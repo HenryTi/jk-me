@@ -44,7 +44,12 @@ export class VMe extends VPage<CMe> {
                     type: 'component',
                     component: <this.meInfo />
                 },
-            ]
+				'',
+            ];
+			let roleNavs = this.controller.roleNavs();
+			if (roleNavs) {
+				rows.push(...roleNavs);
+			}
             rows.push(...aboutRows, ...logOutRows);
         }
         return <PropGrid rows={[...rows]} values={{}} />;
@@ -64,6 +69,14 @@ export class VMe extends VPage<CMe> {
             </div>
         </LMR>;
     });
+
+	/*
+	private renderRolesAdmin = observer(() => {
+		return <LMR className="py-2 cursor-pointer w-100" onClick={this.controller.roleAdmin}>
+			设置用户角色
+		</LMR>
+	});
+	*/
 
 	private about = () => {
 		this.openVPage(VAbout);

@@ -1,8 +1,10 @@
 import { makeObservable, observable } from "mobx";
-import { QueryPager, User } from "tonva-react";
+import { Prop, QueryPager, User } from "tonva-react";
 import { CUqBase } from "uq-app";
 import { VMe } from "./VMe";
 import { VEditMe } from "./VEditMe";
+import { CManager, CTeamLeader } from "roles";
+//import { CRoleAdmin } from "tonva-uqui";
 
 export interface RootUnitItem {
 	id: number;					// root unit id
@@ -13,19 +15,35 @@ export interface RootUnitItem {
 	x: number;
 }
 
+interface RoleNav {
+	renderNav(): JSX.Element;
+}
+
 export class CMe extends CUqBase {
+	private readonly roleNavColl: {[role:string]:RoleNav};
 	role: number;
 	unitOwner: User;
 	rootUnits: QueryPager<any>;
 	roles: string[] = null;
-	//uq: Uq;
-
 	constructor(res:any) {
 		super(res);
 		makeObservable(this, {
 			roles: observable,
 		});
-		//this.uq = this.uqs.BzTimesChange;
+		this.roleNavColl = {
+			manager: this.newC(CManager),
+			teamLeader: this.newC(CTeamLeader),
+		}
+	}
+
+	roleNavs():Prop[] {
+		if (!this.roles) return;
+		return this.roles.map(v => {
+			return {
+				type: 'component',
+				component: this.roleNavColl[v].renderNav(),
+			} as Prop;
+		});
 	}
 
     protected async internalStart() {
@@ -42,7 +60,7 @@ export class CMe extends CUqBase {
 	}
 
 	load = async () => {
-		//this.roles = await this.getUqRoles(this.uq.$.name);
+		this.roles = await this.getUqRoles(this.uqs.JkMe.$.name);
 	}
 
 	backend = async () => {
@@ -55,4 +73,10 @@ export class CMe extends CUqBase {
 		//this.user.roles[this.uq.$.name] = roles;
 		//nav.saveLocalUser();
 	}
+	/*
+	roleAdmin = async () => {
+		let cRoleAdmin = new CRoleAdmin(this.uqs.JkMe, this.myRolesChanged);
+		await cRoleAdmin.start();
+	}
+	*/
 }

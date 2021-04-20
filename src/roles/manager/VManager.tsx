@@ -1,7 +1,7 @@
 import { VPage } from "tonva-react";
-import { CMe } from "./CMe";
+import { CManager } from "./CManager";
 
-export class VManager extends VPage<CMe> {
+export class VManager extends VPage<CManager> {
 	header() {return '经理'}
 	content() {
 		return <div className="p-3">
