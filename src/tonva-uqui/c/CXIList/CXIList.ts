@@ -1,5 +1,5 @@
 import { ID, IX, PageItems, Uq } from "tonva-react";
-import { IDBase } from "tonva-uqui";
+import { IDBase } from "../../base";
 import { CIDSelect } from "../CIDSelect";
 import { CIDView } from "../CIDView";
 import { CUqUi, XIListUiProps } from "../props";

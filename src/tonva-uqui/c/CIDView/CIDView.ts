@@ -1,5 +1,5 @@
 import { Prop } from "tonva-react";
-import { IDBase } from "tonva-uqui";
+import { IDBase } from "../../base";
 import { CIDBase } from "../CIDBase";
 import { CIDEdit } from "../CIDEdit";
 import { IDViewUiProps } from "../props";

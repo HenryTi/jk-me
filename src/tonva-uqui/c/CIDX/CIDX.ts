@@ -1,4 +1,4 @@
-import { IDBase } from "tonva-uqui";
+import { IDBase } from "../../base";
 import { CUqUi, IDXUiProps } from "../props";
 import { VIDX } from "./VIDX";
 

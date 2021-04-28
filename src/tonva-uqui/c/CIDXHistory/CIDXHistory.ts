@@ -1,5 +1,5 @@
 import { PageItems } from "tonva-react";
-import { IDBase } from "tonva-uqui/base";
+import { IDBase } from "../../base";
 import { CUqUi, IDXHistoryUiProps } from "../props";
 import { VIDXHistory } from "./VIDXHistory";
 

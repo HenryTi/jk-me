@@ -1,4 +1,4 @@
-import { IDBase } from "tonva-uqui";
+import { IDBase } from "../../base";
 import { CIDList } from "../CIDList";
 import { CXIList } from "../CXIList";
 import { CUqUi, IDListUiProps, XIListUiProps, XIUiProps } from "../props";

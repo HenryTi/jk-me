@@ -1,5 +1,5 @@
 import { Controller, FieldCustoms, ID, IDX, IX, Uq } from "tonva-react";
-import { IDBase } from "tonva-uqui";
+import { IDBase } from "../../base";
 
 export interface UqUiProps {
 	uq: Uq;

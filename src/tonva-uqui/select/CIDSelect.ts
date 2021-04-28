@@ -1,5 +1,5 @@
 import { ID, Uq } from "tonva-react";
-import { IDBase } from "../base/IDBase";
+import { IDBase } from "../base";
 import { CList, IDListPageItems, MidList } from "../list";
 import { renderSelectItem } from "./parts";
 

@@ -1,8 +1,8 @@
 import { runInAction } from "mobx";
 import { Context } from "node:vm";
 import { ButtonSchema, FieldItem, FieldItemId, FieldItemString, PickId, Schema, UiButton, UiItemCollection, UiSchema } from "tonva-react";
-import { IDBase } from "tonva-uqui";
-import { CFormView, FormUI } from "tonva-uqui/form";
+import { IDBase } from "../../base";
+import { CFormView, FormUI } from "../../form";
 import { CIDBase } from "../CIDBase";
 import { IDEditUiProps } from "../props";
 import { VIDEdit } from "./VIDEdit";

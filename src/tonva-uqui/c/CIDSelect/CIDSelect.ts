@@ -1,4 +1,4 @@
-import { IDBase } from "tonva-uqui";
+import { IDBase } from "../../base";
 import { CIDList } from "../CIDList";
 import { VIDSelect } from "./VIDSelect";
 
