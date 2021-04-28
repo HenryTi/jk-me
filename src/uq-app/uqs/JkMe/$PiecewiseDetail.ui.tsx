@@ -26,18 +26,18 @@ const fields = {
 	} as FieldItemInt,
 	sec: {
 		"name": "sec",
-		"type": "integer",
+		"type": "number",
 		"isKey": false,
 		"widget": "updown",
 		"label": "Sec"
-	} as FieldItemInt,
+	} as FieldItemNum,
 	value: {
 		"name": "value",
-		"type": "integer",
+		"type": "number",
 		"isKey": false,
 		"widget": "updown",
 		"label": "Value"
-	} as FieldItemInt,
+	} as FieldItemNum,
 };
 /*==fields==*/
 
@@ -52,9 +52,9 @@ export const ui: UI = {
 };
 
 const resRaw: Res<any> = {
-	zh: {
+	$zh: {
 	},
-	en: {
+	$en: {
 	}
 };
 const res: any = {};

@@ -3,8 +3,7 @@ import { Prop, QueryPager, User } from "tonva-react";
 import { CUqBase } from "uq-app";
 import { VMe } from "./VMe";
 import { VEditMe } from "./VEditMe";
-import { CManager, CTeamLeader } from "roles";
-//import { CRoleAdmin } from "tonva-uqui";
+import { CAdmin, CManager, CTeamLeader } from "roles";
 
 export interface RootUnitItem {
 	id: number;					// root unit id
@@ -31,6 +30,7 @@ export class CMe extends CUqBase {
 			roles: observable,
 		});
 		this.roleNavColl = {
+			admin: this.newC(CAdmin),
 			manager: this.newC(CManager),
 			teamLeader: this.newC(CTeamLeader),
 		}
@@ -38,7 +38,9 @@ export class CMe extends CUqBase {
 
 	roleNavs():Prop[] {
 		if (!this.roles) return;
-		return this.roles.map(v => {
+		let arr = ['admin', 'manager', 'teamLeader'];
+		let sortedRoles = arr.filter(v => this.roles.findIndex(r => r === v) >= 0);
+		return sortedRoles.map(v => {
 			return {
 				type: 'component',
 				component: this.roleNavColl[v].renderNav(),

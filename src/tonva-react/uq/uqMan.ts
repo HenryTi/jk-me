@@ -130,8 +130,8 @@ export interface RetActDetail3 extends RetActDetail2 {
 
 export interface ParamQueryID {
 	ID?: ID;
+	IX?: (IX|string)[];
 	IDX?: (ID|IDX)[];
-	IX?: IX[];
 	id?: number | number[];
 	key?: {[key:string]:string|number};
 	ix?: number;

@@ -1,7 +1,7 @@
 import { FA, LMR, View } from "tonva-react";
 import { CUqBase } from "uq-app";
 
-export abstract class VNav<T extends CUqBase> extends View<T> {
+export abstract class VRoleNav<T extends CUqBase> extends View<T> {
 	protected abstract get caption():string;
 	protected get iconName(): string {return 'user'}
 	protected get iconColor(): string {return 'text-info'}
@@ -11,7 +11,7 @@ export abstract class VNav<T extends CUqBase> extends View<T> {
 				className={'mr-3 ' + this.iconColor} />
 	}
 	render() {
-		return <LMR className="p-3 w-100 cursor-pointer align-items-center"
+		return <LMR className="px-3 py-2 w-100 cursor-pointer align-items-center"
 			left={this.icon}
 			onClick={()=>this.controller.start()}>
 			{this.caption}

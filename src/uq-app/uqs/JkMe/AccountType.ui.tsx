@@ -13,11 +13,10 @@ const fields = {
 	} as FieldItemId,
 	type: {
 		"name": "type",
-		"type": "string",
 		"isKey": true,
 		"widget": "string",
 		"label": "Type"
-	} as FieldItemString,
+	} as undefined,
 };
 /*==fields==*/
 
@@ -32,9 +31,9 @@ export const ui: UI = {
 };
 
 const resRaw: Res<any> = {
-	zh: {
+	$zh: {
 	},
-	en: {
+	$en: {
 	}
 };
 const res: any = {};

@@ -39,9 +39,9 @@ export const ui: UI = {
 };
 
 export const res: Res<any> = {
-	zh: {
+	$zh: {
 	},
-	en: {
+	$en: {
 	}
 };
 

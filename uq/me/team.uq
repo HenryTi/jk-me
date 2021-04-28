@@ -1,0 +1,18 @@
+ID Team (
+	id,
+	KEY name CHAR(50),
+);
+
+ID Staff (
+	id,
+	KEY no,
+	name Char(50),
+	user ID,				-- 对应的User
+
+	INDEX user (user) UNIQUE,
+);
+
+IX TeamStaff (
+	ix Team,
+	xi Staff,
+);

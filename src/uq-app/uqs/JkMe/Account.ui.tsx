@@ -17,23 +17,11 @@ const fields = {
 		"isKey": true,
 		"label": "User"
 	} as FieldItemId,
-	$owner: {
-		"name": "$owner",
-		"type": "integer",
-		"isKey": false,
-		"widget": "updown",
-		"label": "$owner"
-	} as FieldItemInt,
-	$create: {
-		"name": "$create",
-		"isKey": false,
-		"label": "$create"
-	} as undefined,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.user, fields.$owner, fields.$create, 
+	fields.user, 
 ];
 
 export const ui: UI = {
@@ -43,9 +31,9 @@ export const ui: UI = {
 };
 
 const resRaw: Res<any> = {
-	zh: {
+	$zh: {
 	},
-	en: {
+	$en: {
 	}
 };
 const res: any = {};

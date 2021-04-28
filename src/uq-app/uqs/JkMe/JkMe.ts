@@ -1,11 +1,16 @@
-//=== UqApp builder created on Fri Apr 09 2021 16:55:02 GMT-0400 (GMT-04:00) ===//
+//=== UqApp builder created on Fri Apr 23 2021 11:02:44 GMT-0400 (GMT-04:00) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { IDXValue, Uq, UqTuid, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
+import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 
 
 //===============================
 //======= UQ 百灵威系统工程部/me ========
 //===============================
+
+export enum EnumAccountType {
+	cto = 1,
+	contentManager = 2
+}
 
 export interface Tuid$sheet {
 	no: string;
@@ -29,6 +34,15 @@ export interface Tuid$user {
 	poke: number;
 }
 
+export interface ParamWriteCTO {
+	user: number;
+	orderAmount: number;
+	orderDeliver: number;
+	orderPaid: number;
+}
+interface ResultWriteCTO {
+}
+
 export interface Param$poked {
 }
 interface Return$pokedRet {
@@ -41,8 +55,7 @@ interface Result$poked {
 export interface $Piecewise {
 	id?: number;
 	name: string;
-	mul: number;
-	div: number;
+	ratio: number;
 	offset: number;
 	asc: number;
 }
@@ -57,19 +70,29 @@ export interface $PiecewiseDetail {
 
 export interface AccountType {
 	id?: number;
-	type: string;
+	type: any;
 }
 
 export interface Account {
 	id?: number;
 	user: number;
-	$owner?: number;
-	$create?: any;
+}
+
+export interface Staff {
+	id?: number;
+	no?: string;
+	name: string;
+	user: number;
+}
+
+export interface Team {
+	id?: number;
+	name: string;
 }
 
 export interface AccountCTO {
 	id: number;
-	commissionFormula?: number;
+	type?: number;
 	orderAmount?: number;
 	orderDeliver?: number;
 	orderPaid?: number;
@@ -77,9 +100,15 @@ export interface AccountCTO {
 	$act?: number;
 }
 
+export interface AccountCTOType {
+	id: number;
+	commissionFormula?: number;
+	$act?: number;
+}
+
 export interface ActParamAccountCTO {
 	id: number|IDXValue;
-	commissionFormula?: number|IDXValue;
+	type?: number|IDXValue;
 	orderAmount?: number|IDXValue;
 	orderDeliver?: number|IDXValue;
 	orderPaid?: number|IDXValue;
@@ -87,7 +116,18 @@ export interface ActParamAccountCTO {
 	$act?: number;
 }
 
+export interface ActParamAccountCTOType {
+	id: number|IDXValue;
+	commissionFormula?: number|IDXValue;
+	$act?: number;
+}
+
 export interface UserAccountType {
+	ix: number;
+	xi: number;
+}
+
+export interface TeamStaff {
 	ix: number;
 	xi: number;
 }
@@ -97,8 +137,12 @@ export interface ParamActs {
 	$PiecewiseDetail?: $PiecewiseDetail[];
 	accountType?: AccountType[];
 	account?: Account[];
+	staff?: Staff[];
+	team?: Team[];
 	accountCTO?: ActParamAccountCTO[];
+	accountCTOType?: ActParamAccountCTOType[];
 	userAccountType?: UserAccountType[];
+	teamStaff?: TeamStaff[];
 }
 
 
@@ -107,11 +151,16 @@ export interface UqExt extends Uq {
 
 	$sheet: UqTuid<Tuid$sheet>;
 	$user: UqTuid<Tuid$user>;
+	WriteCTO: UqAction<ParamWriteCTO, ResultWriteCTO>;
 	$poked: UqQuery<Param$poked, Result$poked>;
 	$Piecewise: UqID<any>;
 	$PiecewiseDetail: UqID<any>;
 	AccountType: UqID<any>;
 	Account: UqID<any>;
+	Staff: UqID<any>;
+	Team: UqID<any>;
 	AccountCTO: UqIDX<any>;
+	AccountCTOType: UqIDX<any>;
 	UserAccountType: UqIX<any>;
+	TeamStaff: UqIX<any>;
 }

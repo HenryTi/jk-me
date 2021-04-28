@@ -1,3 +1,3 @@
-export * from './CIX';
+export * from './CIXX';
 export * from './CIXEdit';
-export * from './CIXList';
+export * from './CIXXList';

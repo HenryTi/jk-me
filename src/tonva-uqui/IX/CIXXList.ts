@@ -4,7 +4,7 @@ import { ID, IX, Uq } from "tonva-react";
 import { CList, MidIDListBase } from "../list";
 import { IXBase } from "../base";
 
-export class CIXList<T extends IXBase> extends CList<T> {
+export class CIXXList<T extends IXBase> extends CList<T> {
 	protected midIXList: MidIXList<T>;
 	constructor(midIXList: MidIXList<T>) {
 		super(midIXList);

@@ -1,14 +1,14 @@
 import { ID } from "tonva-react";
-import { CIX, MidIX } from "./CIX";
-import { CIXList, MidIXList} from "./CIXList";
+import { CIXX, MidIX } from "./CIXX";
+import { CIXXList, MidIXList} from "./CIXXList";
 import { CIXSelect, MidIXSelectList } from "../select";
 
 export interface IXEditProps extends MidIX {
 	ID: ID;
 }
 
-export class CIXEdit extends CIX<IXEditProps> {
-	private cIXList: CIXList<any>;
+export class CIXXEdit extends CIXX<IXEditProps> {
+	private cIXList: CIXXList<any>;
 	protected async internalStart() {
 		let {uq, IX, ID, id} = this.midIX;
 		let midIXList = new MidIXList(uq, IX, ID, id);
@@ -16,7 +16,7 @@ export class CIXEdit extends CIX<IXEditProps> {
 		midIXList.renderItem = undefined;
 		midIXList.onItemClick = undefined;
 		midIXList.renderRight = undefined;
-		this.cIXList = new CIXList(midIXList);
+		this.cIXList = new CIXXList(midIXList);
 		await this.cIXList.start();
 	}
 

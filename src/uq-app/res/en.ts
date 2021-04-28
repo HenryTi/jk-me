@@ -13,4 +13,6 @@ export const en = {
 
 	content: 'Content',
 	backend: 'Backend Management',
+
+	list: 'List',
 }

@@ -1,6 +1,8 @@
+ENUM EnumAccountType (cto=1, contentManager=2, );
+
 ID AccountType (
 	id,
-	key type char(50),				-- 'cto', ...
+	key type ENUM EnumAccountType,				-- 'cto', ...
 );
 
 IDX AccountCTOType (
@@ -37,7 +39,9 @@ OPEN ACT WriteCTO ver 0.5 (
 	orderPaid DEC(16,4),
 ) {
 	VAR accountId ID = ID(Account new, user);
-	WITH AccountCTO as a ID=accountId SET a.type = ID(AccountType new, 'cto');
+	VAR accountTypeId ID = ID(AccountType new, EnumAccountType.cto);
+	WITH AccountCTO as a ID=accountId SET a.type = accountTypeId;
+	WITH UserAccountType as a IX=user XI=accountTypeId;
 	IF NOT orderAmount IS NULL {
 		WITH AccountCTO as a ID=accountId SETX a.orderAmount=orderAmount ACT=1;
 	}

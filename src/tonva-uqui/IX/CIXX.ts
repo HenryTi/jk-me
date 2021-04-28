@@ -1,6 +1,6 @@
 import { Controller, ID, IX, Uq } from "tonva-react";
 import { Mid } from "../base";
-import { CIXList, MidIXList } from "./CIXList";
+import { CIXXList, MidIXList } from "./CIXXList";
 
 export class MidIX extends Mid {
 	readonly IX: IX;
@@ -17,7 +17,7 @@ export class MidIX extends Mid {
 	}
 }
 
-export class CIX<P extends MidIX> extends Controller {
+export class CIXX<P extends MidIX> extends Controller {
 	protected readonly midIX: P;
 
 	constructor(midIX: P) {
@@ -33,7 +33,7 @@ export class CIX<P extends MidIX> extends Controller {
 		midIXList.renderItem = undefined;
 		midIXList.onItemClick = this.onItemClick;
 		midIXList.renderRight = undefined;
-		let idList = new CIXList(midIXList);
+		let idList = new CIXXList(midIXList);
 		await idList.start();
 	}
 

@@ -11,11 +11,11 @@ const fields = {
 		"isKey": false,
 		"label": "Id"
 	} as FieldItemId,
-	commissionFormula: {
-		"name": "commissionFormula",
+	type: {
+		"name": "type",
 		"type": "id",
 		"isKey": false,
-		"label": "CommissionFormula"
+		"label": "Type"
 	} as FieldItemId,
 	orderAmount: {
 		"name": "orderAmount",
@@ -49,7 +49,7 @@ const fields = {
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.commissionFormula, fields.orderAmount, fields.orderDeliver, fields.orderPaid, fields.amount, 
+	fields.type, fields.orderAmount, fields.orderDeliver, fields.orderPaid, fields.amount, 
 ];
 
 export const ui: UI = {
@@ -59,9 +59,9 @@ export const ui: UI = {
 };
 
 const resRaw: Res<any> = {
-	zh: {
+	$zh: {
 	},
-	en: {
+	$en: {
 	}
 };
 const res: any = {};

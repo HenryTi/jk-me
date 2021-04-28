@@ -1,8 +1,8 @@
-import { VNav } from "roles/VNav";
+import { VRoleNav } from "roles/VRoleNav";
 import { CManager } from "./CManager";
 
-export class VManagerNav extends VNav<CManager> {
-	protected get caption():string {return '组长'}
+export class VManagerNav extends VRoleNav<CManager> {
+	protected get caption():string {return '经理'}
 	protected get iconName(): string {return 'user'}
 	protected get iconColor(): string {return 'text-success'}
 }

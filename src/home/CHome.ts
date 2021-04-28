@@ -1,6 +1,6 @@
 import { makeObservable, observable } from "mobx";
 import { CApp, CUqBase } from "uq-app";
-import { Account, AccountType } from "uq-app/uqs/JkMe";
+import { Account, AccountType, EnumAccountType } from "uq-app/uqs/JkMe";
 import { CContentManager } from "./contentManager";
 import { CCTO } from "./cto";
 import { VHome } from "./VHome";
@@ -50,8 +50,8 @@ export class CHome extends CUqBase {
 		this.accountControllers = accounType.map(v => {
 			switch(v.type) {
 				default:
-				case 'cto': return this.newSub(CCTO);
-				case 'contentmanager': return this.newSub(CContentManager);
+				case EnumAccountType.cto: return this.newSub(CCTO);
+				case EnumAccountType.contentManager: return this.newSub(CContentManager);
 			}
 		});
 		await Promise.all(this.accountControllers.map(v => v.loadItem()));

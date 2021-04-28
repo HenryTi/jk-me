@@ -13,4 +13,6 @@ export const zh = {
 
 	content: '内容',
 	backend: '后台管理',
+
+	list: '列表',
 }
