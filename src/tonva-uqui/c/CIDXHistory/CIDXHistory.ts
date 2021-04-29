@@ -1,15 +1,44 @@
 import { PageItems } from "tonva-react";
+import { TimeSpan } from "tonva-uqui/tools";
 import { IDBase } from "../../base";
 import { CUqUi, IDXHistoryUiProps } from "../props";
-import { VIDXHistory } from "./VIDXHistory";
+import { VIDXHistory, VHistory } from "./VIDXHistory";
 
 export class CIDXHistory<T> extends CUqUi<IDXHistoryUiProps<T>> {
+	item: any;
 	field: string;
 	historyItems: HistoryPageItems<any>
 	
 	protected async internalStart() {
 		this.openVPage(VIDXHistory);
 	}
+
+	async startFieldHistory(item: any, field:string) {
+		let {ID, IDX} = this.props;
+		await Promise.all([
+			IDX.loadSchema(),
+			ID.loadSchema(),
+		]);
+		this.item = item;
+		this.field = field;
+		let timeSpan = TimeSpan.create('year');
+		this.historyItems.first({
+			id: this.item.id,
+			far: timeSpan.far,
+			near: 1817507137000, //this.timeSpan.near,
+			field
+		});
+	}
+
+	renderFieldHistory() {
+		return this.renderView(VHistory);
+	}
+
+	async showFieldHistory(field:string) {
+		await this.startFieldHistory(this.item, field);
+		this.openVPage(VIDXHistory);
+	}
+
 }
 
 class HistoryPageItems<T extends IDBase> extends PageItems<T> {

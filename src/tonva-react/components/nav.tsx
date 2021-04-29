@@ -808,7 +808,7 @@ export class Nav {
 		nav.clear();
 
         if (callback !== undefined) //this.loginCallbacks.has)
-            callback(user);
+            await callback(user);
             //this.loginCallbacks.call(user);
         else if (this.isWebNav === true) {
 			this.navigate('/index');
@@ -830,11 +830,6 @@ export class Nav {
     async userLogined(user: User, callback?: (user:User)=>Promise<void>) {
 		await this.internalLogined(user, callback, true);
     }
-
-    //wsConnect() {
-        //let ws:WSChannel = this.ws = new WSChannel(this.wsHost, this.user.token);
-        //ws.connect();
-    //}
 
     loginTop(defaultTop:JSX.Element) {
         return (this.navSettings && this.navSettings.loginTop) || defaultTop;
@@ -906,13 +901,11 @@ export class Nav {
 	}
 
     async logout(callback?:()=>Promise<void>) { //notShowLogin?:boolean) {
-        //appInFrame.unit = undefined;
-        this.local.logoutClear();
+		this.local.logoutClear();
         this.user = undefined; //{} as User;
         logoutApis();
         let guest = this.local.guest.get();
         setCenterToken(0, guest && guest.token);
-		//this.ws = undefined;
 		this.clear();
         if (callback === undefined)
             await nav.start();
