@@ -55,15 +55,5 @@ export class CHome extends CUqBase {
 			}
 		});
 		await Promise.all(this.accountControllers.map(v => v.loadItem()));
-
-/*
-		await me.Acts({
-			accountCTO: [{
-				id: this.accountId,
-				orderAmount: 3,
-			}],
-		});
-*/
 	}
 }
-

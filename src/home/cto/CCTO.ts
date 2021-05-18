@@ -4,8 +4,7 @@ import { AccountCTO } from 'uq-app/uqs/JkMe';
 import { VItem } from "./VItem";
 import { VValuePage } from "./VValuePage";
 import { action, makeObservable, observable, runInAction } from "mobx";
-import { CIDX, MidIDX, TimeSpan } from "tonva-uqui";
-//import { CList } from "tonva-uqui/list";
+import { CIDX, CIDXX, IDXUiProps, MidIDX, TimeSpan } from "tonva-uqui";
 
 export class CCTO extends CUqSub<CApp, UQs, CHome> implements AccountController {
 	value: number = null;
@@ -83,11 +82,10 @@ export class CCTO extends CUqSub<CApp, UQs, CHome> implements AccountController 
 		});
 	}
 
-	showIDX = async () => {
+	showIDX0 = async () => {
 		let uq = this.uqs.JkMe;
 		let mid = new MidIDX(uq, uq.AccountCTO, uq.Account, this.timeZone);
 		let cIDX = new CIDX(mid);
-		//await cIDX.start();
 		let ret = await uq.QueryID<any>({
 			ID: uq.Account,
 			IDX: [uq.AccountCTO],
@@ -98,11 +96,27 @@ export class CCTO extends CUqSub<CApp, UQs, CHome> implements AccountController 
 			return;
 		}
 		await cIDX.showItemView(ret[0]);
-		/*
-		let midIDXList = new MidIDXList(uq, uq.Account, uq.AccountCTO);
-		midIDXList.onItemClick = (item:any) => cIDX.start(item);
-		let idList = new CList(midIDXList);
-		await idList.start();
-		*/
+	}
+
+	showIDX = async () => {
+		let uq = this.uqs.JkMe;
+		//let mid = new MidIDX(uq, uq.AccountCTO, uq.Account, this.timeZone);
+		let props: IDXUiProps<any> = {
+			uq,
+			IDX: uq.AccountCTO,
+			ID: uq.Account,
+			timeZone: 8
+		};
+		let cIDX = new CIDXX(props);
+		let ret = await uq.QueryID<any>({
+			ID: uq.Account,
+			IDX: [uq.AccountCTO],
+			key: {user: undefined},
+		});
+		if (ret.length === 0) {
+			alert('QUERY ID return nothing!');
+			return;
+		}
+		await cIDX.showItemView(ret[0]);
 	}
 }

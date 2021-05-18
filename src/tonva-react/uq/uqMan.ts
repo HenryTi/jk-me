@@ -14,7 +14,7 @@ import { ReactBoxId } from './tuid/reactBoxId';
 import { Tag } from './tag/tag';
 import { UqEnum } from './enum';
 import { Entity } from './entity';
-import { CenterApi, centerApi, UqConfig } from '../app';
+import { UqConfig } from '../app';
 import { ID, IX, IDX } from './ID';
 import { nav } from '../components';
 
@@ -332,8 +332,6 @@ export class UqMan {
         }
         this.tuidsCache = new TuidsCache(this);
     }
-
-	get center():CenterApi {return centerApi;}
 
 	getID(name:string):ID {return this.ids[name.toLowerCase()];};
 	getIDX(name:string):IDX {return this.idxs[name.toLowerCase()];};

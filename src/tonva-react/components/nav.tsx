@@ -807,16 +807,16 @@ export class Nav {
 		netToken.set(user.id, user.token);
 		nav.clear();
 
-        if (callback !== undefined) //this.loginCallbacks.has)
+		await this.onChangeLogin?.(this.user);
+        if (callback !== undefined) {
             await callback(user);
-            //this.loginCallbacks.call(user);
+		}
         else if (this.isWebNav === true) {
 			this.navigate('/index');
 		}
 		else {
             await this.showAppView(isUserLogin);
         }
-		await this.onChangeLogin?.(this.user);
 	}
 
 	onChangeLogin: (user:User) => Promise<void>;

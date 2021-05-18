@@ -1,10 +1,7 @@
-import { IDUI } from "tonva-react";
-import { MidID } from "tonva-uqui";
-import { CIX, CXI, XIUiProps } from "tonva-uqui/c";
+import { CIX, CXI, XIUiProps } from "tonva-uqui";
 import { IDListUiProps, IXListUiProps, IXUiProps, XIListUiProps } from "tonva-uqui";
 import { CUqBase } from "uq-app";
 import { Staff, Team } from "uq-app/uqs/JkMe";
-import { CIDTeam } from "./team";
 import { VAdmin } from "./VAdmin";
 import { VAdminNav } from "./VAdminNav";
 
