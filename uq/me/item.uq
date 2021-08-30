@@ -18,13 +18,6 @@ ENUM Post (
     [client-sales]              = 7100,
     [customer]                  = 8010,
 );
-/*
-ID Post (
-    id,
-    KEY name CHAR(50),
-    vice CHAR(100),
-);
-*/
 
 IX PostItem ver 0.5 (
     ix ENUM Post,               -- 岗位
@@ -32,15 +25,6 @@ IX PostItem ver 0.5 (
     ratio DEC(6,2),             -- 百分比，从item的value，折算到ObjectHistory
     -- INDEX item_post (item),
 );
-/*
-+ (post, item, ratio) VALUES 
-(Post.sales, Item.[order-deliver], 1),
-(Post.sales, Item.[order-return], 1),
-(Post.sales, Item.[order-receive], 1),
-(Post.sales, Item.[order-profit-commission], 0.08),
-(Post.cto, Item.[order-amount-commission], 0.001)
-;
-*/
 
 ID Person (
     id,
@@ -68,24 +52,6 @@ ID PersonPostItem (
     KEY item ENUM Item,
 );
 
--- 这个怎么处理，还需要细想。通常是超过某个合计值，比例提升。
--- 这样，就需要年底，才能一次性核算。当然也可以，这么算奖金。
--- piecewise TEXT,             -- 分段计算公式。百分比，从item的value，折算到ObjectHistory
-
-/*
-ID Item (
-    id,
-    KEY no,
-    name CHAR(50),
-    vice CHAR(100),
-
-    INDEX no(no) UNIQUE,
-)
-+ (no, name, vice) VALUES 
-('1001', 'commission-order-amount', '订单销售额提成'),
-('1002', 'commission-order-profit', '订单毛利润提成');
-*/
-
 -- MINUTEID 分钟序ID
 ID ItemHistory MINUTEID (
     -- 26位表达从2021开始的分钟，后面跟16位的序列号。如果重了，就顺序往后加。
@@ -110,24 +76,3 @@ IDX DxPostItem (
     id,
     value DEC(18,4) SUM,
 );
-
-/*
-ACT ItemReceived(
-    item ID,
-    value DEC(18,4)
-) 
-{
-    VAR itemHistoryId ID = ID(ItemHistory new);
-    VAR a ID = Item.[order-deliver];
-    FOR (
-            VAR postItemId ID, ratio DEC(6,2)
-            OF SELECT a.id as postItemId, a.ratio FROM PostItem as a WHERE a.item=item
-        )
-    {
-        IF ratio IS NULL {
-            SET ratio = 100;
-        }
-        WITH PostItemHistory as a IX=postItemId XI=itemHistoryId SET a.value=ratio*value/100;
-    };
-};
-*/
