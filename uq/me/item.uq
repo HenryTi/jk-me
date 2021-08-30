@@ -1,8 +1,77 @@
 -- 业务科目
 ENUM Item (
-    [commission-order-amount] = 101,
-    [commission-order-profit] = 102,
+    [order-deliver]             = 1010,             -- 订单发货
+    [order-return]              = 1020,             -- 订单退货
+    [order-receive]             = 1030,             -- 订单收款
+    [order-profit-commission]   = 1040,             -- 订单毛利提成
+    [order-amount-commission]   = 1050,             -- 订单销售额提成
+    
+    [order-customer-point]      = 2010,             -- 客户普通积分
 );
+
+-- 业务岗位
+ENUM Post (
+    [staff]                     = 1010,
+    [staff-sales]               = 1100,
+    [manager]                   = 2010,
+    [client]                    = 7010,
+    [client-sales]              = 7100,
+    [customer]                  = 8010,
+);
+/*
+ID Post (
+    id,
+    KEY name CHAR(50),
+    vice CHAR(100),
+);
+*/
+
+IX PostItem ver 0.5 (
+    ix ENUM Post,               -- 岗位
+    xi ENUM Item INDEX,         -- Item
+    ratio DEC(6,2),             -- 百分比，从item的value，折算到ObjectHistory
+    -- INDEX item_post (item),
+);
+/*
++ (post, item, ratio) VALUES 
+(Post.sales, Item.[order-deliver], 1),
+(Post.sales, Item.[order-return], 1),
+(Post.sales, Item.[order-receive], 1),
+(Post.sales, Item.[order-profit-commission], 0.08),
+(Post.cto, Item.[order-amount-commission], 0.001)
+;
+*/
+
+ID Person (
+    id,
+);
+
+ID PersonUser (
+    id,             -- person
+    KEY user ID,
+);
+
+ID PersonCustomer (
+    id,             -- person
+    KEY customer ID,
+);
+
+ID PersonSales (
+    id,
+    KEY sales ID,
+);
+
+ID PersonPostItem (
+    id,
+    KEY person ID,
+    KEY post ENUM Post,
+    KEY item ENUM Item,
+);
+
+-- 这个怎么处理，还需要细想。通常是超过某个合计值，比例提升。
+-- 这样，就需要年底，才能一次性核算。当然也可以，这么算奖金。
+-- piecewise TEXT,             -- 分段计算公式。百分比，从item的value，折算到ObjectHistory
+
 /*
 ID Item (
     id,
@@ -17,59 +86,48 @@ ID Item (
 ('1002', 'commission-order-profit', '订单毛利润提成');
 */
 
-ID Object (
-    id,
-    KEY name CHAR(50),
-    vice CHAR(100),
-);
-
-ID ObjectItem ver 0.3 (
-    id,
-    KEY object ID,              -- 对象
-    KEY item ENUM Item,         -- Item
-    ratio DEC(6,2),             -- 百分比，从item的value，折算到ObjectHistory
-
-    INDEX item_object (item),
-);
-
 -- MINUTEID 分钟序ID
 ID ItemHistory MINUTEID (
     -- 26位表达从2021开始的分钟，后面跟16位的序列号。如果重了，就顺序往后加。
     id,                         -- 分钟序id
-    item ENUM Item,             -- 科目
+    KEY track ID,               -- 原始凭证
+    KEY item ENUM Item,         -- 科目
     value DEC(18,4),            -- 数值
 );
 
-IX UserObject (
-    ix User,
-    xi Object,
+IX PersonPost (
+    ix Person,
+    xi ENUM Post,
 );
 
-IX ObjectHistory (
-    ix ObjectItem,
+IX PostItemHistory (
+    ix PersonPostItem,
     xi ItemHistory,
     value DEC(18,4),
 );
 
-IDX DxObjectItem (
+IDX DxPostItem (
     id,
     value DEC(18,4) SUM,
 );
 
+/*
 ACT ItemReceived(
     item ID,
     value DEC(18,4)
 ) 
 {
     VAR itemHistoryId ID = ID(ItemHistory new);
+    VAR a ID = Item.[order-deliver];
     FOR (
-            VAR objectItemId ID, ratio DEC(6,2)
-            OF SELECT a.id as objectItemId, a.ratio FROM ObjectItem as a WHERE a.item=item
+            VAR postItemId ID, ratio DEC(6,2)
+            OF SELECT a.id as postItemId, a.ratio FROM PostItem as a WHERE a.item=item
         )
     {
         IF ratio IS NULL {
             SET ratio = 100;
         }
-        WITH ObjectHistory as a IX=objectItemId XI=itemHistoryId SET a.value=ratio*value/100;
+        WITH PostItemHistory as a IX=postItemId XI=itemHistoryId SET a.value=ratio*value/100;
     };
 };
+*/

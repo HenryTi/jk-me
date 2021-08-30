@@ -1,18 +1,32 @@
-//=== UqApp builder created on Fri Apr 23 2021 11:02:44 GMT-0400 (GMT-04:00) ===//
+//=== UqApp builder created on Fri Aug 27 2021 00:04:33 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
+import { IDXValue, Uq, UqTuid, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 
 
 //===============================
 //======= UQ 百灵威系统工程部/me ========
 //===============================
 
-export enum EnumAccountType {
-	cto = 1,
-	contentManager = 2
+export enum Item {
+	order_deliver = 1010,
+	order_return = 1020,
+	order_receive = 1030,
+	order_profit_commission = 1040,
+	order_amount_commission = 1050,
+	order_customer_point = 2010
+}
+
+export enum Post {
+	staff = 1010,
+	staff_sales = 1100,
+	manager = 2010,
+	client = 7010,
+	client_sales = 7100,
+	customer = 8010
 }
 
 export interface Tuid$sheet {
+	id?: number;
 	no: string;
 	user: number;
 	date: any;
@@ -27,6 +41,7 @@ export interface Tuid$sheet {
 }
 
 export interface Tuid$user {
+	id?: number;
 	name: string;
 	nick: string;
 	icon: string;
@@ -34,48 +49,13 @@ export interface Tuid$user {
 	poke: number;
 }
 
-export interface ParamWriteCTO {
-	user: number;
-	orderAmount: number;
-	orderDeliver: number;
-	orderPaid: number;
-}
-interface ResultWriteCTO {
-}
-
 export interface Param$poked {
 }
-interface Return$pokedRet {
+export interface Return$pokedRet {
 	poke: number;
 }
-interface Result$poked {
+export interface Result$poked {
 	ret: Return$pokedRet[];
-}
-
-export interface $Piecewise {
-	id?: number;
-	name: string;
-	ratio: number;
-	offset: number;
-	asc: number;
-}
-
-export interface $PiecewiseDetail {
-	id?: number;
-	parent: number;
-	row?: number;
-	sec: number;
-	value: number;
-}
-
-export interface AccountType {
-	id?: number;
-	type: any;
-}
-
-export interface Account {
-	id?: number;
-	user: number;
 }
 
 export interface Staff {
@@ -90,41 +70,108 @@ export interface Team {
 	name: string;
 }
 
-export interface AccountCTO {
+export interface ItemHistory {
+	id?: number;
+	track: number;
+	item: any;
+	value: number;
+}
+
+export interface OrderDetail {
+	id?: number;
+	main?: number;
+	item: number;
+	product: number;
+	quantity: number;
+	amount: number;
+	price: number;
+}
+
+export interface OrderMain {
+	id?: number;
+	no?: string;
+	webUser: number;
+	customer: number;
+	currency: number;
+	sumAmount: number;
+}
+
+export interface PersonSales {
+	id?: number;
+	sales: number;
+}
+
+export interface PersonPostItem {
+	id?: number;
+	person: number;
+	post: any;
+	item: any;
+}
+
+export interface PersonUser {
+	id?: number;
+	user: number;
+}
+
+export interface PersonCustomer {
+	id?: number;
+	customer: number;
+}
+
+export interface Person {
+	id?: number;
+}
+
+export interface DxOrderDetail {
 	id: number;
-	type?: number;
-	orderAmount?: number;
-	orderDeliver?: number;
-	orderPaid?: number;
-	amount?: number;
+	deliverDone?: number;
+	receiveDone?: number;
+	return?: number;
+	costPrice?: number;
 	$act?: number;
 }
 
-export interface AccountCTOType {
+export interface DxOrderMain {
 	id: number;
-	commissionFormula?: number;
+	costPriceSet?: number;
 	$act?: number;
 }
 
-export interface ActParamAccountCTO {
+export interface DxPostItem {
+	id: number;
+	value?: number;
+	$act?: number;
+}
+
+export interface DxPendingOrderBound {
+	id: number;
+	$act?: number;
+}
+
+export interface ActParamDxOrderDetail {
 	id: number|IDXValue;
-	type?: number|IDXValue;
-	orderAmount?: number|IDXValue;
-	orderDeliver?: number|IDXValue;
-	orderPaid?: number|IDXValue;
-	amount?: number|IDXValue;
+	deliverDone?: number|IDXValue;
+	receiveDone?: number|IDXValue;
+	return?: number|IDXValue;
+	costPrice?: number|IDXValue;
 	$act?: number;
 }
 
-export interface ActParamAccountCTOType {
+export interface ActParamDxOrderMain {
 	id: number|IDXValue;
-	commissionFormula?: number|IDXValue;
+	costPriceSet?: number|IDXValue;
 	$act?: number;
 }
 
-export interface UserAccountType {
-	ix: number;
-	xi: number;
+export interface ActParamDxPostItem {
+	id: number|IDXValue;
+	value?: number|IDXValue;
+	$act?: number;
+}
+
+export interface ActParamDxPendingOrderBound {
+	id: number|IDXValue;
+	$act?: number;
 }
 
 export interface TeamStaff {
@@ -132,17 +179,49 @@ export interface TeamStaff {
 	xi: number;
 }
 
+export interface PostItemHistory {
+	ix: number;
+	xi: number;
+	value: number;
+}
+
+export interface PostItem {
+	ix: number;
+	xi: number;
+	ratio: number;
+}
+
+export interface PersonPost {
+	ix: number;
+	xi: number;
+}
+
+export interface IxPendingOrderBoundTo {
+	ixx: number;
+	ix: number;
+	xi: number;
+}
+
 export interface ParamActs {
-	$Piecewise?: $Piecewise[];
-	$PiecewiseDetail?: $PiecewiseDetail[];
-	accountType?: AccountType[];
-	account?: Account[];
 	staff?: Staff[];
 	team?: Team[];
-	accountCTO?: ActParamAccountCTO[];
-	accountCTOType?: ActParamAccountCTOType[];
-	userAccountType?: UserAccountType[];
+	itemHistory?: ItemHistory[];
+	orderDetail?: OrderDetail[];
+	orderMain?: OrderMain[];
+	personSales?: PersonSales[];
+	personPostItem?: PersonPostItem[];
+	personUser?: PersonUser[];
+	personCustomer?: PersonCustomer[];
+	person?: Person[];
+	dxOrderDetail?: ActParamDxOrderDetail[];
+	dxOrderMain?: ActParamDxOrderMain[];
+	dxPostItem?: ActParamDxPostItem[];
+	dxPendingOrderBound?: ActParamDxPendingOrderBound[];
 	teamStaff?: TeamStaff[];
+	postItemHistory?: PostItemHistory[];
+	postItem?: PostItem[];
+	personPost?: PersonPost[];
+	ixPendingOrderBoundTo?: IxPendingOrderBoundTo[];
 }
 
 
@@ -151,16 +230,24 @@ export interface UqExt extends Uq {
 
 	$sheet: UqTuid<Tuid$sheet>;
 	$user: UqTuid<Tuid$user>;
-	WriteCTO: UqAction<ParamWriteCTO, ResultWriteCTO>;
 	$poked: UqQuery<Param$poked, Result$poked>;
-	$Piecewise: UqID<any>;
-	$PiecewiseDetail: UqID<any>;
-	AccountType: UqID<any>;
-	Account: UqID<any>;
 	Staff: UqID<any>;
 	Team: UqID<any>;
-	AccountCTO: UqIDX<any>;
-	AccountCTOType: UqIDX<any>;
-	UserAccountType: UqIX<any>;
+	ItemHistory: UqID<any>;
+	OrderDetail: UqID<any>;
+	OrderMain: UqID<any>;
+	PersonSales: UqID<any>;
+	PersonPostItem: UqID<any>;
+	PersonUser: UqID<any>;
+	PersonCustomer: UqID<any>;
+	Person: UqID<any>;
+	DxOrderDetail: UqIDX<any>;
+	DxOrderMain: UqIDX<any>;
+	DxPostItem: UqIDX<any>;
+	DxPendingOrderBound: UqIDX<any>;
 	TeamStaff: UqIX<any>;
+	PostItemHistory: UqIX<any>;
+	PostItem: UqIX<any>;
+	PersonPost: UqIX<any>;
+	IxPendingOrderBoundTo: UqIX<any>;
 }

@@ -1,6 +1,6 @@
 import { makeObservable, observable } from "mobx";
 import { CApp, CUqBase } from "uq-app";
-import { Account, AccountType, EnumAccountType } from "uq-app/uqs/JkMe";
+//import { Account, AccountType, EnumAccountType } from "uq-app/uqs/JkMe";
 import { CContentManager } from "./contentManager";
 import { CCTO } from "./cto";
 import { VHome } from "./VHome";
@@ -33,6 +33,7 @@ export class CHome extends CUqBase {
 	load = async () => {
 		let me = this.uqs.JkMe;
 		let ret = await Promise.all([
+			/*
 			me.QueryID<Account>({
 				IDX: [me.Account],
 				keyx: {user:undefined, accounType: undefined},
@@ -42,10 +43,18 @@ export class CHome extends CUqBase {
 				IDX: [me.AccountType],
 				ix: undefined,
 			}),
+			*/
+			me.$QueryID<any>({
+				IX: [me.PostItem],
+				//IDX: [me.P..AccountType],
+				//ix: undefined,
+			}),
 		]);
-		let account = ret[0];
-		let accounType = ret[1];
+		//let account = ret[0];
+		//let accounType = ret[1];
+		let sql = ret[0];
 
+		/*
 		this.accountId = account[0]?.id;
 		this.accountControllers = accounType.map(v => {
 			switch(v.type) {
@@ -55,5 +64,6 @@ export class CHome extends CUqBase {
 			}
 		});
 		await Promise.all(this.accountControllers.map(v => v.loadItem()));
+		*/
 	}
 }

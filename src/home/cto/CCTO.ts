@@ -1,10 +1,9 @@
 import { AccountController, CHome } from "../CHome";
 import { CApp, CUqSub, UQs } from "uq-app";
-import { AccountCTO } from 'uq-app/uqs/JkMe';
 import { VItem } from "./VItem";
 import { VValuePage } from "./VValuePage";
-import { action, makeObservable, observable, runInAction } from "mobx";
-import { CIDX, CIDXX, IDXUiProps, MidIDX, TimeSpan } from "tonva-uqui";
+import { action, makeObservable, observable } from "mobx";
+import { TimeSpan } from "tonva-uqui";
 
 export class CCTO extends CUqSub<CApp, UQs, CHome> implements AccountController {
 	value: number = null;
@@ -42,6 +41,7 @@ export class CCTO extends CUqSub<CApp, UQs, CHome> implements AccountController 
 		//let timeSpanYear = TimeSpan.create('year');
 		let me = this.uqs.JkMe;
 		let id = this.owner.accountId;
+		/*
 		let ret = await Promise.all([
 			me.IDSum<AccountCTO>({
 				IDX: me.AccountCTO,
@@ -64,15 +64,6 @@ export class CCTO extends CUqSub<CApp, UQs, CHome> implements AccountController 
 				far: timeSpanMonth.far,				// 以前
 				near: timeSpanMonth.near,				// 最近
 			}),
-			/*
-			me.IDSum<AccountCTO>({
-				IDX: me.AccountCTO,
-				field: ['orderAmount'],
-				id,
-				far: timeSpanYear.far,				// 以前
-				near: timeSpanYear.near,				// 最近
-			}),
-			*/
 		]);
 		runInAction(() => {
 			this.orderAmountDay = ret[0][0]?.orderAmount;
@@ -80,10 +71,12 @@ export class CCTO extends CUqSub<CApp, UQs, CHome> implements AccountController 
 			this.orderAmountMonth = ret[2][0]?.orderAmount;
 			//this.orderAmountYear = ret[3][0]?.orderAmount;
 		});
+		*/
 	}
 
 	showIDX0 = async () => {
 		let uq = this.uqs.JkMe;
+		/*
 		let mid = new MidIDX(uq, uq.AccountCTO, uq.Account, this.timeZone);
 		let cIDX = new CIDX(mid);
 		let ret = await uq.QueryID<any>({
@@ -95,12 +88,14 @@ export class CCTO extends CUqSub<CApp, UQs, CHome> implements AccountController 
 			alert('QUERY ID return nothing!');
 			return;
 		}
-		await cIDX.showItemView(ret[0]);
+		*/
+		//await cIDX.showItemView(ret[0]);
 	}
 
 	showIDX = async () => {
 		let uq = this.uqs.JkMe;
 		//let mid = new MidIDX(uq, uq.AccountCTO, uq.Account, this.timeZone);
+		/*
 		let props: IDXUiProps<any> = {
 			uq,
 			IDX: uq.AccountCTO,
@@ -118,5 +113,6 @@ export class CCTO extends CUqSub<CApp, UQs, CHome> implements AccountController 
 			return;
 		}
 		await cIDX.showItemView(ret[0]);
+		*/
 	}
 }

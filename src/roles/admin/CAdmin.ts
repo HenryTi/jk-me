@@ -1,5 +1,5 @@
-import { CIX, CXI, XIUiProps } from "tonva-uqui";
-import { IDListUiProps, IXListUiProps, IXUiProps, XIListUiProps } from "tonva-uqui";
+import { CIX } from "tonva-uqui";
+//import { IDListUiProps, IXListUiProps, IXUiProps, XIListUiProps } from "tonva-uqui";
 import { CUqBase } from "uq-app";
 import { Staff, Team } from "uq-app/uqs/JkMe";
 import { VAdmin } from "./VAdmin";
@@ -25,7 +25,7 @@ export class CAdmin extends CUqBase {
 		let c = new CIDList(idListUiProps);
 		await c.start();
 		*/
-
+/*
 		let ixProps: IDListUiProps<Team> = {
 			uq,
 			ID: uq.Team,
@@ -44,6 +44,7 @@ export class CAdmin extends CUqBase {
 		};
 		let c = new CIX(ixUiProps);
 		await c.start();
+	*/
 	}
 
 	showTeams = async () => {
@@ -63,6 +64,7 @@ export class CAdmin extends CUqBase {
 		await cID.call();
 		*/
 		let uq = this.uqs.JkMe;
+		/*
 		let ixProps: IDListUiProps<Team> = {
 			uq,
 			ID: uq.Team,
@@ -81,6 +83,7 @@ export class CAdmin extends CUqBase {
 		};
 		let c = new CIX(ixUiProps);
 		await c.start();
+		*/
 	}
 
 	showStaffs = async () => {
@@ -100,6 +103,7 @@ export class CAdmin extends CUqBase {
 		await cID.call();
 		*/
 		let uq = this.uqs.JkMe;
+		/*
 		let xiProps: IDListUiProps<Staff> = {
 			uq,
 			ID: uq.Staff,
@@ -118,5 +122,6 @@ export class CAdmin extends CUqBase {
 		};
 		let c = new CXI(xiUiProps);
 		await c.start();
+		*/
 	}
 }
