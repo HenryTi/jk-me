@@ -53,7 +53,7 @@ ACT ActOrder ver 0.5 ()
                     XI=Item.orderAmountCommission 
                     SET a.value=value;
             }
-            ELSEIF orderAction=EnumOrderAction.[receiveDone] {          -- 1030 订单收款
+            ELSEIF orderAction=EnumOrderAction.[receiveDone] {      -- 1030 订单收款
                 SET value = a.receiveDone 
                     FROM DxOrderDetail as a 
                     WHERE a.id=orderDetail;

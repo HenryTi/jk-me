@@ -38,14 +38,9 @@ abstract class Period {
     type: EnumPeriod;
 	from: Date;
 	to: Date;
-    period: EnumPeriod;
     abstract init(): void;
     abstract prev(): void;
-    next(): void {
-        if (this.hasNext === false) return;
-        this.nextDate();
-    }
-    protected abstract nextDate(): void;
+    abstract next(): void;
     get hasNext(): boolean {
         let date = new Date();
         date.setHours(0, 0, 0, 0);
@@ -62,7 +57,7 @@ class DayPeriod extends Period {
         this.to = new Date(this.to.setDate(this.to.getDate()-1));
         this.from = new Date(this.from.setDate(this.from.getDate()-1));
     }
-    protected nextDate(): void {
+    next(): void {
         this.to = new Date(this.to.setDate(this.to.getDate()+1));
         this.from = new Date(this.from.setDate(this.from.getDate()+1));
     }
@@ -80,7 +75,7 @@ class WeekPeriod extends Period {
         this.from = new Date(this.from.setDate(this.from.getDate() - 7));
         this.to = new Date(this.to.setDate(this.to.getDate() - 7));
     }
-    protected nextDate(): void {
+    next(): void {
         this.from = new Date(this.from.setDate(this.from.getDate() + 7));
         this.to = new Date(this.to.setDate(this.to.getDate() + 7));
     }
@@ -96,7 +91,7 @@ class MonthPeriod extends Period {
         this.from = new Date(this.from.setMonth(this.from.getMonth() - 1));
         this.to = new Date(this.to.setMonth(this.to.getMonth() - 1));
     }
-    protected nextDate(): void {
+    next(): void {
         this.from = new Date(this.from.setMonth(this.from.getMonth() + 1));
         this.to = new Date(this.to.setMonth(this.to.getMonth() + 1));
     }
@@ -112,7 +107,7 @@ class YearPeriod extends Period {
         this.from = new Date(this.from.setFullYear(this.from.getFullYear() - 1));
         this.to = new Date(this.to.setFullYear(this.to.getFullYear() - 1));
     }
-    protected nextDate(): void {
+    next(): void {
         this.from = new Date(this.from.setFullYear(this.from.getFullYear() + 1));
         this.to = new Date(this.to.setFullYear(this.to.getFullYear() + 1));
     }
@@ -121,9 +116,6 @@ class YearPeriod extends Period {
 export class PeriodSum {
     private uqs: UQs;
     period: Period;
-	// from: Date;
-	// to: Date;
-    // period: EnumPeriod;
     postPeriodSumColl: {[post in keyof typeof Post]: PostPeriodSum};
     postPeriodSumList: PostPeriodSum[];
     personPostItem: PersonPostItem;
@@ -134,9 +126,6 @@ export class PeriodSum {
         this.uqs = uqs;
         makeObservable(this, {
             period: observable,
-            //from: observable,
-            //to: observable,
-            //hasNext: computed,
             history: observable.shallow,
             postPeriodSumColl: observable.ref,
             postPeriodSumList: observable.shallow,
@@ -208,6 +197,7 @@ export class PeriodSum {
     }
 
     next = async () => {
+        if (this.period.hasNext === false) return;
         this.period.next();
         await this.load();
     }
