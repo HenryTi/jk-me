@@ -1,25 +1,27 @@
 -- 业务科目
 ENUM Item (
-    [order-deliver]             = 1010,             -- 订单发货
-    [order-return]              = 1020,             -- 订单退货
-    [order-receive]             = 1030,             -- 订单收款
-    [order-profit-commission]   = 1040,             -- 订单毛利提成
-    [order-amount-commission]   = 1050,             -- 订单销售额提成
+    orderDeliver                = 1010,             -- 订单发货
+    orderReturn                 = 1020,             -- 订单退货
+    orderReceive                = 1030,             -- 订单收款
+    orderReceiveReturn          = 1040,             -- 订单退款
+    orderProfitCommission       = 1110,             -- 订单毛利提成
+    orderAmountCommission       = 1120,             -- 订单销售额提成
     
-    [order-customer-point]      = 2010,             -- 客户普通积分
+    orderCustomerPoint          = 2010,             -- 客户普通积分
 );
 
 -- 业务岗位
 ENUM Post (
-    [staff]                     = 1010,
-    [staff-sales]               = 1100,
-    [manager]                   = 2010,
-    [client]                    = 7010,
-    [client-sales]              = 7100,
-    [customer]                  = 8010,
+    staff                       = 1010,
+    staffSales                  = 1100,
+    manager                     = 2010,
+    managerIT                   = 2100,
+    client                      = 7010,
+    clientSales                 = 7100,
+    customer                    = 8010,
 );
 
-IX PostItem ver 0.5 (
+IX PostItem ver 0.1 (
     ix ENUM Post,               -- 岗位
     xi ENUM Item INDEX,         -- Item
     ratio DEC(6,2),             -- 百分比，从item的value，折算到ObjectHistory
@@ -40,9 +42,15 @@ ID PersonCustomer (
     KEY customer ID,
 );
 
-ID PersonSales (
+ID PersonStaff (
     id,
-    KEY sales ID,
+    KEY staff ID,
+);
+
+-- 特定职位，由此对应的提成
+ID PersonPost (
+    id,
+    KEY post ENUM Post,
 );
 
 ID PersonPostItem (
@@ -59,11 +67,7 @@ ID ItemHistory MINUTEID (
     KEY track ID,               -- 原始凭证
     KEY item ENUM Item,         -- 科目
     value DEC(18,4),            -- 数值
-);
-
-IX PersonPost (
-    ix Person,
-    xi ENUM Post,
+    memo INT,                   -- 文本ID
 );
 
 IX PostItemHistory (
@@ -72,7 +76,12 @@ IX PostItemHistory (
     value DEC(18,4),
 );
 
-IDX DxPostItem (
+IX UserPerson (
+    IX user,
+    XI ID Person,
+);
+
+IDX UserTimezone (
     id,
-    value DEC(18,4) SUM,
+    timeZone TINYINT,               -- 时区
 );

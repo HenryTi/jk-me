@@ -1,0 +1,68 @@
+QUERY UserPersonPostItem()
+RETURNS ret (
+    id ID,
+    person ID,
+    post ENUM Post,
+    item ENUM Item,
+) {
+    INTO ret SELECT a.id, a.person, a.post, a.item
+        FROM PersonPostItem as a
+            JOIN UserPerson as b ON a.person=b.xi
+        WHERE b.ix=$user;
+};
+
+QUERY UserItemPeriodSum ver 0.1 (
+    from DATE,
+    to DATE,
+)
+RETURNS ret (
+    id ID,
+    person ID,
+    post ENUM Post,
+    item ENUM Item,
+    sumValue DEC(18,4)
+) {
+    VAR timeZone TINYINT;
+    SET timeZone = a.timeZone FROM UserTimezone as a WHERE a.id=$user;
+    IF timeZone IS NULL {
+        SET timeZone = 8;       -- 北京时间
+    }
+    INTO ret SELECT a.id, a.person, a.post, a.item,
+        IFNULL(
+            (SELECT SUM(t.value)
+                FROM postitemhistory AS t
+                WHERE t.ix=a.id
+                    AND t.xi >= minuteIdFromDate(from, timeZone)
+                    AND t.xi < minuteIdFromDate(to, timeZone)
+            ),
+            0
+        ) as sumValue
+        FROM PersonPostItem as a
+            JOIN UserPerson as b ON a.person=b.xi
+        WHERE b.ix=$user;
+};
+
+QUERY UserItemHistory ver 0.1 (
+    personPostItem ID PersonPostItem,
+    from DATE,
+    to DATE,
+    period TINYINT,         -- 0: day, 1: month
+)
+RETURNS ret (
+    date Date,
+    sumValue DEC(18,4)
+) {
+    VAR timeZone TINYINT;
+    SET timeZone = a.timeZone FROM UserTimezone as a WHERE a.id=$user;
+    IF timeZone IS NULL {
+        SET timeZone = 8;       -- 北京时间
+    }
+    INTO ret SELECT date, SUM(a.value) as sumValue
+        FROM postitemhistory AS a
+            JOIN PersonPostItem as b ON a.ix=b.id
+            JOIN UserPerson as c ON b.person=c.xi
+        WHERE c.ix=$user
+            AND a.xi >= minuteIdFromDate(from, timeZone)
+            AND a.xi < minuteIdFromDate(to, timeZone)
+        GROUP BY dateFromMinuteId(a.xi, timeZone, period) as date;
+};

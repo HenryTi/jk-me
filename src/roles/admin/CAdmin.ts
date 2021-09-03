@@ -1,7 +1,5 @@
-import { CIX } from "tonva-uqui";
 //import { IDListUiProps, IXListUiProps, IXUiProps, XIListUiProps } from "tonva-uqui";
 import { CUqBase } from "uq-app";
-import { Staff, Team } from "uq-app/uqs/JkMe";
 import { VAdmin } from "./VAdmin";
 import { VAdminNav } from "./VAdminNav";
 

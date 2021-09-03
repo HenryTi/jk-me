@@ -40,7 +40,7 @@ export class CCTO extends CUqSub<CApp, UQs, CHome> implements AccountController 
 		let timeSpanMonth = TimeSpan.create('month');
 		//let timeSpanYear = TimeSpan.create('year');
 		let me = this.uqs.JkMe;
-		let id = this.owner.accountId;
+		//let id = this.owner.accountId;
 		/*
 		let ret = await Promise.all([
 			me.IDSum<AccountCTO>({

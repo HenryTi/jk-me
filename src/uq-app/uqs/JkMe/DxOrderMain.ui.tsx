@@ -11,16 +11,21 @@ const fields = {
 		"isKey": false,
 		"label": "Id"
 	} as FieldItemId,
-	costPriceSet: {
-		"name": "costPriceSet",
+	flagBoundTo: {
+		"name": "flagBoundTo",
 		"isKey": false,
-		"label": "CostPriceSet"
+		"label": "FlagBoundTo"
+	} as undefined,
+	flagCostPrice: {
+		"name": "flagCostPrice",
+		"isKey": false,
+		"label": "FlagCostPrice"
 	} as undefined,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.costPriceSet, 
+	fields.flagBoundTo, fields.flagCostPrice, 
 ];
 
 export const ui: UI = {

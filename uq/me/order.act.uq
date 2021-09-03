@@ -1,84 +1,134 @@
-PROC ProcOrder(
-    orderMain ID,
-) {
+-- 每次处理最多maxActOrderRows行，然后退出，进入下一个循环。
+-- 这样可以避免数据库被占用太多算力，以至于无法响应访问操作
+CONST maxActOrderRows = 10;
+
+-- schedule 扫描操作所有待处理订单相关绩效
+ACT ActOrder ver 0.5 ()
+{
+    VAR rowCount INT = 0;
     -- 基础元素齐备,开始操作. 否则,等下一个元素
     -- 确认Order, bound to and cost 已经收到
-    IF Not Exists(SELECT a.id 
-        FROM DxOrderMain as a
-            JOIN OrderMain as b ON a.id=b.id
-        WHERE a.id=orderMain AND a.flagBoundTo=1 AND a.flagCostPrice=1)
+    FOR (VAR orderMain ID, orderAction ENUM EnumOrderAction 
+        OF SELECT a.ix as orderMain, a.xi as orderAction 
+            FROM IxPendingOrderAction as a
+                JOIN DxOrderMain as b ON a.ix=b.id
+                JOIN OrderMain as c ON c.id=b.id
+            WHERE b.flagBoundTo=1 AND b.flagCostPrice=1
+            ORDER BY a.ix, a.xi
+            LIMIT maxActOrderRows)
     {
-        RETURN;
-    }
-
-    FOR (VAR item ENUM Item 
-        OF SELECT a.xi as item FROM IxPendingOrderAction as a WHERE a.ix=orderMain) 
-    {
-        VAR itemHistoryId ID;
-        FOR (VAR orderDetail ID, amount DEC(18,4), quantity DEC(18,4)
-            OF SELECT id as orderDetail, amount, quantity
+        FOR (VAR orderDetail ID, amount DEC(18,4), quantity DEC(18,4), price DEC(18,4)
+            OF SELECT id as orderDetail, amount, quantity, price
                 FROM OrderDetail WHERE main=orderMain)
         {
-            SET itemHistoryId=ID(ItemHistory new, orderDetail, item);
-            FOR (VAR boundType CHAR(50), to ID
-                OF SELECT idtext(a.ix) as boundType, a.xi as to
-                    FROM IxOrderBoundTo as a WHERE a.ixx=orderMain)
-            {
-                VAR value DEC(18,2), post ENUM Post;
-                IF item=Item.[order-deliver] { -- 1010 订单发货
-                    IF boundType='a' {
-                        SET post=Post.[staff-sales];
-                    }
-                    ELSE {
-                        SET post=Post.[staff];
-                    }
-                    SET value = amount;
-                };
-                ELSEIF item=Item.[order-return] {-- 1020 订单退货
-                    IF boundType='a' {
-                        SET post=Post.[staff-sales];
-                    }
-                    ELSE {
-                        SET post=Post.[staff];
-                    }
-                    SET value = amount;
-                }
-                ELSEIF item=Item.[order-receive] { -- 1030 订单收款
-                    IF boundType='a' {
-                        SET post=Post.[staff-sales];
-                    }
-                    ELSE {
-                        SET post=Post.[staff];
-                    }
-                    SET value = amount;
-                }
-                ELSEIF item=Item.[order-profit-commission] { -- 1040 订单毛利提成
-                    IF boundType='a' {
-                        SET post=Post.[staff-sales];
-                    }
-                    ELSE {
-                        SET post=Post.[staff];
-                    }
-                    SET value = a.deliverDone * (amount/quantity - a.costPrice) 
-                        FROM DxOrderDetail as a 
-                        WHERE a.id=orderDetail;
-                }
-                ELSEIF item=Item.[order-amount-commission] { -- 1050 订单销售额提成
-                    IF boundType='a' {
-                        SET post=Post.[staff-sales];
-                    }
-                    ELSE {
-                        SET post=Post.[staff];
-                    }
-                    SET value = amount;
-                }
-                VAR personPostItemId ID;
-                SET personPostItemId=ID(PersonPostItem new, to, post, item);
-                VAR ratio DEC(6,2) = NULL;
-                SET ratio = a.ratio FROM PostItem as a WHERE a.IX=post AND a.XI=item;
-                WITH PostItemHistory as a IX=personPostItemId XI=itemHistoryId SET a.value=value * IFNULL(ratio, 100) / 100;
+            VAR value DEC(18,2) = NULL;
+            IF orderAction=EnumOrderAction.[deliverDone] {          -- 1010 订单发货
+                SET value = a.deliverDone * price
+                    FROM DxOrderDetail as a 
+                    WHERE a.id=orderDetail;
+                WITH IxPendingOrderItem as a IX=orderDetail 
+                    XI=Item.orderDeliver 
+                    SET a.value=value;
+                SET value = a.deliverDone * price
+                    FROM DxOrderDetail as a 
+                    WHERE a.id=orderDetail;
+                WITH IxPendingOrderItem as a IX=orderDetail 
+                    XI=Item.orderProfitCommission 
+                    SET a.value=value;
+                WITH IxPendingOrderItem as a IX=orderDetail 
+                    XI=Item.orderAmountCommission 
+                    SET a.value=value;
+            }
+            ELSEIF orderAction=EnumOrderAction.[return] {           -- 1020 订单退货
+                SET value = a.return * price
+                    FROM DxOrderDetail as a 
+                    WHERE a.id=orderDetail;
+                WITH IxPendingOrderItem as a IX=orderDetail 
+                    XI=Item.orderReturn 
+                    SET a.value=value;
+                WITH IxPendingOrderItem as a IX=orderDetail 
+                    XI=Item.orderProfitCommission 
+                    SET a.value=value;
+                WITH IxPendingOrderItem as a IX=orderDetail 
+                    XI=Item.orderAmountCommission 
+                    SET a.value=value;
+            }
+            ELSEIF orderAction=EnumOrderAction.[receiveDone] {          -- 1030 订单收款
+                SET value = a.receiveDone 
+                    FROM DxOrderDetail as a 
+                    WHERE a.id=orderDetail;
+                WITH IxPendingOrderItem as a IX=orderDetail 
+                    XI=Item.orderReceive
+                    SET a.value=value;
+                WITH IxPendingOrderItem as a IX=orderDetail 
+                    XI=Item.orderProfitCommission 
+                    SET a.value=value;
+                WITH IxPendingOrderItem as a IX=orderDetail 
+                    XI=Item.orderAmountCommission 
+                    SET a.value=value;
             }
         }
-        WITH IxPendingOrderAction IX=orderMain XI=item DEL;
+        WITH IxPendingOrderAction IX=orderMain XI=orderAction DEL;
+        SET rowCount = rowCount + 1;
     }
+    PROC ProcItemBoundTo();
+    IF rowCount>=maxActOrderRows {
+        SCHEDULE ActOrder;
+    }
+};
+
+PROC ProcItemBoundTo(
+) {
+    FOR (VAR orderMain ID, orderDetail ID, item ENUM Item, value DEC(18,4) OF
+        SELECT b.main as orderMain, a.ix as orderDetail, a.xi as item, a.value
+            FROM IxPendingOrderItem as a JOIN OrderDetail as b ON a.ix=b.id
+            ORDER BY a.ix, a.xi)
+    {
+        VAR itemHistoryId ID = ID(ItemHistory new, orderDetail, item);
+        WITH ItemHistory as a ID=itemHistoryId SET a.value=value;
+        FOR (VAR boundType CHAR(50), to ID
+            OF SELECT idtext(a.ix) as boundType, a.xi as to
+                FROM IxOrderBoundTo as a WHERE a.ixx=orderMain)
+        {
+            VAR post ENUM Post = NULL;
+            IF boundType='staff-sales' {
+                SET post=Post.staffSales;
+            }
+            ELSEIF boundType='manager-it' {
+                SET post = Post.managerIT;
+            }
+
+            IF post IS NULL OR value IS NULL {
+                CONTINUE;
+            }
+            PROC ProcPostItemHistory(to, post, item, itemHistoryId, value);
+        }
+        -- 针对非绑定，或者团队绑定的业绩分配
+        IF item=Item.orderAmountCommission {
+            VAR post ENUM POST = Post.managerIT;
+            VAR toId ID;
+			SET toId=ID(PersonPost, post);
+			IF toId IS NULL {
+				SET toId=ID(Person new);
+				WITH PersonPost ID=toId SET post=post;
+			}
+            PROC ProcPostItemHistory(toId, Post.managerIT, item, itemHistoryId, value);
+        }
+
+        WITH IxPendingOrderItem IX=orderDetail XI=item DEL;
+    }
+};
+
+PROC ProcPostItemHistory(
+    to ID,
+    post ENUM Post,
+    item ENUM Item,
+    itemHistoryId ID,
+    value DEC(18,4)
+) {
+    VAR personPostItemId ID = ID(PersonPostItem new, to, post, item);
+    VAR ratio DEC(6,2) = NULL;
+    SET ratio = a.ratio FROM PostItem as a WHERE a.IX=post AND a.XI=item;
+    WITH PostItemHistory as a IX=personPostItemId XI=itemHistoryId 
+        SET a.value=value * IFNULL(ratio, 100) / 100;
 };

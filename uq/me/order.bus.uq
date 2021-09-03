@@ -1,47 +1,70 @@
-BUS JkOrderBus ver 0.2 from 百灵威系统工程部/[jk-order]
+BUS JkOrderBus ver 0.5 from 百灵威系统工程部/[jk-order]
 ACCEPT order {
 	VAR mainId ID;
 	SET mainId = id;
-	WITH OrderMain as a ID=id SET a.no=no, a.customer=customer;
+	WITH OrderMain as a ID=mainId SET a.no=no, a.customer=customer;
 	FOR detail {
 		WITH OrderDetail as a 
 			ID = id
 			SET a.main=mainId
 				, a.item=item, a.product=product
-				, a.quantity=quantity, a.amount=amount, a.price=price;
+				, a.quantity=quantity, a.price=price
+				, a.amount=quantity * price;
 	}
+    SCHEDULE ActOrder;
 }
 ACCEPT [deliver-done] {
 	FOR detail {
 		WITH DxOrderDetail ID=id SET deliverDone=value;
 	}
-    PROC ProcOrder(id);
+	WITH IxPendingOrderAction IX=id XI=EnumOrderAction.[deliverDone];
+    SCHEDULE ActOrder;
 }
 ACCEPT [receive-done] {
 	FOR detail {
 		WITH DxOrderDetail ID=id SET receiveDone=value;
 	}
-    PROC ProcOrder(id);
+	WITH IxPendingOrderAction IX=id XI=EnumOrderAction.[receiveDone];
+    SCHEDULE ActOrder;
 }
 ACCEPT [return] {
 	FOR detail {
 		WITH DxOrderDetail ID=id SET return+=quantity;
 	}
-    PROC ProcOrder(id);
+	WITH IxPendingOrderAction IX=id XI=EnumOrderAction.[return];
+    SCHEDULE ActOrder;
 }
 ACCEPT [order-cost-price] {
     FOR detail {
         WITH DxOrderDetail ID=[order-detail] SET costPrice=[cost-price];
     }
     WITH DxOrderMain ID=order SET flagCostPrice=1;
-    PROC ProcOrder(order);
+    SCHEDULE ActOrder;
 }
 -- 订单提成对象绑定
 ACCEPT [order-bound] {
     FOR to {
-        WITH IxOrderBoundTo IXX=order IX=textid(type) XI=id;
+		VAR toId ID;
+		IF [id-type] = 'staff' {
+			SET toId=ID(PersonStaff, id);
+			IF toId IS NULL {
+				SET toId=ID(Person new);
+				WITH PersonStaff ID=toId SET staff=id;
+			}
+		}
+		ELSEIF [id-type] = 'customer' {
+			SET toId=ID(PersonCustomer, id);
+			IF toId IS NULL {
+				SET toId=ID(Person new);
+				WITH PersonCustomer ID=toId SET customer=id;
+			}
+		}
+		ELSE {
+			SET toId = id;
+		}
+        WITH IxOrderBoundTo IXX=order IX=textid(type) XI=toId;
     }
     WITH DxOrderMain ID=order SET flagBoundTo=1;
-    PROC ProcOrder(order);
+    SCHEDULE ActOrder;
 }
 ;

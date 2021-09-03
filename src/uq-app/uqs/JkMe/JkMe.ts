@@ -1,6 +1,6 @@
-//=== UqApp builder created on Fri Aug 27 2021 00:04:33 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Wed Sep 01 2021 23:47:55 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { IDXValue, Uq, UqTuid, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
+import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 
 
 //===============================
@@ -8,21 +8,29 @@ import { IDXValue, Uq, UqTuid, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 //===============================
 
 export enum Item {
-	order_deliver = 1010,
-	order_return = 1020,
-	order_receive = 1030,
-	order_profit_commission = 1040,
-	order_amount_commission = 1050,
-	order_customer_point = 2010
+	orderDeliver = 1010,
+	orderReturn = 1020,
+	orderReceive = 1030,
+	orderReceiveReturn = 1040,
+	orderProfitCommission = 1110,
+	orderAmountCommission = 1120,
+	orderCustomerPoint = 2010
 }
 
 export enum Post {
 	staff = 1010,
-	staff_sales = 1100,
+	staffSales = 1100,
 	manager = 2010,
+	managerIT = 2100,
 	client = 7010,
-	client_sales = 7100,
+	clientSales = 7100,
 	customer = 8010
+}
+
+export enum EnumOrderAction {
+	deliverDone = 1,
+	receiveDone = 2,
+	return = 3
 }
 
 export interface Tuid$sheet {
@@ -49,6 +57,17 @@ export interface Tuid$user {
 	poke: number;
 }
 
+export interface ParamBusTest {
+	orderMain: number;
+}
+export interface ResultBusTest {
+}
+
+export interface ParamActOrder {
+}
+export interface ResultActOrder {
+}
+
 export interface Param$poked {
 }
 export interface Return$pokedRet {
@@ -56,6 +75,47 @@ export interface Return$pokedRet {
 }
 export interface Result$poked {
 	ret: Return$pokedRet[];
+}
+
+export interface ParamUserItemPeriodSum {
+	from: any;
+	to: any;
+}
+export interface ReturnUserItemPeriodSumRet {
+	id: number;
+	person: number;
+	post: any;
+	item: any;
+	sumValue: number;
+}
+export interface ResultUserItemPeriodSum {
+	ret: ReturnUserItemPeriodSumRet[];
+}
+
+export interface ParamUserPersonPostItem {
+}
+export interface ReturnUserPersonPostItemRet {
+	id: number;
+	person: number;
+	post: any;
+	item: any;
+}
+export interface ResultUserPersonPostItem {
+	ret: ReturnUserPersonPostItemRet[];
+}
+
+export interface ParamUserItemHistory {
+	personPostItem: number;
+	from: any;
+	to: any;
+	period: number;
+}
+export interface ReturnUserItemHistoryRet {
+	date: any;
+	sumValue: number;
+}
+export interface ResultUserItemHistory {
+	ret: ReturnUserItemHistoryRet[];
 }
 
 export interface Staff {
@@ -75,6 +135,7 @@ export interface ItemHistory {
 	track: number;
 	item: any;
 	value: number;
+	memo: number;
 }
 
 export interface OrderDetail {
@@ -94,11 +155,6 @@ export interface OrderMain {
 	customer: number;
 	currency: number;
 	sumAmount: number;
-}
-
-export interface PersonSales {
-	id?: number;
-	sales: number;
 }
 
 export interface PersonPostItem {
@@ -122,6 +178,11 @@ export interface Person {
 	id?: number;
 }
 
+export interface PersonStaff {
+	id?: number;
+	staff: number;
+}
+
 export interface DxOrderDetail {
 	id: number;
 	deliverDone?: number;
@@ -133,18 +194,14 @@ export interface DxOrderDetail {
 
 export interface DxOrderMain {
 	id: number;
-	costPriceSet?: number;
+	flagBoundTo?: number;
+	flagCostPrice?: number;
 	$act?: number;
 }
 
-export interface DxPostItem {
+export interface UserTimezone {
 	id: number;
-	value?: number;
-	$act?: number;
-}
-
-export interface DxPendingOrderBound {
-	id: number;
+	timeZone?: number;
 	$act?: number;
 }
 
@@ -159,18 +216,14 @@ export interface ActParamDxOrderDetail {
 
 export interface ActParamDxOrderMain {
 	id: number|IDXValue;
-	costPriceSet?: number|IDXValue;
+	flagBoundTo?: number|IDXValue;
+	flagCostPrice?: number|IDXValue;
 	$act?: number;
 }
 
-export interface ActParamDxPostItem {
+export interface ActParamUserTimezone {
 	id: number|IDXValue;
-	value?: number|IDXValue;
-	$act?: number;
-}
-
-export interface ActParamDxPendingOrderBound {
-	id: number|IDXValue;
+	timeZone?: number|IDXValue;
 	$act?: number;
 }
 
@@ -191,13 +244,24 @@ export interface PostItem {
 	ratio: number;
 }
 
-export interface PersonPost {
+export interface IxPendingOrderAction {
 	ix: number;
 	xi: number;
 }
 
-export interface IxPendingOrderBoundTo {
+export interface IxOrderBoundTo {
 	ixx: number;
+	ix: number;
+	xi: number;
+}
+
+export interface IxPendingOrderItem {
+	ix: number;
+	xi: number;
+	value: number;
+}
+
+export interface UserPerson {
 	ix: number;
 	xi: number;
 }
@@ -208,20 +272,21 @@ export interface ParamActs {
 	itemHistory?: ItemHistory[];
 	orderDetail?: OrderDetail[];
 	orderMain?: OrderMain[];
-	personSales?: PersonSales[];
 	personPostItem?: PersonPostItem[];
 	personUser?: PersonUser[];
 	personCustomer?: PersonCustomer[];
 	person?: Person[];
+	personStaff?: PersonStaff[];
 	dxOrderDetail?: ActParamDxOrderDetail[];
 	dxOrderMain?: ActParamDxOrderMain[];
-	dxPostItem?: ActParamDxPostItem[];
-	dxPendingOrderBound?: ActParamDxPendingOrderBound[];
+	userTimezone?: ActParamUserTimezone[];
 	teamStaff?: TeamStaff[];
 	postItemHistory?: PostItemHistory[];
 	postItem?: PostItem[];
-	personPost?: PersonPost[];
-	ixPendingOrderBoundTo?: IxPendingOrderBoundTo[];
+	ixPendingOrderAction?: IxPendingOrderAction[];
+	ixOrderBoundTo?: IxOrderBoundTo[];
+	ixPendingOrderItem?: IxPendingOrderItem[];
+	userPerson?: UserPerson[];
 }
 
 
@@ -230,24 +295,30 @@ export interface UqExt extends Uq {
 
 	$sheet: UqTuid<Tuid$sheet>;
 	$user: UqTuid<Tuid$user>;
+	BusTest: UqAction<ParamBusTest, ResultBusTest>;
+	ActOrder: UqAction<ParamActOrder, ResultActOrder>;
 	$poked: UqQuery<Param$poked, Result$poked>;
+	UserItemPeriodSum: UqQuery<ParamUserItemPeriodSum, ResultUserItemPeriodSum>;
+	UserPersonPostItem: UqQuery<ParamUserPersonPostItem, ResultUserPersonPostItem>;
+	UserItemHistory: UqQuery<ParamUserItemHistory, ResultUserItemHistory>;
 	Staff: UqID<any>;
 	Team: UqID<any>;
 	ItemHistory: UqID<any>;
 	OrderDetail: UqID<any>;
 	OrderMain: UqID<any>;
-	PersonSales: UqID<any>;
 	PersonPostItem: UqID<any>;
 	PersonUser: UqID<any>;
 	PersonCustomer: UqID<any>;
 	Person: UqID<any>;
+	PersonStaff: UqID<any>;
 	DxOrderDetail: UqIDX<any>;
 	DxOrderMain: UqIDX<any>;
-	DxPostItem: UqIDX<any>;
-	DxPendingOrderBound: UqIDX<any>;
+	UserTimezone: UqIDX<any>;
 	TeamStaff: UqIX<any>;
 	PostItemHistory: UqIX<any>;
 	PostItem: UqIX<any>;
-	PersonPost: UqIX<any>;
-	IxPendingOrderBoundTo: UqIX<any>;
+	IxPendingOrderAction: UqIX<any>;
+	IxOrderBoundTo: UqIX<any>;
+	IxPendingOrderItem: UqIX<any>;
+	UserPerson: UqIX<any>;
 }

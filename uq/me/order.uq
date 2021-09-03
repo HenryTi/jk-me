@@ -1,3 +1,9 @@
+ENUM EnumOrderAction (
+	deliverDone = 1, 
+	receiveDone = 2,
+	return = 3,
+);
+
 ID OrderMain ver 0.5 GLOBAL (
 	id,
 	KEY no,
@@ -46,5 +52,11 @@ IX IxOrderBoundTo (
 -- 3. 成本和绑定关系，从其它uq发来
 IX IxPendingOrderAction (
 	ix OrderMain,
+	xi ENUM EnumOrderAction,
+);
+
+IX IxPendingOrderItem (
+	ix OrderDetail,
 	xi ENUM Item,
+	value DEC(18,4),
 );

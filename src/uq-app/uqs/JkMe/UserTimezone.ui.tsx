@@ -1,7 +1,7 @@
 import { Res, setRes, TFunc, UI, uqStringify } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
-import { ItemHistory } from "./JkMe";
+import { UserTimezone } from "./JkMe";
 
 /*--fields--*/
 const fields = {
@@ -11,40 +11,20 @@ const fields = {
 		"isKey": false,
 		"label": "Id"
 	} as FieldItemId,
-	track: {
-		"name": "track",
-		"type": "id",
-		"isKey": true,
-		"label": "Track"
-	} as FieldItemId,
-	item: {
-		"name": "item",
-		"isKey": true,
-		"label": "Item"
+	timeZone: {
+		"name": "timeZone",
+		"isKey": false,
+		"label": "TimeZone"
 	} as undefined,
-	value: {
-		"name": "value",
-		"type": "number",
-		"isKey": false,
-		"widget": "number",
-		"label": "Value"
-	} as FieldItemNum,
-	memo: {
-		"name": "memo",
-		"type": "integer",
-		"isKey": false,
-		"widget": "updown",
-		"label": "Memo"
-	} as FieldItemInt,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.track, fields.item, fields.value, fields.memo, 
+	fields.timeZone, 
 ];
 
 export const ui: UI = {
-	label: "ItemHistory",
+	label: "UserTimezone",
 	fieldArr,
 	fields,
 };
@@ -62,6 +42,6 @@ export const t:TFunc = (str:string|JSX.Element): string|JSX.Element => {
 	return res[str as string] ?? str;
 }
 
-export function render(item: ItemHistory):JSX.Element {
+export function render(item: UserTimezone):JSX.Element {
 	return <>{uqStringify(item)}</>;
 };
