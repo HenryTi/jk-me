@@ -1,31 +1,30 @@
-import { Res, setRes, TFunc, UI } from "tonva-react";
+import { Res, setRes, TFunc, UI, uqStringify } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
-import { TeamStaff } from "./JkMe";
+import { ObjectPost } from "./JkMe";
 
 /*--fields--*/
 const fields = {
-	ix: {
-		"name": "ix",
+	id: {
+		"name": "id",
 		"type": "id",
 		"isKey": false,
-		"label": "Ix"
+		"label": "Id"
 	} as FieldItemId,
-	xi: {
-		"name": "xi",
-		"type": "id",
-		"isKey": false,
-		"label": "Xi"
-	} as FieldItemId,
+	post: {
+		"name": "post",
+		"isKey": true,
+		"label": "Post"
+	} as undefined,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.xi, 
+	fields.post, 
 ];
 
 export const ui: UI = {
-	label: "TeamStaff",
+	label: "ObjectPost",
 	fieldArr,
 	fields,
 };
@@ -43,6 +42,6 @@ export const t:TFunc = (str:string|JSX.Element): string|JSX.Element => {
 	return res[str as string] ?? str;
 }
 
-export function render(item: TeamStaff):JSX.Element {
-	return <>{JSON.stringify(item)}</>;
+export function render(item: ObjectPost):JSX.Element {
+	return <>{uqStringify(item)}</>;
 };

@@ -1,41 +1,36 @@
 import { Res, setRes, TFunc, UI, uqStringify } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
-import { PersonPostItem } from "./JkMe";
+import { UserObject } from "./JkMe";
 
 /*--fields--*/
 const fields = {
-	id: {
-		"name": "id",
+	ix: {
+		"name": "ix",
 		"type": "id",
 		"isKey": false,
-		"label": "Id"
+		"label": "Ix"
 	} as FieldItemId,
-	person: {
-		"name": "person",
+	xi: {
+		"name": "xi",
 		"type": "id",
-		"isKey": true,
-		"label": "Person"
+		"isKey": false,
+		"label": "Xi"
 	} as FieldItemId,
-	post: {
-		"name": "post",
-		"isKey": true,
-		"label": "Post"
-	} as undefined,
-	item: {
-		"name": "item",
-		"isKey": true,
-		"label": "Item"
+	relation: {
+		"name": "relation",
+		"isKey": false,
+		"label": "Relation"
 	} as undefined,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.person, fields.post, fields.item, 
+	fields.xi, fields.relation, 
 ];
 
 export const ui: UI = {
-	label: "PersonPostItem",
+	label: "UserObject",
 	fieldArr,
 	fields,
 };
@@ -53,6 +48,6 @@ export const t:TFunc = (str:string|JSX.Element): string|JSX.Element => {
 	return res[str as string] ?? str;
 }
 
-export function render(item: PersonPostItem):JSX.Element {
+export function render(item: UserObject):JSX.Element {
 	return <>{uqStringify(item)}</>;
 };

@@ -2,6 +2,7 @@ export const zh = {
 	home: '首页',
 	relation: '关系',
 	discover: '发现',
+	supervise: '团队',
 	test: '测试',
 	debug: 'Debug',
 	me: '我',

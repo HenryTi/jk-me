@@ -16,6 +16,8 @@ ACCEPT order {
 ACCEPT [deliver-done] {
 	FOR detail {
 		WITH DxOrderDetail ID=id SET deliverDone=value;
+        WITH ItemHistory as a ID=ID(ItemHistory new, id, Item.orderDeliver) 
+			SET a.value=value;
 	}
 	WITH IxPendingOrderAction IX=id XI=EnumOrderAction.[deliverDone];
     SCHEDULE ActOrder;
@@ -23,6 +25,8 @@ ACCEPT [deliver-done] {
 ACCEPT [receive-done] {
 	FOR detail {
 		WITH DxOrderDetail ID=id SET receiveDone=value;
+        WITH ItemHistory as a ID=ID(ItemHistory new, id, Item.orderReceive) 
+			SET a.value=value;
 	}
 	WITH IxPendingOrderAction IX=id XI=EnumOrderAction.[receiveDone];
     SCHEDULE ActOrder;
@@ -46,17 +50,17 @@ ACCEPT [order-bound] {
     FOR to {
 		VAR toId ID;
 		IF [id-type] = 'staff' {
-			SET toId=ID(PersonStaff, id);
+			SET toId=ID(ObjectStaff, id);
 			IF toId IS NULL {
-				SET toId=ID(Person new);
-				WITH PersonStaff ID=toId SET staff=id;
+				SET toId=ID(Object new);
+				WITH ObjectStaff ID=toId SET staff=id;
 			}
 		}
 		ELSEIF [id-type] = 'customer' {
-			SET toId=ID(PersonCustomer, id);
+			SET toId=ID(ObjectCustomer, id);
 			IF toId IS NULL {
-				SET toId=ID(Person new);
-				WITH PersonCustomer ID=toId SET customer=id;
+				SET toId=ID(Object new);
+				WITH ObjectCustomer ID=toId SET customer=id;
 			}
 		}
 		ELSE {

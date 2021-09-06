@@ -28,34 +28,34 @@ IX PostItem ver 0.1 (
     -- INDEX item_post (item),
 );
 
-ID Person (
+ID Object (
     id,
 );
 
-ID PersonUser (
-    id,             -- person
+ID ObjectUser (
+    id,             -- Object
     KEY user ID,
 );
 
-ID PersonCustomer (
-    id,             -- person
+ID ObjectCustomer (
+    id,             -- Object
     KEY customer ID,
 );
 
-ID PersonStaff (
+ID ObjectStaff (
     id,
     KEY staff ID,
 );
 
 -- 特定职位，由此对应的提成
-ID PersonPost (
+ID ObjectPost (
     id,
     KEY post ENUM Post,
 );
 
-ID PersonPostItem (
+ID ObjectPostItem (
     id,
-    KEY person ID,
+    KEY object ID,
     KEY post ENUM Post,
     KEY item ENUM Item,
 );
@@ -71,14 +71,25 @@ ID ItemHistory MINUTEID (
 );
 
 IX PostItemHistory (
-    ix PersonPostItem,
+    ix ObjectPostItem,
     xi ItemHistory,
     value DEC(18,4),
 );
 
-IX UserPerson (
+ENUM EnumUserObjectRelation (
+    self = 0,                   -- 自己的数据
+    other = 1,                  -- 别人的数据
+    group = 2,                  -- 自己管理的group的数据
+);
+IX UserObject (
     IX user,
-    XI ID Person,
+    XI ID Object,
+    relation ENUM EnumUserObjectRelation DEFAULT 0,
+);
+
+IX UserSuperviseItem (
+    IX user,
+    XI ENUM Item,
 );
 
 IDX UserTimezone (

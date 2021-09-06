@@ -1,4 +1,4 @@
-//=== UqApp builder created on Wed Sep 01 2021 23:47:55 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Sun Sep 05 2021 23:19:31 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 
@@ -31,6 +31,12 @@ export enum EnumOrderAction {
 	deliverDone = 1,
 	receiveDone = 2,
 	return = 3
+}
+
+export enum EnumUserObjectRelation {
+	self = 0,
+	other = 1,
+	group = 2
 }
 
 export interface Tuid$sheet {
@@ -83,7 +89,7 @@ export interface ParamUserItemPeriodSum {
 }
 export interface ReturnUserItemPeriodSumRet {
 	id: number;
-	person: number;
+	object: number;
 	post: any;
 	item: any;
 	sumValue: number;
@@ -92,20 +98,8 @@ export interface ResultUserItemPeriodSum {
 	ret: ReturnUserItemPeriodSumRet[];
 }
 
-export interface ParamUserPersonPostItem {
-}
-export interface ReturnUserPersonPostItemRet {
-	id: number;
-	person: number;
-	post: any;
-	item: any;
-}
-export interface ResultUserPersonPostItem {
-	ret: ReturnUserPersonPostItemRet[];
-}
-
 export interface ParamUserItemHistory {
-	personPostItem: number;
+	objectPostItem: number;
 	from: any;
 	to: any;
 	period: number;
@@ -118,16 +112,66 @@ export interface ResultUserItemHistory {
 	ret: ReturnUserItemHistoryRet[];
 }
 
-export interface Staff {
-	id?: number;
-	no?: string;
-	name: string;
-	user: number;
+export interface ParamGetPostTitles {
+}
+export interface ReturnGetPostTitlesRet {
+	id: number;
+	title: string;
+	vice: string;
+}
+export interface ResultGetPostTitles {
+	ret: ReturnGetPostTitlesRet[];
 }
 
-export interface Team {
+export interface ParamGetItemTitles {
+}
+export interface ReturnGetItemTitlesRet {
+	id: number;
+	title: string;
+	vice: string;
+	unit: string;
+	fixed: number;
+}
+export interface ResultGetItemTitles {
+	ret: ReturnGetItemTitlesRet[];
+}
+
+export interface ParamUserObjectPostItem {
+}
+export interface ReturnUserObjectPostItemRet {
+	id: number;
+	object: number;
+	post: any;
+	item: any;
+}
+export interface ResultUserObjectPostItem {
+	ret: ReturnUserObjectPostItemRet[];
+}
+
+export interface ParamGetUserSuperviseItem {
+}
+export interface ReturnGetUserSuperviseItemRet {
+	item: any;
+}
+export interface ResultGetUserSuperviseItem {
+	ret: ReturnGetUserSuperviseItemRet[];
+}
+
+export interface ParamGetUserSuperviseObject {
+}
+export interface ReturnGetUserSuperviseObjectRet {
+	id: number;
+	object: number;
+	post: any;
+	item: any;
+	relation: any;
+}
+export interface ResultGetUserSuperviseObject {
+	ret: ReturnGetUserSuperviseObjectRet[];
+}
+
+export interface Object {
 	id?: number;
-	name: string;
 }
 
 export interface ItemHistory {
@@ -157,30 +201,50 @@ export interface OrderMain {
 	sumAmount: number;
 }
 
-export interface PersonPostItem {
+export interface ItemTitle {
 	id?: number;
-	person: number;
-	post: any;
-	item: any;
+	title: string;
+	vice: string;
+	unit: string;
+	fixed: number;
 }
 
-export interface PersonUser {
+export interface PostTitle {
+	id?: number;
+	title: string;
+	vice: string;
+}
+
+export interface ObjectUser {
 	id?: number;
 	user: number;
 }
 
-export interface PersonCustomer {
+export interface ObjectStaff {
+	id?: number;
+	staff: number;
+}
+
+export interface ObjectPost {
+	id?: number;
+	post: any;
+}
+
+export interface ObjectCustomer {
 	id?: number;
 	customer: number;
 }
 
-export interface Person {
+export interface ObjectPostItem {
 	id?: number;
+	object: number;
+	post: any;
+	item: any;
 }
 
-export interface PersonStaff {
+export interface Group {
 	id?: number;
-	staff: number;
+	name: string;
 }
 
 export interface DxOrderDetail {
@@ -227,9 +291,10 @@ export interface ActParamUserTimezone {
 	$act?: number;
 }
 
-export interface TeamStaff {
+export interface UserObject {
 	ix: number;
 	xi: number;
+	relation: any;
 }
 
 export interface PostItemHistory {
@@ -261,32 +326,40 @@ export interface IxPendingOrderItem {
 	value: number;
 }
 
-export interface UserPerson {
+export interface GroupObject {
+	ix: number;
+	xi: number;
+}
+
+export interface UserSuperviseItem {
 	ix: number;
 	xi: number;
 }
 
 export interface ParamActs {
-	staff?: Staff[];
-	team?: Team[];
+	object?: Object[];
 	itemHistory?: ItemHistory[];
 	orderDetail?: OrderDetail[];
 	orderMain?: OrderMain[];
-	personPostItem?: PersonPostItem[];
-	personUser?: PersonUser[];
-	personCustomer?: PersonCustomer[];
-	person?: Person[];
-	personStaff?: PersonStaff[];
+	itemTitle?: ItemTitle[];
+	postTitle?: PostTitle[];
+	objectUser?: ObjectUser[];
+	objectStaff?: ObjectStaff[];
+	objectPost?: ObjectPost[];
+	objectCustomer?: ObjectCustomer[];
+	objectPostItem?: ObjectPostItem[];
+	group?: Group[];
 	dxOrderDetail?: ActParamDxOrderDetail[];
 	dxOrderMain?: ActParamDxOrderMain[];
 	userTimezone?: ActParamUserTimezone[];
-	teamStaff?: TeamStaff[];
+	userObject?: UserObject[];
 	postItemHistory?: PostItemHistory[];
 	postItem?: PostItem[];
 	ixPendingOrderAction?: IxPendingOrderAction[];
 	ixOrderBoundTo?: IxOrderBoundTo[];
 	ixPendingOrderItem?: IxPendingOrderItem[];
-	userPerson?: UserPerson[];
+	groupObject?: GroupObject[];
+	userSuperviseItem?: UserSuperviseItem[];
 }
 
 
@@ -299,26 +372,38 @@ export interface UqExt extends Uq {
 	ActOrder: UqAction<ParamActOrder, ResultActOrder>;
 	$poked: UqQuery<Param$poked, Result$poked>;
 	UserItemPeriodSum: UqQuery<ParamUserItemPeriodSum, ResultUserItemPeriodSum>;
-	UserPersonPostItem: UqQuery<ParamUserPersonPostItem, ResultUserPersonPostItem>;
 	UserItemHistory: UqQuery<ParamUserItemHistory, ResultUserItemHistory>;
-	Staff: UqID<any>;
-	Team: UqID<any>;
+	GetPostTitles: UqQuery<ParamGetPostTitles, ResultGetPostTitles>;
+	GetItemTitles: UqQuery<ParamGetItemTitles, ResultGetItemTitles>;
+	UserObjectPostItem: UqQuery<ParamUserObjectPostItem, ResultUserObjectPostItem>;
+	GetUserSuperviseItem: UqQuery<ParamGetUserSuperviseItem, ResultGetUserSuperviseItem>;
+	GetUserSuperviseObject: UqQuery<ParamGetUserSuperviseObject, ResultGetUserSuperviseObject>;
+	Object: UqID<any>;
 	ItemHistory: UqID<any>;
 	OrderDetail: UqID<any>;
 	OrderMain: UqID<any>;
-	PersonPostItem: UqID<any>;
-	PersonUser: UqID<any>;
-	PersonCustomer: UqID<any>;
-	Person: UqID<any>;
-	PersonStaff: UqID<any>;
+	ItemTitle: UqID<any>;
+	PostTitle: UqID<any>;
+	ObjectUser: UqID<any>;
+	ObjectStaff: UqID<any>;
+	ObjectPost: UqID<any>;
+	ObjectCustomer: UqID<any>;
+	ObjectPostItem: UqID<any>;
+	Group: UqID<any>;
 	DxOrderDetail: UqIDX<any>;
 	DxOrderMain: UqIDX<any>;
 	UserTimezone: UqIDX<any>;
-	TeamStaff: UqIX<any>;
+	UserObject: UqIX<any>;
 	PostItemHistory: UqIX<any>;
 	PostItem: UqIX<any>;
 	IxPendingOrderAction: UqIX<any>;
 	IxOrderBoundTo: UqIX<any>;
 	IxPendingOrderItem: UqIX<any>;
-	UserPerson: UqIX<any>;
+	GroupObject: UqIX<any>;
+	UserSuperviseItem: UqIX<any>;
 }
+
+	export function assign(uq: any, to:string, from:any): void {
+		Object.assign((uq as any)[to], from);
+	}
+	

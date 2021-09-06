@@ -1,4 +1,5 @@
 import { Controller, View } from "tonva-react";
+/*
 import { Team } from "uq-app/uqs/JkMe";
 
 export class VTeamItem extends View<Controller> {
@@ -7,3 +8,4 @@ export class VTeamItem extends View<Controller> {
 		return <div className="px-3 py-2">{name}</div>;
 	}
 }
+*/

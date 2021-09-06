@@ -1,7 +1,7 @@
 import { Res, setRes, TFunc, UI, uqStringify } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
-import { UserPerson } from "./JkMe";
+import { UserSuperviseItem } from "./JkMe";
 
 /*--fields--*/
 const fields = {
@@ -25,7 +25,7 @@ const fieldArr: FieldItem[] = [
 ];
 
 export const ui: UI = {
-	label: "UserPerson",
+	label: "UserSuperviseItem",
 	fieldArr,
 	fields,
 };
@@ -43,6 +43,6 @@ export const t:TFunc = (str:string|JSX.Element): string|JSX.Element => {
 	return res[str as string] ?? str;
 }
 
-export function render(item: UserPerson):JSX.Element {
+export function render(item: UserSuperviseItem):JSX.Element {
 	return <>{uqStringify(item)}</>;
 };

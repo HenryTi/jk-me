@@ -1,0 +1,9 @@
+ID Group (
+	id,						-- Object id
+	KEY name CHAR(50),
+);
+
+IX GroupObject (
+	ix Group,
+	xi Object INDEX,
+);

@@ -2,6 +2,7 @@ export const en = {
 	home: 'Home',
 	relation: 'Relation',
 	discover: 'Discover',
+	supervise: 'Supervise',
 	test: 'Test',
 	debug: 'Debug',
 	me: 'Me',
