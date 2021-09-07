@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sun Sep 05 2021 23:19:31 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Mon Sep 06 2021 22:28:09 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 
@@ -160,14 +160,37 @@ export interface ResultGetUserSuperviseItem {
 export interface ParamGetUserSuperviseObject {
 }
 export interface ReturnGetUserSuperviseObjectRet {
-	id: number;
 	object: number;
-	post: any;
-	item: any;
 	relation: any;
 }
 export interface ResultGetUserSuperviseObject {
 	ret: ReturnGetUserSuperviseObjectRet[];
+}
+
+export interface ParamGetItemSumMonths {
+	item: any;
+	date: any;
+	months: number;
+}
+export interface ReturnGetItemSumMonthsRet {
+	date: any;
+	value: number;
+}
+export interface ResultGetItemSumMonths {
+	ret: ReturnGetItemSumMonthsRet[];
+}
+
+export interface ParamGetItemSumDays {
+	item: any;
+	date: any;
+	days: number;
+}
+export interface ReturnGetItemSumDaysRet {
+	date: any;
+	value: number;
+}
+export interface ResultGetItemSumDays {
+	ret: ReturnGetItemSumDaysRet[];
 }
 
 export interface Object {
@@ -334,6 +357,7 @@ export interface GroupObject {
 export interface UserSuperviseItem {
 	ix: number;
 	xi: number;
+	timeZone: number;
 }
 
 export interface ParamActs {
@@ -378,6 +402,8 @@ export interface UqExt extends Uq {
 	UserObjectPostItem: UqQuery<ParamUserObjectPostItem, ResultUserObjectPostItem>;
 	GetUserSuperviseItem: UqQuery<ParamGetUserSuperviseItem, ResultGetUserSuperviseItem>;
 	GetUserSuperviseObject: UqQuery<ParamGetUserSuperviseObject, ResultGetUserSuperviseObject>;
+	GetItemSumMonths: UqQuery<ParamGetItemSumMonths, ResultGetItemSumMonths>;
+	GetItemSumDays: UqQuery<ParamGetItemSumDays, ResultGetItemSumDays>;
 	Object: UqID<any>;
 	ItemHistory: UqID<any>;
 	OrderDetail: UqID<any>;
@@ -403,7 +429,6 @@ export interface UqExt extends Uq {
 	UserSuperviseItem: UqIX<any>;
 }
 
-	export function assign(uq: any, to:string, from:any): void {
-		Object.assign((uq as any)[to], from);
-	}
-	
+export function assign(uq: any, to:string, from:any): void {
+	Object.assign((uq as any)[to], from);
+}

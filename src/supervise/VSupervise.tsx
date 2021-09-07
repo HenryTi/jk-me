@@ -49,6 +49,6 @@ export class VSupervise extends VPage<CSupervise> {
     }
     
     private onClickSuperviseItem = (row: ReturnGetUserSuperviseItemRet) => {
-        alert(JSON.stringify(row));
+        this.controller.showItemDayHistory(row.item);
     }
 }

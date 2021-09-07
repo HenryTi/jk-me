@@ -90,6 +90,7 @@ IX UserObject (
 IX UserSuperviseItem (
     IX user,
     XI ENUM Item,
+    timeZone TINYINT DEFAULT 8,     -- 时区
 );
 
 IDX UserTimezone (
