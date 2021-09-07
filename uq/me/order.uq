@@ -26,37 +26,51 @@ ID OrderDetail ver 0.5 GLOBAL (
 
 IDX DxOrderMain (
     id,
-	flagBoundTo TINYINT DEFAULT 0,
-	flagCostPrice TINYINT DEFAULT 0,
+    flagBoundTo TINYINT DEFAULT 0,
+    flagCostPrice TINYINT DEFAULT 0,    -- 这个要删除（转移到DxOrderMainFlag里面了)
 );
 
 IDX DxOrderDetail (
     id,
-	deliverDone DEC(18,4),
-	receiveDone DEC(18,4),
-	return DEC(18,4) SUM,
-	costPrice DEC(18,4),
+    deliverDone DEC(18,4),
+    receiveDone DEC(18,4) SUM,
+    return DEC(18,4) SUM,
+    costPrice DEC(18,4),
+    bottomPrice DEC(18,4),
+);
+
+IDX DxOrderDetailFlag (
+    id,
+    flagBottomPrice TINYINT DEFAULT 0,
 );
 
 -- 1. 订单跟岗位和个人的绑定关系。
 -- 2. 从订单绑定管理发送过来。
 -- 3. 一直保留
 IX IxOrderBoundTo (
-	ixx,				-- orderMain id
-	ix,					-- text id of to type: 'sales' | 'client'
-	xi,					-- to id, 
+    ixx,				-- orderMain id
+    ix,					-- text id of to type: 'sales' | 'client'
+    xi,					-- to id, 
 );
 
 -- 1. pending：操作完成后，会删除
 -- 2. 订单相关的操作，需要成本和绑定关系。
 -- 3. 成本和绑定关系，从其它uq发来
+-- 要删除，被IxPendingOrderItemAction替换
 IX IxPendingOrderAction (
-	ix OrderMain,
-	xi ENUM EnumOrderAction,
+    ix OrderMain,
+    xi ENUM EnumOrderAction,
+    value DEC(18,4),
+);
+
+IX IxPendingOrderItemAction (
+    ix OrderDetail,
+    xi ENUM EnumOrderAction,
+    value DEC(18,4),
 );
 
 IX IxPendingOrderItem (
-	ix OrderDetail,
-	xi ENUM Item,
-	value DEC(18,4),
+    ix OrderDetail,
+    xi ENUM Item,
+    value DEC(18,4),
 );

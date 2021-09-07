@@ -8,67 +8,65 @@ ACT ActOrder ver 0.5 ()
     VAR rowCount INT = 0;
     -- 基础元素齐备,开始操作. 否则,等下一个元素
     -- 确认Order, bound to and cost 已经收到
-    FOR (VAR orderMain ID, orderAction ENUM EnumOrderAction 
-        OF SELECT a.ix as orderMain, a.xi as orderAction 
-            FROM IxPendingOrderAction as a
-                JOIN DxOrderMain as b ON a.ix=b.id
-                JOIN OrderMain as c ON c.id=b.id
-            WHERE b.flagBoundTo=1 AND b.flagCostPrice=1
+    FOR (VAR orderDetail ID, orderAction ENUM EnumOrderAction, quantity DEC(18,4), 
+             price DEC(18,4), bottomPrice DEC(18, 4), currentValue DEC(18, 4)
+        OF SELECT a.ix as orderDetail, a.xi as orderAction, c.quantity, c.price, d.bottomPrice, a.value as currentValue
+            FROM IxPendingOrderItemAction as a
+                JOIN DxOrderDetailFlag as b ON a.ix = b.id
+                JOIN OrderDetail as c on c.id = a.ix
+                JOIN DxOrderDetail as d on d.id = c.id
+                JOIN DxOrderMain as e on e.id = c.main
+            WHERE e.flagBoundTo = 1 AND b.flagBottomPrice = 1
             ORDER BY a.ix, a.xi
             LIMIT maxActOrderRows)
     {
-        FOR (VAR orderDetail ID, amount DEC(18,4), quantity DEC(18,4), price DEC(18,4)
-            OF SELECT id as orderDetail, amount, quantity, price
-                FROM OrderDetail WHERE main=orderMain)
-        {
-            VAR value DEC(18,2) = NULL;
-            IF orderAction=EnumOrderAction.[deliverDone] {          -- 1010 订单发货
-                SET value = a.deliverDone * price
-                    FROM DxOrderDetail as a 
-                    WHERE a.id=orderDetail;
-                WITH IxPendingOrderItem as a IX=orderDetail 
-                    XI=Item.orderDeliver 
-                    SET a.value=value;
-                SET value = a.deliverDone * price
-                    FROM DxOrderDetail as a 
-                    WHERE a.id=orderDetail;
-                WITH IxPendingOrderItem as a IX=orderDetail 
-                    XI=Item.orderProfitCommission 
-                    SET a.value=value;
-                WITH IxPendingOrderItem as a IX=orderDetail 
-                    XI=Item.orderAmountCommission 
-                    SET a.value=value;
-            }
-            ELSEIF orderAction=EnumOrderAction.[return] {           -- 1020 订单退货
-                SET value = a.return * price
-                    FROM DxOrderDetail as a 
-                    WHERE a.id=orderDetail;
-                WITH IxPendingOrderItem as a IX=orderDetail 
-                    XI=Item.orderReturn 
-                    SET a.value=value;
-                WITH IxPendingOrderItem as a IX=orderDetail 
-                    XI=Item.orderProfitCommission 
-                    SET a.value=value;
-                WITH IxPendingOrderItem as a IX=orderDetail 
-                    XI=Item.orderAmountCommission 
-                    SET a.value=value;
-            }
-            ELSEIF orderAction=EnumOrderAction.[receiveDone] {      -- 1030 订单收款
-                SET value = a.receiveDone 
-                    FROM DxOrderDetail as a 
-                    WHERE a.id=orderDetail;
-                WITH IxPendingOrderItem as a IX=orderDetail 
-                    XI=Item.orderReceive
-                    SET a.value=value;
-                WITH IxPendingOrderItem as a IX=orderDetail 
-                    XI=Item.orderProfitCommission 
-                    SET a.value=value;
-                WITH IxPendingOrderItem as a IX=orderDetail 
-                    XI=Item.orderAmountCommission 
-                    SET a.value=value;
-            }
+        VAR value DEC(18,2) = NULL;
+        IF orderAction = EnumOrderAction.[deliverDone] {          -- 1010 订单发货
+            SET value = currentValue * price;
+            
+            WITH IxPendingOrderItem as a IX=orderDetail 
+                XI=Item.orderDeliver 
+                SET a.value=value;
+            WITH IxPendingOrderItem as a IX=orderDetail 
+                XI=Item.orderAmountCommission 
+                SET a.value=value;
+                
+            SET value = currentValue * (price - bottomPrice) * 0.5;
+            WITH IxPendingOrderItem as a IX=orderDetail 
+                XI=Item.orderProfitCommission 
+                SET a.value=value;
         }
-        WITH IxPendingOrderAction IX=orderMain XI=orderAction DEL;
+        ELSEIF orderAction=EnumOrderAction.[return] {           -- 1020 订单退货
+            SET value = currentValue * price;
+            WITH IxPendingOrderItem as a IX=orderDetail 
+                XI=Item.orderReturn 
+                SET a.value=value;
+            WITH IxPendingOrderItem as a IX=orderDetail 
+                XI=Item.orderAmountCommission 
+                SET a.value=value;
+
+            -- 这个不好计算了，如果退货时，还没有发货也没有付款，则不扣；已发货未付款或已付款未发货，扣50%，已发货已付款，扣100%
+            SET value = currentValue * (price - bottomPrice);
+            WITH IxPendingOrderItem as a IX=orderDetail 
+                XI=Item.orderProfitCommission 
+                SET a.value=value;
+        }
+        ELSEIF orderAction=EnumOrderAction.[receiveDone] {      -- 1030 订单收款
+            SET value = currentValue;
+            WITH IxPendingOrderItem as a IX=orderDetail 
+                XI=Item.orderReceive
+                SET a.value=value;
+            WITH IxPendingOrderItem as a IX=orderDetail 
+                XI=Item.orderAmountCommission 
+                SET a.value=value;
+
+            SET value = currentValue * (1 - bottomPrice/price);
+            WITH IxPendingOrderItem as a IX=orderDetail 
+                XI=Item.orderProfitCommission 
+                SET a.value=value;
+        }
+
+        WITH IxPendingOrderItemAction IX=orderDetail XI=orderAction DEL;
         SET rowCount = rowCount + 1;
     }
     PROC ProcItemBoundTo();
