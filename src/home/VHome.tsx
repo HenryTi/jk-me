@@ -5,7 +5,6 @@ import { CHome } from "./CHome";
 import '../App.css';
 import { ReturnUserItemPeriodSumRet } from "uq-app/uqs/JkMe";
 import { EnumPeriod, ItemPeriodSum, PostPeriodSum } from "./periodSum";
-import { itemTitles, postTitles } from "./enums";
 
 const cnColPeriod = "col text-center";
 const cnPeriod = " py-2 px-3 ";
@@ -52,9 +51,10 @@ export class VHome extends VPage<CHome> {
 	private renderDate() {
 		let {periodSum} = this.controller;
 		let {period, prev, next} = periodSum;
-		let {from, to, hasNext, type} = period;
+		let {hasNext} = period;
 		let left = <div className="cursor-pointer p-3" onClick={prev}><FA name="angle-left" /></div>;
 		let right = <div className={' p-3 ' + (hasNext? ' cursor-pointer ':' text-light ')} onClick={next}><FA name="angle-right" /></div>
+		/*
 		let content:any;
 		switch(type) {
 			case EnumPeriod.day:
@@ -70,9 +70,10 @@ export class VHome extends VPage<CHome> {
 				content = <>{from.getFullYear()}年</>;
 				break;
 		}
+		*/
 		return <div className="d-flex">
 			{left}
-			<div className="text-center flex-fill py-3">{content}</div>
+			<div className="text-center flex-fill py-3">{period.render()}</div>
 			{right}
 		</div>;
 	}
@@ -82,6 +83,7 @@ export class VHome extends VPage<CHome> {
 	}
 
 	private renderItem = (postPeriodSum: PostPeriodSum, index: number) => {
+		let {postTitles} = this.controller.cApp;
 		let {post, itemList} = postPeriodSum;
 		let {title, vice} = postTitles[post];
 		return <div className="d-block mx-3 my-3 border border-success">
@@ -97,6 +99,7 @@ export class VHome extends VPage<CHome> {
 	}
 
 	private renderItemPeriodSum = (ips: ItemPeriodSum, index: number) => {
+		let {itemTitles} = this.controller.cApp;
 		let {item, sumValue} = ips;
 		let {title, vice} = itemTitles[item];
 		return <LMR className="px-3 py-2 w-100" right={<div>{sumValue}</div>}>

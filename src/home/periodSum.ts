@@ -1,12 +1,12 @@
-import { action, computed, makeObservable, observable } from "mobx";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { UQs } from "uq-app";
-import { Item, PersonPostItem, Post, ReturnUserItemHistoryRet, ReturnUserItemPeriodSumRet } from "uq-app/uqs/JkMe";
+import { Item, ObjectPostItem, Post, ReturnUserItemHistoryRet, ReturnUserItemPeriodSumRet } from "uq-app/uqs/JkMe";
 
 export enum EnumPeriod {day = 0, month = 1, week = 2, year = 3}
 
 export interface ItemPeriodSum extends ReturnUserItemPeriodSumRet {
 	id: number;
-	person: number;
+	object: number;
 	post: Post;
 	item: Item;
 	sumValue: number;
@@ -46,6 +46,7 @@ abstract class Period {
         date.setHours(0, 0, 0, 0);
         return this.to < date;
     }
+    abstract render(): string;
 }
 
 class DayPeriod extends Period {
@@ -61,13 +62,14 @@ class DayPeriod extends Period {
         this.to = new Date(this.to.setDate(this.to.getDate()+1));
         this.from = new Date(this.from.setDate(this.from.getDate()+1));
     }
+    render(): string {return this.from.toLocaleDateString()}
 }
 
 class WeekPeriod extends Period {
     init(): void {
         this.type = EnumPeriod.week;
         let day = this.to.getDay();
-        let diff = this.to.getDate() - day + (day == 0 ? -6:1); // adjust when day is sunday
+        let diff = this.to.getDate() - day + (day === 0 ? -6:1); // adjust when day is sunday
         this.from = new Date(this.to.setDate(diff));
         this.to.setDate(this.to.getDate() + 7);
     }
@@ -78,6 +80,11 @@ class WeekPeriod extends Period {
     next(): void {
         this.from = new Date(this.from.setDate(this.from.getDate() + 7));
         this.to = new Date(this.to.setDate(this.to.getDate() + 7));
+    }
+    render(): string {
+        let to = new Date(this.to);
+        to.setDate(to.getDate() - 1);
+        return `${this.from.toLocaleDateString()} - ${to.toLocaleDateString()}`;
     }
 }
 
@@ -95,6 +102,7 @@ class MonthPeriod extends Period {
         this.from = new Date(this.from.setMonth(this.from.getMonth() + 1));
         this.to = new Date(this.to.setMonth(this.to.getMonth() + 1));
     }
+    render(): string {return `${this.from.getFullYear()}年${this.from.getMonth()+1}月`;}
 }
 
 class YearPeriod extends Period {
@@ -111,6 +119,7 @@ class YearPeriod extends Period {
         this.from = new Date(this.from.setFullYear(this.from.getFullYear() + 1));
         this.to = new Date(this.to.setFullYear(this.to.getFullYear() + 1));
     }
+    render(): string {return `${this.from.getFullYear()}年`}
 }
 
 export class PeriodSum {
@@ -118,7 +127,7 @@ export class PeriodSum {
     period: Period;
     postPeriodSumColl: {[post in keyof typeof Post]: PostPeriodSum};
     postPeriodSumList: PostPeriodSum[];
-    personPostItem: PersonPostItem;
+    objectPostItem: ObjectPostItem;
     itemPeriodSum: ItemPeriodSum;
     history: ReturnUserItemHistoryRet[];
 
@@ -157,38 +166,44 @@ export class PeriodSum {
 			to,
 		});
         let arr: ReturnUserItemPeriodSumRet[] = ret.ret;
-        this.postPeriodSumColl = {} as any;
-        this.postPeriodSumList = [];
+        let postPeriodSumColl = {} as any;
+        let postPeriodSumList:PostPeriodSum[] = [];
         for (let n of arr) {
             let post = Number(n.post);
             let item = Number(n.item);
             let ips:ItemPeriodSum = {...n, post, item};
-            let postPeriodSum = this.postPeriodSumColl[post];
+            let postPeriodSum = postPeriodSumColl[post];
             if (postPeriodSum === undefined) {
                 let itemColl: {[item in keyof typeof Item]: ItemPeriodSum} = {} as any;
-                this.postPeriodSumColl[post] = postPeriodSum = {
+                postPeriodSumColl[post] = postPeriodSum = {
                     post: post,
                     itemColl,
                     itemList: [],
                 }
-                this.postPeriodSumList.push(postPeriodSum);
+                postPeriodSumList.push(postPeriodSum);
             }
             postPeriodSum.itemColl[item] = ips;
             postPeriodSum.itemList.push(ips);
         }
+        runInAction(() => {
+            this.postPeriodSumColl = postPeriodSumColl;
+            this.postPeriodSumList = postPeriodSumList;    
+        });
     }
 
     async loadHistory(ips: ItemPeriodSum, sumPeriod: EnumPeriod) {
         this.itemPeriodSum = ips;
-        let {id: personPostItem} = ips;
+        let {id: objectPostItem} = ips;
         let {from, to} = this.period;
 		let ret = await this.uqs.JkMe.UserItemHistory.query({
-			personPostItem, 
+			objectPostItem, 
 			from,
 			to,
 			period: sumPeriod,
 		});
-        this.history = ret.ret;
+        runInAction(() => {
+            this.history = ret.ret;
+        });
 	}
 
     prev = async () => {

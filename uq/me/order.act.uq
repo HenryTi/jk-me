@@ -107,10 +107,10 @@ PROC ProcItemBoundTo(
         IF item=Item.orderAmountCommission {
             VAR post ENUM POST = Post.managerIT;
             VAR toId ID;
-			SET toId=ID(PersonPost, post);
+			SET toId=ID(ObjectPost, post);
 			IF toId IS NULL {
-				SET toId=ID(Person new);
-				WITH PersonPost ID=toId SET post=post;
+				SET toId=ID(Object new);
+				WITH ObjectPost ID=toId SET post=post;
 			}
             PROC ProcPostItemHistory(toId, Post.managerIT, item, itemHistoryId, value);
         }
@@ -126,9 +126,9 @@ PROC ProcPostItemHistory(
     itemHistoryId ID,
     value DEC(18,4)
 ) {
-    VAR personPostItemId ID = ID(PersonPostItem new, to, post, item);
+    VAR objectPostItemId ID = ID(ObjectPostItem new, to, post, item);
     VAR ratio DEC(6,2) = NULL;
     SET ratio = a.ratio FROM PostItem as a WHERE a.IX=post AND a.XI=item;
-    WITH PostItemHistory as a IX=personPostItemId XI=itemHistoryId 
+    WITH PostItemHistory as a IX=objectPostItemId XI=itemHistoryId 
         SET a.value=value * IFNULL(ratio, 100) / 100;
 };

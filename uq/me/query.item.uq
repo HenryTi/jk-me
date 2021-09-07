@@ -1,0 +1,57 @@
+QUERY GetUserSuperviseObject()
+RETURNS ret (
+    object ID,
+    relation ENUM EnumUserObjectRelation,
+) {
+    INTO ret SELECT a.xi as object, a.relation
+        FROM UserObject as a
+        WHERE a.ix=$user 
+            AND a.relation in (EnumUserObjectRelation.other, EnumUserObjectRelation.group);
+};
+
+QUERY GetUserSuperviseItem() 
+RETURNS ret (
+    item ENUM Item,
+) {
+    INTO ret SELECT a.xi as item FROM UserSuperviseItem as a WHERE a.ix=$user;
+};
+
+-- 从date开始，往前days天的按日汇总
+QUERY GetItemSumDays(
+    item ENUM Item,
+    date DATE,
+    days INT,
+)
+RETURNS ret (
+    date DATE,
+    value DEC(18,4),
+) {
+    VAR timeZone TINYINT;
+    SET timeZone=a.timeZone FROM UserSuperviseItem as a WHERE a.ix=$user AND a.xi=item;
+    INTO ret SELECT gDate as date, sum(a.value) as value
+        FROM ItemHistory as a
+        WHERE a.id>=minuteIdFromDate(DATEADD(day, -days, date), timeZone)
+            AND a.id<minuteIdFromDate(date, timeZone)
+        GROUP BY dateFromMinuteId(a.id, timeZone, 0) as gDate
+        ORDER BY gDate DESC;
+};
+
+-- 从date开始，往前months月的按月汇总
+QUERY GetItemSumMonths(
+    item ENUM Item,
+    date DATE,
+    months INT,
+)
+RETURNS ret (
+    date DATE,
+    value DEC(18,4),
+) {
+    VAR timeZone TINYINT;
+    SET timeZone=a.timeZone FROM UserSuperviseItem as a WHERE a.ix=$user AND a.xi=item;
+    INTO ret SELECT gDate as date, sum(a.value) as value
+        FROM ItemHistory as a
+        WHERE a.id>=minuteIdFromDate(DATEADD(month, -months, date), timeZone)
+            AND a.id<minuteIdFromDate(date, timeZone)
+        GROUP BY dateFromMinuteId(a.id, timeZone, 1) as gDate
+        ORDER BY gDate DESC;
+};

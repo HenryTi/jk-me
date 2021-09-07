@@ -1,0 +1,50 @@
+
+ID ItemTitle ver 0.1 CONST (
+    id small,
+    title CHAR(50),
+    vice CHAR(100),
+    unit CHAR(10),
+    fixed TINYINT DEFAULT 2,
+)
++ (id, title, vice, unit, fixed)
+VALUES 
+(Item.orderDeliver, '发货', '已发货金额', '元', 2),
+(Item.orderReturn, '退货', null, '元', 2),
+(Item.orderReceive, '收款', null, '元', 2),
+(Item.orderReceiveReturn, '退款', null, '元', 2),
+(Item.orderProfitCommission, '有效销售额', null, '元', 2),
+(Item.orderAmountCommission, '销售提成', null, '元', 2),
+(Item.orderCustomerPoint, '客户积分', null, '点', 2)
+;
+
+ID PostTitle ver 0.1 CONST (
+    id small,
+    title CHAR(50),
+    vice CHAR(100),
+)
++ (id, title, vice)
+VALUES
+(Post.staff, '职员', null),
+(Post.staffSales, '销售员', null),
+(Post.manager, '经理', null),
+(Post.managerIT, 'IT总监', null),
+(Post.client, '代理', null),
+(Post.clientSales, '轻代理', null),
+(Post.customer, '顾客', null)
+;
+
+QUERY GetItemTitles()
+RETURNS ret (
+    #ItemTitle
+) {
+    INTO ret SELECT id, title, vice, unit, fixed
+        FROM ItemTitle;
+};
+
+QUERY GetPostTitles()
+RETURNS ret (
+    #PostTitle
+) {
+    INTO ret SELECT id, title, vice
+        FROM PostTitle;
+};

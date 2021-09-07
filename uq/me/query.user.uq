@@ -1,14 +1,14 @@
-QUERY UserPersonPostItem()
+QUERY UserObjectPostItem()
 RETURNS ret (
     id ID,
-    person ID,
+    object ID,
     post ENUM Post,
     item ENUM Item,
 ) {
-    INTO ret SELECT a.id, a.person, a.post, a.item
-        FROM PersonPostItem as a
-            JOIN UserPerson as b ON a.person=b.xi
-        WHERE b.ix=$user;
+    INTO ret SELECT a.id, a.object, a.post, a.item
+        FROM ObjectPostItem as a
+            JOIN UserObject as b ON a.object=b.xi
+        WHERE b.ix=$user AND b.relation=EnumUserObjectRelation.self;
 };
 
 QUERY UserItemPeriodSum ver 0.1 (
@@ -17,7 +17,7 @@ QUERY UserItemPeriodSum ver 0.1 (
 )
 RETURNS ret (
     id ID,
-    person ID,
+    object ID,
     post ENUM Post,
     item ENUM Item,
     sumValue DEC(18,4)
@@ -27,7 +27,7 @@ RETURNS ret (
     IF timeZone IS NULL {
         SET timeZone = 8;       -- 北京时间
     }
-    INTO ret SELECT a.id, a.person, a.post, a.item,
+    INTO ret SELECT a.id, a.object, a.post, a.item,
         IFNULL(
             (SELECT SUM(t.value)
                 FROM postitemhistory AS t
@@ -37,13 +37,13 @@ RETURNS ret (
             ),
             0
         ) as sumValue
-        FROM PersonPostItem as a
-            JOIN UserPerson as b ON a.person=b.xi
+        FROM ObjectPostItem as a
+            JOIN UserObject as b ON a.object=b.xi
         WHERE b.ix=$user;
 };
 
 QUERY UserItemHistory ver 0.1 (
-    personPostItem ID PersonPostItem,
+    objectPostItem ID ObjectPostItem,
     from DATE,
     to DATE,
     period TINYINT,         -- 0: day, 1: month
@@ -59,8 +59,8 @@ RETURNS ret (
     }
     INTO ret SELECT date, SUM(a.value) as sumValue
         FROM postitemhistory AS a
-            JOIN PersonPostItem as b ON a.ix=b.id
-            JOIN UserPerson as c ON b.person=c.xi
+            JOIN ObjectPostItem as b ON a.ix=b.id
+            JOIN UserObject as c ON b.object=c.xi
         WHERE c.ix=$user
             AND a.xi >= minuteIdFromDate(from, timeZone)
             AND a.xi < minuteIdFromDate(to, timeZone)

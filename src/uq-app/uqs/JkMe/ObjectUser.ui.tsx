@@ -1,7 +1,7 @@
 import { Res, setRes, TFunc, UI, uqStringify } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
-import { PersonCustomer } from "./JkMe";
+import { ObjectUser } from "./JkMe";
 
 /*--fields--*/
 const fields = {
@@ -11,21 +11,21 @@ const fields = {
 		"isKey": false,
 		"label": "Id"
 	} as FieldItemId,
-	customer: {
-		"name": "customer",
+	user: {
+		"name": "user",
 		"type": "id",
 		"isKey": true,
-		"label": "Customer"
+		"label": "User"
 	} as FieldItemId,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.customer, 
+	fields.user, 
 ];
 
 export const ui: UI = {
-	label: "PersonCustomer",
+	label: "ObjectUser",
 	fieldArr,
 	fields,
 };
@@ -43,6 +43,6 @@ export const t:TFunc = (str:string|JSX.Element): string|JSX.Element => {
 	return res[str as string] ?? str;
 }
 
-export function render(item: PersonCustomer):JSX.Element {
+export function render(item: ObjectUser):JSX.Element {
 	return <>{uqStringify(item)}</>;
 };

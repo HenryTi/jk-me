@@ -6,19 +6,38 @@ import { res } from "./res";
 import { VMain } from "./VMain";
 import { CTester } from "./test-uqui";
 import { setUI } from "./uqs";
+import { Item, Post, ReturnGetUserSuperviseItemRet, ReturnGetUserSuperviseObjectRet } from "./uqs/JkMe";
+import { CSupervise } from "supervise";
 
 //const gaps = [10, 3,3,3,3,3,5,5,5,5,5,5,5,5,10,10,10,10,15,15,15,30,30,60];
 
+export interface Title {
+    title: string;
+    vice?: string;
+    unit?: string;
+    fixed?: number;
+}
+
+
 export class CApp extends CUqApp {
 	cHome: CHome;
+	cSupervise: CSupervise;
 	cBug: CBug;
 	cMe: CMe;
 	cUI: CTester;
-
+	readonly itemTitles:{[item in Item]: Title} = {} as any;
+	readonly postTitles:{[post in Post]: Title} = {} as any;
+	superviseObjects: ReturnGetUserSuperviseObjectRet[];
+	superviseItems: ReturnGetUserSuperviseItemRet[];
+	
 	protected async internalStart(isUserLogin: boolean) {
 		this.setRes(res);
 		setUI(this.uqs);
+
+		await this.loadBaseData();
+
 		this.cHome = this.newC(CHome);
+		this.cSupervise = this.newC(CSupervise);
 		this.cBug = this.newC(CBug);
 		this.cMe = this.newC(CMe);
 		this.cUI = this.newC(CTester) as CTester;
@@ -34,6 +53,20 @@ export class CApp extends CUqApp {
 	protected onDispose() {
 		clearInterval(this.timer);
 		this.timer = undefined;
+	}
+
+	private async loadBaseData() {
+		let {JkMe} = this.uqs;
+		let [retItemTitles, retPostTitles, superviseObjects, superviseItems] = await Promise.all([
+			JkMe.GetItemTitles.query({}),
+			JkMe.GetPostTitles.query({}),
+			JkMe.GetUserSuperviseObject.query({}),
+			JkMe.GetUserSuperviseItem.query({}),
+		]);
+		for (let it of retItemTitles.ret) this.itemTitles[it.id as Item] = it;
+		for (let pt of retPostTitles.ret) this.postTitles[pt.id as Post] = pt;
+		this.superviseObjects = superviseObjects.ret;
+		this.superviseItems = superviseItems.ret;
 	}
 
 	/*

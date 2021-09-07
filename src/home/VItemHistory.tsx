@@ -1,10 +1,10 @@
 import { List, LMR, VPage } from "tonva-react";
 import { ReturnUserItemHistoryRet } from "uq-app/uqs/JkMe";
 import { CHome } from "./CHome";
-import { itemTitles, postTitles } from "./enums";
 
 export class VItemHistory extends VPage<CHome> {
 	header() {
+        let {itemTitles, postTitles} = this.controller.cApp;
         let {itemPeriodSum} = this.controller.periodSum;
         let {post, item} = itemPeriodSum;
         return `${postTitles[post].title} - ${itemTitles[item].title}`;
@@ -18,6 +18,7 @@ export class VItemHistory extends VPage<CHome> {
     }
 
     private renderItem = (history: ReturnUserItemHistoryRet, index: number) => {
+        let {itemTitles} = this.controller.cApp;
         let {date, sumValue} = history;
         let {item} = this.controller.periodSum.itemPeriodSum;
         let {unit, fixed} = itemTitles[item];
