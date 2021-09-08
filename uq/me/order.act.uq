@@ -9,8 +9,8 @@ ACT ActOrder ver 0.5 ()
     -- 基础元素齐备,开始操作. 否则,等下一个元素
     -- 确认Order, bound to and cost 已经收到
     FOR (VAR orderDetail ID, orderAction ENUM EnumOrderAction, quantity DEC(18,4), 
-             price DEC(18,4), bottomPrice DEC(18, 4), currentValue DEC(18, 4)
-        OF SELECT a.ix as orderDetail, a.xi as orderAction, c.quantity, c.price, d.bottomPrice, a.value as currentValue
+             price DEC(18,4), deliverDone DEC(18, 4), receiveDone dec(18, 4), bottomPrice DEC(18, 4), currentValue DEC(18, 4)
+        OF SELECT a.ix as orderDetail, a.xi as orderAction, c.quantity, c.price, d.deliverDone, d.receiveDone, d.bottomPrice, a.value as currentValue
             FROM IxPendingOrderItemAction as a
                 JOIN DxOrderDetailFlag as b ON a.ix = b.id
                 JOIN OrderDetail as c on c.id = a.ix
@@ -45,8 +45,7 @@ ACT ActOrder ver 0.5 ()
                 XI=Item.orderAmountCommission 
                 SET a.value=value;
 
-            -- 这个不好计算了，如果退货时，还没有发货也没有付款，则不扣；已发货未付款或已付款未发货，扣50%，已发货已付款，扣100%
-            SET value = currentValue * (price - bottomPrice);
+            SET value = currentValue / quantity * (deliverDone * price  + receiveDone) * (1 - bottomPrice/price);
             WITH IxPendingOrderItem as a IX=orderDetail 
                 XI=Item.orderProfitCommission 
                 SET a.value=value;
@@ -60,7 +59,7 @@ ACT ActOrder ver 0.5 ()
                 XI=Item.orderAmountCommission 
                 SET a.value=value;
 
-            SET value = currentValue * (1 - bottomPrice/price);
+            SET value = currentValue * (1 - bottomPrice/price) * 0.5;
             WITH IxPendingOrderItem as a IX=orderDetail 
                 XI=Item.orderProfitCommission 
                 SET a.value=value;
