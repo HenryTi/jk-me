@@ -28,10 +28,10 @@ ACT BusTest ver 0.3 (
             ADD [order-detail]=detailId, [cost-price]=price*0.15;
     }
 
-    BUS JkOrderBus.[order-bound] SET order=orderMain;
-    BUS JkOrderBus.[order-bound] INTO to ADD type='staff-sales', id=999, [id-type]='staff';
+    BUS JkOrderBus.[order-bound-staff-sales] SET order=orderMain;
+    BUS JkOrderBus.[order-bound-staff-sales] INTO to ADD id=999;
 
     BUS JkOrderBus.[deliver-done] LOCAL;
     BUS JkOrderBus.[order-cost-price] LOCAL;
-    BUS JkOrderBus.[order-bound] LOCAL;
+    BUS JkOrderBus.[order-bound-staff-sales] LOCAL;
 };

@@ -14,6 +14,7 @@ import * as Group from './Group.ui';
 import * as DxOrderDetail from './DxOrderDetail.ui';
 import * as DxOrderMain from './DxOrderMain.ui';
 import * as UserTimezone from './UserTimezone.ui';
+import * as DxOrderDetailFlag from './DxOrderDetailFlag.ui';
 import * as UserObject from './UserObject.ui';
 import * as PostItemHistory from './PostItemHistory.ui';
 import * as PostItem from './PostItem.ui';
@@ -22,6 +23,7 @@ import * as IxOrderBoundTo from './IxOrderBoundTo.ui';
 import * as IxPendingOrderItem from './IxPendingOrderItem.ui';
 import * as GroupObject from './GroupObject.ui';
 import * as UserSuperviseItem from './UserSuperviseItem.ui';
+import * as IxPendingOrderItemAction from './IxPendingOrderItemAction.ui';
 	
 export function setUI(uq: Uq) {
 	assign(uq, 'Object', Object);
@@ -39,6 +41,7 @@ export function setUI(uq: Uq) {
 	assign(uq, 'DxOrderDetail', DxOrderDetail);
 	assign(uq, 'DxOrderMain', DxOrderMain);
 	assign(uq, 'UserTimezone', UserTimezone);
+	assign(uq, 'DxOrderDetailFlag', DxOrderDetailFlag);
 	assign(uq, 'UserObject', UserObject);
 	assign(uq, 'PostItemHistory', PostItemHistory);
 	assign(uq, 'PostItem', PostItem);
@@ -47,5 +50,6 @@ export function setUI(uq: Uq) {
 	assign(uq, 'IxPendingOrderItem', IxPendingOrderItem);
 	assign(uq, 'GroupObject', GroupObject);
 	assign(uq, 'UserSuperviseItem', UserSuperviseItem);
+	assign(uq, 'IxPendingOrderItemAction', IxPendingOrderItemAction);
 }
 export * from './JkMe';

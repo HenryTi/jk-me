@@ -17,7 +17,7 @@ RETURNS ret (
 };
 
 -- 从date开始，往前days天的按日汇总
-QUERY GetItemSumDays(
+QUERY GetItemSumDays ver 0.1 (
     item ENUM Item,
     date DATE,
     days INT,
@@ -30,7 +30,9 @@ RETURNS ret (
     SET timeZone=a.timeZone FROM UserSuperviseItem as a WHERE a.ix=$user AND a.xi=item;
     INTO ret SELECT gDate as date, sum(a.value) as value
         FROM ItemHistory as a
-        WHERE a.id>=minuteIdFromDate(DATEADD(day, -days, date), timeZone)
+            JOIN UserSuperviseItem as b ON a.item=b.xi
+        WHERE b.ix=$user
+            AND a.id>=minuteIdFromDate(DATEADD(day, -days, date), timeZone)
             AND a.id<minuteIdFromDate(date, timeZone)
         GROUP BY dateFromMinuteId(a.id, timeZone, 0) as gDate
         ORDER BY gDate DESC;
@@ -50,8 +52,37 @@ RETURNS ret (
     SET timeZone=a.timeZone FROM UserSuperviseItem as a WHERE a.ix=$user AND a.xi=item;
     INTO ret SELECT gDate as date, sum(a.value) as value
         FROM ItemHistory as a
-        WHERE a.id>=minuteIdFromDate(DATEADD(month, -months, date), timeZone)
+            JOIN UserSuperviseItem as b ON a.item=b.xi
+        WHERE b.ix=$user
+            AND a.id>=minuteIdFromDate(DATEADD(month, -months, date), timeZone)
             AND a.id<minuteIdFromDate(date, timeZone)
         GROUP BY dateFromMinuteId(a.id, timeZone, 1) as gDate
         ORDER BY gDate DESC;
+};
+
+-- from < to
+QUERY GetItemHistory (
+    item ENUM Item,
+    from DATE,
+    to DATE,
+)
+PAGE (
+    id ID DESC,                 -- 分钟序id
+    track ID,                   -- 原始凭证
+    item ENUM Item,             -- 科目
+    value DEC(18,4),            -- 数值
+    memo CHAR(100),             -- 文本ID
+    timeZone TINYINT,           -- user timezone
+) {
+    VAR timeZone TINYINT;
+    SET timeZone=a.timeZone FROM UserSuperviseItem as a WHERE a.ix=$user AND a.xi=item;
+    PAGE SELECT a.id, a.track, a.item, a.value, idtext(a.memo) as memo, timeZone as timeZone
+        FROM ItemHistory as a
+            JOIN UserSuperviseItem as b ON a.item=b.xi
+        WHERE b.ix=$user
+            AND a.id<$pageStart
+            AND a.id>=minuteIdFromDate(from, timeZone)
+            AND a.id<minuteIdFromDate(to, timeZone)
+        ORDER BY a.id DESC
+        LIMIT $pageSize;
 };

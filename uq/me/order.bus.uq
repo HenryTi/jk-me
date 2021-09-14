@@ -1,4 +1,4 @@
-BUS JkOrderBus ver 0.5 from 百灵威系统工程部/[jk-order]
+BUS JkOrderBus ver 0.5 from 百灵威系统工程部/[jk-order-1]
 ACCEPT order {
 	VAR mainId ID;
 	SET mainId = id;
@@ -11,49 +11,54 @@ ACCEPT order {
 				, a.quantity=quantity, a.price=price
 				, a.amount=quantity * price;
 	}
-    SCHEDULE ActOrder;
+    VAR orderActionId ID = ID(OrderAction new, mainId, EnumOrderAction.orderAccept);
+    SCHEDULE ActOrderAction DELAY 1;
 }
 ACCEPT [deliver-done] {
 	FOR detail {
 		WITH DxOrderDetail ID=id SET deliverDone=value;
-        VAR itemHistoryId ID = ID(ItemHistory new, id, Item.orderDeliver);
-        WITH ItemHistory as a ID = itemHistoryId
-			SET a.value=value;
-        WITH IxPendingOrderItemAction IX=id XI=EnumOrderAction.[deliverDone] set value = value;
+        VAR orderActionId ID = ID(OrderAction new, id, EnumOrderAction.deliverDone);
+        WITH OrderAction as a ID=orderActionId
+            SET a.orderDetail=orderDetail, a.value=value, a.item=Item.orderDeliver;
 	}
-    SCHEDULE ActOrder;
+    SCHEDULE ActOrderAction DELAY 1;
 }
 ACCEPT [receive-done] {
 	FOR detail {
 		WITH DxOrderDetail ID=id SET receiveDone+=value;
-        VAR itemHistoryId ID = ID(ItemHistory new, id, Item.orderReceive);
-        WITH ItemHistory as a ID = itemHistoryId
-			SET a.value=value;
-        WITH IxPendingOrderItemAction IX=id XI=EnumOrderAction.[receiveDone] set value = value;
+        VAR orderActionId ID = ID(OrderAction new, id, EnumOrderAction.receiveDone);
+        WITH OrderAction as a ID=orderActionId
+            SET a.orderDetail=orderDetail, a.value=value, a.item=Item.orderReceive;
 	}
-    SCHEDULE ActOrder;
+    SCHEDULE ActOrderAction DELAY 1;
 }
 ACCEPT [return] {
 	FOR detail {
 		WITH DxOrderDetail ID=id SET return+=quantity;
-        WITH IxPendingOrderItemAction IX=id XI=EnumOrderAction.[return] set value = quantity;
+        VAR orderActionId ID = ID(OrderAction new, id, EnumOrderAction.return);
+        WITH OrderAction as a ID=orderActionId
+            SET a.orderDetail=orderDetail, a.value=quantity, a.item=Item.orderReturn;
 	}
-    SCHEDULE ActOrder;
+    SCHEDULE ActOrderAction DELAY 1;
 }
 ACCEPT [order-cost-price] {
     FOR detail {
         WITH DxOrderDetail ID=[order-detail] SET costPrice=[cost-price];
     }
-    WITH DxOrderMain ID=order SET flagCostPrice=1;
-    SCHEDULE ActOrder;
+    WITH DxOrderMain as a ID=order SET a.readyStates=a.readyStates | ReadyStates.cost;
+    VAR orderActionId ID = ID(OrderAction new, order, EnumOrderAction.orderMain);
+    SCHEDULE ActOrderAction DELAY 1;
 }
+/*
 ACCEPT [order-bottom-price] {
     FOR detail {
         WITH DxOrderDetail ID = [order-detail] SET bottomPrice = [bottom-price];
-        WITH DxOrderDetailFlag ID = [order-detail] SET flagBottomPrice = 1;
     }
-    SCHEDULE ActOrder;
+    VAR orderActionId ID = ID(OrderAction new, order, EnumOrderAction.orderMain);
+    SCHEDULE ActOrderAction DELAY 1;
 }
+*/
+/*
 -- 订单提成对象绑定
 ACCEPT [order-bound] {
     FOR to {
@@ -81,5 +86,62 @@ ACCEPT [order-bound] {
     -- 那就可能会漏掉一个吧(要么就是对同一个order的绑定必须一次发过来，这个要求好像不合理)
     WITH DxOrderMain ID=order SET flagBoundTo=1;    
     SCHEDULE ActOrder;
+}
+*/
+ACCEPT [order-bound-staff-sales] {
+    FOR to {
+		VAR toId ID;
+        SET toId=ID(ObjectStaff, id);
+        IF toId IS NULL {
+            SET toId=ID(Object new);
+            WITH ObjectStaff ID=toId SET staff=id;
+        }
+        WITH IxOrderBoundTo IXX=order IX=Post.staffSales XI=toId;
+    }
+    WITH IxOrderBoundPost IX=order XI=Post.staffSales;
+    VAR orderActionId ID = ID(OrderAction new, order, EnumOrderAction.orderBoundStaffSales);
+    SCHEDULE ActOrderAction DELAY 1;
+}
+ACCEPT [order-bound-agent] { -- 轻代理
+    FOR to {
+		VAR toId ID;
+		SET toId=ID(ObjectAgent, id);
+        IF toId IS NULL {
+            SET toId=ID(Object new);
+            WITH ObjectAgent ID=toId SET agent=id;
+        }
+        WITH IxOrderBoundTo IXX=order IX=Post.agent XI=toId;
+    }
+    WITH IxOrderBoundPost IX=order XI=Post.agent;
+    VAR orderActionId ID = ID(OrderAction new, order, EnumOrderAction.orderBoundAgent);
+    SCHEDULE ActOrderAction DELAY 1;
+}
+ACCEPT [order-bound-distributor] { -- 分销商
+    FOR to {
+		VAR toId ID;
+        SET toId=ID(ObjectDistributor, id);
+        IF toId IS NULL {
+            SET toId=ID(Object new);
+            WITH ObjectDistributor ID=toId SET distributor=id;
+        }
+        WITH IxOrderBoundTo IXX=order IX=Post.distributor XI=toId;
+    }
+    WITH IxOrderBoundPost IX=order XI=Post.distributor;
+    VAR orderActionId ID = ID(OrderAction new, order, EnumOrderAction.orderBoundDistributor);
+    SCHEDULE ActOrderAction DELAY 1;
+}
+ACCEPT [order-bound-customer] {
+    FOR to {
+		VAR toId ID;
+        SET toId=ID(ObjectCustomer, id);
+        IF toId IS NULL {
+            SET toId=ID(Object new);
+            WITH ObjectCustomer ID=toId SET customer=id;
+        }
+        WITH IxOrderBoundTo IXX=order IX=Post.customer XI=toId;
+    }
+    WITH IxOrderBoundPost IX=order XI=Post.customer;
+    VAR orderActionId ID = ID(OrderAction new, order, EnumOrderAction.orderBoundCustomer);
+    SCHEDULE ActOrderAction DELAY 1;
 }
 ;

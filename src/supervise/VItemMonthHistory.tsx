@@ -39,7 +39,11 @@ export class VItemMonthHistory extends VPage<CSupervise> {
             right={<div>{value.toFixed(fixed??2)} {unit}</div>} />
     }
 
-    private onClickItem = (row: ReturnGetItemSumMonthsRet) => {
-        alert(JSON.stringify(row));
+    private onClickItem = async (row: ReturnGetItemSumMonthsRet) => {
+        let {date} = row;
+        let from = new Date(date.getFullYear(), date.getMonth(), 1);
+        let to = new Date(date.getFullYear(), date.getMonth()+1, 1);
+        await this.controller.showItemHistory(from, to);
     }
+
 }

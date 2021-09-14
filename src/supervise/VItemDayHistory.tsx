@@ -40,7 +40,11 @@ export class VItemDayHistory extends VPage<CSupervise> {
             right={<div>{value.toFixed(fixed??2)} {unit}</div>} />
     }
 
-    private onClickItem = (row: ReturnGetItemSumDaysRet) => {
-        alert(JSON.stringify(row));
+    private onClickItem = async (row: ReturnGetItemSumDaysRet) => {
+        let {date} = row;
+        let from = new Date(date);
+        from.setDate(from.getDate() - 1);
+        let to = new Date(date);
+        await this.controller.showItemHistory(from, to);
     }
 }

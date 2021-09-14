@@ -9,12 +9,13 @@ ID ItemTitle ver 0.1 CONST (
 + (id, title, vice, unit, fixed)
 VALUES 
 (Item.orderDeliver, '发货', '已发货金额', '元', 2),
+(Item.orderProfit, '毛利', null, '元', 2),
 (Item.orderReturn, '退货', null, '元', 2),
 (Item.orderReceive, '收款', null, '元', 2),
 (Item.orderReceiveReturn, '退款', null, '元', 2),
-(Item.orderProfitCommission, '有效销售额', null, '元', 2),
-(Item.orderAmountCommission, '销售提成', null, '元', 2),
-(Item.orderCustomerPoint, '客户积分', null, '点', 2)
+(Item.commissionFromProfit, '订单毛利提成', null, '元', 2),
+(Item.commissionFromAmount, '订单销售额提成', null, '元', 2),
+(Item.customerPoint, '客户积分', null, '点', 2)
 ;
 
 ID PostTitle ver 0.1 CONST (
@@ -28,9 +29,36 @@ VALUES
 (Post.staffSales, '销售员', null),
 (Post.manager, '经理', null),
 (Post.managerIT, 'IT总监', null),
-(Post.client, '代理', null),
-(Post.clientSales, '轻代理', null),
+(Post.agent, '轻代理', null),
+(Post.agentSales, '轻代理销售员', null),
 (Post.customer, '顾客', null)
+;
+
+ID PostProc ver 0.5 CONST (
+    id,
+    post ENUM Post,
+    action ENUM EnumOrderAction,
+    readyStates ENUM ReadyStates,
+    item ENUM Item,                     -- item to itemHistory
+    itemToObj ENUM Item,                -- item to ObjectHistory
+    INDEX post_action(post, action),
+)
++ (post, action, readyStates, item, itemToObj)
+VALUES
+(Post.none, EnumOrderAction.deliverDone, ReadyStates.costNone, Item.orderDeliver, null),
+(Post.staffSales, EnumOrderAction.deliverDone, ReadyStates.costNone, Item.orderDeliver, Item.orderDeliver),
+(Post.staffSales, EnumOrderAction.deliverDone, ReadyStates.cost, Item.orderProfit, Item.commissionFromProfit),
+(Post.staffSales, EnumOrderAction.receiveDone, ReadyStates.cost, Item.orderProfit, Item.commissionFromProfit),
+/*
+(Post.staff, ReadyStates.cost, 'BoundStaff'),
+(Post.manager, ReadyStates.cost, 'BoundManager'),
+(Post.managerIT, ReadyStates.cost, 'BoundManagerIT'),
+(Post.agent, ReadyStates.cost, 'BoundAgent'),
+(Post.agentSales, ReadyStates.cost, 'BoundAgentSales'),
+(Post.distributor, ReadyStates.cost, 'BoundDistributor'),
+(Post.distributorSales, ReadyStates.cost, 'BoundDistributorSales'),
+(Post.customer, ReadyStates.cost, 'BoundCustomer')
+*/
 ;
 
 QUERY GetItemTitles()

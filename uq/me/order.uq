@@ -1,7 +1,24 @@
 ENUM EnumOrderAction (
-	deliverDone = 1, 
-	receiveDone = 2,
-	return = 3,
+    none                        = 0,
+	deliverDone                 = 1, 
+	receiveDone                 = 2,
+	return                      = 3,
+    orderMain                   = 1000,
+    orderAccept                 = 1001,
+    orderBoundStaffSales        = 1002,
+    orderBoundAgent             = 1003,
+    orderBoundDistributor       = 1004,
+    orderBoundCustomer          = 1005,
+);
+
+ENUM ReadyStates (
+    costNone                    = 0x0001,
+    cost                        = 0x0002,
+);
+
+ENUM EnumDone (
+    withCost                    = 0x0001,
+    withoutCost                 = 0x0002,
 );
 
 ID OrderMain ver 0.5 GLOBAL (
@@ -20,14 +37,12 @@ ID OrderDetail ver 0.5 GLOBAL (
 	product ID,
 	quantity DEC(12,2),
 	amount DEC(12,2),
-	price DEC(12,2),                    -- 实际成交价
+	price DEC(12,2),                            -- 实际成交价
 );
-
 
 IDX DxOrderMain (
     id,
-    flagBoundTo TINYINT DEFAULT 0,
-    flagCostPrice TINYINT DEFAULT 0,    -- 这个要删除（转移到DxOrderMainFlag里面了)
+    readyStates ENUM ReadyStates DEFAULT 0,     -- 按位记的准备状态
 );
 
 IDX DxOrderDetail (
@@ -36,41 +51,36 @@ IDX DxOrderDetail (
     receiveDone DEC(18,4) SUM,
     return DEC(18,4) SUM,
     costPrice DEC(18,4),
-    bottomPrice DEC(18,4),
+    -- bottomPrice DEC(18,4),
 );
 
-IDX DxOrderDetailFlag (
+ID OrderAction MINUTEID (
     id,
-    flagBottomPrice TINYINT DEFAULT 0,
+    KEY actionId ID,                    -- orderMain, or detail of deliver, receive, return
+    KEY action ENUM EnumOrderAction,    -- orderMainAction
+    orderDetail ID,                     -- orderDetail
+    value DEC(18,4),                    -- action value
+    item ENUM Item,                     -- for ItemHistory
+);
+
+IDX DxOrderAction (
+    id,                                     -- OrderAction
+    orderMain ID OrderMain,
+    orderDetail ID OrderDetail,
+    done ENUM EnumDone DEFAULT 0,        
+    INDEX order (orderMain, orderDetail),   -- 不能unique
 );
 
 -- 1. 订单跟岗位和个人的绑定关系。
 -- 2. 从订单绑定管理发送过来。
 -- 3. 一直保留
 IX IxOrderBoundTo (
-    ixx,				-- orderMain id
-    ix,					-- text id of to type: 'sales' | 'client'
-    xi,					-- to id, 
+    ixx,				        -- orderMain id
+    ix ENUM Post,
+    xi,					        -- to id, 
 );
-
--- 1. pending：操作完成后，会删除
--- 2. 订单相关的操作，需要成本和绑定关系。
--- 3. 成本和绑定关系，从其它uq发来
--- 要删除，被IxPendingOrderItemAction替换
-IX IxPendingOrderAction (
-    ix OrderMain,
-    xi ENUM EnumOrderAction,
-    value DEC(18,4),
-);
-
-IX IxPendingOrderItemAction (
-    ix OrderDetail,
-    xi ENUM EnumOrderAction,
-    value DEC(18,4),
-);
-
-IX IxPendingOrderItem (
-    ix OrderDetail,
-    xi ENUM Item,
-    value DEC(18,4),
+IX IxOrderBoundPost (
+    ix,                                 -- order main id
+    xi ENUM Post,                       -- post
+    done ENUM EnumDone DEFAULT 0,       -- 0: 绑定，1: 无成本已处理，2: 有成本已处理
 );

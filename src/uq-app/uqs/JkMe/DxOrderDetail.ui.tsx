@@ -39,11 +39,18 @@ const fields = {
 		"widget": "number",
 		"label": "CostPrice"
 	} as FieldItemNum,
+	bottomPrice: {
+		"name": "bottomPrice",
+		"type": "number",
+		"isKey": false,
+		"widget": "number",
+		"label": "BottomPrice"
+	} as FieldItemNum,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.deliverDone, fields.receiveDone, fields.return, fields.costPrice, 
+	fields.deliverDone, fields.receiveDone, fields.return, fields.costPrice, fields.bottomPrice, 
 ];
 
 export const ui: UI = {
