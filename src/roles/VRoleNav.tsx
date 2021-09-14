@@ -8,7 +8,7 @@ export abstract class VRoleNav<T extends CUqBase> extends View<T> {
 	protected get icon():JSX.Element {
 		return <FA name={this.iconName} 
 				size="lg" 
-				className={'mr-3 ' + this.iconColor} />
+				className={'me-3 ' + this.iconColor} />
 	}
 	render() {
 		return <LMR className="px-3 py-2 w-100 cursor-pointer align-items-center"

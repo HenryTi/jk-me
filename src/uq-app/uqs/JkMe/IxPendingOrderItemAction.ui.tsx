@@ -1,7 +1,7 @@
 import { Res, setRes, TFunc, UI, uqStringify } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
-import { IxPendingOrderAction } from "./JkMe";
+import { IxPendingOrderItemAction } from "./JkMe";
 
 /*--fields--*/
 const fields = {
@@ -32,7 +32,7 @@ const fieldArr: FieldItem[] = [
 ];
 
 export const ui: UI = {
-	label: "IxPendingOrderAction",
+	label: "IxPendingOrderItemAction",
 	fieldArr,
 	fields,
 };
@@ -50,6 +50,6 @@ export const t:TFunc = (str:string|JSX.Element): string|JSX.Element => {
 	return res[str as string] ?? str;
 }
 
-export function render(item: IxPendingOrderAction):JSX.Element {
+export function render(item: IxPendingOrderItemAction):JSX.Element {
 	return <>{uqStringify(item)}</>;
 };

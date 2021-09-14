@@ -1,4 +1,4 @@
-//=== UqApp builder created on Mon Sep 06 2021 22:28:09 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Tue Sep 07 2021 17:01:13 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 
@@ -193,6 +193,23 @@ export interface ResultGetItemSumDays {
 	ret: ReturnGetItemSumDaysRet[];
 }
 
+export interface ParamGetItemHistory {
+	item: any;
+	from: any;
+	to: any;
+}
+export interface ReturnGetItemHistory$page {
+	id: number;
+	track: number;
+	item: any;
+	value: number;
+	memo: string;
+	timeZone: number;
+}
+export interface ResultGetItemHistory {
+	$page: ReturnGetItemHistory$page[];
+}
+
 export interface Object {
 	id?: number;
 }
@@ -276,6 +293,7 @@ export interface DxOrderDetail {
 	receiveDone?: number;
 	return?: number;
 	costPrice?: number;
+	bottomPrice?: number;
 	$act?: number;
 }
 
@@ -292,12 +310,19 @@ export interface UserTimezone {
 	$act?: number;
 }
 
+export interface DxOrderDetailFlag {
+	id: number;
+	flagBottomPrice?: number;
+	$act?: number;
+}
+
 export interface ActParamDxOrderDetail {
 	id: number|IDXValue;
 	deliverDone?: number|IDXValue;
 	receiveDone?: number|IDXValue;
 	return?: number|IDXValue;
 	costPrice?: number|IDXValue;
+	bottomPrice?: number|IDXValue;
 	$act?: number;
 }
 
@@ -311,6 +336,12 @@ export interface ActParamDxOrderMain {
 export interface ActParamUserTimezone {
 	id: number|IDXValue;
 	timeZone?: number|IDXValue;
+	$act?: number;
+}
+
+export interface ActParamDxOrderDetailFlag {
+	id: number|IDXValue;
+	flagBottomPrice?: number|IDXValue;
 	$act?: number;
 }
 
@@ -335,6 +366,7 @@ export interface PostItem {
 export interface IxPendingOrderAction {
 	ix: number;
 	xi: number;
+	value: number;
 }
 
 export interface IxOrderBoundTo {
@@ -360,6 +392,12 @@ export interface UserSuperviseItem {
 	timeZone: number;
 }
 
+export interface IxPendingOrderItemAction {
+	ix: number;
+	xi: number;
+	value: number;
+}
+
 export interface ParamActs {
 	object?: Object[];
 	itemHistory?: ItemHistory[];
@@ -376,6 +414,7 @@ export interface ParamActs {
 	dxOrderDetail?: ActParamDxOrderDetail[];
 	dxOrderMain?: ActParamDxOrderMain[];
 	userTimezone?: ActParamUserTimezone[];
+	dxOrderDetailFlag?: ActParamDxOrderDetailFlag[];
 	userObject?: UserObject[];
 	postItemHistory?: PostItemHistory[];
 	postItem?: PostItem[];
@@ -384,6 +423,7 @@ export interface ParamActs {
 	ixPendingOrderItem?: IxPendingOrderItem[];
 	groupObject?: GroupObject[];
 	userSuperviseItem?: UserSuperviseItem[];
+	ixPendingOrderItemAction?: IxPendingOrderItemAction[];
 }
 
 
@@ -404,6 +444,7 @@ export interface UqExt extends Uq {
 	GetUserSuperviseObject: UqQuery<ParamGetUserSuperviseObject, ResultGetUserSuperviseObject>;
 	GetItemSumMonths: UqQuery<ParamGetItemSumMonths, ResultGetItemSumMonths>;
 	GetItemSumDays: UqQuery<ParamGetItemSumDays, ResultGetItemSumDays>;
+	GetItemHistory: UqQuery<ParamGetItemHistory, ResultGetItemHistory>;
 	Object: UqID<any>;
 	ItemHistory: UqID<any>;
 	OrderDetail: UqID<any>;
@@ -419,6 +460,7 @@ export interface UqExt extends Uq {
 	DxOrderDetail: UqIDX<any>;
 	DxOrderMain: UqIDX<any>;
 	UserTimezone: UqIDX<any>;
+	DxOrderDetailFlag: UqIDX<any>;
 	UserObject: UqIX<any>;
 	PostItemHistory: UqIX<any>;
 	PostItem: UqIX<any>;
@@ -427,6 +469,7 @@ export interface UqExt extends Uq {
 	IxPendingOrderItem: UqIX<any>;
 	GroupObject: UqIX<any>;
 	UserSuperviseItem: UqIX<any>;
+	IxPendingOrderItemAction: UqIX<any>;
 }
 
 export function assign(uq: any, to:string, from:any): void {
