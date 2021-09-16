@@ -12,8 +12,20 @@ ACCEPT order {
                 , a.price=price
 				, a.amount=amount;
 	}
+
     PROC ProcBusTest(mainId);
     VAR orderActionId ID = ID(OrderAction new, mainId, EnumOrderAction.orderAccept);
+
+    -- 所有的订单绑定到ManagerIT
+    VAR objManagerId ID;
+    SET objManagerId=ID(ObjectPost, Post.managerIT);
+    IF objManagerId IS NULL {
+        SET objManagerId=ID(Object new);
+        WITH ObjectPost as a ID=objManagerId SET a.post=Post.managerIT;
+    }
+    WITH IxOrderBoundTo IXX=mainId IX=Post.managerIT XI=objManagerId;
+    VAR actionOrderBoundManagerIT ID = ID(OrderAction new, mainId, EnumOrderAction.orderBoundManagerIT);
+
     SCHEDULE ActOrderAction DELAY 1;
 }
 ACCEPT [deliver-done] {

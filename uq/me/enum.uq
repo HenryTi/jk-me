@@ -1,0 +1,148 @@
+-- 业务科目
+ENUM Item (
+    orderDeliver                = 1010,             -- 订单发货，value是数量
+    orderAmount                 = 1011,             -- 订单金额，value是应收金额
+    orderProfit                 = 1012,             -- 订单毛利，value是毛利润
+    orderReturn                 = 1020,             -- 订单退货
+    orderReceive                = 1030,             -- 订单收款
+    orderReceiveReturn          = 1040,             -- 订单退款
+
+    commissionFromProfit        = 1110,             -- 订单毛利提成
+    commissionFromAmount        = 1120,             -- 订单销售额提成
+    
+    customerPoint               = 2010,             -- 客户普通积分
+);
+
+-- 业务岗位
+ENUM Post (
+    none                        = 0,
+
+    staff                       = 1010,
+    staffSales                  = 1100,
+    manager                     = 2010,
+    managerIT                   = 2100,
+    agent                       = 7010,
+    agentSales                  = 7100,
+    distributor                 = 7500,
+    distributorSales            = 7501,
+    customer                    = 8010,
+);
+
+ENUM EnumOrderAction (
+    none                        = 0,
+	deliverDone                 = 1, 
+	receiveDone                 = 2,
+	return                      = 3,
+    orderMain                   = 1000,
+    orderAccept                 = 1001,
+    orderCost                   = 1002,
+    orderBoundStaffSales        = 1101,
+    orderBoundAgent             = 1102,
+    orderBoundDistributor       = 1103,
+    orderBoundCustomer          = 1104,
+    orderBoundManagerIT         = 1120,
+);
+
+ENUM ReadyStates (
+    costNone                    = 0x0001,
+    cost                        = 0x0002,
+);
+
+ENUM EnumDone (
+    withCost                    = 0x0001,
+    withoutCost                 = 0x0002,
+);
+
+
+ID ItemTitle ver 0.1 CONST (
+    id small,
+    title CHAR(50),
+    vice CHAR(100),
+    unit CHAR(10),
+    fixed TINYINT DEFAULT 2,
+)
++ (id, title, vice, unit, fixed)
+VALUES 
+(Item.orderDeliver, '发货', '已发货金额', '元', 2),
+(Item.orderAmount, '销售额', null, '元', 2),
+(Item.orderProfit, '毛利', null, '元', 2),
+(Item.orderReturn, '退货', null, '元', 2),
+(Item.orderReceive, '收款', null, '元', 2),
+(Item.orderReceiveReturn, '退款', null, '元', 2),
+(Item.commissionFromProfit, '订单毛利提成', null, '元', 2),
+(Item.commissionFromAmount, '订单销售额提成', null, '元', 2),
+(Item.customerPoint, '客户积分', null, '点', 2)
+;
+
+ID PostTitle ver 0.1 CONST (
+    id small,
+    title CHAR(50),
+    vice CHAR(100),
+)
++ (id, title, vice)
+VALUES
+(Post.staff, '职员', null),
+(Post.staffSales, '销售员', null),
+(Post.manager, '经理', null),
+(Post.managerIT, 'IT总监', null),
+(Post.agent, '轻代理', null),
+(Post.agentSales, '轻代理销售员', null),
+(Post.customer, '顾客', null)
+;
+
+ID PostBound ver 0.5 CONST (
+    id,
+    action ENUM EnumOrderAction,
+    post ENUM Post,
+    item ENUM Item,                     -- item to itemHistory
+    itemToObj ENUM Item,                -- item to PostItemHistory
+    ratio DEC(6,2) DEFAULT 100,         -- 百分比，从itemHistory的value，折算到PostItemHistory, 未来有可能是分段公式
+    INDEX action_post(action, post),
+)
++ (action, post, item, itemToObj, ratio)
+VALUES
+-- EnumOrderAction.deliverDone
+(EnumOrderAction.deliverDone, Post.staffSales, Item.orderAmount, Item.orderAmount, null),
+(EnumOrderAction.deliverDone, Post.staffSales, Item.orderProfit, Item.commissionFromProfit, 4),
+(EnumOrderAction.deliverDone, Post.managerIT, Item.orderAmount, Item.commissionFromAmount, 0.1),
+
+-- EnumOrderAction.receiveDone
+(EnumOrderAction.receiveDone, Post.staffSales, Item.orderProfit, Item.commissionFromProfit, 4),
+
+/*
+(Post.staff, ReadyStates.cost, 'BoundStaff'),
+(Post.manager, ReadyStates.cost, 'BoundManager'),
+(Post.managerIT, ReadyStates.cost, 'BoundManagerIT'),
+(Post.agent, ReadyStates.cost, 'BoundAgent'),
+(Post.agentSales, ReadyStates.cost, 'BoundAgentSales'),
+(Post.distributor, ReadyStates.cost, 'BoundDistributor'),
+(Post.distributorSales, ReadyStates.cost, 'BoundDistributorSales'),
+(Post.customer, ReadyStates.cost, 'BoundCustomer')
+*/
+;
+
+ID ItemReadyStates CONST (
+    id small,                           -- Enum Item
+    readyStates ENUM ReadyStates,
+)
++ (id, readyStates)
+VALUES
+(Item.orderAmount, ReadyStates.costNone),
+(Item.orderProfit, ReadyStates.cost),
+;
+
+QUERY GetItemTitles()
+RETURNS ret (
+    #ItemTitle
+) {
+    INTO ret SELECT id, title, vice, unit, fixed
+        FROM ItemTitle;
+};
+
+QUERY GetPostTitles()
+RETURNS ret (
+    #PostTitle
+) {
+    INTO ret SELECT id, title, vice
+        FROM PostTitle;
+};

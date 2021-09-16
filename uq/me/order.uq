@@ -1,27 +1,3 @@
-ENUM EnumOrderAction (
-    none                        = 0,
-	deliverDone                 = 1, 
-	receiveDone                 = 2,
-	return                      = 3,
-    orderMain                   = 1000,
-    orderAccept                 = 1001,
-    orderCost                   = 1002,
-    orderBoundStaffSales        = 1101,
-    orderBoundAgent             = 1102,
-    orderBoundDistributor       = 1103,
-    orderBoundCustomer          = 1104,
-);
-
-ENUM ReadyStates (
-    costNone                    = 0x0001,
-    cost                        = 0x0002,
-);
-
-ENUM EnumDone (
-    withCost                    = 0x0001,
-    withoutCost                 = 0x0002,
-);
-
 ID OrderMain ver 0.5 GLOBAL (
 	id,
 	KEY no,

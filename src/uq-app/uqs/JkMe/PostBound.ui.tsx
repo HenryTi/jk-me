@@ -2,7 +2,7 @@
 import { Res, setRes, TFunc, UI, uqStringify } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
-import { PostProc } from "./JkMe";
+import { PostBound } from "./JkMe";
 
 /*--fields--*/
 const fields = {
@@ -12,20 +12,15 @@ const fields = {
 		"isKey": false,
 		"label": "Id"
 	} as FieldItemId,
-	post: {
-		"name": "post",
-		"isKey": false,
-		"label": "Post"
-	} as undefined,
 	action: {
 		"name": "action",
 		"isKey": false,
 		"label": "Action"
 	} as undefined,
-	readyStates: {
-		"name": "readyStates",
+	post: {
+		"name": "post",
 		"isKey": false,
-		"label": "ReadyStates"
+		"label": "Post"
 	} as undefined,
 	item: {
 		"name": "item",
@@ -37,15 +32,22 @@ const fields = {
 		"isKey": false,
 		"label": "ItemToObj"
 	} as undefined,
+	ratio: {
+		"name": "ratio",
+		"type": "number",
+		"isKey": false,
+		"widget": "number",
+		"label": "Ratio"
+	} as FieldItemNum,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.post, fields.action, fields.readyStates, fields.item, fields.itemToObj, 
+	fields.action, fields.post, fields.item, fields.itemToObj, fields.ratio, 
 ];
 
 export const ui: UI = {
-	label: "PostProc",
+	label: "PostBound",
 	fieldArr,
 	fields,
 };
@@ -63,6 +65,6 @@ export const t:TFunc = (str:string|JSX.Element): string|JSX.Element => {
 	return res[str as string] ?? str;
 }
 
-export function render(item: PostProc):JSX.Element {
+export function render(item: PostBound):JSX.Element {
 	return <>{uqStringify(item)}</>;
 };

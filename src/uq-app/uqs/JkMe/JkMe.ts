@@ -1,4 +1,4 @@
-//=== UqApp builder created on Wed Sep 15 2021 15:26:10 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Thu Sep 16 2021 16:31:59 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 
@@ -43,7 +43,8 @@ export enum EnumOrderAction {
 	orderBoundStaffSales = 1101,
 	orderBoundAgent = 1102,
 	orderBoundDistributor = 1103,
-	orderBoundCustomer = 1104
+	orderBoundCustomer = 1104,
+	orderBoundManagerIT = 1120
 }
 
 export enum EnumUserObjectRelation {
@@ -320,15 +321,6 @@ export interface ObjectAgent {
 	agent: number;
 }
 
-export interface PostProc {
-	id?: number;
-	post: any;
-	action: any;
-	readyStates: any;
-	item: any;
-	itemToObj: any;
-}
-
 export interface OrderAction {
 	id?: number;
 	actionId: number;
@@ -336,6 +328,20 @@ export interface OrderAction {
 	orderDetail: number;
 	value: number;
 	item: any;
+}
+
+export interface ItemReadyStates {
+	id?: number;
+	readyStates: any;
+}
+
+export interface PostBound {
+	id?: number;
+	action: any;
+	post: any;
+	item: any;
+	itemToObj: any;
+	ratio: number;
 }
 
 export interface DxOrderDetail {
@@ -409,13 +415,6 @@ export interface PostItemHistory {
 	action: any;
 }
 
-export interface PostItem {
-	ixx: number;
-	ix: number;
-	xi: number;
-	ratio: number;
-}
-
 export interface IxOrderBoundTo {
 	ixx: number;
 	ix: number;
@@ -454,15 +453,15 @@ export interface ParamActs {
 	group?: Group[];
 	objectDistributor?: ObjectDistributor[];
 	objectAgent?: ObjectAgent[];
-	postProc?: PostProc[];
 	orderAction?: OrderAction[];
+	itemReadyStates?: ItemReadyStates[];
+	postBound?: PostBound[];
 	dxOrderDetail?: ActParamDxOrderDetail[];
 	dxOrderMain?: ActParamDxOrderMain[];
 	userTimezone?: ActParamUserTimezone[];
 	dxOrderAction?: ActParamDxOrderAction[];
 	userObject?: UserObject[];
 	postItemHistory?: PostItemHistory[];
-	postItem?: PostItem[];
 	ixOrderBoundTo?: IxOrderBoundTo[];
 	groupObject?: GroupObject[];
 	userSuperviseItem?: UserSuperviseItem[];
@@ -502,15 +501,15 @@ export interface UqExt extends Uq {
 	Group: UqID<any>;
 	ObjectDistributor: UqID<any>;
 	ObjectAgent: UqID<any>;
-	PostProc: UqID<any>;
 	OrderAction: UqID<any>;
+	ItemReadyStates: UqID<any>;
+	PostBound: UqID<any>;
 	DxOrderDetail: UqIDX<any>;
 	DxOrderMain: UqIDX<any>;
 	UserTimezone: UqIDX<any>;
 	DxOrderAction: UqIDX<any>;
 	UserObject: UqIX<any>;
 	PostItemHistory: UqIX<any>;
-	PostItem: UqIX<any>;
 	IxOrderBoundTo: UqIX<any>;
 	GroupObject: UqIX<any>;
 	UserSuperviseItem: UqIX<any>;
