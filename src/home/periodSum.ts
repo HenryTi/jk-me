@@ -44,7 +44,8 @@ abstract class Period {
     get hasNext(): boolean {
         let date = new Date();
         date.setHours(0, 0, 0, 0);
-        return this.to < date;
+        date.setDate(date.getDate()+1);
+        return this.to <= date;
     }
     abstract render(): string;
 }
@@ -52,7 +53,7 @@ abstract class Period {
 class DayPeriod extends Period {
     init(): void {
         this.type = EnumPeriod.day;
-        this.from.setDate(this.to.getDate()-1);
+        this.to.setDate(this.from.getDate()+1);
     }
     prev(): void {
         this.to = new Date(this.to.setDate(this.to.getDate()-1));

@@ -1,38 +1,32 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Res, setRes, TFunc, UI, uqStringify } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
-import { IxPendingOrderAction } from "./JkMe";
+import { ObjectDistributor } from "./JkMe";
 
 /*--fields--*/
 const fields = {
-	ix: {
-		"name": "ix",
+	id: {
+		"name": "id",
 		"type": "id",
 		"isKey": false,
-		"label": "Ix"
+		"label": "Id"
 	} as FieldItemId,
-	xi: {
-		"name": "xi",
+	distributor: {
+		"name": "distributor",
 		"type": "id",
-		"isKey": false,
-		"label": "Xi"
+		"isKey": true,
+		"label": "Distributor"
 	} as FieldItemId,
-	value: {
-		"name": "value",
-		"type": "number",
-		"isKey": false,
-		"widget": "number",
-		"label": "Value"
-	} as FieldItemNum,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.xi, fields.value, 
+	fields.distributor, 
 ];
 
 export const ui: UI = {
-	label: "IxPendingOrderAction",
+	label: "ObjectDistributor",
 	fieldArr,
 	fields,
 };
@@ -50,6 +44,6 @@ export const t:TFunc = (str:string|JSX.Element): string|JSX.Element => {
 	return res[str as string] ?? str;
 }
 
-export function render(item: IxPendingOrderAction):JSX.Element {
+export function render(item: ObjectDistributor):JSX.Element {
 	return <>{uqStringify(item)}</>;
 };
