@@ -148,8 +148,9 @@ PROC ProcBoundPost (
 ) {
     LOG CONCAT_WS(' ', action, post, to, actionId, readyStates) SUBJECT 'ProcBoundPost Parameters';
     FOR (VAR item ENUM Item, itemToObj ENUM Item
-        OF SELECT a.item, a.itemToObj FROM PostProc as a 
-            WHERE a.post=post AND a.action=action AND a.readyStates=readyStates)
+        OF SELECT a.item, a.itemToObj 
+            FROM PostProc as a JOIN ItemReadyStates as b ON a.item=b.id
+            WHERE a.post=post AND a.action=action AND b.readyStates=readyStates)
     {
         VAR itemHistoryId ID = ID(ItemHistory, actionId, item);
         IF itemHistoryId IS NULL { CONTINUE; }
