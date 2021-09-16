@@ -54,23 +54,6 @@ export class VHome extends VPage<CHome> {
 		let {hasNext} = period;
 		let left = <div className="cursor-pointer p-3" onClick={prev}><FA name="angle-left" /></div>;
 		let right = <div className={' p-3 ' + (hasNext? ' cursor-pointer ':' text-light ')} onClick={next}><FA name="angle-right" /></div>
-		/*
-		let content:any;
-		switch(type) {
-			case EnumPeriod.day:
-				content = <>{from.toLocaleDateString()}</>;
-				break;
-			case EnumPeriod.week:
-				content = <>{from.toLocaleDateString()} - {to.toLocaleDateString()}</>;
-				break;
-			case EnumPeriod.month:
-				content = <>{from.getFullYear()}年{from.getMonth()+1}月</>;
-				break;
-			case EnumPeriod.year:
-				content = <>{from.getFullYear()}年</>;
-				break;
-		}
-		*/
 		return <div className="d-flex">
 			{left}
 			<div className="text-center flex-fill py-3">{period.render()}</div>
@@ -101,8 +84,8 @@ export class VHome extends VPage<CHome> {
 	private renderItemPeriodSum = (ips: ItemPeriodSum, index: number) => {
 		let {itemTitles} = this.controller.cApp;
 		let {item, sumValue} = ips;
-		let {title, vice} = itemTitles[item];
-		return <LMR className="px-3 py-2 w-100" right={<div>{sumValue}</div>}>
+		let {title, vice, fixed} = itemTitles[item];
+		return <LMR className="px-3 py-2 w-100" right={<div>{sumValue.toFixed(fixed)}</div>}>
 			{title} <small className="text-muted ms-3">{vice}</small>
 		</LMR>;
 	}

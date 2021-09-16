@@ -9,6 +9,7 @@ ID ItemTitle ver 0.1 CONST (
 + (id, title, vice, unit, fixed)
 VALUES 
 (Item.orderDeliver, '发货', '已发货金额', '元', 2),
+(Item.orderAmount, '销售额', null, '元', 2),
 (Item.orderProfit, '毛利', null, '元', 2),
 (Item.orderReturn, '退货', null, '元', 2),
 (Item.orderReceive, '收款', null, '元', 2),
@@ -40,13 +41,12 @@ ID PostProc ver 0.5 CONST (
     action ENUM EnumOrderAction,
     readyStates ENUM ReadyStates,
     item ENUM Item,                     -- item to itemHistory
-    itemToObj ENUM Item,                -- item to ObjectHistory
+    itemToObj ENUM Item,                -- item to PostItemHistory
     INDEX post_action(post, action),
 )
 + (post, action, readyStates, item, itemToObj)
 VALUES
-(Post.none, EnumOrderAction.deliverDone, ReadyStates.costNone, Item.orderDeliver, null),
-(Post.staffSales, EnumOrderAction.deliverDone, ReadyStates.costNone, Item.orderDeliver, Item.orderDeliver),
+(Post.staffSales, EnumOrderAction.deliverDone, ReadyStates.costNone, Item.orderAmount, Item.orderAmount),
 (Post.staffSales, EnumOrderAction.deliverDone, ReadyStates.cost, Item.orderProfit, Item.commissionFromProfit),
 (Post.staffSales, EnumOrderAction.receiveDone, ReadyStates.cost, Item.orderProfit, Item.commissionFromProfit),
 /*

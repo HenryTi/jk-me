@@ -10,28 +10,37 @@ CONST JkOrderTest={
     date: unix_timestamp() + 6,
 };
 
-ACT BusTest ver 0.3 (
+ACT BusTest ver 0.8 (
     orderMain ID
 ) {
+    PROC ProcBusTest(orderMain);
+};
+
+PROC ProcBusTest(
+    orderMain ID
+) {
+    /*
     BUS JkOrderBus.[deliver-done] SET warehouse=-1, id=orderMain;
     FOR (VAR detailId ID, value DEC(18,4) OF 
         SELECT id as detailId, quantity as value FROM OrderDetail WHERE main=orderMain)
     {
         BUS JkOrderBus.[deliver-done] INTO detail ADD id=detailId, value=value;
     }
+    */
 
     BUS JkOrderBus.[order-cost-price] SET order=orderMain;
     FOR (VAR detailId ID, price DEC(18,4) OF 
         SELECT id as detailId, price FROM OrderDetail WHERE main=orderMain)
     {
+        VAR cost DEC(18,4) = price*0.85;
         BUS JkOrderBus.[order-cost-price] INTO detail 
-            ADD [order-detail]=detailId, [cost-price]=price*0.15;
+            ADD [order-detail]=detailId, [cost-price]=cost;
     }
 
     BUS JkOrderBus.[order-bound-staff-sales] SET order=orderMain;
     BUS JkOrderBus.[order-bound-staff-sales] INTO to ADD id=999;
 
-    BUS JkOrderBus.[deliver-done] LOCAL;
+    -- BUS JkOrderBus.[deliver-done] LOCAL;
     BUS JkOrderBus.[order-cost-price] LOCAL;
     BUS JkOrderBus.[order-bound-staff-sales] LOCAL;
 };

@@ -1,7 +1,8 @@
 -- 业务科目
 ENUM Item (
-    orderDeliver                = 1010,             -- 订单发货
-    orderProfit                 = 1011,             -- 订单毛利
+    orderDeliver                = 1010,             -- 订单发货，value是数量
+    orderAmount                 = 1011,             -- 订单金额，value是应收金额
+    orderProfit                 = 1012,             -- 订单毛利，value是毛利润
     orderReturn                 = 1020,             -- 订单退货
     orderReceive                = 1030,             -- 订单收款
     orderReceiveReturn          = 1040,             -- 订单退款
@@ -29,10 +30,9 @@ ENUM Post (
 
 IX PostItem ver 0.1 (
     ixx ENUM Post,              -- 岗位
-    ix ENUM Item,               -- item to ObjectHistory
-    xi ENUM EnumOrderAction,    -- 操作
-    ratio DEC(6,2),             -- 百分比，从item的value，折算到ObjectHistory, 未来有可能是分段公式
-    -- INDEX item_post (item),
+    ix ENUM Item,               -- item to PostItemHistory
+    xi ENUM Item,               -- item to ItemHistory
+    ratio DEC(6,2),             -- 百分比，从itemHistory的value，折算到PostItemHistory, 未来有可能是分段公式
 );
 
 ID Object (

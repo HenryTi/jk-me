@@ -1,4 +1,4 @@
-//=== UqApp builder created on Tue Sep 07 2021 17:01:13 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Wed Sep 15 2021 15:26:10 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 
@@ -9,34 +9,57 @@ import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonv
 
 export enum Item {
 	orderDeliver = 1010,
+	orderAmount = 1011,
+	orderProfit = 1012,
 	orderReturn = 1020,
 	orderReceive = 1030,
 	orderReceiveReturn = 1040,
-	orderProfitCommission = 1110,
-	orderAmountCommission = 1120,
-	orderCustomerPoint = 2010
+	commissionFromProfit = 1110,
+	commissionFromAmount = 1120,
+	customerPoint = 2010
 }
 
 export enum Post {
+	none = 0,
 	staff = 1010,
 	staffSales = 1100,
 	manager = 2010,
 	managerIT = 2100,
-	client = 7010,
-	clientSales = 7100,
+	agent = 7010,
+	agentSales = 7100,
+	distributor = 7500,
+	distributorSales = 7501,
 	customer = 8010
 }
 
 export enum EnumOrderAction {
+	none = 0,
 	deliverDone = 1,
 	receiveDone = 2,
-	return = 3
+	return = 3,
+	orderMain = 1000,
+	orderAccept = 1001,
+	orderCost = 1002,
+	orderBoundStaffSales = 1101,
+	orderBoundAgent = 1102,
+	orderBoundDistributor = 1103,
+	orderBoundCustomer = 1104
 }
 
 export enum EnumUserObjectRelation {
 	self = 0,
 	other = 1,
 	group = 2
+}
+
+export enum ReadyStates {
+	costNone = 1,
+	cost = 2
+}
+
+export enum EnumDone {
+	withCost = 1,
+	withoutCost = 2
 }
 
 export interface Tuid$sheet {
@@ -69,9 +92,9 @@ export interface ParamBusTest {
 export interface ResultBusTest {
 }
 
-export interface ParamActOrder {
+export interface ParamActOrderAction {
 }
-export interface ResultActOrder {
+export interface ResultActOrderAction {
 }
 
 export interface Param$poked {
@@ -287,20 +310,46 @@ export interface Group {
 	name: string;
 }
 
+export interface ObjectDistributor {
+	id?: number;
+	distributor: number;
+}
+
+export interface ObjectAgent {
+	id?: number;
+	agent: number;
+}
+
+export interface PostProc {
+	id?: number;
+	post: any;
+	action: any;
+	readyStates: any;
+	item: any;
+	itemToObj: any;
+}
+
+export interface OrderAction {
+	id?: number;
+	actionId: number;
+	action: any;
+	orderDetail: number;
+	value: number;
+	item: any;
+}
+
 export interface DxOrderDetail {
 	id: number;
 	deliverDone?: number;
 	receiveDone?: number;
 	return?: number;
 	costPrice?: number;
-	bottomPrice?: number;
 	$act?: number;
 }
 
 export interface DxOrderMain {
 	id: number;
-	flagBoundTo?: number;
-	flagCostPrice?: number;
+	readyStates?: any;
 	$act?: number;
 }
 
@@ -310,9 +359,11 @@ export interface UserTimezone {
 	$act?: number;
 }
 
-export interface DxOrderDetailFlag {
+export interface DxOrderAction {
 	id: number;
-	flagBottomPrice?: number;
+	orderMain?: number;
+	orderDetail?: number;
+	done?: any;
 	$act?: number;
 }
 
@@ -322,14 +373,12 @@ export interface ActParamDxOrderDetail {
 	receiveDone?: number|IDXValue;
 	return?: number|IDXValue;
 	costPrice?: number|IDXValue;
-	bottomPrice?: number|IDXValue;
 	$act?: number;
 }
 
 export interface ActParamDxOrderMain {
 	id: number|IDXValue;
-	flagBoundTo?: number|IDXValue;
-	flagCostPrice?: number|IDXValue;
+	readyStates?: any|IDXValue;
 	$act?: number;
 }
 
@@ -339,9 +388,11 @@ export interface ActParamUserTimezone {
 	$act?: number;
 }
 
-export interface ActParamDxOrderDetailFlag {
+export interface ActParamDxOrderAction {
 	id: number|IDXValue;
-	flagBottomPrice?: number|IDXValue;
+	orderMain?: number|IDXValue;
+	orderDetail?: number|IDXValue;
+	done?: any|IDXValue;
 	$act?: number;
 }
 
@@ -355,30 +406,20 @@ export interface PostItemHistory {
 	ix: number;
 	xi: number;
 	value: number;
+	action: any;
 }
 
 export interface PostItem {
+	ixx: number;
 	ix: number;
 	xi: number;
 	ratio: number;
-}
-
-export interface IxPendingOrderAction {
-	ix: number;
-	xi: number;
-	value: number;
 }
 
 export interface IxOrderBoundTo {
 	ixx: number;
 	ix: number;
 	xi: number;
-}
-
-export interface IxPendingOrderItem {
-	ix: number;
-	xi: number;
-	value: number;
 }
 
 export interface GroupObject {
@@ -392,10 +433,10 @@ export interface UserSuperviseItem {
 	timeZone: number;
 }
 
-export interface IxPendingOrderItemAction {
+export interface IxOrderActionBoundPostDone {
 	ix: number;
 	xi: number;
-	value: number;
+	done: any;
 }
 
 export interface ParamActs {
@@ -411,19 +452,21 @@ export interface ParamActs {
 	objectCustomer?: ObjectCustomer[];
 	objectPostItem?: ObjectPostItem[];
 	group?: Group[];
+	objectDistributor?: ObjectDistributor[];
+	objectAgent?: ObjectAgent[];
+	postProc?: PostProc[];
+	orderAction?: OrderAction[];
 	dxOrderDetail?: ActParamDxOrderDetail[];
 	dxOrderMain?: ActParamDxOrderMain[];
 	userTimezone?: ActParamUserTimezone[];
-	dxOrderDetailFlag?: ActParamDxOrderDetailFlag[];
+	dxOrderAction?: ActParamDxOrderAction[];
 	userObject?: UserObject[];
 	postItemHistory?: PostItemHistory[];
 	postItem?: PostItem[];
-	ixPendingOrderAction?: IxPendingOrderAction[];
 	ixOrderBoundTo?: IxOrderBoundTo[];
-	ixPendingOrderItem?: IxPendingOrderItem[];
 	groupObject?: GroupObject[];
 	userSuperviseItem?: UserSuperviseItem[];
-	ixPendingOrderItemAction?: IxPendingOrderItemAction[];
+	ixOrderActionBoundPostDone?: IxOrderActionBoundPostDone[];
 }
 
 
@@ -433,7 +476,7 @@ export interface UqExt extends Uq {
 	$sheet: UqTuid<Tuid$sheet>;
 	$user: UqTuid<Tuid$user>;
 	BusTest: UqAction<ParamBusTest, ResultBusTest>;
-	ActOrder: UqAction<ParamActOrder, ResultActOrder>;
+	ActOrderAction: UqAction<ParamActOrderAction, ResultActOrderAction>;
 	$poked: UqQuery<Param$poked, Result$poked>;
 	UserItemPeriodSum: UqQuery<ParamUserItemPeriodSum, ResultUserItemPeriodSum>;
 	UserItemHistory: UqQuery<ParamUserItemHistory, ResultUserItemHistory>;
@@ -457,19 +500,21 @@ export interface UqExt extends Uq {
 	ObjectCustomer: UqID<any>;
 	ObjectPostItem: UqID<any>;
 	Group: UqID<any>;
+	ObjectDistributor: UqID<any>;
+	ObjectAgent: UqID<any>;
+	PostProc: UqID<any>;
+	OrderAction: UqID<any>;
 	DxOrderDetail: UqIDX<any>;
 	DxOrderMain: UqIDX<any>;
 	UserTimezone: UqIDX<any>;
-	DxOrderDetailFlag: UqIDX<any>;
+	DxOrderAction: UqIDX<any>;
 	UserObject: UqIX<any>;
 	PostItemHistory: UqIX<any>;
 	PostItem: UqIX<any>;
-	IxPendingOrderAction: UqIX<any>;
 	IxOrderBoundTo: UqIX<any>;
-	IxPendingOrderItem: UqIX<any>;
 	GroupObject: UqIX<any>;
 	UserSuperviseItem: UqIX<any>;
-	IxPendingOrderItemAction: UqIX<any>;
+	IxOrderActionBoundPostDone: UqIX<any>;
 }
 
 export function assign(uq: any, to:string, from:any): void {

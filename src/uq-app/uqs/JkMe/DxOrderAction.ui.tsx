@@ -1,7 +1,8 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Res, setRes, TFunc, UI, uqStringify } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
-import { DxOrderDetailFlag } from "./JkMe";
+import { DxOrderAction } from "./JkMe";
 
 /*--fields--*/
 const fields = {
@@ -11,20 +12,32 @@ const fields = {
 		"isKey": false,
 		"label": "Id"
 	} as FieldItemId,
-	flagBottomPrice: {
-		"name": "flagBottomPrice",
+	orderMain: {
+		"name": "orderMain",
+		"type": "id",
 		"isKey": false,
-		"label": "FlagBottomPrice"
+		"label": "OrderMain"
+	} as FieldItemId,
+	orderDetail: {
+		"name": "orderDetail",
+		"type": "id",
+		"isKey": false,
+		"label": "OrderDetail"
+	} as FieldItemId,
+	done: {
+		"name": "done",
+		"isKey": false,
+		"label": "Done"
 	} as undefined,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.flagBottomPrice, 
+	fields.orderMain, fields.orderDetail, fields.done, 
 ];
 
 export const ui: UI = {
-	label: "DxOrderDetailFlag",
+	label: "DxOrderAction",
 	fieldArr,
 	fields,
 };
@@ -42,6 +55,6 @@ export const t:TFunc = (str:string|JSX.Element): string|JSX.Element => {
 	return res[str as string] ?? str;
 }
 
-export function render(item: DxOrderDetailFlag):JSX.Element {
+export function render(item: DxOrderAction):JSX.Element {
 	return <>{uqStringify(item)}</>;
 };

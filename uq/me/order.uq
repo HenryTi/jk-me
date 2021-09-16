@@ -5,10 +5,11 @@ ENUM EnumOrderAction (
 	return                      = 3,
     orderMain                   = 1000,
     orderAccept                 = 1001,
-    orderBoundStaffSales        = 1002,
-    orderBoundAgent             = 1003,
-    orderBoundDistributor       = 1004,
-    orderBoundCustomer          = 1005,
+    orderCost                   = 1002,
+    orderBoundStaffSales        = 1101,
+    orderBoundAgent             = 1102,
+    orderBoundDistributor       = 1103,
+    orderBoundCustomer          = 1104,
 );
 
 ENUM ReadyStates (
@@ -27,7 +28,7 @@ ID OrderMain ver 0.5 GLOBAL (
     webUser ID,                         -- 下单user注册账号
 	customer ID,                        -- customer的个人的ID
     currency ID,
-	sumAmount DEC(12,2),	            -- 订单总金额。各行金额
+	sumAmount DEC(18,4),	            -- 订单总金额。各行金额
 );
 
 ID OrderDetail ver 0.5 GLOBAL (
@@ -35,14 +36,14 @@ ID OrderDetail ver 0.5 GLOBAL (
 	main ID OrderMain,
 	item ID,
 	product ID,
-	quantity DEC(12,2),
-	amount DEC(12,2),
-	price DEC(12,2),                            -- 实际成交价
+	quantity DEC(18,4),
+	amount DEC(18,4),
+	price DEC(18,4),                            -- 实际成交价
 );
 
 IDX DxOrderMain (
     id,
-    readyStates ENUM ReadyStates DEFAULT 0,     -- 按位记的准备状态
+    readyStates ENUM ReadyStates DEFAULT 1,     -- 按位记的准备状态, 无价格1，有价格2，实际值3
 );
 
 IDX DxOrderDetail (
@@ -51,7 +52,6 @@ IDX DxOrderDetail (
     receiveDone DEC(18,4) SUM,
     return DEC(18,4) SUM,
     costPrice DEC(18,4),
-    -- bottomPrice DEC(18,4),
 );
 
 ID OrderAction MINUTEID (
@@ -79,8 +79,15 @@ IX IxOrderBoundTo (
     ix ENUM Post,
     xi,					        -- to id, 
 );
+/*
 IX IxOrderBoundPost (
     ix,                                 -- order main id
+    xi ENUM Post,                       -- post
+    -- done ENUM EnumDone DEFAULT 0,       -- 0: 绑定，1: 无成本已处理，2: 有成本已处理
+);
+*/
+IX IxOrderActionBoundPostDone (
+    ix,                                 -- order action id
     xi ENUM Post,                       -- post
     done ENUM EnumDone DEFAULT 0,       -- 0: 绑定，1: 无成本已处理，2: 有成本已处理
 );
