@@ -24,16 +24,11 @@ const fields = {
 		"widget": "number",
 		"label": "Value"
 	} as FieldItemNum,
-	action: {
-		"name": "action",
-		"isKey": false,
-		"label": "Action"
-	} as undefined,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.xi, fields.value, fields.action, 
+	fields.xi, fields.value, 
 ];
 
 export const ui: UI = {

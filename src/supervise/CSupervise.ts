@@ -3,7 +3,7 @@ import { CUqBase, UQs } from "uq-app";
 import { Item, ReturnGetItemHistory$page, ReturnGetItemSumDaysRet, ReturnGetItemSumMonthsRet } from "uq-app/uqs/JkMe";
 import { VSupervise } from "./VSupervise";
 import { VItemMonthHistory } from "./VItemMonthHistory";
-import { PageItems } from "tonva-react";
+import { env, PageItems } from "tonva-react";
 import { VItemHistory } from "./VItemHistory";
 
 export class CSupervise extends CUqBase {
@@ -23,7 +23,12 @@ export class CSupervise extends CUqBase {
 	async showItemDayHistory(item: Item) {
 		if (item) this.item = item;
 		else item = this.item;
-		let ret = await this.uqs.JkMe.GetItemSumDays.query({item, date: new Date(), days: 30});
+		let ret = await this.uqs.JkMe.GetItemSumDays.query({
+			item, 
+			date: new Date(), 
+			days: 30,
+            timeZone: env.timeZone,
+		});
 		this.itemSumDays = ret.ret;
 		this.openVPage(VItemDayHistory);
 	}
@@ -31,7 +36,12 @@ export class CSupervise extends CUqBase {
 	async showItemMonthHistory(item: Item) {
 		if (item) this.item = item;
 		else item = this.item;
-		let ret = await this.uqs.JkMe.GetItemSumMonths.query({item, date: new Date(), months: 12});
+		let ret = await this.uqs.JkMe.GetItemSumMonths.query({
+			item, 
+			date: new Date(), 
+			months: 12,
+			timeZone: env.timeZone,
+		});
 		this.itemSumMonths = ret.ret;
 		this.openVPage(VItemMonthHistory);
 	}

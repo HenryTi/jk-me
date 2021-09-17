@@ -14,6 +14,7 @@ RETURNS ret (
 QUERY UserItemPeriodSum ver 0.1 (
     from DATE,
     to DATE,
+    timeZone TINYINT,
 )
 RETURNS ret (
     id ID,
@@ -22,11 +23,6 @@ RETURNS ret (
     item ENUM Item,
     value DEC(18,4)
 ) {
-    VAR timeZone TINYINT;
-    SET timeZone = a.timeZone FROM UserTimezone as a WHERE a.id=$user;
-    IF timeZone IS NULL {
-        SET timeZone = 8;       -- 北京时间
-    }
     INTO ret SELECT a.id, a.object, a.post, a.item,
         IFNULL(
             (SELECT SUM(t.value)
@@ -46,17 +42,13 @@ QUERY UserItemHistory ver 0.1 (
     objectPostItem ID ObjectPostItem,
     from DATE,
     to DATE,
+    timeZone TINYINT,
 )
 RETURNS ret (
     minuteId ID,
     track ID,
     value DEC(18,4)
 ) {
-    VAR timeZone TINYINT;
-    SET timeZone = a.timeZone FROM UserTimezone as a WHERE a.id=$user;
-    IF timeZone IS NULL {
-        SET timeZone = 8;       -- 北京时间
-    }
     INTO ret SELECT a.xi as minuteId, d.track as track, a.value
         FROM PostItemHistory AS a
             JOIN ObjectPostItem as b ON a.ix=b.id
@@ -74,16 +66,12 @@ QUERY UserItemPeriodHistory ver 0.2 (
     from DATE,
     to DATE,
     period TINYINT,         -- 0: day, 1: month
+    timeZone TINYINT,
 )
 RETURNS ret (
     date Date,
     value DEC(18,4)
 ) {
-    VAR timeZone TINYINT;
-    SET timeZone = a.timeZone FROM UserTimezone as a WHERE a.id=$user;
-    IF timeZone IS NULL {
-        SET timeZone = 8;       -- 北京时间
-    }
     INTO ret SELECT date, SUM(a.value) as value
         FROM postitemhistory AS a
             JOIN ObjectPostItem as b ON a.ix=b.id
