@@ -1,6 +1,6 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { UQs } from "uq-app";
-import { Item, ObjectPostItem, Post, ReturnUserItemHistoryRet, ReturnUserItemPeriodSumRet } from "uq-app/uqs/JkMe";
+import { Item, ObjectPostItem, Post, ReturnUserItemHistoryRet, ReturnUserItemPeriodHistoryRet, ReturnUserItemPeriodSumRet } from "uq-app/uqs/JkMe";
 
 export enum EnumPeriod {day = 0, month = 1, week = 2, year = 3}
 
@@ -9,7 +9,7 @@ export interface ItemPeriodSum extends ReturnUserItemPeriodSumRet {
 	object: number;
 	post: Post;
 	item: Item;
-	sumValue: number;
+	value: number;
 }
 
 export interface PostPeriodSum {
@@ -131,12 +131,14 @@ export class PeriodSum {
     objectPostItem: ObjectPostItem;
     itemPeriodSum: ItemPeriodSum;
     history: ReturnUserItemHistoryRet[];
+    periodHistory: ReturnUserItemPeriodHistoryRet[];
 
     constructor(uqs: UQs) {
         this.uqs = uqs;
         makeObservable(this, {
             period: observable,
             history: observable.shallow,
+            periodHistory: observable.shallow,
             postPeriodSumColl: observable.ref,
             postPeriodSumList: observable.shallow,
             internalSetPeriod: action,
@@ -192,18 +194,40 @@ export class PeriodSum {
         });
     }
 
-    async loadHistory(ips: ItemPeriodSum, sumPeriod: EnumPeriod) {
+    async loadHistory(ips: ItemPeriodSum, fromDate: Date, toDate: Date) {
+        if (!ips) {
+            ips = this.itemPeriodSum;
+        }
+        else {
+            this.itemPeriodSum = ips;
+        }
+        let {id: objectPostItem} = ips;
+      
+        let {from, to} = this.period;
+        if (fromDate) from = fromDate;
+        if (toDate) to = toDate;
+		let ret = await this.uqs.JkMe.UserItemHistory.query({
+			objectPostItem, 
+			from,
+			to,
+		});
+        runInAction(() => {
+            this.history = ret.ret;
+        });
+	}
+
+    async loadPeriodHistory(ips: ItemPeriodSum, sumPeriod: EnumPeriod) {
         this.itemPeriodSum = ips;
         let {id: objectPostItem} = ips;
         let {from, to} = this.period;
-		let ret = await this.uqs.JkMe.UserItemHistory.query({
+		let ret = await this.uqs.JkMe.UserItemPeriodHistory.query({
 			objectPostItem, 
 			from,
 			to,
 			period: sumPeriod,
 		});
         runInAction(() => {
-            this.history = ret.ret;
+            this.periodHistory = ret.ret;
         });
 	}
 

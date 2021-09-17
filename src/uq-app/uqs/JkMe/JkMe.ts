@@ -1,4 +1,4 @@
-//=== UqApp builder created on Thu Sep 16 2021 16:31:59 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Thu Sep 16 2021 17:07:50 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 
@@ -116,7 +116,7 @@ export interface ReturnUserItemPeriodSumRet {
 	object: number;
 	post: any;
 	item: any;
-	sumValue: number;
+	value: number;
 }
 export interface ResultUserItemPeriodSum {
 	ret: ReturnUserItemPeriodSumRet[];
@@ -126,11 +126,11 @@ export interface ParamUserItemHistory {
 	objectPostItem: number;
 	from: any;
 	to: any;
-	period: number;
 }
 export interface ReturnUserItemHistoryRet {
-	date: any;
-	sumValue: number;
+	minuteId: number;
+	track: number;
+	value: number;
 }
 export interface ResultUserItemHistory {
 	ret: ReturnUserItemHistoryRet[];
@@ -232,6 +232,20 @@ export interface ReturnGetItemHistory$page {
 }
 export interface ResultGetItemHistory {
 	$page: ReturnGetItemHistory$page[];
+}
+
+export interface ParamUserItemPeriodHistory {
+	objectPostItem: number;
+	from: any;
+	to: any;
+	period: number;
+}
+export interface ReturnUserItemPeriodHistoryRet {
+	date: any;
+	value: number;
+}
+export interface ResultUserItemPeriodHistory {
+	ret: ReturnUserItemPeriodHistoryRet[];
 }
 
 export interface Object {
@@ -487,6 +501,7 @@ export interface UqExt extends Uq {
 	GetItemSumMonths: UqQuery<ParamGetItemSumMonths, ResultGetItemSumMonths>;
 	GetItemSumDays: UqQuery<ParamGetItemSumDays, ResultGetItemSumDays>;
 	GetItemHistory: UqQuery<ParamGetItemHistory, ResultGetItemHistory>;
+	UserItemPeriodHistory: UqQuery<ParamUserItemPeriodHistory, ResultUserItemPeriodHistory>;
 	Object: UqID<any>;
 	ItemHistory: UqID<any>;
 	OrderDetail: UqID<any>;
