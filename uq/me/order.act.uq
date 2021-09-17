@@ -148,9 +148,10 @@ PROC ProcBoundPost (
     -- value DEC(18,4),
 ) {
     LOG CONCAT_WS(' ', action, post, to, actionId, readyStates) SUBJECT 'ProcBoundPost Parameters';
-    FOR (VAR item ENUM Item, itemToObj ENUM Item
-        OF SELECT a.item, a.itemToObj FROM PostProc as a 
-            WHERE a.post=post AND a.action=action AND a.readyStates=readyStates)
+    FOR (VAR item ENUM Item, itemToObj ENUM Item, ratio DEC(6,2)
+        OF SELECT a.item, a.itemToObj, a.ratio
+            FROM PostBound as a JOIN ItemReadyStates as b ON a.item=b.id
+            WHERE a.post=post AND a.action=action AND b.readyStates=readyStates)
     {
         VAR itemHistoryId ID = ID(ItemHistory, actionId, item);
         IF itemHistoryId IS NULL { CONTINUE; }
@@ -159,11 +160,8 @@ PROC ProcBoundPost (
 
         LOG CONCAT_WS(' ', itemHistoryId, item, itemToObj) SUBJECT 'ProcBoundPost PostItemHistory';
         VAR objectPostItemId ID = ID(ObjectPostItem new, to, post, itemToObj);
-        VAR ratio DEC(6,2) = NULL;
-        SET ratio = a.ratio FROM PostItem as a 
-            WHERE a.IXX=post AND a.IX=itemToObj AND a.XI=item;
         WITH PostItemHistory as a IX=objectPostItemId XI=itemHistoryId 
-            SET a.value=itemValue * IFNULL(ratio, 100) / 100, a.action=action;
+            SET a.value=itemValue * IFNULL(ratio, 100) / 100;
     }
 };
 

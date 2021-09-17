@@ -83,14 +83,23 @@ export class VHome extends VPage<CHome> {
 
 	private renderItemPeriodSum = (ips: ItemPeriodSum, index: number) => {
 		let {itemTitles} = this.controller.cApp;
-		let {item, sumValue} = ips;
+		let {item, value} = ips;
 		let {title, vice, fixed} = itemTitles[item];
-		return <LMR className="px-3 py-2 w-100" right={<div>{sumValue.toFixed(fixed)}</div>}>
+		return <LMR className="px-3 py-2 w-100" right={<div>{value.toFixed(fixed)}</div>}>
 			{title} <small className="text-muted ms-3">{vice}</small>
 		</LMR>;
 	}
 	
 	private onClickItemPeriodSum = (ips: ItemPeriodSum) => {
-		this.controller.showItemHistory(ips, EnumPeriod.day);
+		switch (this.controller.periodSum.period.type) {
+			case EnumPeriod.day:
+				this.controller.showItemHistory(ips, undefined, undefined);
+				break;
+			case EnumPeriod.month:
+			case EnumPeriod.week:
+			case EnumPeriod.year:
+				this.controller.showItemPeriodHistory(ips, EnumPeriod.day);
+				break;
+		}
 	}
 }

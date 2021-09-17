@@ -20,7 +20,7 @@ RETURNS ret (
     object ID,
     post ENUM Post,
     item ENUM Item,
-    sumValue DEC(18,4)
+    value DEC(18,4)
 ) {
     VAR timeZone TINYINT;
     SET timeZone = a.timeZone FROM UserTimezone as a WHERE a.id=$user;
@@ -36,7 +36,7 @@ RETURNS ret (
                     AND t.xi < minuteIdFromDate(to, timeZone)
             ),
             0
-        ) as sumValue
+        ) as value
         FROM ObjectPostItem as a
             JOIN UserObject as b ON a.object=b.xi
         WHERE b.ix=$user;
@@ -46,22 +46,50 @@ QUERY UserItemHistory ver 0.1 (
     objectPostItem ID ObjectPostItem,
     from DATE,
     to DATE,
-    period TINYINT,         -- 0: day, 1: month
 )
 RETURNS ret (
-    date Date,
-    sumValue DEC(18,4)
+    minuteId ID,
+    track ID,
+    value DEC(18,4)
 ) {
     VAR timeZone TINYINT;
     SET timeZone = a.timeZone FROM UserTimezone as a WHERE a.id=$user;
     IF timeZone IS NULL {
         SET timeZone = 8;       -- 北京时间
     }
-    INTO ret SELECT date, SUM(a.value) as sumValue
+    INTO ret SELECT a.xi as minuteId, d.track as track, a.value
+        FROM PostItemHistory AS a
+            JOIN ObjectPostItem as b ON a.ix=b.id
+            JOIN UserObject as c ON b.object=c.xi
+            JOIN ItemHistory as d ON a.xi=d.id
+        WHERE c.ix=$user
+            AND a.ix=objectPostItem
+            AND a.xi >= minuteIdFromDate(from, timeZone)
+            AND a.xi < minuteIdFromDate(to, timeZone)
+        Order BY a.xi DESC;
+};
+
+QUERY UserItemPeriodHistory ver 0.2 (
+    objectPostItem ID ObjectPostItem,
+    from DATE,
+    to DATE,
+    period TINYINT,         -- 0: day, 1: month
+)
+RETURNS ret (
+    date Date,
+    value DEC(18,4)
+) {
+    VAR timeZone TINYINT;
+    SET timeZone = a.timeZone FROM UserTimezone as a WHERE a.id=$user;
+    IF timeZone IS NULL {
+        SET timeZone = 8;       -- 北京时间
+    }
+    INTO ret SELECT date, SUM(a.value) as value
         FROM postitemhistory AS a
             JOIN ObjectPostItem as b ON a.ix=b.id
             JOIN UserObject as c ON b.object=c.xi
         WHERE c.ix=$user
+            AND a.ix=objectPostItem
             AND a.xi >= minuteIdFromDate(from, timeZone)
             AND a.xi < minuteIdFromDate(to, timeZone)
         GROUP BY dateFromMinuteId(a.xi, timeZone, period) as date;
