@@ -1,8 +1,8 @@
-BUS JkOrderBus ver 0.7 from 百灵威系统工程部/[jk-order-1]
+BUS JkOrderBus ver 0.7 from 百灵威系统工程部/[jk-order]
 ACCEPT order {
 	VAR mainId ID;
 	SET mainId = id;
-	WITH OrderMain as a ID=mainId SET a.no=no, a.customer=customer;
+	WITH OrderMain as a ID=mainId SET a.no=no, a.customer=customerAccount;
 	FOR detail {
 		WITH OrderDetail as a 
 			ID = id
@@ -30,7 +30,7 @@ ACCEPT order {
 }
 ACCEPT [deliver-done] {
 	FOR detail {
-		WITH DxOrderDetail ID=orderDetail SET deliverDone=value;
+		WITH DxOrderDetail ID=orderDetail SET deliverDone += value;
         PROC SaveOrderAction(id, EnumOrderAction.deliverDone, orderDetail, value, Item.orderDeliver);
 	}
     SCHEDULE ActOrderAction DELAY 1;

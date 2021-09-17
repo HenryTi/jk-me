@@ -24,7 +24,7 @@ IDX DxOrderMain (
 
 IDX DxOrderDetail (
     id,
-    deliverDone DEC(18,4),
+    deliverDone DEC(18,4) SUM,
     receiveDone DEC(18,4) SUM,
     return DEC(18,4) SUM,
     costPrice DEC(18,4),
