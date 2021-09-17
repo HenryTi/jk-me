@@ -13,7 +13,7 @@ ACCEPT order {
 				, a.amount=amount;
 	}
 
-    PROC ProcBusTest(mainId);
+--    PROC ProcBusTest(mainId);
     VAR orderActionId ID = ID(OrderAction new, mainId, EnumOrderAction.orderAccept);
 
     -- 所有的订单绑定到ManagerIT

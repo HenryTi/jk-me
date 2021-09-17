@@ -1,4 +1,4 @@
-//=== UqApp builder created on Thu Sep 16 2021 17:07:50 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Fri Sep 17 2021 00:27:49 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 
@@ -110,6 +110,7 @@ export interface Result$poked {
 export interface ParamUserItemPeriodSum {
 	from: any;
 	to: any;
+	timeZone: number;
 }
 export interface ReturnUserItemPeriodSumRet {
 	id: number;
@@ -126,6 +127,7 @@ export interface ParamUserItemHistory {
 	objectPostItem: number;
 	from: any;
 	to: any;
+	timeZone: number;
 }
 export interface ReturnUserItemHistoryRet {
 	minuteId: number;
@@ -195,6 +197,7 @@ export interface ParamGetItemSumMonths {
 	item: any;
 	date: any;
 	months: number;
+	timeZone: number;
 }
 export interface ReturnGetItemSumMonthsRet {
 	date: any;
@@ -208,6 +211,7 @@ export interface ParamGetItemSumDays {
 	item: any;
 	date: any;
 	days: number;
+	timeZone: number;
 }
 export interface ReturnGetItemSumDaysRet {
 	date: any;
@@ -221,6 +225,7 @@ export interface ParamGetItemHistory {
 	item: any;
 	from: any;
 	to: any;
+	timeZone: number;
 }
 export interface ReturnGetItemHistory$page {
 	id: number;
@@ -228,7 +233,6 @@ export interface ReturnGetItemHistory$page {
 	item: any;
 	value: number;
 	memo: string;
-	timeZone: number;
 }
 export interface ResultGetItemHistory {
 	$page: ReturnGetItemHistory$page[];
@@ -239,6 +243,7 @@ export interface ParamUserItemPeriodHistory {
 	from: any;
 	to: any;
 	period: number;
+	timeZone: number;
 }
 export interface ReturnUserItemPeriodHistoryRet {
 	date: any;
@@ -426,7 +431,6 @@ export interface PostItemHistory {
 	ix: number;
 	xi: number;
 	value: number;
-	action: any;
 }
 
 export interface IxOrderBoundTo {
@@ -443,7 +447,6 @@ export interface GroupObject {
 export interface UserSuperviseItem {
 	ix: number;
 	xi: number;
-	timeZone: number;
 }
 
 export interface IxOrderActionBoundPostDone {

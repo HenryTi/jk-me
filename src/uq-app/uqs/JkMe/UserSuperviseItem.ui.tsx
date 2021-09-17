@@ -17,16 +17,11 @@ const fields = {
 		"isKey": false,
 		"label": "Xi"
 	} as FieldItemId,
-	timeZone: {
-		"name": "timeZone",
-		"isKey": false,
-		"label": "TimeZone"
-	} as undefined,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.xi, fields.timeZone, 
+	fields.xi, 
 ];
 
 export const ui: UI = {

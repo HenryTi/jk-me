@@ -1,4 +1,5 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { env } from "tonva-react";
 import { UQs } from "uq-app";
 import { Item, ObjectPostItem, Post, ReturnUserItemHistoryRet, ReturnUserItemPeriodHistoryRet, ReturnUserItemPeriodSumRet } from "uq-app/uqs/JkMe";
 
@@ -167,6 +168,7 @@ export class PeriodSum {
         let ret = await this.uqs.JkMe.UserItemPeriodSum.query({
 			from,
 			to,
+            timeZone: env.timeZone,
 		});
         let arr: ReturnUserItemPeriodSumRet[] = ret.ret;
         let postPeriodSumColl = {} as any;
@@ -206,10 +208,12 @@ export class PeriodSum {
         let {from, to} = this.period;
         if (fromDate) from = fromDate;
         if (toDate) to = toDate;
+        let {timeZone} = env;
 		let ret = await this.uqs.JkMe.UserItemHistory.query({
 			objectPostItem, 
 			from,
 			to,
+            timeZone,
 		});
         runInAction(() => {
             this.history = ret.ret;
@@ -220,11 +224,13 @@ export class PeriodSum {
         this.itemPeriodSum = ips;
         let {id: objectPostItem} = ips;
         let {from, to} = this.period;
+        let {timeZone} = env;
 		let ret = await this.uqs.JkMe.UserItemPeriodHistory.query({
 			objectPostItem, 
 			from,
 			to,
 			period: sumPeriod,
+            timeZone,
 		});
         runInAction(() => {
             this.periodHistory = ret.ret;

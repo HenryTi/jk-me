@@ -21,8 +21,8 @@ export class VItemHistory extends VPage<CSupervise> {
         let {cApp, item} = this.controller;
         let {itemTitles} = cApp;
         let {unit, fixed} = itemTitles[item];
-        let {id, track, value, memo, timeZone} = row;
-        let date = dateFromMinuteId(id, timeZone);
+        let {id, track, value, memo} = row;
+        let date = dateFromMinuteId(id);
         let left = <div>
             <div className="small text-muted"><VDate date={date} /></div>
             <div>
