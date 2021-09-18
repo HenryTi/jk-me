@@ -17,19 +17,19 @@ ACT ActOrderAction() {
             LIMIT maxActionRows)
     {
         IF action>=EnumOrderAction.orderMain {
-            LOG CONCAT_WS(' ', action, id, actionId) SUBJECT 'ACT ActOrderAction() action>=EnumOrderAction.orderMain';
+            LOG CONCAT_WS(' ', action, id, actionId) SUBJECT 'OrderMainAction';
             FOR (VAR orderActionId ID
                 OF SELECT a.id as orderActionId
                     FROM DxOrderAction as a
                     WHERE a.orderMain=actionId)
             {
                 -- 处理跟这个订单相关的所有action
-                LOG CONCAT_WS(' ', orderActionId) SUBJECT 'ACT ActOrderAction() FOR (VAR orderActionId ID';
+                -- LOG CONCAT_WS(' ', orderActionId) SUBJECT 'ACT ActOrderAction() FOR (VAR orderActionId ID';
                 PROC ProcOrderAction(orderActionId);
             }
         }
         ELSE {
-            LOG CONCAT_WS(' ', action, id, actionId) SUBJECT 'ACT ActOrderAction() action detail';
+            -- LOG CONCAT_WS(' ', action, id, actionId) SUBJECT 'ACT ActOrderAction() action detail';
             PROC ProcOrderAction(id);
         }
         SET rowCount = rowCount+1;
@@ -39,6 +39,7 @@ ACT ActOrderAction() {
     IF rowCount>=maxActionRows {
         SCHEDULE ActOrderAction;
     }
+
 };
 
 PROC ProcOrderAction(
@@ -86,14 +87,17 @@ PROC ProcOrderAction(
     }
 
     VAR nDone ENUM EnumDone = done;
+    LOG CONCAT_WS(' ', action, done, readyStates, orderActionId, orderActionId) SUBJECT 'readyStates&ReadyStates.cost';
     IF (readyStates&ReadyStates.cost)=ReadyStates.cost AND (done & EnumDone.withCost)=0 {
+        LOG CONCAT_WS(' ', done, readyStates, orderActionId, orderActionId) SUBJECT '如果有成本';
         -- 如果有成本，Item.orderProfit History
         IF action=EnumOrderAction.deliverDone {
             PROC SaveItemProfit(actionId, orderDetail, value);
         }
-        SET nDone = done | EnumDone.withCost;
+        SET nDone = nDone | EnumDone.withCost;
     }
     IF (done & EnumDone.withoutCost)=0 {
+        LOG CONCAT_WS(' ', done, readyStates, orderActionId, orderActionId) SUBJECT '如果没有成本';
         -- 如果没有成本，Item.orderAmount History
         IF action=EnumOrderAction.deliverDone {
             -- deliver的时候，生成orderAmount
@@ -102,7 +106,7 @@ PROC ProcOrderAction(
         ELSE {
             PROC SaveItemHistory(actionId, item, value);
         }
-        SET nDone = done | EnumDone.withoutCost;
+        SET nDone = nDone | EnumDone.withoutCost;
     }
     IF done<>nDone {
         WITH DxOrderAction as a ID=orderActionId SET a.done=nDone;
@@ -123,12 +127,12 @@ PROC ProcOrderAction(
             CONTINUE;
         }
         SET nDoneBound=doneBound;
-        LOG CONCAT_WS(' ', post, to, readyStates, value, doneBound, nDoneBound) SUBJECT 'FOR BoundTo readyStates&ReadyStates.cost)=ReadyStates.cost AND (doneBound & EnumDone.withCost)=0';
+        -- LOG CONCAT_WS(' ', post, to, readyStates, value, doneBound, nDoneBound) SUBJECT 'FOR BoundTo readyStates&ReadyStates.cost)=ReadyStates.cost AND (doneBound & EnumDone.withCost)=0';
         IF (readyStates&ReadyStates.cost)=ReadyStates.cost AND (doneBound & EnumDone.withCost)=0 {
             PROC ProcBoundPost(action, post, to, actionId, readyStates&ReadyStates.cost); -- , value);
             SET nDoneBound = nDoneBound | EnumDone.withCost;
         }
-        LOG CONCAT_WS(' ', post, to, readyStates, value, doneBound, nDoneBound) SUBJECT 'FOR BoundTo (doneBound & EnumDone.withoutCost)=0';
+        -- LOG CONCAT_WS(' ', post, to, readyStates, value, doneBound, nDoneBound) SUBJECT 'FOR BoundTo (doneBound & EnumDone.withoutCost)=0';
         IF (doneBound & EnumDone.withoutCost)=0 {
             PROC ProcBoundPost(action, post, to, actionId, readyStates&ReadyStates.costNone); -- , value);
             SET nDoneBound = nDoneBound | EnumDone.withoutCost;
@@ -147,7 +151,7 @@ PROC ProcBoundPost (
     readyStates ENUM ReadyStates,        -- 15种ReadyStates，按位记
     -- value DEC(18,4),
 ) {
-    LOG CONCAT_WS(' ', action, post, to, actionId, readyStates) SUBJECT 'ProcBoundPost Parameters';
+    -- LOG CONCAT_WS(' ', action, post, to, actionId, readyStates) SUBJECT 'ProcBoundPost Parameters';
     FOR (VAR item ENUM Item, itemToObj ENUM Item, ratio DEC(6,2)
         OF SELECT a.item, a.itemToObj, a.ratio
             FROM PostBound as a JOIN ItemReadyStates as b ON a.item=b.id
@@ -158,7 +162,7 @@ PROC ProcBoundPost (
         VAR itemValue DEC(18,4);
         SET itemValue = a.value FROM ItemHistory as a WHERE a.id=itemHistoryId;
 
-        LOG CONCAT_WS(' ', itemHistoryId, item, itemToObj) SUBJECT 'ProcBoundPost PostItemHistory';
+        -- LOG CONCAT_WS(' ', itemHistoryId, item, itemToObj) SUBJECT 'ProcBoundPost PostItemHistory';
         VAR objectPostItemId ID = ID(ObjectPostItem new, to, post, itemToObj);
         WITH PostItemHistory as a IX=objectPostItemId XI=itemHistoryId 
             SET a.value=itemValue * IFNULL(ratio, 100) / 100;
@@ -170,7 +174,7 @@ PROC SaveItemProfit(
     orderDetail ID,
     value DEC(18,4)
 ) {
-    LOG CONCAT_WS(' ', actionId, orderDetail, value) SUBJECT 'SaveItemProfit';
+    -- LOG CONCAT_WS(' ', actionId, orderDetail, value) SUBJECT 'SaveItemProfit';
     VAR price DEC(18,4), cost DEC(18,4);
     SET price=a.price FROM OrderDetail as a WHERE a.id=orderDetail;
     SET cost=a.costPrice FROM DxOrderDetail as a WHERE a.id=orderDetail;
@@ -182,7 +186,7 @@ PROC SaveItemAmount(
     orderDetail ID,
     value DEC(18,4)
 ) {
-    LOG CONCAT_WS(' ', actionId, orderDetail, value) SUBJECT 'SaveItemAmount';
+    -- LOG CONCAT_WS(' ', actionId, orderDetail, value) SUBJECT 'SaveItemAmount';
     VAR price DEC(18,4);
     SET price=a.price FROM OrderDetail as a WHERE a.id=orderDetail;
     PROC SaveItemHistory(actionId, Item.orderAmount, price*value);
@@ -193,7 +197,7 @@ PROC SaveItemHistory(
     item ENUM Item,
     value DEC(18,4),
 ) {
-    LOG CONCAT_WS(' ', actionId, item, value) SUBJECT 'SaveItemHistory';
+    -- LOG CONCAT_WS(' ', actionId, item, value) SUBJECT 'SaveItemHistory';
     VAR itemHistoryId ID = ID(ItemHistory new, actionId, item);
     WITH ItemHistory as a ID = itemHistoryId SET a.value=value;
 };

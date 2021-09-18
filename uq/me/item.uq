@@ -1,11 +1,3 @@
-/*
-IX PostItem ver 0.1 (
-    ixx ENUM Post,              -- 岗位
-    ix ENUM Item,               -- item to PostItemHistory
-    xi ENUM Item,               -- item to ItemHistory
-    ratio DEC(6,2),             -- 百分比，从itemHistory的value，折算到PostItemHistory, 未来有可能是分段公式
-);
-*/
 ID Object (
     id,
 );

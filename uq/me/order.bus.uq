@@ -2,8 +2,10 @@ BUS JkOrderBus ver 0.7 from 百灵威系统工程部/[jk-order]
 ACCEPT order {
 	VAR mainId ID;
 	SET mainId = id;
-	WITH OrderMain as a ID=mainId SET a.no=no, a.customer=customerAccount;
+	WITH OrderMain as a ID=mainId SET a.no=no, a.customerAccount=customerAccount;
+    LOG CONCAT_WS(' ', mainId, customerAccount) SUBJECT 'JkOrderBus ACCEPT order';
 	FOR detail {
+        LOG CONCAT_WS(' ', id, quantity, item) SUBJECT 'JkOrderBus ACCEPT orderDetail';
 		WITH OrderDetail as a 
 			ID = id
 			SET a.main=mainId
@@ -49,9 +51,9 @@ ACCEPT [return] {
 	}
     SCHEDULE ActOrderAction DELAY 1;
 }
-ACCEPT [order-cost-price] {
+ACCEPT [order-sale-cost] {
     FOR detail {
-        WITH DxOrderDetail ID=[order-detail] SET costPrice=[cost-price];
+        WITH DxOrderDetail ID=[order-detail] SET costPrice=[cost];
     }
     VAR readyStates ENUM ReadyStates;
     SET readyStates=a.readyStates FROM DxOrderMain as a WHERE a.id=order;

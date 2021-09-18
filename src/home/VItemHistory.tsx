@@ -24,7 +24,7 @@ export class VItemHistory extends VPage<CHome> {
         let {unit, fixed} = itemTitles[item];
         let d = dateFromMinuteId(minuteId);
         let left = <div className="text-muted small w-8c"><EasyTime date={d} timeZone={-5} /></div>;
-        let right = <div>{value.toFixed(fixed??2)} {unit}</div>;
+        let right = <div>{(value??0).toFixed(fixed??2)} {unit}</div>;
         return <LMR className="px-3 py-2" left={left} right={right}>{track}</LMR>;
     }
 

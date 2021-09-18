@@ -1,36 +1,14 @@
 import { CSupervise } from "supervise";
-import { List, LMR, VPage } from "tonva-react";
-import { ReturnGetItemSumDaysRet } from "uq-app/uqs/JkMe";
+import { List, LMR, View, VPage } from "tonva-react";
+import { ReturnGetItemSumDaysRet, ReturnGetItemSumMonthsRet } from "uq-app/uqs/JkMe";
 
-export class VItemDayHistory extends VPage<CSupervise> {
-    header() {
-        let {cApp, item} = this.controller;
-        let {itemTitles} = cApp;
-		let {title, vice} = itemTitles[item];
-        return title;
+export class ViewItemDayHistory extends View<CSupervise> {
+    render() {
+        return <List items={this.controller.itemSumDays} 
+            item={{render: this.renderDayItem, onClick: this.onClickDayItem}} />
     }
 
-    right() {
-        return <button 
-            className="btn btn-sm btn-primary me-1"
-            onClick={this.showMonth}>
-            月
-        </button>;
-    }
-
-    private showMonth = async () => {
-        this.ceasePage();
-        await this.controller.showItemMonthHistory(undefined);
-    }
-
-    content() {
-        return <div className="">
-            <List items={this.controller.itemSumDays} 
-                item={{render: this.renderItem, onClick: this.onClickItem}} />
-        </div>
-    }
-
-    private renderItem = (row: ReturnGetItemSumDaysRet, index: number) => {
+    private renderDayItem = (row: ReturnGetItemSumDaysRet, index: number) => {
         let {cApp, item} = this.controller;
         let {itemTitles} = cApp;
         let {unit, fixed} = itemTitles[item];
@@ -40,11 +18,27 @@ export class VItemDayHistory extends VPage<CSupervise> {
             right={<div>{value.toFixed(fixed??2)} {unit}</div>} />
     }
 
-    private onClickItem = async (row: ReturnGetItemSumDaysRet) => {
+    private onClickDayItem = async (row: ReturnGetItemSumDaysRet) => {
         let {date} = row;
         let from = new Date(date);
-        from.setDate(from.getDate() - 1);
-        let to = new Date(date);
+        let to = new Date(from);
+        to.setDate(to.getDate() + 1);
         await this.controller.showItemHistory(from, to);
+    }
+}
+
+export class VItemDayHistory extends VPage<CSupervise> {
+    header() {
+        let {cApp, item} = this.controller;
+        let {itemTitles} = cApp;
+		let {title, vice} = itemTitles[item];
+        return title;
+    }
+
+    content() {
+        let v = new ViewItemDayHistory(this.controller);
+        return <div className="">
+            {v.render()}
+        </div>
     }
 }
