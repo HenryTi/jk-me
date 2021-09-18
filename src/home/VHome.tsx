@@ -97,8 +97,10 @@ export class VHome extends VPage<CHome> {
 				break;
 			case EnumPeriod.month:
 			case EnumPeriod.week:
+				this.controller.showItemDayHistory(ips, undefined, undefined);
+				break;
 			case EnumPeriod.year:
-				this.controller.showItemPeriodHistory(ips, EnumPeriod.day);
+				this.controller.showItemMonthHistory(ips, undefined, undefined);
 				break;
 		}
 	}

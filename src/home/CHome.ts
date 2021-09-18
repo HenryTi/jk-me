@@ -1,12 +1,9 @@
 import { makeObservable, observable } from "mobx";
 import { CApp, CUqBase } from "uq-app";
 import { EnumPeriod, ItemPeriodSum, PeriodSum } from "./periodSum";
-//import { Account, AccountType, EnumAccountType } from "uq-app/uqs/JkMe";
-//import { CContentManager } from "./contentManager";
-//import { CCTO } from "./cto";
 import { VHome } from "./VHome";
 import { VItemHistory } from "./VItemHistory";
-import { VItemPeriodHistory } from "./VItemPeriodHistory";
+import { VItemDayHistory, VItemMonthHistory } from "./VItemPeriodHistory";
 
 export interface AccountController {
 	start(): Promise<void>;
@@ -39,8 +36,13 @@ export class CHome extends CUqBase {
 		this.openVPage(VItemHistory);
 	}
 
-	async showItemPeriodHistory(ips: ItemPeriodSum, sumPeriod: EnumPeriod) {
-		await this.periodSum.loadPeriodHistory(ips, sumPeriod);
-		this.openVPage(VItemPeriodHistory);
+	async showItemDayHistory(ips: ItemPeriodSum, from: Date, to: Date) {
+		await this.periodSum.loadPeriodHistory(ips, from, to, EnumPeriod.day);
+		this.openVPage(VItemDayHistory);
+	}
+
+	async showItemMonthHistory(ips: ItemPeriodSum, from: Date, to: Date) {
+		await this.periodSum.loadPeriodHistory(ips, from, to, EnumPeriod.month);
+		this.openVPage(VItemMonthHistory);
 	}
 }

@@ -1,10 +1,10 @@
-import { VItemDayHistory } from "./VItemDayHistory";
 import { CUqBase, UQs } from "uq-app";
 import { Item, ReturnGetItemHistory$page, ReturnGetItemSumDaysRet, ReturnGetItemSumMonthsRet } from "uq-app/uqs/JkMe";
 import { VSupervise } from "./VSupervise";
-import { VItemMonthHistory } from "./VItemMonthHistory";
+import { VItemSumHistory } from "./VItemSumHistory";
 import { env, PageItems } from "tonva-react";
 import { VItemHistory } from "./VItemHistory";
+import { VItemDayHistory } from "./VItemDayHistory";
 
 export class CSupervise extends CUqBase {
 	item: Item;
@@ -20,30 +20,42 @@ export class CSupervise extends CUqBase {
 	load = async() => {
 	}
 
-	async showItemDayHistory(item: Item) {
+	async showItemSumHistory(item: Item) {
 		if (item) this.item = item;
 		else item = this.item;
-		let ret = await this.uqs.JkMe.GetItemSumDays.query({
-			item, 
-			date: new Date(), 
-			days: 30,
-            timeZone: env.timeZone,
-		});
-		this.itemSumDays = ret.ret;
-		this.openVPage(VItemDayHistory);
+		let [itemSumMonths, itemSumDays] = await Promise.all([
+			this.uqs.JkMe.GetItemSumMonths.query({
+				item, 
+				date: new Date(), 
+				months: 12,
+				timeZone: env.timeZone,
+			}),
+			this.uqs.JkMe.GetItemSumDays.query({
+				item, 
+				date: new Date(), 
+				days: 30,
+				timeZone: env.timeZone,
+			})
+		]);
+		this.itemSumDays = itemSumDays.ret;
+		this.itemSumMonths = itemSumMonths.ret;
+		this.openVPage(VItemSumHistory);
 	}
 
-	async showItemMonthHistory(item: Item) {
+	async showItemDayHistory(item: Item, from:Date, to:Date) {
 		if (item) this.item = item;
 		else item = this.item;
-		let ret = await this.uqs.JkMe.GetItemSumMonths.query({
-			item, 
-			date: new Date(), 
-			months: 12,
-			timeZone: env.timeZone,
-		});
-		this.itemSumMonths = ret.ret;
-		this.openVPage(VItemMonthHistory);
+		let days = Math.floor((to.getTime() - from.getTime())/ (1000*3600*24));
+		let [itemSumDays] = await Promise.all([
+			this.uqs.JkMe.GetItemSumDays.query({
+				item, 
+				date: to, 
+				days,
+				timeZone: env.timeZone,
+			})
+		]);
+		this.itemSumDays = itemSumDays.ret;
+		this.openVPage(VItemDayHistory);
 	}
 
 	async showItemHistory(from:Date, to:Date) {
@@ -51,7 +63,8 @@ export class CSupervise extends CUqBase {
 		await this.pageItemHistory.first({
 			item:this.item, 
 			from, 
-			to
+			to,
+			timeZone: env.timeZone,
 		});
 		this.openVPage(VItemHistory);
 	}

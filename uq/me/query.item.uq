@@ -30,7 +30,8 @@ RETURNS ret (
     INTO ret SELECT gDate as date, sum(a.value) as value
         FROM ItemHistory as a
             JOIN UserSuperviseItem as b ON a.item=b.xi
-        WHERE b.ix=$user
+        WHERE b.ix=$user 
+            AND a.item=item
             AND a.id>=minuteIdFromDate(DATEADD(day, -days, date), timeZone)
             AND a.id<minuteIdFromDate(date, timeZone)
         GROUP BY dateFromMinuteId(a.id, timeZone, 0) as gDate
@@ -52,6 +53,7 @@ RETURNS ret (
         FROM ItemHistory as a
             JOIN UserSuperviseItem as b ON a.item=b.xi
         WHERE b.ix=$user
+            AND a.item=item
             AND a.id>=minuteIdFromDate(DATEADD(month, -months, date), timeZone)
             AND a.id<minuteIdFromDate(date, timeZone)
         GROUP BY dateFromMinuteId(a.id, timeZone, 1) as gDate
@@ -76,6 +78,7 @@ PAGE (
         FROM ItemHistory as a
             JOIN UserSuperviseItem as b ON a.item=b.xi
         WHERE b.ix=$user
+            AND a.item=item
             AND a.id<$pageStart
             AND a.id>=minuteIdFromDate(from, timeZone)
             AND a.id<minuteIdFromDate(to, timeZone)

@@ -23,15 +23,14 @@ export class VItemHistory extends VPage<CSupervise> {
         let {unit, fixed} = itemTitles[item];
         let {id, track, value, memo} = row;
         let date = dateFromMinuteId(id);
-        let left = <div>
-            <div className="small text-muted"><VDate date={date} /></div>
-            <div>
-                <b>{track}</b> {memo}
-            </div>
+        let left = <div className="small text-muted w-8c">
+            <VDate date={date} hideSameYear={true} />
         </div>; 
-        return <LMR className="px-3 py-2 align-items-end" 
+        return <LMR className="px-3 py-2 align-items-center" 
             left={left} 
-            right={<div>{value.toFixed(fixed??2)} <small className="text-muted">{unit}</small></div>} />
+            right={<div>{value.toFixed(fixed??2)} <small className="text-muted">{unit}</small></div>}>
+            <b>{track}</b> {memo}
+        </LMR>;
     }
 
     private onClickItem = (row: ReturnGetItemHistory$page) => {

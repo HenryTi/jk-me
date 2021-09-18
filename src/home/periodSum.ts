@@ -45,7 +45,7 @@ abstract class Period {
     get hasNext(): boolean {
         let date = new Date();
         date.setHours(0, 0, 0, 0);
-        date.setDate(date.getDate()+1);
+        //date.setDate(date.getDate()+1);
         return this.to <= date;
     }
     abstract render(): string;
@@ -220,10 +220,17 @@ export class PeriodSum {
         });
 	}
 
-    async loadPeriodHistory(ips: ItemPeriodSum, sumPeriod: EnumPeriod) {
-        this.itemPeriodSum = ips;
+    async loadPeriodHistory(ips: ItemPeriodSum, fromDate: Date, toDate: Date, sumPeriod: EnumPeriod) {
+        if (ips) {
+            this.itemPeriodSum = ips;
+        }
+        else {
+            ips = this.itemPeriodSum;
+        }
         let {id: objectPostItem} = ips;
         let {from, to} = this.period;
+        if (fromDate) from = fromDate;
+        if (toDate) to = toDate;
         let {timeZone} = env;
 		let ret = await this.uqs.JkMe.UserItemPeriodHistory.query({
 			objectPostItem, 
