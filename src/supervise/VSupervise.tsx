@@ -8,9 +8,27 @@ export class VSupervise extends VPage<CSupervise> {
 
     header() {return '团队'}
     content() {
+        const queryList: {
+            caption: string;
+            action: () => void;
+        }[] = [
+            {
+                caption: '按月商品销售额排序',
+                action: this.controller.showProductSumByMonth,
+            }
+        ];
         let {superviseObjects, superviseItems} = this.controller.cApp;
     
         return <div>
+            {
+                queryList.map((v, index) => {
+                    let {caption, action} = v;
+                    return <div key={index} className="px-3 py-2 mb-1 bg-white cursor-pointer" onClick={action}>
+                        {caption}
+                    </div>;
+                })
+            }
+
             <List items={superviseObjects} 
                 item={{render: this.renderSuperviseObject, onClick: this.onClickSuperviseObject}} />
             <div className="py-1"></div>

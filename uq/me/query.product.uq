@@ -1,0 +1,63 @@
+IX ProductMonthSum (
+    ix,                     -- month, 202109
+    xi,                     -- product id
+    value DEC(18,4),        -- 销售额
+    INDEX ix_value(ix, value),
+    INDEX xi_ix(xi, ix),
+);
+
+-- 定期计算，每小时计算一次。把新的销售添加到月销量表
+ACT ActProductMonthSum() {
+    VAR timeZone TINYINT = 8;
+    VAR itemHistoryId ID;
+    SETTING 'itemHistoryId' BIGINT TO itemHistoryId;
+    IF itemHistoryId IS NULL {
+        SET itemHistoryId=0;
+    }
+    WHILE 1=1 {
+        VAR product ID, value DEC(18,4), historyId ID, date DATE, m INT;
+        SET product=NULL;
+        SET product=b.product, historyId=a.id, value=a.value
+            FROM ItemHistory as a
+                JOIN OrderDetail as b ON a.orderDetail=b.id
+            WHERE a.item=Item.orderAmount AND a.id>itemHistoryId
+            ORDER BY a.id ASC
+            LIMIT 1;
+        IF product IS NULL { BREAK; }
+        SET itemHistoryId=historyId;
+        SET date=dateFromMinuteId(historyId, timeZone, 1);
+        SET m=YEAR(date)*100+MONTH(date);
+        IF not exists(SELECT a.ix FROM ProductMonthSum as a WHERE a.ix=m AND a.xi=product) {
+            WITH ProductMonthSum as a IX=m XI=product SET a.value=0;
+        }
+        WITH ProductMonthSum as a IX=m XI=product SET a.value=a.value + value;
+        SETTING 'itemHistoryId' BIGINT = itemHistoryId;
+    }
+};
+
+QUERY GetMonthProductSum (
+    product ID,
+)
+PAGE (
+    month INT DESC,
+    value DEC(18,4),
+) {
+    PAGE SELECT a.ix as month, a.value
+        FROM ProductMonthSum as a
+        WHERE a.xi=product AND a.ix>$pageStart
+        ORDER BY a.ix DESC
+        LIMIT $pageSize;
+};
+
+QUERY GetProductSumByMonth(
+    month INT,          -- month: 202109
+)
+RETURNS ret (
+    product ID,
+    value DEC(18,4),
+) {
+    INTO ret SELECT a.xi as product, a.value
+        FROM ProductMonthSum as a
+        WHERE a.ix=month
+        ORDER BY a.xi ASC;
+};

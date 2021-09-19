@@ -22,6 +22,12 @@ const fields = {
 		"isKey": true,
 		"label": "Item"
 	} as undefined,
+	orderDetail: {
+		"name": "orderDetail",
+		"type": "id",
+		"isKey": false,
+		"label": "OrderDetail"
+	} as FieldItemId,
 	value: {
 		"name": "value",
 		"type": "number",
@@ -40,7 +46,7 @@ const fields = {
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.track, fields.item, fields.value, fields.memo, 
+	fields.track, fields.item, fields.orderDetail, fields.value, fields.memo, 
 ];
 
 export const ui: UI = {

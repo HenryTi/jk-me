@@ -26,6 +26,7 @@ import * as IxOrderBoundTo from './IxOrderBoundTo.ui';
 import * as GroupObject from './GroupObject.ui';
 import * as UserSuperviseItem from './UserSuperviseItem.ui';
 import * as IxOrderActionBoundPostDone from './IxOrderActionBoundPostDone.ui';
+import * as ProductMonthSum from './ProductMonthSum.ui';
 	
 export function setUI(uq: Uq) {
 	assign(uq, 'Object', Object);
@@ -55,5 +56,6 @@ export function setUI(uq: Uq) {
 	assign(uq, 'GroupObject', GroupObject);
 	assign(uq, 'UserSuperviseItem', UserSuperviseItem);
 	assign(uq, 'IxOrderActionBoundPostDone', IxOrderActionBoundPostDone);
+	assign(uq, 'ProductMonthSum', ProductMonthSum);
 }
 export * from './JkMe';

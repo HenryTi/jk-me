@@ -1,10 +1,11 @@
 import { CUqBase, UQs } from "uq-app";
-import { Item, ReturnGetItemHistory$page, ReturnGetItemSumDaysRet, ReturnGetItemSumMonthsRet } from "uq-app/uqs/JkMe";
+import { Item, ReturnGetItemHistory$page, ReturnGetItemSumDaysRet, ReturnGetItemSumMonthsRet, ReturnGetProductSumByMonthRet } from "uq-app/uqs/JkMe";
 import { VSupervise } from "./VSupervise";
 import { VItemSumHistory } from "./VItemSumHistory";
 import { env, PageItems } from "tonva-react";
 import { VItemHistory } from "./VItemHistory";
 import { VItemDayHistory } from "./VItemDayHistory";
+import { VProductSumByMonth } from "./VProductSumByMonth";
 
 export class CSupervise extends CUqBase {
 	item: Item;
@@ -23,19 +24,21 @@ export class CSupervise extends CUqBase {
 	async showItemSumHistory(item: Item) {
 		if (item) this.item = item;
 		else item = this.item;
-		let [itemSumMonths, itemSumDays] = await Promise.all([
+		let date = new Date();
+		date.setDate(date.getDate() + 1);
+		let [itemSumDays, itemSumMonths] = await Promise.all([
+			this.uqs.JkMe.GetItemSumDays.query({
+				item, 
+				date, 
+				days: 30,
+				timeZone: env.timeZone,
+			}),
 			this.uqs.JkMe.GetItemSumMonths.query({
 				item, 
-				date: new Date(), 
+				date, 
 				months: 12,
 				timeZone: env.timeZone,
 			}),
-			this.uqs.JkMe.GetItemSumDays.query({
-				item, 
-				date: new Date(), 
-				days: 30,
-				timeZone: env.timeZone,
-			})
 		]);
 		this.itemSumDays = itemSumDays.ret;
 		this.itemSumMonths = itemSumMonths.ret;
@@ -67,6 +70,19 @@ export class CSupervise extends CUqBase {
 			timeZone: env.timeZone,
 		});
 		this.openVPage(VItemHistory);
+	}
+
+	productSumByMonth: ReturnGetProductSumByMonthRet[];
+	showProductSumByMonth = async () => {
+		let date = new Date();
+		let month = date.getFullYear() * 100 + (date.getMonth() + 1);
+		let ret = await this.uqs.JkMe.GetProductSumByMonth.query({month});
+		this.productSumByMonth = ret.ret;
+		let len = this.productSumByMonth.length;
+		for (let i=0; i<len; i++) {
+			(this.productSumByMonth[i] as any).$serial = i+1;
+		}
+		this.openVPage(VProductSumByMonth);
 	}
 }
 

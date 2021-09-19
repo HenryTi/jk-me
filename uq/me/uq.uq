@@ -1,4 +1,6 @@
-UQ 百灵威系统工程部/me version='0.01' author='henry';
+UQ 百灵威系统工程部/me version='0.01' author='henry' {
+	SCHEDULE ActProductMonthSum REPEAT -1 INTERVAL 60;	--无限重复
+};
 
 ROLE admin				-- 设置账号，初始化，设立team，以及team成员
 	, manager
