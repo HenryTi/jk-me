@@ -22,6 +22,12 @@ export const appConfig: AppConfig = {
 			alias: 'Me',
 			version: '0.1.0',
 		},
+		{
+			dev: jk,
+			name: 'product',
+			alias: 'Product',
+			version: '0.1.0',
+		},
 	],
 	noUnit: true,
     tvs: {},

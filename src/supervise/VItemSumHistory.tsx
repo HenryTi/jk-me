@@ -1,6 +1,6 @@
 import { CSupervise } from "supervise";
 import { List, LMR, VPage } from "tonva-react";
-import { ReturnGetItemSumDaysRet, ReturnGetItemSumMonthsRet } from "uq-app/uqs/JkMe";
+import { ReturnGetItemSumMonthsRet } from "uq-app/uqs/JkMe";
 import { ViewItemDayHistory } from "./VItemDayHistory";
 
 export class VItemSumHistory extends VPage<CSupervise> {

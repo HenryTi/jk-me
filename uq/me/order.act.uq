@@ -104,7 +104,7 @@ PROC ProcOrderAction(
             PROC SaveItemAmount(actionId, orderDetail, value);
         }
         ELSE {
-            PROC SaveItemHistory(actionId, item, value);
+            PROC SaveItemHistory(actionId, orderDetail, item, value);
         }
         SET nDone = nDone | EnumDone.withoutCost;
     }
@@ -178,7 +178,7 @@ PROC SaveItemProfit(
     VAR price DEC(18,4), cost DEC(18,4);
     SET price=a.price FROM OrderDetail as a WHERE a.id=orderDetail;
     SET cost=a.costPrice FROM DxOrderDetail as a WHERE a.id=orderDetail;
-    PROC SaveItemHistory(actionId, Item.orderProfit, (price-cost)*value);
+    PROC SaveItemHistory(actionId, orderDetail, Item.orderProfit, (price-cost)*value);
 };
 
 PROC SaveItemAmount(
@@ -189,15 +189,16 @@ PROC SaveItemAmount(
     -- LOG CONCAT_WS(' ', actionId, orderDetail, value) SUBJECT 'SaveItemAmount';
     VAR price DEC(18,4);
     SET price=a.price FROM OrderDetail as a WHERE a.id=orderDetail;
-    PROC SaveItemHistory(actionId, Item.orderAmount, price*value);
+    PROC SaveItemHistory(actionId, orderDetail, Item.orderAmount, price*value);
 };
 
 PROC SaveItemHistory(
     actionId ID,
+    orderDetail ID,
     item ENUM Item,
     value DEC(18,4),
 ) {
     -- LOG CONCAT_WS(' ', actionId, item, value) SUBJECT 'SaveItemHistory';
     VAR itemHistoryId ID = ID(ItemHistory new, actionId, item);
-    WITH ItemHistory as a ID = itemHistoryId SET a.value=value;
+    WITH ItemHistory as a ID = itemHistoryId SET a.value=value, a.orderDetail=orderDetail;
 };

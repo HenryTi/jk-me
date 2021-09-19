@@ -1,57 +1,39 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Res, setRes, TFunc, UI, uqStringify } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
-import { OrderMain } from "./JkMe";
+import { ProductMonthSum } from "./JkMe";
 
 /*--fields--*/
 const fields = {
-	id: {
-		"name": "id",
+	ix: {
+		"name": "ix",
 		"type": "id",
 		"isKey": false,
-		"label": "Id"
+		"label": "Ix"
 	} as FieldItemId,
-	no: {
-		"name": "no",
-		"type": "string",
-		"isKey": true,
-		"widget": "string",
-		"label": "No"
-	} as FieldItemString,
-	webUser: {
-		"name": "webUser",
+	xi: {
+		"name": "xi",
 		"type": "id",
 		"isKey": false,
-		"label": "WebUser"
+		"label": "Xi"
 	} as FieldItemId,
-	customerAccount: {
-		"name": "customerAccount",
-		"type": "id",
-		"isKey": false,
-		"label": "CustomerAccount"
-	} as FieldItemId,
-	currency: {
-		"name": "currency",
-		"type": "id",
-		"isKey": false,
-		"label": "Currency"
-	} as FieldItemId,
-	sumAmount: {
-		"name": "sumAmount",
+	value: {
+		"name": "value",
 		"type": "number",
 		"isKey": false,
 		"widget": "number",
-		"label": "SumAmount"
+		"label": "Value"
 	} as FieldItemNum,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.no, fields.webUser, fields.customerAccount, fields.currency, fields.sumAmount, 
+	fields.xi, fields.value, 
 ];
 
 export const ui: UI = {
-	label: "OrderMain",
+	label: "ProductMonthSum",
 	fieldArr,
 	fields,
 };
@@ -69,6 +51,6 @@ export const t:TFunc = (str:string|JSX.Element): string|JSX.Element => {
 	return res[str as string] ?? str;
 }
 
-export function render(item: OrderMain):JSX.Element {
+export function render(item: ProductMonthSum):JSX.Element {
 	return <>{uqStringify(item)}</>;
 };

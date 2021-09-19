@@ -27,6 +27,7 @@ RETURNS ret (
     date DATE,
     value DEC(18,4),
 ) {
+    LOG CONCAT_WS(' ', item, date, days, timeZone) SUBJECT 'GetItemSumDays';
     INTO ret SELECT gDate as date, sum(a.value) as value
         FROM ItemHistory as a
             JOIN UserSuperviseItem as b ON a.item=b.xi
