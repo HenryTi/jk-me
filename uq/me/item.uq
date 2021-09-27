@@ -41,7 +41,7 @@ ID ObjectPostItem (
 );
 
 -- MINUTEID 分钟序ID
-ID ItemHistory MINUTEID (
+ID ItemHistory ver 0.1 MINUTEID (
     -- 26位表达从2021开始的分钟，后面跟16位的序列号。如果重了，就顺序往后加。
     id,                         -- 分钟序id
     KEY track ID,               -- 原始凭证

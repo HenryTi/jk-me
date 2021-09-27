@@ -2,7 +2,7 @@
 -- 这样可以避免数据库被占用太多算力，以至于无法响应访问操作
 CONST maxActionRows = 10;
 
-ACT ActOrderAction() {
+ACT ActOrderAction ver 0.3 () {
     VAR orderActionId ID, rowCount INT = 0;
     SETTING 'orderActionId' BIGINT TO orderActionId;
     IF orderActionId IS NULL {
@@ -104,7 +104,11 @@ PROC ProcOrderAction(
             PROC SaveItemAmount(actionId, orderDetail, value);
         }
         ELSE {
-            PROC SaveItemHistory(actionId, orderDetail, item, value);
+            VAR create TIMESTAMP;
+            SET create=b.[$create]
+                FROM OrderDetail as a JOIN OrderMain as b ON a.main=b.id
+                WHERE a.id=orderDetail;
+            PROC SaveItemHistory(create, actionId, orderDetail, item, value);
         }
         SET nDone = nDone | EnumDone.withoutCost;
     }
@@ -175,10 +179,12 @@ PROC SaveItemProfit(
     value DEC(18,4)
 ) {
     -- LOG CONCAT_WS(' ', actionId, orderDetail, value) SUBJECT 'SaveItemProfit';
-    VAR price DEC(18,4), cost DEC(18,4);
-    SET price=a.price FROM OrderDetail as a WHERE a.id=orderDetail;
+    VAR price DEC(18,4), cost DEC(18,4), create TIMESTAMP;
+    SET price=a.price, create=b.[$create]
+        FROM OrderDetail as a JOIN OrderMain as b ON a.main=b.id
+        WHERE a.id=orderDetail;
     SET cost=a.costPrice FROM DxOrderDetail as a WHERE a.id=orderDetail;
-    PROC SaveItemHistory(actionId, orderDetail, Item.orderProfit, (price-cost)*value);
+    PROC SaveItemHistory(create, actionId, orderDetail, Item.orderProfit, (price-cost)*value);
 };
 
 PROC SaveItemAmount(
@@ -187,18 +193,21 @@ PROC SaveItemAmount(
     value DEC(18,4)
 ) {
     -- LOG CONCAT_WS(' ', actionId, orderDetail, value) SUBJECT 'SaveItemAmount';
-    VAR price DEC(18,4);
-    SET price=a.price FROM OrderDetail as a WHERE a.id=orderDetail;
-    PROC SaveItemHistory(actionId, orderDetail, Item.orderAmount, price*value);
+    VAR price DEC(18,4), create TIMESTAMP;
+    SET price=a.price, create=b.[$create]
+        FROM OrderDetail as a JOIN OrderMain as b ON a.main=b.id
+        WHERE a.id=orderDetail;
+    PROC SaveItemHistory(create, actionId, orderDetail, Item.orderAmount, price*value);
 };
 
-PROC SaveItemHistory(
+PROC SaveItemHistory ver 0.1 (
+    create TIMESTAMP,
     actionId ID,
     orderDetail ID,
     item ENUM Item,
     value DEC(18,4),
 ) {
     -- LOG CONCAT_WS(' ', actionId, item, value) SUBJECT 'SaveItemHistory';
-    VAR itemHistoryId ID = ID(ItemHistory new, actionId, item);
+    VAR itemHistoryId ID = ID(ItemHistory new, actionId, item, create);
     WITH ItemHistory as a ID = itemHistoryId SET a.value=value, a.orderDetail=orderDetail;
 };

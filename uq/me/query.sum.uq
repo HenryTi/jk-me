@@ -1,0 +1,148 @@
+IX MonthSumProduct (
+    ixx ENUM Item,          -- ENUM Item
+    ix,                     -- month, 202109
+    xi,                     -- product id
+    value DEC(18,4),        -- 销售额
+    INDEX ixx_ix_value(ixx, ix, value),
+    INDEX ixx_xi_ix(ixx, xi, ix),
+);
+
+IX MonthSumCustomer (
+    ixx ENUM Item,          -- ENUM Item
+    ix,                     -- month, 202109
+    xi,                     -- customerAccount id, 
+    value DEC(18,4),        -- 销售额
+    INDEX ixx_ix_value(ixx, ix, value),
+    INDEX ixx_xi_ix(ixx, xi, ix),
+);
+
+-- 定期计算，每小时计算一次。把新的销售添加到月销量表
+ACT CalcMonthSum ver 0.3 (
+) {
+    TRANSACTION OFF;                     -- 去掉每一个ACT开始的Start Transaction和结尾的Commit
+    VAR timeZone TINYINT = 8;
+    VAR itemHistoryId ID;
+    SETTING 'itemHistoryId' BIGINT TO itemHistoryId;
+    IF itemHistoryId IS NULL {
+        SET itemHistoryId=0;
+    }
+    WHILE 1=1 {
+        VAR product ID, customerAccount ID, value DEC(18,4), historyId ID, date DATE, m INT, item ENUM Item;
+        SET historyId=NULL;
+        SET historyId=a.id
+            , customerAccount=c.customerAccount
+            , product=b.product
+            , value=a.value
+            , item=a.item
+            FROM ItemHistory as a
+                JOIN OrderDetail as b ON a.orderDetail=b.id
+                JOIN OrderMain as c ON b.main=c.id
+            WHERE a.id>itemHistoryId
+            ORDER BY a.id ASC
+            LIMIT 1;
+        IF historyId IS NULL { BREAK; }
+        SET itemHistoryId=historyId;
+        SET date=dateFromMinuteId(historyId, timeZone, 1);
+        SET m=YEAR(date)*100+MONTH(date);
+
+        TRANSACTION Start;
+        -- product
+        WITH MonthSumProduct as a IXX=item IX=m XI=product SET a.value=a.value + value;
+
+        -- customerAccount
+        WITH MonthSumCustomer as a IXX=item IX=m XI=customerAccount SET a.value=a.value + value;
+
+        SETTING 'itemHistoryId' BIGINT = itemHistoryId;
+        TRANSACTION Commit;
+    }
+};
+
+QUERY GetMonthSumProduct (
+    item ENUM Item,
+    id ID,
+)
+PAGE (
+    month INT DESC,
+    value DEC(18,4),
+    amount DEC(18,4),
+    profit DEC(18,4),
+    receive DEC(18,4),
+    return DEC(18,4),
+) {
+    PAGE SELECT a.ix as month, a.value
+        , (SELECT value FROM MonthSumProduct WHERE ixx=Item.orderAmount AND ix=a.ix AND xi=a.xi) as amount
+        , (SELECT value FROM MonthSumProduct WHERE ixx=Item.orderProfit AND ix=a.ix AND xi=a.xi) as profit
+        , (SELECT value FROM MonthSumProduct WHERE ixx=Item.orderReceive AND ix=a.ix AND xi=a.xi) as receive
+        , (SELECT value FROM MonthSumProduct WHERE ixx=Item.orderReturn AND ix=a.ix AND xi=a.xi) as return
+        FROM MonthSumProduct as a
+        WHERE a.ixx=item AND a.xi=id AND a.ix>$pageStart
+        ORDER BY a.ix DESC
+        LIMIT $pageSize;
+};
+
+QUERY GetProductSumByMonth(
+    item ENUM Item,
+    month INT,          -- month: 202109
+)
+RETURNS ret (
+    id ID,
+    value DEC(18,4),
+    amount DEC(18,4),
+    profit DEC(18,4),
+    receive DEC(18,4),
+    return DEC(18,4),
+) {
+    INTO ret SELECT a.xi as id, a.value
+        , (SELECT value FROM MonthSumProduct WHERE ixx=Item.orderAmount AND ix=a.ix AND xi=a.xi) as amount
+        , (SELECT value FROM MonthSumProduct WHERE ixx=Item.orderProfit AND ix=a.ix AND xi=a.xi) as profit
+        , (SELECT value FROM MonthSumProduct WHERE ixx=Item.orderReceive AND ix=a.ix AND xi=a.xi) as receive
+        , (SELECT value FROM MonthSumProduct WHERE ixx=Item.orderReturn AND ix=a.ix AND xi=a.xi) as return
+        FROM MonthSumProduct as a
+        WHERE a.ixx=item AND a.ix=month
+        ORDER BY a.value ASC;
+};
+
+QUERY GetMonthSumCustomer (
+    item ENUM Item,
+    id ID,
+)
+PAGE (
+    month INT DESC,
+    value DEC(18,4),
+    amount DEC(18,4),
+    profit DEC(18,4),
+    receive DEC(18,4),
+    return DEC(18,4),
+) {
+    PAGE SELECT a.ix as month, a.value
+        , (SELECT value FROM MonthSumCustomer WHERE ixx=Item.orderAmount AND ix=a.ix AND xi=a.xi) as amount
+        , (SELECT value FROM MonthSumCustomer WHERE ixx=Item.orderProfit AND ix=a.ix AND xi=a.xi) as profit
+        , (SELECT value FROM MonthSumCustomer WHERE ixx=Item.orderReceive AND ix=a.ix AND xi=a.xi) as receive
+        , (SELECT value FROM MonthSumCustomer WHERE ixx=Item.orderReturn AND ix=a.ix AND xi=a.xi) as return
+        FROM MonthSumCustomer as a
+        WHERE a.ixx=item AND a.xi=id AND a.ix>$pageStart
+        ORDER BY a.ix DESC
+        LIMIT $pageSize;
+};
+
+QUERY GetCustomerSumByMonth(
+    item ENUM Item,
+    month INT,          -- month: 202109
+)
+RETURNS ret (
+    id ID,
+    value DEC(18,4),
+    amount DEC(18,4),
+    profit DEC(18,4),
+    receive DEC(18,4),
+    return DEC(18,4),
+) {
+    INTO ret SELECT a.xi as id, a.value
+        , (SELECT value FROM MonthSumCustomer WHERE ixx=Item.orderAmount AND ix=a.ix AND xi=a.xi) as amount
+        , (SELECT value FROM MonthSumCustomer WHERE ixx=Item.orderProfit AND ix=a.ix AND xi=a.xi) as profit
+        , (SELECT value FROM MonthSumCustomer WHERE ixx=Item.orderReceive AND ix=a.ix AND xi=a.xi) as receive
+        , (SELECT value FROM MonthSumCustomer WHERE ixx=Item.orderReturn AND ix=a.ix AND xi=a.xi) as return
+        FROM MonthSumCustomer as a
+        WHERE a.ixx=item AND a.ix=month
+        ORDER BY a.value ASC;
+};

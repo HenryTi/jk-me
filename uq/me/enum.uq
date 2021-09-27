@@ -74,7 +74,7 @@ VALUES
 (Item.customerPoint, '客户积分', null, '点', 2)
 ;
 
-ID PostTitle ver 0.1 CONST (
+ID PostTitle ver 0.2 CONST (
     id small,
     title CHAR(50),
     vice CHAR(100),

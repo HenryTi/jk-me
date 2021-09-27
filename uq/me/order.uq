@@ -5,6 +5,7 @@ ID OrderMain ver 0.5 GLOBAL (
 	customerAccount ID,                 -- customerAccount
     currency ID,
 	sumAmount DEC(18,4),	            -- 订单总金额。各行金额
+    sys (create),
 );
 
 ID OrderDetail ver 0.5 GLOBAL (

@@ -1,5 +1,6 @@
 import { List, VPage } from "tonva-react";
-import { EnumUserObjectRelation, Item, ReturnGetUserSuperviseItemRet, ReturnGetUserSuperviseObjectRet } from "uq-app/uqs/JkMe";
+import { EnumUserObjectRelation, ReturnGetUserSuperviseItemRet, ReturnGetUserSuperviseObjectRet } from "uq-app/uqs/JkMe";
+import { Item  } from "uq-app/uqs/JkMe/JkMe";
 import { CSupervise } from "./CSupervise";
 
 export class VSupervise extends VPage<CSupervise> {
@@ -10,20 +11,39 @@ export class VSupervise extends VPage<CSupervise> {
     content() {
         const queryList: {
             caption: string;
-            action: () => void;
+            item: Item;
+            action: (caption:string, item: Item) => void;
         }[] = [
             {
                 caption: '按月商品销售额排序',
+                item: Item.orderAmount,
                 action: this.controller.showProductSumByMonth,
-            }
+            },
+            {
+                caption: '按月商品毛利润排序',
+                item: Item.orderProfit,
+                action: this.controller.showProductSumByMonth,
+            },
+            {
+                caption: '按月客户销售额排序',
+                item: Item.orderAmount,
+                action: this.controller.showCustomerSumByMonth,
+            },
+            {
+                caption: '按月客户毛利润排序',
+                item: Item.orderProfit,
+                action: this.controller.showCustomerSumByMonth,
+            },
         ];
         let {superviseObjects, superviseItems} = this.controller.cApp;
     
         return <div>
             {
                 queryList.map((v, index) => {
-                    let {caption, action} = v;
-                    return <div key={index} className="px-3 py-2 mb-1 bg-white cursor-pointer" onClick={action}>
+                    let {caption, item, action} = v;
+                    return <div key={index} 
+                        className="px-3 py-2 mb-1 bg-white cursor-pointer" 
+                        onClick={() => action(caption, item)}>
                         {caption}
                     </div>;
                 })

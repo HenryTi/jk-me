@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sat Sep 18 2021 22:32:06 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Sun Sep 19 2021 12:05:29 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 
@@ -108,9 +108,9 @@ export interface ResultBusTestOrderSaleCost {
 	ret: ReturnBusTestOrderSaleCostRet[];
 }
 
-export interface ParamActProductMonthSum {
+export interface ParamCalcMonthSum {
 }
-export interface ResultActProductMonthSum {
+export interface ResultCalcMonthSum {
 }
 
 export interface Param$poked {
@@ -269,25 +269,67 @@ export interface ResultUserItemPeriodHistory {
 }
 
 export interface ParamGetProductSumByMonth {
+	item: any;
 	month: number;
 }
 export interface ReturnGetProductSumByMonthRet {
-	product: number;
+	id: number;
 	value: number;
+	amount: number;
+	profit: number;
+	receive: number;
+	return: number;
 }
 export interface ResultGetProductSumByMonth {
 	ret: ReturnGetProductSumByMonthRet[];
 }
 
-export interface ParamGetMonthProductSum {
-	product: number;
+export interface ParamGetMonthSumProduct {
+	item: any;
+	id: number;
 }
-export interface ReturnGetMonthProductSum$page {
+export interface ReturnGetMonthSumProduct$page {
 	month: number;
 	value: number;
+	amount: number;
+	profit: number;
+	receive: number;
+	return: number;
 }
-export interface ResultGetMonthProductSum {
-	$page: ReturnGetMonthProductSum$page[];
+export interface ResultGetMonthSumProduct {
+	$page: ReturnGetMonthSumProduct$page[];
+}
+
+export interface ParamGetMonthSumCustomer {
+	item: any;
+	id: number;
+}
+export interface ReturnGetMonthSumCustomer$page {
+	month: number;
+	value: number;
+	amount: number;
+	profit: number;
+	receive: number;
+	return: number;
+}
+export interface ResultGetMonthSumCustomer {
+	$page: ReturnGetMonthSumCustomer$page[];
+}
+
+export interface ParamGetCustomerSumByMonth {
+	item: any;
+	month: number;
+}
+export interface ReturnGetCustomerSumByMonthRet {
+	id: number;
+	value: number;
+	amount: number;
+	profit: number;
+	receive: number;
+	return: number;
+}
+export interface ResultGetCustomerSumByMonth {
+	ret: ReturnGetCustomerSumByMonthRet[];
 }
 
 export interface Object {
@@ -493,7 +535,15 @@ export interface IxOrderActionBoundPostDone {
 	done: any;
 }
 
-export interface ProductMonthSum {
+export interface MonthSumProduct {
+	ixx: number;
+	ix: number;
+	xi: number;
+	value: number;
+}
+
+export interface MonthSumCustomer {
+	ixx: number;
 	ix: number;
 	xi: number;
 	value: number;
@@ -527,7 +577,8 @@ export interface ParamActs {
 	groupObject?: GroupObject[];
 	userSuperviseItem?: UserSuperviseItem[];
 	ixOrderActionBoundPostDone?: IxOrderActionBoundPostDone[];
-	productMonthSum?: ProductMonthSum[];
+	monthSumProduct?: MonthSumProduct[];
+	monthSumCustomer?: MonthSumCustomer[];
 }
 
 
@@ -539,7 +590,7 @@ export interface UqExt extends Uq {
 	ActOrderAction: UqAction<ParamActOrderAction, ResultActOrderAction>;
 	BusTestBoundStaffSales: UqAction<ParamBusTestBoundStaffSales, ResultBusTestBoundStaffSales>;
 	BusTestOrderSaleCost: UqAction<ParamBusTestOrderSaleCost, ResultBusTestOrderSaleCost>;
-	ActProductMonthSum: UqAction<ParamActProductMonthSum, ResultActProductMonthSum>;
+	CalcMonthSum: UqAction<ParamCalcMonthSum, ResultCalcMonthSum>;
 	$poked: UqQuery<Param$poked, Result$poked>;
 	UserItemPeriodSum: UqQuery<ParamUserItemPeriodSum, ResultUserItemPeriodSum>;
 	UserItemHistory: UqQuery<ParamUserItemHistory, ResultUserItemHistory>;
@@ -553,7 +604,9 @@ export interface UqExt extends Uq {
 	GetItemHistory: UqQuery<ParamGetItemHistory, ResultGetItemHistory>;
 	UserItemPeriodHistory: UqQuery<ParamUserItemPeriodHistory, ResultUserItemPeriodHistory>;
 	GetProductSumByMonth: UqQuery<ParamGetProductSumByMonth, ResultGetProductSumByMonth>;
-	GetMonthProductSum: UqQuery<ParamGetMonthProductSum, ResultGetMonthProductSum>;
+	GetMonthSumProduct: UqQuery<ParamGetMonthSumProduct, ResultGetMonthSumProduct>;
+	GetMonthSumCustomer: UqQuery<ParamGetMonthSumCustomer, ResultGetMonthSumCustomer>;
+	GetCustomerSumByMonth: UqQuery<ParamGetCustomerSumByMonth, ResultGetCustomerSumByMonth>;
 	Object: UqID<any>;
 	ItemHistory: UqID<any>;
 	OrderDetail: UqID<any>;
@@ -581,7 +634,8 @@ export interface UqExt extends Uq {
 	GroupObject: UqIX<any>;
 	UserSuperviseItem: UqIX<any>;
 	IxOrderActionBoundPostDone: UqIX<any>;
-	ProductMonthSum: UqIX<any>;
+	MonthSumProduct: UqIX<any>;
+	MonthSumCustomer: UqIX<any>;
 }
 
 export function assign(uq: any, to:string, from:any): void {
