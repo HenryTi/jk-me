@@ -69,6 +69,7 @@ PROC ProcOrderAction(
         WITH DxOrderAction as a ID=orderActionId
             SET a.orderMain=orderMain, a.orderDetail=orderDetail;
     }
+    
 
     IF orderMain=0 {
         SET orderMain=a.main FROM OrderDetail as a WHERE a.id=orderDetail;
