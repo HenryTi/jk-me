@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sun Sep 19 2021 12:05:29 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Mon Sep 27 2021 10:20:08 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 
@@ -111,6 +111,11 @@ export interface ResultBusTestOrderSaleCost {
 export interface ParamCalcMonthSum {
 }
 export interface ResultCalcMonthSum {
+}
+
+export interface ParamATest {
+}
+export interface ResultATest {
 }
 
 export interface Param$poked {
@@ -443,6 +448,16 @@ export interface PostBound {
 	ratio: number;
 }
 
+export interface A_Id_Test {
+	id?: number;
+	a: string;
+}
+
+export interface AIdTest {
+	id?: number;
+	a: string;
+}
+
 export interface DxOrderDetail {
 	id: number;
 	deliverDone?: number;
@@ -567,6 +582,8 @@ export interface ParamActs {
 	orderAction?: OrderAction[];
 	itemReadyStates?: ItemReadyStates[];
 	postBound?: PostBound[];
+	a_Id_test?: A_Id_Test[];
+	aIdTest?: AIdTest[];
 	dxOrderDetail?: ActParamDxOrderDetail[];
 	dxOrderMain?: ActParamDxOrderMain[];
 	userTimezone?: ActParamUserTimezone[];
@@ -591,6 +608,7 @@ export interface UqExt extends Uq {
 	BusTestBoundStaffSales: UqAction<ParamBusTestBoundStaffSales, ResultBusTestBoundStaffSales>;
 	BusTestOrderSaleCost: UqAction<ParamBusTestOrderSaleCost, ResultBusTestOrderSaleCost>;
 	CalcMonthSum: UqAction<ParamCalcMonthSum, ResultCalcMonthSum>;
+	ATest: UqAction<ParamATest, ResultATest>;
 	$poked: UqQuery<Param$poked, Result$poked>;
 	UserItemPeriodSum: UqQuery<ParamUserItemPeriodSum, ResultUserItemPeriodSum>;
 	UserItemHistory: UqQuery<ParamUserItemHistory, ResultUserItemHistory>;
@@ -624,6 +642,8 @@ export interface UqExt extends Uq {
 	OrderAction: UqID<any>;
 	ItemReadyStates: UqID<any>;
 	PostBound: UqID<any>;
+	A_Id_Test: UqID<any>;
+	AIdTest: UqID<any>;
 	DxOrderDetail: UqIDX<any>;
 	DxOrderMain: UqIDX<any>;
 	UserTimezone: UqIDX<any>;
