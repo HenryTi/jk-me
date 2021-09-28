@@ -16,6 +16,8 @@ import * as ObjectAgent from './ObjectAgent.ui';
 import * as OrderAction from './OrderAction.ui';
 import * as ItemReadyStates from './ItemReadyStates.ui';
 import * as PostBound from './PostBound.ui';
+import * as A_Id_Test from './A_Id_Test.ui';
+import * as AIdTest from './AIdTest.ui';
 import * as DxOrderDetail from './DxOrderDetail.ui';
 import * as DxOrderMain from './DxOrderMain.ui';
 import * as UserTimezone from './UserTimezone.ui';
@@ -47,6 +49,8 @@ export function setUI(uq: Uq) {
 	assign(uq, 'OrderAction', OrderAction);
 	assign(uq, 'ItemReadyStates', ItemReadyStates);
 	assign(uq, 'PostBound', PostBound);
+	assign(uq, 'A_Id_Test', A_Id_Test);
+	assign(uq, 'AIdTest', AIdTest);
 	assign(uq, 'DxOrderDetail', DxOrderDetail);
 	assign(uq, 'DxOrderMain', DxOrderMain);
 	assign(uq, 'UserTimezone', UserTimezone);
