@@ -108,17 +108,6 @@ VALUES
 
 -- EnumOrderAction.receiveDone
 (EnumOrderAction.receiveDone, Post.staffSales, Item.orderProfit, Item.commissionFromProfit, 4),
-
-/*
-(Post.staff, ReadyStates.cost, 'BoundStaff'),
-(Post.manager, ReadyStates.cost, 'BoundManager'),
-(Post.managerIT, ReadyStates.cost, 'BoundManagerIT'),
-(Post.agent, ReadyStates.cost, 'BoundAgent'),
-(Post.agentSales, ReadyStates.cost, 'BoundAgentSales'),
-(Post.distributor, ReadyStates.cost, 'BoundDistributor'),
-(Post.distributorSales, ReadyStates.cost, 'BoundDistributorSales'),
-(Post.customer, ReadyStates.cost, 'BoundCustomer')
-*/
 ;
 
 ID ItemReadyStates CONST (

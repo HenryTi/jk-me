@@ -42,7 +42,7 @@ export class VHome extends VPage<CHome> {
 				{this.renderDate()}
 				<div className="">
 					<List items={this.controller.periodSum.postPeriodSumList} 
-						item={{render: this.renderItem, onClick: this.onClickItem}} />
+						item={{render: this.renderItem, onClick: undefined/*this.onClickItem*/}} />
 				</div>
 			</div>;
 		}));

@@ -35,7 +35,7 @@ ACT CalcMonthSum ver 0.3 (
             , value=a.value
             , item=a.item
             FROM ItemHistory as a
-                JOIN OrderDetail as b ON a.orderDetail=b.id
+                JOIN OrderDetail as b ON a.referer=b.id
                 JOIN OrderMain as c ON b.main=c.id
             WHERE a.id>itemHistoryId
             ORDER BY a.id ASC

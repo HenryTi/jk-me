@@ -51,7 +51,8 @@ PROC ProcOrderAction(
         action ENUM EnumOrderAction,
         value DEC(18,4),
         item ENUM Item,
-        done ENUM EnumDone;
+        done ENUM EnumDone,
+        itemHistoryId ID;
 
     SET orderMain=a.orderMain
         , orderDetail=a.orderDetail
@@ -92,7 +93,10 @@ PROC ProcOrderAction(
         LOG CONCAT_WS(' ', done, readyStates, orderActionId, orderActionId) SUBJECT '如果有成本';
         -- 如果有成本，Item.orderProfit History
         IF action=EnumOrderAction.deliverDone {
-            PROC SaveItemProfit(actionId, orderDetail, value);
+            PROC SaveItemProfit(actionId, orderDetail, value, itemHistoryId);
+        }
+        ELSEIF action=EnumOrderAction.receiveDone {
+            PROC SaveItemReceive(actionId, orderDetail, value, itemHistoryId);
         }
         SET nDone = nDone | EnumDone.withCost;
     }
@@ -101,14 +105,14 @@ PROC ProcOrderAction(
         -- 如果没有成本，Item.orderAmount History
         IF action=EnumOrderAction.deliverDone {
             -- deliver的时候，生成orderAmount
-            PROC SaveItemAmount(actionId, orderDetail, value);
+            PROC SaveItemAmount(actionId, orderDetail, value, itemHistoryId);
         }
         ELSE {
             VAR create TIMESTAMP;
             SET create=b.[$create]
                 FROM OrderDetail as a JOIN OrderMain as b ON a.main=b.id
                 WHERE a.id=orderDetail;
-            PROC SaveItemHistory(create, actionId, orderDetail, item, value);
+            PROC SaveItemHistory(create, actionId, orderDetail, item, value, itemHistoryId);
         }
         SET nDone = nDone | EnumDone.withoutCost;
     }
@@ -133,12 +137,12 @@ PROC ProcOrderAction(
         SET nDoneBound=doneBound;
         -- LOG CONCAT_WS(' ', post, to, readyStates, value, doneBound, nDoneBound) SUBJECT 'FOR BoundTo readyStates&ReadyStates.cost)=ReadyStates.cost AND (doneBound & EnumDone.withCost)=0';
         IF (readyStates&ReadyStates.cost)=ReadyStates.cost AND (doneBound & EnumDone.withCost)=0 {
-            PROC ProcBoundPost(action, post, to, actionId, readyStates&ReadyStates.cost); -- , value);
+            PROC ProcBoundPost(itemHistoryId, action, post, to, actionId, readyStates&ReadyStates.cost);
             SET nDoneBound = nDoneBound | EnumDone.withCost;
         }
         -- LOG CONCAT_WS(' ', post, to, readyStates, value, doneBound, nDoneBound) SUBJECT 'FOR BoundTo (doneBound & EnumDone.withoutCost)=0';
         IF (doneBound & EnumDone.withoutCost)=0 {
-            PROC ProcBoundPost(action, post, to, actionId, readyStates&ReadyStates.costNone); -- , value);
+            PROC ProcBoundPost(itemHistoryId, action, post, to, actionId, readyStates&ReadyStates.costNone);
             SET nDoneBound = nDoneBound | EnumDone.withoutCost;
         }
         IF doneBound<>nDoneBound {
@@ -148,6 +152,7 @@ PROC ProcOrderAction(
 };
 
 PROC ProcBoundPost (
+    itemHistoryId ID,
     action ENUM EnumOrderAction, 
     post ENUM Post, 
     to ID, 
@@ -158,13 +163,27 @@ PROC ProcBoundPost (
     -- LOG CONCAT_WS(' ', action, post, to, actionId, readyStates) SUBJECT 'ProcBoundPost Parameters';
     FOR (VAR item ENUM Item, itemToObj ENUM Item, ratio DEC(6,2)
         OF SELECT a.item, a.itemToObj, a.ratio
-            FROM PostBound as a JOIN ItemReadyStates as b ON a.item=b.id
-            WHERE a.post=post AND a.action=action AND b.readyStates=readyStates)
+            FROM PostBound as a LEFT JOIN ItemReadyStates as b ON a.item=b.id
+            WHERE a.post=post AND a.action=action 
+                AND IFNULL(b.readyStates, ReadyStates.costNone)=readyStates)
     {
-        VAR itemHistoryId ID = ID(ItemHistory, actionId, item);
-        IF itemHistoryId IS NULL { CONTINUE; }
-        VAR itemValue DEC(18,4);
-        SET itemValue = a.value FROM ItemHistory as a WHERE a.id=itemHistoryId;
+        VAR hisItem ENUM Item, itemValue DEC(18,4), track ID, referer BIGINT;
+        SET hisItem = a.item, itemValue = a.value, track = a.track, referer = a.referer 
+            FROM ItemHistory as a 
+            WHERE a.id=itemHistoryId;
+        IF hisItem <> item {
+            -- 目前，只处理回溯一层。绝大多数情况下，应该是可以了
+            -- 不能有分拆单的情况，比如某一个订单明细，分多次收款
+            SET hisItem = NULL;
+            SET hisItem = a.item, itemValue = a.value 
+                FROM ItemHistory as a 
+                WHERE a.track=referer AND a.item=item
+                LIMIT 1;
+            IF hisItem IS NULL OR hisItem <> item {
+                LOG CONCAT_WS(' ', itemHistoryId, item, hisItem, itemToObj, referer, track) SUBJECT 'ProcBoundPost PostItemHistory';
+                BREAK;
+            }
+        }
 
         -- LOG CONCAT_WS(' ', itemHistoryId, item, itemToObj) SUBJECT 'ProcBoundPost PostItemHistory';
         VAR objectPostItemId ID = ID(ObjectPostItem new, to, post, itemToObj);
@@ -176,28 +195,40 @@ PROC ProcBoundPost (
 PROC SaveItemProfit(
     actionId ID,
     orderDetail ID,
-    value DEC(18,4)
+    value DEC(18,4),
+    out itemHistoryId ID,
 ) {
-    -- LOG CONCAT_WS(' ', actionId, orderDetail, value) SUBJECT 'SaveItemProfit';
+    -- LOG CONCAT_WS(' ', actionId, orderDetail, value) SUBJECT 'SaveItemProfit' 1;
     VAR price DEC(18,4), cost DEC(18,4), create TIMESTAMP;
     SET price=a.price, create=b.[$create]
         FROM OrderDetail as a JOIN OrderMain as b ON a.main=b.id
         WHERE a.id=orderDetail;
     SET cost=a.costPrice FROM DxOrderDetail as a WHERE a.id=orderDetail;
-    PROC SaveItemHistory(create, actionId, orderDetail, Item.orderProfit, (price-cost)*value);
+    PROC SaveItemHistory(create, actionId, orderDetail, Item.orderProfit, (price-cost)*value, itemHistoryId);
 };
 
 PROC SaveItemAmount(
     actionId ID,
     orderDetail ID,
-    value DEC(18,4)
+    value DEC(18,4),
+    out itemHistoryId ID,
 ) {
-    -- LOG CONCAT_WS(' ', actionId, orderDetail, value) SUBJECT 'SaveItemAmount';
+    -- LOG CONCAT_WS(' ', actionId, orderDetail, value) SUBJECT 'SaveItemAmount' 1;
     VAR price DEC(18,4), create TIMESTAMP;
     SET price=a.price, create=b.[$create]
         FROM OrderDetail as a JOIN OrderMain as b ON a.main=b.id
         WHERE a.id=orderDetail;
-    PROC SaveItemHistory(create, actionId, orderDetail, Item.orderAmount, price*value);
+    PROC SaveItemHistory(create, actionId, orderDetail, Item.orderAmount, price*value, itemHistoryId);
+};
+
+PROC SaveItemReceive(
+    actionId ID,
+    orderDetail ID,
+    value DEC(18,4),
+    out itemHistoryId ID,
+) {
+    -- LOG CONCAT_WS(' ', actionId, orderDetail, value) SUBJECT 'SaveItemReceive';
+    PROC SaveItemHistory(NULL, actionId, orderDetail, Item.orderReceive, value, itemHistoryId);
 };
 
 PROC SaveItemHistory ver 0.1 (
@@ -206,8 +237,9 @@ PROC SaveItemHistory ver 0.1 (
     orderDetail ID,
     item ENUM Item,
     value DEC(18,4),
+    out itemHistoryId ID,
 ) {
-    -- LOG CONCAT_WS(' ', actionId, item, value) SUBJECT 'SaveItemHistory';
-    VAR itemHistoryId ID = ID(ItemHistory new, actionId, item, create);
-    WITH ItemHistory as a ID = itemHistoryId SET a.value=value, a.orderDetail=orderDetail;
+    -- LOG CONCAT_WS(' ', actionId, item, value) SUBJECT 'SaveItemHistory' 2;
+    SET itemHistoryId = ID(ItemHistory new, actionId, item, create);
+    WITH ItemHistory as a ID = itemHistoryId SET a.value=value, a.referer=orderDetail;
 };

@@ -1,50 +1,19 @@
 import { makeObservable, observable } from "mobx";
-import { Prop, QueryPager, User } from "tonva-react";
+import { QueryPager, User } from "tonva-react";
 import { CUqBase } from "uq-app";
 import { VMe } from "./VMe";
 import { VEditMe } from "./VEditMe";
-import { CAdmin, CManager, CTeamLeader } from "roles";
-
-export interface RootUnitItem {
-	id: number;					// root unit id
-	owner: any;
-	name: string;				// 唯一
-	content: string;
-	tonvaUnit: number;			// 跟tonva机构对应的值
-	x: number;
-}
-
-interface RoleNav {
-	renderNav(): JSX.Element;
-}
+import { VAdminSetting } from "./VAdminSetting";
 
 export class CMe extends CUqBase {
-	private readonly roleNavColl: {[role:string]:RoleNav};
-	role: number;
 	unitOwner: User;
 	rootUnits: QueryPager<any>;
-	roles: string[] = null;
+	admins: {id:number;role:number}[] = null;
+	isAdmin: boolean = false;
 	constructor(res:any) {
 		super(res);
 		makeObservable(this, {
-			roles: observable,
-		});
-		this.roleNavColl = {
-			admin: this.newC(CAdmin),
-			manager: this.newC(CManager),
-			teamLeader: this.newC(CTeamLeader),
-		}
-	}
-
-	roleNavs():Prop[] {
-		if (!this.roles) return;
-		let arr = ['admin', 'manager', 'teamLeader'];
-		let sortedRoles = arr.filter(v => this.roles.findIndex(r => r === v) >= 0);
-		return sortedRoles.map(v => {
-			return {
-				type: 'component',
-				component: this.roleNavColl[v].renderNav(),
-			} as Prop;
+			isAdmin: observable,
 		});
 	}
 
@@ -56,13 +25,17 @@ export class CMe extends CUqBase {
 	}
 
 	showEditMe = async () => {
-		//let result = await this.uqs.Notes.GetSystemRole.query({});
-		//this.role = result.ret[0]?.role;
 		this.openVPage(VEditMe);
 	}
 
 	load = async () => {
-		this.roles = await this.getUqRoles(this.uqs.JkMe.$.name);
+		let admins = await this.uqs.JkMe.getAdmins();
+		if (!admins) return;
+		let userId = this.user.id;
+		let p = admins.findIndex(v => v.id === userId);
+		if (p >= 0) admins.splice(p, 1);
+		this.admins = admins;
+		this.isAdmin = true;
 	}
 
 	backend = async () => {
@@ -70,15 +43,7 @@ export class CMe extends CUqBase {
 		//await cRoles.start();
 	}
 
-	private myRolesChanged = (roles:string[]) => {
-		//this.roles = roles;
-		//this.user.roles[this.uq.$.name] = roles;
-		//nav.saveLocalUser();
+	adminSetting = async () => {
+		this.openVPage(VAdminSetting);
 	}
-	/*
-	roleAdmin = async () => {
-		let cRoleAdmin = new CRoleAdmin(this.uqs.JkMe, this.myRolesChanged);
-		await cRoleAdmin.start();
-	}
-	*/
 }
