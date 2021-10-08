@@ -39,11 +39,18 @@ const fields = {
 		"widget": "number",
 		"label": "Ratio"
 	} as FieldItemNum,
+	memo: {
+		"name": "memo",
+		"type": "integer",
+		"isKey": false,
+		"widget": "updown",
+		"label": "Memo"
+	} as FieldItemInt,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.action, fields.post, fields.item, fields.itemToObj, fields.ratio, 
+	fields.action, fields.post, fields.item, fields.itemToObj, fields.ratio, fields.memo, 
 ];
 
 export const ui: UI = {

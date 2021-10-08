@@ -242,7 +242,7 @@ export class UQsMan {
                 let ret = target[lk];
                 if (ret !== undefined) return ret;
                 debugger;
-                //console.error('error in uqs');
+                console.error(`controller.uqs.${String(key)} undefined`);
                 this.showReload(`新增 uq ${String(key)}`);
                 return undefined;
             },

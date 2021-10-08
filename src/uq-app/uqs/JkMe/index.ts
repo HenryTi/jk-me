@@ -18,10 +18,15 @@ import * as ItemReadyStates from './ItemReadyStates.ui';
 import * as PostBound from './PostBound.ui';
 import * as A_Id_Test from './A_Id_Test.ui';
 import * as AIdTest from './AIdTest.ui';
+import * as QueueBizOp from './QueueBizOp.ui';
+import * as QueueBizMain from './QueueBizMain.ui';
 import * as DxOrderDetail from './DxOrderDetail.ui';
 import * as DxOrderMain from './DxOrderMain.ui';
 import * as UserTimezone from './UserTimezone.ui';
 import * as DxOrderAction from './DxOrderAction.ui';
+import * as DxBizMain from './DxBizMain.ui';
+import * as DxBizOp from './DxBizOp.ui';
+import * as DxBiz from './DxBiz.ui';
 import * as UserObject from './UserObject.ui';
 import * as PostItemHistory from './PostItemHistory.ui';
 import * as IxOrderBoundTo from './IxOrderBoundTo.ui';
@@ -30,6 +35,9 @@ import * as UserSuperviseItem from './UserSuperviseItem.ui';
 import * as IxOrderActionBoundPostDone from './IxOrderActionBoundPostDone.ui';
 import * as MonthSumProduct from './MonthSumProduct.ui';
 import * as MonthSumCustomer from './MonthSumCustomer.ui';
+import * as IxActionTrack from './IxActionTrack.ui';
+import * as IxBizOpBound from './IxBizOpBound.ui';
+import * as IxBizMainBoundTo from './IxBizMainBoundTo.ui';
 	
 export function setUI(uq: Uq) {
 	assign(uq, 'Object', Object);
@@ -51,10 +59,15 @@ export function setUI(uq: Uq) {
 	assign(uq, 'PostBound', PostBound);
 	assign(uq, 'A_Id_Test', A_Id_Test);
 	assign(uq, 'AIdTest', AIdTest);
+	assign(uq, 'QueueBizOp', QueueBizOp);
+	assign(uq, 'QueueBizMain', QueueBizMain);
 	assign(uq, 'DxOrderDetail', DxOrderDetail);
 	assign(uq, 'DxOrderMain', DxOrderMain);
 	assign(uq, 'UserTimezone', UserTimezone);
 	assign(uq, 'DxOrderAction', DxOrderAction);
+	assign(uq, 'DxBizMain', DxBizMain);
+	assign(uq, 'DxBizOp', DxBizOp);
+	assign(uq, 'DxBiz', DxBiz);
 	assign(uq, 'UserObject', UserObject);
 	assign(uq, 'PostItemHistory', PostItemHistory);
 	assign(uq, 'IxOrderBoundTo', IxOrderBoundTo);
@@ -63,5 +76,8 @@ export function setUI(uq: Uq) {
 	assign(uq, 'IxOrderActionBoundPostDone', IxOrderActionBoundPostDone);
 	assign(uq, 'MonthSumProduct', MonthSumProduct);
 	assign(uq, 'MonthSumCustomer', MonthSumCustomer);
+	assign(uq, 'IxActionTrack', IxActionTrack);
+	assign(uq, 'IxBizOpBound', IxBizOpBound);
+	assign(uq, 'IxBizMainBoundTo', IxBizMainBoundTo);
 }
 export * from './JkMe';

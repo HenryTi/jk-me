@@ -71,7 +71,6 @@ PROC ProcOrderAction(
             SET a.orderMain=orderMain, a.orderDetail=orderDetail;
     }
     
-
     IF orderMain=0 {
         SET orderMain=a.main FROM OrderDetail as a WHERE a.id=orderDetail;
         IF orderMain IS NULL { RETURN; }
@@ -161,34 +160,37 @@ PROC ProcBoundPost (
     -- value DEC(18,4),
 ) {
     -- LOG CONCAT_WS(' ', action, post, to, actionId, readyStates) SUBJECT 'ProcBoundPost Parameters';
-    FOR (VAR item ENUM Item, itemToObj ENUM Item, ratio DEC(6,2)
-        OF SELECT a.item, a.itemToObj, a.ratio
+    FOR (VAR item ENUM Item, itemToObj ENUM Item, ratio DEC(6,2), memo INT
+        OF SELECT a.item, a.itemToObj, a.ratio, a.memo
             FROM PostBound as a LEFT JOIN ItemReadyStates as b ON a.item=b.id
             WHERE a.post=post AND a.action=action 
                 AND IFNULL(b.readyStates, ReadyStates.costNone)=readyStates)
     {
         VAR hisItem ENUM Item, itemValue DEC(18,4), track ID, referer BIGINT;
-        SET hisItem = a.item, itemValue = a.value, track = a.track, referer = a.referer 
+        SET hisItem = a.item, itemValue = a.value, track = a.bizOp, referer = a.biz 
             FROM ItemHistory as a 
             WHERE a.id=itemHistoryId;
         IF hisItem <> item {
+            LOG CONCAT_WS(' ', itemHistoryId, action, item, hisItem, itemToObj, referer, track) SUBJECT 'ProcBoundPost 1';
             -- 目前，只处理回溯一层。绝大多数情况下，应该是可以了
             -- 不能有分拆单的情况，比如某一个订单明细，分多次收款
             SET hisItem = NULL;
-            SET hisItem = a.item, itemValue = a.value 
-                FROM ItemHistory as a 
-                WHERE a.track=referer AND a.item=item
+            SET itemHistoryId = b.id, hisItem = b.item, itemValue = b.value
+                FROM IxActionTrack as a
+                    JOIN ItemHistory as b ON a.xi=b.id
+                WHERE a.ixx=action AND a.ix=referer AND b.item=item
                 LIMIT 1;
             IF hisItem IS NULL OR hisItem <> item {
-                LOG CONCAT_WS(' ', itemHistoryId, item, hisItem, itemToObj, referer, track) SUBJECT 'ProcBoundPost PostItemHistory';
+                LOG CONCAT_WS(' ', itemHistoryId, action, item, hisItem, itemToObj, referer, track) SUBJECT 'ProcBoundPost 2';
                 BREAK;
             }
+            WITH IxActionTrack IXX=action IX=referer XI=itemHistoryId DEL;
         }
 
         -- LOG CONCAT_WS(' ', itemHistoryId, item, itemToObj) SUBJECT 'ProcBoundPost PostItemHistory';
         VAR objectPostItemId ID = ID(ObjectPostItem new, to, post, itemToObj);
         WITH PostItemHistory as a IX=objectPostItemId XI=itemHistoryId 
-            SET a.value=itemValue * IFNULL(ratio, 100) / 100;
+            SET a.value=itemValue * IFNULL(ratio, 100) / 100, a.memo=memo;
     }
 };
 
@@ -198,13 +200,14 @@ PROC SaveItemProfit(
     value DEC(18,4),
     out itemHistoryId ID,
 ) {
-    -- LOG CONCAT_WS(' ', actionId, orderDetail, value) SUBJECT 'SaveItemProfit' 1;
     VAR price DEC(18,4), cost DEC(18,4), create TIMESTAMP;
     SET price=a.price, create=b.[$create]
         FROM OrderDetail as a JOIN OrderMain as b ON a.main=b.id
         WHERE a.id=orderDetail;
     SET cost=a.costPrice FROM DxOrderDetail as a WHERE a.id=orderDetail;
     PROC SaveItemHistory(create, actionId, orderDetail, Item.orderProfit, (price-cost)*value, itemHistoryId);
+    LOG CONCAT_WS(' ', EnumOrderAction.receiveDone, orderDetail, itemHistoryId) SUBJECT 'SaveItemProfit IxActionTrack';
+    WITH IxActionTrack IXX=EnumOrderAction.receiveDone IX=orderDetail XI=itemHistoryId;
 };
 
 PROC SaveItemAmount(
@@ -227,7 +230,7 @@ PROC SaveItemReceive(
     value DEC(18,4),
     out itemHistoryId ID,
 ) {
-    -- LOG CONCAT_WS(' ', actionId, orderDetail, value) SUBJECT 'SaveItemReceive';
+    LOG CONCAT_WS(' ', actionId, orderDetail, value) SUBJECT 'SaveItemReceive';
     PROC SaveItemHistory(NULL, actionId, orderDetail, Item.orderReceive, value, itemHistoryId);
 };
 
@@ -241,5 +244,5 @@ PROC SaveItemHistory ver 0.1 (
 ) {
     -- LOG CONCAT_WS(' ', actionId, item, value) SUBJECT 'SaveItemHistory' 2;
     SET itemHistoryId = ID(ItemHistory new, actionId, item, create);
-    WITH ItemHistory as a ID = itemHistoryId SET a.value=value, a.referer=orderDetail;
+    WITH ItemHistory as a ID = itemHistoryId SET a.value=value, a.biz=orderDetail, a.bizOp=actionId;
 };

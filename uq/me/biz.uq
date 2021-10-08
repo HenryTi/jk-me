@@ -1,0 +1,212 @@
+-- BizMain ready, 加入这个队列
+ID QueueBizMain MINUTEID (
+    id,
+    KEY bizMain ID,                     -- bizMain
+);
+
+ID QueueBizOp MINUTEID (
+    id,
+    KEY bizOp ID,                       -- detail of deliver, receive, return
+);
+
+IDX DxBizMain (
+    id,
+    ready INT DEFAULT 0,                -- ready状态
+);
+
+-- biz是核心
+IDX DxBiz (
+    id,
+    main ID,
+    INDEX main_id(main),
+);
+
+-- BizOp是针对Biz的业务操作
+IDX DxBizOp (
+    id,                                 -- bizOp id
+    action ENUM EnumBizAction,
+    biz ID,                             -- 指向biz
+    value DEC(18,4),
+    done TINYINT DEFAULT 0,             -- 1: done
+    INDEX biz_id(biz),
+);
+
+IX IxBizOpBound (
+    ixx,                                -- bizOp id
+    ix ENUM EnumBizAction,
+    xi ENUM Post,                       -- POST
+    bound TINYINT DEFAULT 0,            -- 1: bound
+);
+
+-- 1. 订单跟岗位和个人的绑定关系。
+-- 2. 从订单绑定管理发送过来。
+-- 3. 一直保留
+IX IxBizMainBoundTo (
+    ixx,				        -- bizMain id
+    ix ENUM Post,
+    xi,					        -- to id, 
+);
+
+-- 处理的是 biz main sheet
+ACT ExecQueueBizMain () {
+    VAR queueId ID, bizMain ID;
+    SET queueId=a.id, bizMain=a.bizMain
+        FROM QueueBizMain as a
+        ORDER BY a.id ASC
+        LIMIT 1;
+    IF queueId IS NULL {
+        LOG CONCAT_WS(' ', NULL) SUBJECT 'ExecQueueBizMain EXIT';
+        RETURN;
+    }
+    LOG CONCAT_WS(' ', bizMain, queueId) SUBJECT 'ExecQueueBizMain';
+    FOR (VAR bizOp ID
+        OF SELECT c.id as bizOp
+            FROM DxBiz as b
+                JOIN DxBizOp as c ON c.biz=b.id
+            WHERE b.main=bizMain)
+    {
+        PROC ProcBizOp(bizOp);
+    }
+    WITH QueueBizMain ID=queueId DEL;
+    SCHEDULE ExecQueueBizMain;
+};
+
+ACT ExecQueueBizOp ver 0.3 () {
+    VAR rowCount INT = 0;
+    FOR (VAR queueId ID, bizOp ID
+        OF SELECT a.id as queueId, a.bizOp
+            FROM QueueBizOp as a
+            ORDER BY a.id ASC
+            LIMIT maxActionRows)
+    {
+        TRANSACTION Start;
+        PROC ProcBizOp(bizOp);
+        WITH QueueBizOp ID=queueId DEL;
+        TRANSACTION Commit;
+        SET rowCount = rowCount + 1;
+    }
+
+    IF rowCount>=maxActionRows {
+        SCHEDULE ExecQueueBizOp;
+    }
+};
+
+PROC ProcBizOp(
+    bizOp ID,
+) {
+    -- 判断是不是Biz的凭单已经ready
+    IF NOT Exists(SELECT c.id
+        FROM DxBizOp as a 
+            JOIN DxBiz as b ON b.id=a.biz
+            JOIN DxBizMain as c ON c.id=b.main
+        WHERE a.id=bizOp AND c.ready=1)
+    {
+
+        RETURN;
+    };
+
+    VAR action ENUM EnumBizAction, done TINYINT;
+    SET action=a.action, done=a.done
+        FROM DxBizOp as a 
+        WHERE a.id=bizOp;
+
+    IF done=0 {
+        PROC ProcWriteItemHistory(bizOp);
+        WITH DxBizOp ID=bizOp SET done=1;
+    }
+
+    -- biz bound post history
+    FOR (VAR itemHistoryId ID, post ENUM Post, value DEC(18,4), itemToObj ENUM Item, ratio DEC(6,2), to ID, memo INT
+        OF SELECT c.id as itemHistoryId, a.post, c.value, a.itemToObj, a.ratio, e.xi as to, a.memo
+            FROM PostBound as a
+                JOIN DxBizOp as b ON b.id=bizOp
+                JOIN ItemHistory as c ON c.item=a.item AND c.biz=b.biz
+                JOIN DxBiz as d ON d.id=c.biz
+                JOIN IxBizMainBoundTo as e ON e.ixx=d.main AND e.ix=a.post
+                LEFT JOIN IxBizOpBound as f ON f.ixx=b.id AND f.ix=a.action
+            WHERE a.action=action AND f.bound IS NULL)
+    {
+        VAR objectPostItemId ID = ID(ObjectPostItem new, to, post, itemToObj);
+        WITH PostItemHistory as a IX=objectPostItemId XI=itemHistoryId 
+            SET a.value=value * IFNULL(ratio, 100) / 100, a.memo=memo;
+        WITH IxBizOpBound IXX=bizOp IX=action XI=post SET bound=1;
+    }
+};
+
+PROC ProcWriteItemHistory(
+    bizOp ID,
+) {
+    VAR biz ID, action ENUM EnumBizAction, value DEC(18,4);
+    SET biz=a.biz, action=a.action, value=a.value 
+        FROM DxBizOp as a 
+        WHERE a.id=bizOp;
+    IF action=EnumBizAction.orderDeliverDone {
+        VAR price DEC(18,4), cost DEC(18,4), create TIMESTAMP;
+        SET price=a.price, create=b.[$create]
+            FROM OrderDetail as a JOIN OrderMain as b ON a.main=b.id
+            WHERE a.id=biz;
+        SET cost=a.costPrice FROM DxOrderDetail as a WHERE a.id=biz;
+        PROC ProcItemHistory(biz, bizOp, Item.orderProfit, (price-cost)*value, create);
+        PROC ProcItemHistory(biz, bizOp, Item.orderAmount, price*value, create);
+    }
+    ELSEIF action=EnumBizAction.orderReceiveDone {
+        VAR price DEC(18,4), cost DEC(18,4), create TIMESTAMP;
+        SET price=a.price, create=b.[$create]
+            FROM OrderDetail as a JOIN OrderMain as b ON a.main=b.id
+            WHERE a.id=biz;
+        SET cost=a.costPrice FROM DxOrderDetail as a WHERE a.id=biz;
+        VAR profit DEC(18,4);
+        IF price<=0.001 {
+            SET profit = 0;
+        }
+        ELSE {
+            SET profit = (price - cost)/price * value;
+        }
+        PROC ProcItemHistory(biz, bizOp, Item.orderProfit, profit, create);
+        PROC ProcItemHistory(biz, bizOp, Item.orderAmount, value, create);
+        PROC ProcItemHistory(biz, bizOp, Item.orderReceive, value, action, NULL);
+    }
+    ELSEIF action=EnumBizAction.orderReturn {
+
+    }
+};
+/*
+PROC ProcItemOrderProfit(
+    biz ID,
+    bizOp ID,
+) {
+    -- LOG CONCAT_WS(' ', bizOp) SUBJECT 'ProcItemOrderProfit';
+    VAR price DEC(18,4), cost DEC(18,4), create TIMESTAMP;
+    SET price=a.price, create=b.[$create]
+        FROM OrderDetail as a JOIN OrderMain as b ON a.main=b.id
+        WHERE a.id=biz;
+    SET cost=a.costPrice FROM DxOrderDetail as a WHERE a.id=biz;
+    PROC ProcItemHistory(biz, bizOp, Item.orderProfit, (price-cost)*value, create);
+};
+
+PROC ProcItemOrderAmount(
+    biz ID,
+    bizOp ID,
+) {
+    -- LOG CONCAT_WS(' ', bizOp) SUBJECT 'ProcItemOrderAmount';
+    VAR price DEC(18,4), create TIMESTAMP;
+    SET price=a.price, create=b.[$create]
+        FROM OrderDetail as a JOIN OrderMain as b ON a.main=b.id
+        WHERE a.id=orderDetail;
+    PROC ProcItemHistory(biz, bizOp, Item.orderAmount, price*value, create);
+};
+*/
+PROC ProcItemHistory(
+    biz ID,
+    bizOp ID,
+    item ENUM Item,
+    value DEC(18,4),
+    stamp TIMESTAMP,
+) {
+    VAR itemHistoryId ID;
+    SET itemHistoryId = a.id FROM ItemHistory as a WHERE a.biz=biz AND a.item=item;
+    IF itemHistoryId IS NULL {
+        SET itemHistoryId = ID(ItemHistory new, biz, item, stamp);
+        WITH ItemHistory as a ID = itemHistoryId SET a.value=value, a.bizOp=bizOp;
+    }
+};

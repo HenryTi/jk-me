@@ -46,10 +46,12 @@ QUERY UserItemHistory ver 0.1 (
 )
 RETURNS ret (
     minuteId ID,
-    track ID,
-    value DEC(18,4)
+    biz ID,
+    bizOp ID,
+    value DEC(18,4),
+    memo CHAR(200)
 ) {
-    INTO ret SELECT a.xi as minuteId, d.track as track, a.value
+    INTO ret SELECT a.xi as minuteId, d.biz, d.bizOp, a.value, IDTEXT(a.memo) as memo
         FROM PostItemHistory AS a
             JOIN ObjectPostItem as b ON a.ix=b.id
             JOIN UserObject as c ON b.object=c.xi

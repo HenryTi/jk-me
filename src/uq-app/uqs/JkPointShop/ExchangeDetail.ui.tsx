@@ -1,7 +1,8 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Res, setRes, TFunc, UI, uqStringify } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
-import { ItemHistory } from "./JkMe";
+import { ExchangeDetail } from "./JkPointShop";
 
 /*--fields--*/
 const fields = {
@@ -11,46 +12,48 @@ const fields = {
 		"isKey": false,
 		"label": "Id"
 	} as FieldItemId,
-	biz: {
-		"name": "biz",
+	main: {
+		"name": "main",
 		"type": "id",
-		"isKey": true,
-		"label": "Biz"
+		"isKey": false,
+		"label": "Main"
 	} as FieldItemId,
 	item: {
 		"name": "item",
-		"isKey": true,
-		"label": "Item"
-	} as undefined,
-	bizOp: {
-		"name": "bizOp",
 		"type": "id",
 		"isKey": false,
-		"label": "BizOp"
+		"label": "Item"
 	} as FieldItemId,
-	value: {
-		"name": "value",
+	quantity: {
+		"name": "quantity",
 		"type": "number",
 		"isKey": false,
 		"widget": "number",
-		"label": "Value"
+		"label": "Quantity"
 	} as FieldItemNum,
-	memo: {
-		"name": "memo",
-		"type": "integer",
+	point: {
+		"name": "point",
+		"type": "number",
 		"isKey": false,
-		"widget": "updown",
-		"label": "Memo"
-	} as FieldItemInt,
+		"widget": "number",
+		"label": "Point"
+	} as FieldItemNum,
+	subAmount: {
+		"name": "subAmount",
+		"type": "number",
+		"isKey": false,
+		"widget": "number",
+		"label": "SubAmount"
+	} as FieldItemNum,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.biz, fields.item, fields.bizOp, fields.value, fields.memo, 
+	fields.main, fields.item, fields.quantity, fields.point, fields.subAmount, 
 ];
 
 export const ui: UI = {
-	label: "ItemHistory",
+	label: "ExchangeDetail",
 	fieldArr,
 	fields,
 };
@@ -68,6 +71,6 @@ export const t:TFunc = (str:string|JSX.Element): string|JSX.Element => {
 	return res[str as string] ?? str;
 }
 
-export function render(item: ItemHistory):JSX.Element {
+export function render(item: ExchangeDetail):JSX.Element {
 	return <>{uqStringify(item)}</>;
 };

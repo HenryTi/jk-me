@@ -19,13 +19,13 @@ export class VItemHistory extends VPage<CHome> {
 
     private renderItem = (history: ReturnUserItemHistoryRet, index: number) => {
         let {itemTitles} = this.controller.cApp;
-        let {minuteId, value, track} = history;
+        let {minuteId, value, biz, bizOp, memo} = history;
         let {item} = this.controller.periodSum.itemPeriodSum;
         let {unit, fixed} = itemTitles[item];
         let d = dateFromMinuteId(minuteId);
         let left = <div className="text-muted small w-8c"><EasyTime date={d} timeZone={-5} /></div>;
         let right = <div>{(value??0).toFixed(fixed??2)} {unit}</div>;
-        return <LMR className="px-3 py-2" left={left} right={right}>{track}</LMR>;
+        return <LMR className="px-3 py-2" left={left} right={right}>{bizOp}{memo? ': ' + memo : ''}</LMR>;
     }
 
     private onClickItem = (item: ReturnUserItemHistoryRet) => {

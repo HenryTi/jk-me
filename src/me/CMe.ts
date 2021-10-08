@@ -46,4 +46,8 @@ export class CMe extends CUqBase {
 	adminSetting = async () => {
 		this.openVPage(VAdminSetting);
 	}
+
+	testPointShop = async () => {
+		let ret = await this.uqs.JkPointShop.GetPoints.query({customer: 1});
+	}
 }

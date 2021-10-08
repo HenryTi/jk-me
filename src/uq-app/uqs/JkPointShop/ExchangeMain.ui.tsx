@@ -1,7 +1,8 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Res, setRes, TFunc, UI, uqStringify } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
-import { ItemHistory } from "./JkMe";
+import { ExchangeMain } from "./JkPointShop";
 
 /*--fields--*/
 const fields = {
@@ -11,46 +12,52 @@ const fields = {
 		"isKey": false,
 		"label": "Id"
 	} as FieldItemId,
-	biz: {
-		"name": "biz",
-		"type": "id",
+	no: {
+		"name": "no",
+		"type": "string",
 		"isKey": true,
-		"label": "Biz"
-	} as FieldItemId,
-	item: {
-		"name": "item",
-		"isKey": true,
-		"label": "Item"
-	} as undefined,
-	bizOp: {
-		"name": "bizOp",
+		"widget": "string",
+		"label": "No"
+	} as FieldItemString,
+	customer: {
+		"name": "customer",
 		"type": "id",
 		"isKey": false,
-		"label": "BizOp"
+		"label": "Customer"
 	} as FieldItemId,
-	value: {
-		"name": "value",
+	shippingContact: {
+		"name": "shippingContact",
+		"type": "id",
+		"isKey": false,
+		"label": "ShippingContact"
+	} as FieldItemId,
+	amount: {
+		"name": "amount",
 		"type": "number",
 		"isKey": false,
 		"widget": "number",
-		"label": "Value"
+		"label": "Amount"
 	} as FieldItemNum,
-	memo: {
-		"name": "memo",
-		"type": "integer",
+	sheetId: {
+		"name": "sheetId",
+		"type": "id",
 		"isKey": false,
-		"widget": "updown",
-		"label": "Memo"
-	} as FieldItemInt,
+		"label": "SheetId"
+	} as FieldItemId,
+	createDate: {
+		"name": "createDate",
+		"isKey": false,
+		"label": "CreateDate"
+	} as undefined,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.biz, fields.item, fields.bizOp, fields.value, fields.memo, 
+	fields.no, fields.customer, fields.shippingContact, fields.amount, fields.sheetId, fields.createDate, 
 ];
 
 export const ui: UI = {
-	label: "ItemHistory",
+	label: "ExchangeMain",
 	fieldArr,
 	fields,
 };
@@ -68,6 +75,6 @@ export const t:TFunc = (str:string|JSX.Element): string|JSX.Element => {
 	return res[str as string] ?? str;
 }
 
-export function render(item: ItemHistory):JSX.Element {
+export function render(item: ExchangeMain):JSX.Element {
 	return <>{uqStringify(item)}</>;
 };

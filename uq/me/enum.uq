@@ -43,8 +43,30 @@ ENUM EnumOrderAction (
     orderBoundManagerIT         = 1120,
 );
 
+ENUM EnumBoundAction (
+    orderBound                  = 100,
+    orderStaffSales             = 101,
+    orderAgent                  = 102,
+    orderDistributor            = 103,
+    orderCustomer               = 104,
+    orderManagerIT              = 120,
+    orderBoundMax               = 199,
+);
+
+ENUM EnumBizAction (
+    none                        = 0,
+	orderDeliverDone            = 101, 
+	orderReceiveDone            = 102,
+	orderReturn                 = 103,
+);
+
 ENUM ReadyStates (
     costNone                    = 0x0001,
+    cost                        = 0x0002,
+);
+
+ENUM OrderReady (
+    sheet                       = 0x0001,
     cost                        = 0x0002,
 );
 
@@ -97,17 +119,18 @@ ID PostBound ver 0.5 CONST (
     item ENUM Item,                     -- item to itemHistory
     itemToObj ENUM Item,                -- item to PostItemHistory
     ratio DEC(6,2) DEFAULT 100,         -- 百分比，从itemHistory的value，折算到PostItemHistory, 未来有可能是分段公式
+    memo INT,                           -- 文本id
     INDEX action_post(action, post),
 )
-+ (action, post, item, itemToObj, ratio)
++ (action, post, item, itemToObj, ratio, memo)
 VALUES
 -- EnumOrderAction.deliverDone
-(EnumOrderAction.deliverDone, Post.staffSales, Item.orderAmount, Item.orderAmount, null),
-(EnumOrderAction.deliverDone, Post.staffSales, Item.orderProfit, Item.commissionFromProfit, 4),
-(EnumOrderAction.deliverDone, Post.managerIT, Item.orderAmount, Item.commissionFromAmount, 0.1),
+(EnumOrderAction.deliverDone, Post.staffSales, Item.orderAmount, Item.orderAmount, null, TEXTID('发货后订单金额')),
+(EnumOrderAction.deliverDone, Post.staffSales, Item.orderProfit, Item.commissionFromProfit, 4, TEXTID('发货后毛利提成')),
+(EnumOrderAction.deliverDone, Post.managerIT, Item.orderAmount, Item.commissionFromAmount, 0.1, TEXTID('发货后金额提成')),
 
 -- EnumOrderAction.receiveDone
-(EnumOrderAction.receiveDone, Post.staffSales, Item.orderProfit, Item.commissionFromProfit, 4),
+(EnumOrderAction.receiveDone, Post.staffSales, Item.orderProfit, Item.commissionFromProfit, 4, TEXTID('收款后毛利提成')),
 ;
 
 ID ItemReadyStates CONST (
