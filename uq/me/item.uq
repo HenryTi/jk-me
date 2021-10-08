@@ -46,7 +46,7 @@ ID ItemHistory ver 0.1 MINUTEID (
     id,                         -- 分钟序id
     KEY track ID,               -- 原始凭证
     KEY item ENUM Item,         -- 科目
-    orderDetail ID,             -- 订单明细ID，上面带产品，可以统计
+    referer ID,                 -- 来路。对deliver，receive，return而言，是订单明细ID，上面带产品，可以统计
     value DEC(18,4),            -- 数值
     memo INT,                   -- 文本ID
     INDEX item_id(item, id) UNIQUE,

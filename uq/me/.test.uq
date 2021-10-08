@@ -1,13 +1,16 @@
-BUS JkHr ver 0.3 from 百灵威系统工程部/[jk-hr]
+BUS JkHr ver 0.4 from 百灵威系统工程部/[jk-hr]
 ACCEPT [webuser-employee-query] {
     var emp ID;
     set emp=employee;
     LOG CONCAT_WS(' ', webuser, emp) SUBJECT 'ACCEPT [webuser-employee-query]';
 }
+/*
 QUERY [webuser-employee-query] {
     into BUS select webuser, 98 as employee;
     into BUS select webuser, 97 as employee;
-};
+}
+*/
+;
 
 ACT ATest ver 0.3 () {
     BUS JkHr.[webuser-employee-query] QUERY webuser=12;

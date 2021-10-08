@@ -3,7 +3,6 @@ ACCEPT order {
 	VAR mainId ID;
 	SET mainId = id;
 	WITH OrderMain as a ID=mainId SET a.no=no, a.customerAccount=customerAccount;
-    LOG CONCAT_WS(' ', mainId, customerAccount) SUBJECT 'JkOrderBus ACCEPT order';
 	FOR detail {
         LOG CONCAT_WS(' ', id, quantity, item) SUBJECT 'JkOrderBus ACCEPT orderDetail';
 		WITH OrderDetail as a 
@@ -32,6 +31,7 @@ ACCEPT order {
 }
 ACCEPT [deliver-done] {
 	FOR detail {
+        LOG CONCAT_WS(' ', orderDetail, value) SUBJECT 'ACCEPT JkOrderBus.deliver-done';
 		WITH DxOrderDetail ID=orderDetail SET deliverDone += value;
         PROC SaveOrderAction(id, EnumOrderAction.deliverDone, orderDetail, value, Item.orderDeliver);
 	}
@@ -39,6 +39,7 @@ ACCEPT [deliver-done] {
 }
 ACCEPT [receive-done] {
 	FOR detail {
+        LOG CONCAT_WS(' ', orderDetail, value) SUBJECT 'ACCEPT JkOrderBus.receive-done';
 		WITH DxOrderDetail ID=orderDetail SET receiveDone+=value;
         PROC SaveOrderAction(id, EnumOrderAction.receiveDone, orderDetail, value, Item.orderReceive);
 	}
@@ -53,6 +54,7 @@ ACCEPT [return] {
 }
 ACCEPT [order-sale-cost] {
     FOR detail {
+        LOG CONCAT_WS(' ', [order-detail], [cost]) SUBJECT 'ACCEPT JkOrderBus.order-sale-cost';
         WITH DxOrderDetail ID=[order-detail] SET costPrice=[cost];
     }
     VAR readyStates ENUM ReadyStates;

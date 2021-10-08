@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react';
-import { Image, VPage, nav, IconText, PropGrid, LMR, FA, Prop } from 'tonva-react';
+import { Image, VPage, nav, IconText, PropGrid, LMR, FA, Prop, UserIcon, UserView, User } from 'tonva-react';
 import { CMe } from './CMe';
 import { appConfig } from '../uq-app/appConfig';
 import { VAbout } from './VAbout';
@@ -47,22 +47,34 @@ export class VMe extends VPage<CMe> {
                 },
 				'',
             ];
-			let roleNavs = this.controller.roleNavs();
-			if (roleNavs) {
-				rows.push(...roleNavs);
-			}
-            rows.push({
+			rows.push({
                 type: 'component',
-                component: <LMR className="w-100" onClick={this.test}
-					right={<FA className="align-self-center" name="angle-right" />}>
-                    TEST
-                </LMR>,
+                component: <this.renderAdmin />,
             });
-
             rows.push(...aboutRows, ...logOutRows);
         }
         return <PropGrid rows={[...rows]} values={{}} />;
 	}
+
+    private renderAdmin = observer(():JSX.Element => {
+        let {isAdmin} = this.controller;
+        if (isAdmin === false) return null;
+        let {admins, user} = this.controller;
+        return <LMR className="py-2 cursor-pointer w-100"
+                onClick={this.controller.adminSetting}
+                left={<FA name="cog" className="text-info mt-1 me-3" />}
+                right={<FA className="align-self-center" name="angle-right" />}
+            >
+            <div>业务设置</div>
+            <div className="small text-muted d-flex align-items-center">
+                <small className="d-inline">管理员</small>
+                <span className="d-inline ms-3 text-danger">[我]</span>
+                {admins.map(v => {
+                    return <span className="d-inline ms-3">{this.renderUserText(v.id)}</span>
+                })}
+            </div>
+        </LMR>;
+    });
 
 	private meInfo = observer(() => {
         let { user } = nav;
