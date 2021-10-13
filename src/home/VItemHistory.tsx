@@ -25,10 +25,12 @@ export class VItemHistory extends VPage<CHome> {
         let d = dateFromMinuteId(minuteId);
         let left = <div className="text-muted small w-8c"><EasyTime date={d} timeZone={-5} /></div>;
         let right = <div>{(value??0).toFixed(fixed??2)} {unit}</div>;
-        return <LMR className="px-3 py-2" left={left} right={right}>{bizOp}{memo? ': ' + memo : ''}</LMR>;
+        return <LMR className="px-3 py-2" left={left} right={right}>
+            {bizOp}{memo? ': ' + memo : ''}
+        </LMR>;
     }
 
     private onClickItem = (item: ReturnUserItemHistoryRet) => {
-        alert(JSON.stringify(item));
+        this.controller.showBizOpDetail(item);
     }
 }

@@ -73,8 +73,6 @@ export class UQsMan {
         }
         let {id, uqs} = uqAppData;
 		uqsMan.id = id;
-		//console.error(uqAppData);
-		//let ownerProfixMap: {[owner: string]: string};
 		return await uqsMan.buildUqs(uqs, version, uqConfigs);
 	}
 

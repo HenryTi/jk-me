@@ -189,7 +189,7 @@ PROC ProcBoundPost (
 
         -- LOG CONCAT_WS(' ', itemHistoryId, item, itemToObj) SUBJECT 'ProcBoundPost PostItemHistory';
         VAR objectPostItemId ID = ID(ObjectPostItem new, to, post, itemToObj);
-        WITH PostItemHistory as a IX=objectPostItemId XI=itemHistoryId 
+        WITH PostItemHistory as a IXX=objectPostItemId IX=itemHistoryId XI=0
             SET a.value=itemValue * IFNULL(ratio, 100) / 100, a.memo=memo;
     }
 };

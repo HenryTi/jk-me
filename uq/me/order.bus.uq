@@ -28,8 +28,8 @@ ACCEPT order {
     PROC ProcQueueBizMain(mainId);
 }
 ACCEPT [deliver-done] {
+    LOG CONCAT_WS(' ', id) SUBJECT 'ACCEPT JkOrderBus.deliver-done';
 	FOR detail {
-        LOG CONCAT_WS(' ', orderDetail, value) SUBJECT 'ACCEPT JkOrderBus.deliver-done';
 		WITH DxOrderDetail ID=orderDetail SET deliverDone += value;
         WITH DxBizOp as a ID=id 
             SET a.action=EnumBizAction.orderDeliverDone, a.biz=orderDetail, a.value=value;
@@ -38,8 +38,8 @@ ACCEPT [deliver-done] {
     SCHEDULE ExecQueueBizOp DELAY 1;
 }
 ACCEPT [receive-done] {
+    LOG CONCAT_WS(' ', id) SUBJECT 'ACCEPT JkOrderBus.receive-done';
 	FOR detail {
-        LOG CONCAT_WS(' ', orderDetail, value) SUBJECT 'ACCEPT JkOrderBus.receive-done';
 		WITH DxOrderDetail ID=orderDetail SET receiveDone+=value;
         WITH DxBizOp as a ID=id 
             SET a.action=EnumBizAction.orderReceiveDone, a.biz=orderDetail, a.value=value;
@@ -119,6 +119,7 @@ ACCEPT [order-bound-customer] {
 PROC ProcQueueBizMain(
     bizMain ID,
 ) {
+    
     IF EXISTS(SELECT id FROM DxBizMain WHERE ready=1 AND id=bizMain)
         AND NOT EXISTS(SELECT a.id FROM QueueBizMain as a WHERE a.bizMain=bizMain)
     {
@@ -140,5 +141,10 @@ PROC ProcSetOrderReady(
     WITH DxOrderMain ID=order SET readyStates=ready;
     IF ready = (OrderReady.sheet | OrderReady.cost) {
         WITH DxBizMain ID=order SET ready=1;
+        FOR (VAR orderDetail ID 
+            OF SELECT id as orderDetail FROM OrderDetail WHERE main=order)
+        {
+            WITH DxBiz ID=orderDetail SET main=order;
+        }
     }
 };

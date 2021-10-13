@@ -52,9 +52,12 @@ ID ItemHistory ver 0.1 MINUTEID (
     INDEX item_id(item, id) UNIQUE,
 );
 
+-- 2021-10-12：ItemHistory可能产生不同的针对个体的操作。如果只有ix-xi，会覆盖
+-- 所以加一级bizOp，形成ixx-ix-xi结构。
 IX PostItemHistory (
-    ix ObjectPostItem,
-    xi ItemHistory,
+    ixx ObjectPostItem,
+    ix ItemHistory,
+    xi,                         -- bizOp
     value DEC(18,4),
     memo INT,                   -- 文本ID
 );

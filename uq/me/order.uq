@@ -20,7 +20,7 @@ ID OrderDetail ver 0.5 GLOBAL (
 
 IDX DxOrderMain (
     id,
-    readyStates ENUM ReadyStates DEFAULT 1,     -- 按位记的准备状态, 无价格1，有价格2，实际值3
+    readyStates ENUM ReadyStates DEFAULT 0,
 );
 
 IDX DxOrderDetail (

@@ -1,4 +1,4 @@
-//=== UqApp builder created on Fri Oct 08 2021 10:18:46 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Sat Oct 09 2021 14:29:16 GMT-0400 (北美东部夏令时间) ===//
 import * as JkMe from './JkMe';
 import * as JkProduct from './JkProduct';
 import * as JkPointShop from './JkPointShop';

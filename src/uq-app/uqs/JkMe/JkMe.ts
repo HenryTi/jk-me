@@ -1,4 +1,4 @@
-//=== UqApp builder created on Fri Oct 08 2021 10:18:46 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Sat Oct 09 2021 14:29:16 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 
@@ -121,7 +121,12 @@ export interface ResultBusTestBoundStaffSales {
 }
 
 export interface ParamBusTestOrderSaleCost {
-	orderMain: number;
+	order: number;
+	detail: {
+		orderDetail: number;
+		cost: number;
+	}[];
+
 }
 export interface ResultBusTestOrderSaleCost {
 }
@@ -144,6 +149,19 @@ export interface ResultExecQueueBizOp {
 export interface ParamExecQueueBizMain {
 }
 export interface ResultExecQueueBizMain {
+}
+
+export interface ParamDoneDeliver {
+	customer: number;
+	contact: number;
+	warehouse: number;
+	detail: {
+		orderDetail: number;
+		quantity: number;
+	}[];
+
+}
+export interface ResultDoneDeliver {
 }
 
 export interface Param$poked {
@@ -500,6 +518,24 @@ export interface QueueBizMain {
 	bizMain: number;
 }
 
+export interface DeliverDetail {
+	id?: number;
+	main?: number;
+	orderDetail: number;
+	quantity: number;
+}
+
+export interface DeliverMain {
+	id?: number;
+	no?: string;
+	customer: number;
+	contact: number;
+	warehouse: number;
+	cutOffMain: number;
+	trayNumber: number;
+	$create?: any;
+}
+
 export interface DxOrderDetail {
 	id: number;
 	deliverDone?: number;
@@ -691,6 +727,8 @@ export interface ParamActs {
 	aIdTest?: AIdTest[];
 	queueBizOp?: QueueBizOp[];
 	queueBizMain?: QueueBizMain[];
+	deliverDetail?: DeliverDetail[];
+	deliverMain?: DeliverMain[];
 	dxOrderDetail?: ActParamDxOrderDetail[];
 	dxOrderMain?: ActParamDxOrderMain[];
 	userTimezone?: ActParamUserTimezone[];
@@ -724,6 +762,7 @@ export interface UqExt extends Uq {
 	ATest: UqAction<ParamATest, ResultATest>;
 	ExecQueueBizOp: UqAction<ParamExecQueueBizOp, ResultExecQueueBizOp>;
 	ExecQueueBizMain: UqAction<ParamExecQueueBizMain, ResultExecQueueBizMain>;
+	DoneDeliver: UqAction<ParamDoneDeliver, ResultDoneDeliver>;
 	$poked: UqQuery<Param$poked, Result$poked>;
 	UserItemPeriodSum: UqQuery<ParamUserItemPeriodSum, ResultUserItemPeriodSum>;
 	UserItemHistory: UqQuery<ParamUserItemHistory, ResultUserItemHistory>;
@@ -761,6 +800,8 @@ export interface UqExt extends Uq {
 	AIdTest: UqID<any>;
 	QueueBizOp: UqID<any>;
 	QueueBizMain: UqID<any>;
+	DeliverDetail: UqID<any>;
+	DeliverMain: UqID<any>;
 	DxOrderDetail: UqIDX<any>;
 	DxOrderMain: UqIDX<any>;
 	UserTimezone: UqIDX<any>;

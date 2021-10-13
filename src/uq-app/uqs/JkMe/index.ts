@@ -20,6 +20,8 @@ import * as A_Id_Test from './A_Id_Test.ui';
 import * as AIdTest from './AIdTest.ui';
 import * as QueueBizOp from './QueueBizOp.ui';
 import * as QueueBizMain from './QueueBizMain.ui';
+import * as DeliverDetail from './DeliverDetail.ui';
+import * as DeliverMain from './DeliverMain.ui';
 import * as DxOrderDetail from './DxOrderDetail.ui';
 import * as DxOrderMain from './DxOrderMain.ui';
 import * as UserTimezone from './UserTimezone.ui';
@@ -61,6 +63,8 @@ export function setUI(uq: Uq) {
 	assign(uq, 'AIdTest', AIdTest);
 	assign(uq, 'QueueBizOp', QueueBizOp);
 	assign(uq, 'QueueBizMain', QueueBizMain);
+	assign(uq, 'DeliverDetail', DeliverDetail);
+	assign(uq, 'DeliverMain', DeliverMain);
 	assign(uq, 'DxOrderDetail', DxOrderDetail);
 	assign(uq, 'DxOrderMain', DxOrderMain);
 	assign(uq, 'UserTimezone', UserTimezone);

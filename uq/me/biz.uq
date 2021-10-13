@@ -33,8 +33,8 @@ IDX DxBizOp (
 
 IX IxBizOpBound (
     ixx,                                -- bizOp id
-    ix ENUM EnumBizAction,
-    xi ENUM Post,                       -- POST
+    ix ENUM Post,                       -- POST
+    xi ENUM ITEM,                       -- post item
     bound TINYINT DEFAULT 0,            -- 1: bound
 );
 
@@ -72,6 +72,7 @@ ACT ExecQueueBizMain () {
 };
 
 ACT ExecQueueBizOp ver 0.3 () {
+    LOG CONCAT_WS(' ', 'start') SUBJECT 'ExecQueueBizOp';
     VAR rowCount INT = 0;
     FOR (VAR queueId ID, bizOp ID
         OF SELECT a.id as queueId, a.bizOp
@@ -79,6 +80,7 @@ ACT ExecQueueBizOp ver 0.3 () {
             ORDER BY a.id ASC
             LIMIT maxActionRows)
     {
+        LOG CONCAT_WS(' ', 'bizOp', bizOp) SUBJECT 'ExecQueueBizOp';
         TRANSACTION Start;
         PROC ProcBizOp(bizOp);
         WITH QueueBizOp ID=queueId DEL;
@@ -101,12 +103,11 @@ PROC ProcBizOp(
             JOIN DxBizMain as c ON c.id=b.main
         WHERE a.id=bizOp AND c.ready=1)
     {
-
         RETURN;
     };
 
-    VAR action ENUM EnumBizAction, done TINYINT;
-    SET action=a.action, done=a.done
+    VAR action ENUM EnumBizAction, done TINYINT, biz ID;
+    SET action=a.action, done=a.done, biz=a.biz
         FROM DxBizOp as a 
         WHERE a.id=bizOp;
 
@@ -116,20 +117,23 @@ PROC ProcBizOp(
     }
 
     -- biz bound post history
+    LOG CONCAT_WS(' ', 'action', action, 'biz', biz, 'bizOp', bizOp) SUBJECT 'ProcBizOp';
     FOR (VAR itemHistoryId ID, post ENUM Post, value DEC(18,4), itemToObj ENUM Item, ratio DEC(6,2), to ID, memo INT
         OF SELECT c.id as itemHistoryId, a.post, c.value, a.itemToObj, a.ratio, e.xi as to, a.memo
             FROM PostBound as a
-                JOIN DxBizOp as b ON b.id=bizOp
+                JOIN DxBizOp as b ON a.action=b.action
                 JOIN ItemHistory as c ON c.item=a.item AND c.biz=b.biz
                 JOIN DxBiz as d ON d.id=c.biz
                 JOIN IxBizMainBoundTo as e ON e.ixx=d.main AND e.ix=a.post
-                LEFT JOIN IxBizOpBound as f ON f.ixx=b.id AND f.ix=a.action
-            WHERE a.action=action AND f.bound IS NULL)
+                LEFT JOIN IxBizOpBound as f ON f.ixx=b.id AND f.ix=a.post AND f.xi=a.itemToObj
+            WHERE b.id=bizOp AND f.bound IS NULL)
     {
+        LOG CONCAT_WS(' ', 'action', action, itemHistoryId, post, itemToObj, to) SUBJECT 'ProcBizOp Bound 1';
         VAR objectPostItemId ID = ID(ObjectPostItem new, to, post, itemToObj);
-        WITH PostItemHistory as a IX=objectPostItemId XI=itemHistoryId 
+        LOG CONCAT_WS(' ', 'memo', memo, objectPostItemId, itemHistoryId) SUBJECT 'ProcBizOp Bound 2';
+        WITH PostItemHistory as a IXX=objectPostItemId IX=itemHistoryId XI=bizOp
             SET a.value=value * IFNULL(ratio, 100) / 100, a.memo=memo;
-        WITH IxBizOpBound IXX=bizOp IX=action XI=post SET bound=1;
+        WITH IxBizOpBound IXX=bizOp IX=post XI=itemToObj SET bound=1;
     }
 };
 
@@ -164,38 +168,13 @@ PROC ProcWriteItemHistory(
         }
         PROC ProcItemHistory(biz, bizOp, Item.orderProfit, profit, create);
         PROC ProcItemHistory(biz, bizOp, Item.orderAmount, value, create);
-        PROC ProcItemHistory(biz, bizOp, Item.orderReceive, value, action, NULL);
+        PROC ProcItemHistory(biz, bizOp, Item.orderReceive, value, NULL);
     }
     ELSEIF action=EnumBizAction.orderReturn {
 
     }
 };
-/*
-PROC ProcItemOrderProfit(
-    biz ID,
-    bizOp ID,
-) {
-    -- LOG CONCAT_WS(' ', bizOp) SUBJECT 'ProcItemOrderProfit';
-    VAR price DEC(18,4), cost DEC(18,4), create TIMESTAMP;
-    SET price=a.price, create=b.[$create]
-        FROM OrderDetail as a JOIN OrderMain as b ON a.main=b.id
-        WHERE a.id=biz;
-    SET cost=a.costPrice FROM DxOrderDetail as a WHERE a.id=biz;
-    PROC ProcItemHistory(biz, bizOp, Item.orderProfit, (price-cost)*value, create);
-};
 
-PROC ProcItemOrderAmount(
-    biz ID,
-    bizOp ID,
-) {
-    -- LOG CONCAT_WS(' ', bizOp) SUBJECT 'ProcItemOrderAmount';
-    VAR price DEC(18,4), create TIMESTAMP;
-    SET price=a.price, create=b.[$create]
-        FROM OrderDetail as a JOIN OrderMain as b ON a.main=b.id
-        WHERE a.id=orderDetail;
-    PROC ProcItemHistory(biz, bizOp, Item.orderAmount, price*value, create);
-};
-*/
 PROC ProcItemHistory(
     biz ID,
     bizOp ID,

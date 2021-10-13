@@ -124,13 +124,13 @@ ID PostBound ver 0.5 CONST (
 )
 + (action, post, item, itemToObj, ratio, memo)
 VALUES
--- EnumOrderAction.deliverDone
-(EnumOrderAction.deliverDone, Post.staffSales, Item.orderAmount, Item.orderAmount, null, TEXTID('发货后订单金额')),
-(EnumOrderAction.deliverDone, Post.staffSales, Item.orderProfit, Item.commissionFromProfit, 4, TEXTID('发货后毛利提成')),
-(EnumOrderAction.deliverDone, Post.managerIT, Item.orderAmount, Item.commissionFromAmount, 0.1, TEXTID('发货后金额提成')),
+-- EnumOrderAction.orderDeliverDone
+(EnumBizAction.orderDeliverDone, Post.staffSales, Item.orderAmount, Item.orderAmount, null, TEXTID('销售额')),
+(EnumBizAction.orderDeliverDone, Post.staffSales, Item.orderProfit, Item.commissionFromProfit, 4, TEXTID('发货后毛利提成')),
+(EnumBizAction.orderDeliverDone, Post.managerIT, Item.orderAmount, Item.commissionFromAmount, 0.1, TEXTID('销售额提成')),
 
 -- EnumOrderAction.receiveDone
-(EnumOrderAction.receiveDone, Post.staffSales, Item.orderProfit, Item.commissionFromProfit, 4, TEXTID('收款后毛利提成')),
+(EnumBizAction.orderReceiveDone, Post.staffSales, Item.orderProfit, Item.commissionFromProfit, 4, TEXTID('收款后毛利提成')),
 ;
 
 ID ItemReadyStates CONST (
