@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sat Oct 09 2021 14:29:16 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Tue Oct 12 2021 22:17:18 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqSheet, UqBook, UqQuery, UqMap, UqHistory, UqPending, UqID, UqIDX, UqIX } from "tonva-react";
 
@@ -153,6 +153,17 @@ export interface ParamPointProductGenreDelete {
 	genre: number;
 }
 export interface ResultPointProductGenreDelete {
+}
+
+export interface ParamPointChanged {
+	customer: number;
+	point: number;
+	pointYear: number;
+	pointType: number;
+	pointSource: number;
+	comments: string;
+}
+export interface ResultPointChanged {
 }
 
 export interface SheetPointExchangeSheet {
@@ -703,6 +714,7 @@ export interface UqExt extends Uq {
 	Signin: UqAction<ParamSignin, ResultSignin>;
 	SetPointProductVisits: UqAction<ParamSetPointProductVisits, ResultSetPointProductVisits>;
 	PointProductGenreDelete: UqAction<ParamPointProductGenreDelete, ResultPointProductGenreDelete>;
+	PointChanged: UqAction<ParamPointChanged, ResultPointChanged>;
 	PointExchangeSheet: UqSheet<SheetPointExchangeSheet, any>;
 	PointBook: UqBook<ParamPointBook, ResultPointBook>;
 	PointBookByCustomer: UqBook<ParamPointBookByCustomer, ResultPointBookByCustomer>;

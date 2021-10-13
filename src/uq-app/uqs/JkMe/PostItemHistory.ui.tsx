@@ -5,6 +5,12 @@ import { PostItemHistory } from "./JkMe";
 
 /*--fields--*/
 const fields = {
+	ixx: {
+		"name": "ixx",
+		"type": "id",
+		"isKey": false,
+		"label": "Ixx"
+	} as FieldItemId,
 	ix: {
 		"name": "ix",
 		"type": "id",
@@ -35,7 +41,7 @@ const fields = {
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.xi, fields.value, fields.memo, 
+	fields.ixx, fields.xi, fields.value, fields.memo, 
 ];
 
 export const ui: UI = {

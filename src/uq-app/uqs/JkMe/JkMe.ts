@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sat Oct 09 2021 14:29:16 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Tue Oct 12 2021 22:17:18 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 
@@ -134,11 +134,6 @@ export interface ResultBusTestOrderSaleCost {
 export interface ParamCalcMonthSum {
 }
 export interface ResultCalcMonthSum {
-}
-
-export interface ParamATest {
-}
-export interface ResultATest {
 }
 
 export interface ParamExecQueueBizOp {
@@ -416,6 +411,7 @@ export interface OrderMain {
 	customerAccount: number;
 	currency: number;
 	sumAmount: number;
+	$create?: any;
 }
 
 export interface ItemTitle {
@@ -496,16 +492,6 @@ export interface PostBound {
 	itemToObj: any;
 	ratio: number;
 	memo: number;
-}
-
-export interface A_Id_Test {
-	id?: number;
-	a: string;
-}
-
-export interface AIdTest {
-	id?: number;
-	a: string;
 }
 
 export interface QueueBizOp {
@@ -643,6 +629,7 @@ export interface UserObject {
 }
 
 export interface PostItemHistory {
+	ixx: number;
 	ix: number;
 	xi: number;
 	value: number;
@@ -723,8 +710,6 @@ export interface ParamActs {
 	orderAction?: OrderAction[];
 	itemReadyStates?: ItemReadyStates[];
 	postBound?: PostBound[];
-	a_Id_test?: A_Id_Test[];
-	aIdTest?: AIdTest[];
 	queueBizOp?: QueueBizOp[];
 	queueBizMain?: QueueBizMain[];
 	deliverDetail?: DeliverDetail[];
@@ -759,7 +744,6 @@ export interface UqExt extends Uq {
 	BusTestBoundStaffSales: UqAction<ParamBusTestBoundStaffSales, ResultBusTestBoundStaffSales>;
 	BusTestOrderSaleCost: UqAction<ParamBusTestOrderSaleCost, ResultBusTestOrderSaleCost>;
 	CalcMonthSum: UqAction<ParamCalcMonthSum, ResultCalcMonthSum>;
-	ATest: UqAction<ParamATest, ResultATest>;
 	ExecQueueBizOp: UqAction<ParamExecQueueBizOp, ResultExecQueueBizOp>;
 	ExecQueueBizMain: UqAction<ParamExecQueueBizMain, ResultExecQueueBizMain>;
 	DoneDeliver: UqAction<ParamDoneDeliver, ResultDoneDeliver>;
@@ -796,8 +780,6 @@ export interface UqExt extends Uq {
 	OrderAction: UqID<any>;
 	ItemReadyStates: UqID<any>;
 	PostBound: UqID<any>;
-	A_Id_Test: UqID<any>;
-	AIdTest: UqID<any>;
 	QueueBizOp: UqID<any>;
 	QueueBizMain: UqID<any>;
 	DeliverDetail: UqID<any>;

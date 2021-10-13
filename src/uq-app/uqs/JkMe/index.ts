@@ -16,8 +16,6 @@ import * as ObjectAgent from './ObjectAgent.ui';
 import * as OrderAction from './OrderAction.ui';
 import * as ItemReadyStates from './ItemReadyStates.ui';
 import * as PostBound from './PostBound.ui';
-import * as A_Id_Test from './A_Id_Test.ui';
-import * as AIdTest from './AIdTest.ui';
 import * as QueueBizOp from './QueueBizOp.ui';
 import * as QueueBizMain from './QueueBizMain.ui';
 import * as DeliverDetail from './DeliverDetail.ui';
@@ -59,8 +57,6 @@ export function setUI(uq: Uq) {
 	assign(uq, 'OrderAction', OrderAction);
 	assign(uq, 'ItemReadyStates', ItemReadyStates);
 	assign(uq, 'PostBound', PostBound);
-	assign(uq, 'A_Id_Test', A_Id_Test);
-	assign(uq, 'AIdTest', AIdTest);
 	assign(uq, 'QueueBizOp', QueueBizOp);
 	assign(uq, 'QueueBizMain', QueueBizMain);
 	assign(uq, 'DeliverDetail', DeliverDetail);
