@@ -70,12 +70,13 @@ QUERY GetItemHistory (
 )
 PAGE (
     id ID DESC,                 -- 分钟序id
-    track ID,                   -- 原始凭证
+    biz ID,                     -- 原始凭证
+    bizOp ID,
     item ENUM Item,             -- 科目
     value DEC(18,4),            -- 数值
     memo CHAR(100),             -- 文本ID
 ) {
-    PAGE SELECT a.id, a.track, a.item, a.value, idtext(a.memo) as memo
+    PAGE SELECT a.id, a.biz, a.bizOp, a.item, a.value, idtext(a.memo) as memo
         FROM ItemHistory as a
             JOIN UserSuperviseItem as b ON a.item=b.xi
         WHERE b.ix=$user

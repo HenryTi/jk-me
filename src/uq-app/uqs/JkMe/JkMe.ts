@@ -1,4 +1,4 @@
-//=== UqApp builder created on Mon Sep 27 2021 10:20:08 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Sat Oct 09 2021 14:29:16 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 
@@ -63,6 +63,28 @@ export enum EnumDone {
 	withoutCost = 2
 }
 
+export enum EnumBizAction {
+	none = 0,
+	orderDeliverDone = 101,
+	orderReceiveDone = 102,
+	orderReturn = 103
+}
+
+export enum OrderReady {
+	sheet = 1,
+	cost = 2
+}
+
+export enum EnumBoundAction {
+	orderBound = 100,
+	orderStaffSales = 101,
+	orderAgent = 102,
+	orderDistributor = 103,
+	orderCustomer = 104,
+	orderManagerIT = 120,
+	orderBoundMax = 199
+}
+
 export interface Tuid$sheet {
 	id?: number;
 	no: string;
@@ -99,13 +121,14 @@ export interface ResultBusTestBoundStaffSales {
 }
 
 export interface ParamBusTestOrderSaleCost {
-	orderMain: number;
-}
-export interface ReturnBusTestOrderSaleCostRet {
-	ok: number;
+	order: number;
+	detail: {
+		orderDetail: number;
+		cost: number;
+	}[];
+
 }
 export interface ResultBusTestOrderSaleCost {
-	ret: ReturnBusTestOrderSaleCostRet[];
 }
 
 export interface ParamCalcMonthSum {
@@ -116,6 +139,29 @@ export interface ResultCalcMonthSum {
 export interface ParamATest {
 }
 export interface ResultATest {
+}
+
+export interface ParamExecQueueBizOp {
+}
+export interface ResultExecQueueBizOp {
+}
+
+export interface ParamExecQueueBizMain {
+}
+export interface ResultExecQueueBizMain {
+}
+
+export interface ParamDoneDeliver {
+	customer: number;
+	contact: number;
+	warehouse: number;
+	detail: {
+		orderDetail: number;
+		quantity: number;
+	}[];
+
+}
+export interface ResultDoneDeliver {
 }
 
 export interface Param$poked {
@@ -151,8 +197,10 @@ export interface ParamUserItemHistory {
 }
 export interface ReturnUserItemHistoryRet {
 	minuteId: number;
-	track: number;
+	biz: number;
+	bizOp: number;
 	value: number;
+	memo: string;
 }
 export interface ResultUserItemHistory {
 	ret: ReturnUserItemHistoryRet[];
@@ -249,7 +297,8 @@ export interface ParamGetItemHistory {
 }
 export interface ReturnGetItemHistory$page {
 	id: number;
-	track: number;
+	biz: number;
+	bizOp: number;
 	item: any;
 	value: number;
 	memo: string;
@@ -343,9 +392,9 @@ export interface Object {
 
 export interface ItemHistory {
 	id?: number;
-	track: number;
+	biz: number;
 	item: any;
-	orderDetail: number;
+	bizOp: number;
 	value: number;
 	memo: number;
 }
@@ -446,6 +495,7 @@ export interface PostBound {
 	item: any;
 	itemToObj: any;
 	ratio: number;
+	memo: number;
 }
 
 export interface A_Id_Test {
@@ -456,6 +506,34 @@ export interface A_Id_Test {
 export interface AIdTest {
 	id?: number;
 	a: string;
+}
+
+export interface QueueBizOp {
+	id?: number;
+	bizOp: number;
+}
+
+export interface QueueBizMain {
+	id?: number;
+	bizMain: number;
+}
+
+export interface DeliverDetail {
+	id?: number;
+	main?: number;
+	orderDetail: number;
+	quantity: number;
+}
+
+export interface DeliverMain {
+	id?: number;
+	no?: string;
+	customer: number;
+	contact: number;
+	warehouse: number;
+	cutOffMain: number;
+	trayNumber: number;
+	$create?: any;
 }
 
 export interface DxOrderDetail {
@@ -484,6 +562,27 @@ export interface DxOrderAction {
 	orderMain?: number;
 	orderDetail?: number;
 	done?: any;
+	$act?: number;
+}
+
+export interface DxBizMain {
+	id: number;
+	ready?: number;
+	$act?: number;
+}
+
+export interface DxBizOp {
+	id: number;
+	action?: any;
+	biz?: number;
+	value?: number;
+	done?: number;
+	$act?: number;
+}
+
+export interface DxBiz {
+	id: number;
+	main?: number;
 	$act?: number;
 }
 
@@ -516,6 +615,27 @@ export interface ActParamDxOrderAction {
 	$act?: number;
 }
 
+export interface ActParamDxBizMain {
+	id: number|IDXValue;
+	ready?: number|IDXValue;
+	$act?: number;
+}
+
+export interface ActParamDxBizOp {
+	id: number|IDXValue;
+	action?: any|IDXValue;
+	biz?: number|IDXValue;
+	value?: number|IDXValue;
+	done?: number|IDXValue;
+	$act?: number;
+}
+
+export interface ActParamDxBiz {
+	id: number|IDXValue;
+	main?: number|IDXValue;
+	$act?: number;
+}
+
 export interface UserObject {
 	ix: number;
 	xi: number;
@@ -526,6 +646,7 @@ export interface PostItemHistory {
 	ix: number;
 	xi: number;
 	value: number;
+	memo: number;
 }
 
 export interface IxOrderBoundTo {
@@ -564,6 +685,26 @@ export interface MonthSumCustomer {
 	value: number;
 }
 
+export interface IxActionTrack {
+	ixx: number;
+	ix: number;
+	xi: number;
+	stamp: any;
+}
+
+export interface IxBizOpBound {
+	ixx: number;
+	ix: number;
+	xi: number;
+	bound: number;
+}
+
+export interface IxBizMainBoundTo {
+	ixx: number;
+	ix: number;
+	xi: number;
+}
+
 export interface ParamActs {
 	object?: Object[];
 	itemHistory?: ItemHistory[];
@@ -584,10 +725,17 @@ export interface ParamActs {
 	postBound?: PostBound[];
 	a_Id_test?: A_Id_Test[];
 	aIdTest?: AIdTest[];
+	queueBizOp?: QueueBizOp[];
+	queueBizMain?: QueueBizMain[];
+	deliverDetail?: DeliverDetail[];
+	deliverMain?: DeliverMain[];
 	dxOrderDetail?: ActParamDxOrderDetail[];
 	dxOrderMain?: ActParamDxOrderMain[];
 	userTimezone?: ActParamUserTimezone[];
 	dxOrderAction?: ActParamDxOrderAction[];
+	dxBizMain?: ActParamDxBizMain[];
+	dxBizOp?: ActParamDxBizOp[];
+	dxBiz?: ActParamDxBiz[];
 	userObject?: UserObject[];
 	postItemHistory?: PostItemHistory[];
 	ixOrderBoundTo?: IxOrderBoundTo[];
@@ -596,6 +744,9 @@ export interface ParamActs {
 	ixOrderActionBoundPostDone?: IxOrderActionBoundPostDone[];
 	monthSumProduct?: MonthSumProduct[];
 	monthSumCustomer?: MonthSumCustomer[];
+	ixActionTrack?: IxActionTrack[];
+	ixBizOpBound?: IxBizOpBound[];
+	ixBizMainBoundTo?: IxBizMainBoundTo[];
 }
 
 
@@ -609,6 +760,9 @@ export interface UqExt extends Uq {
 	BusTestOrderSaleCost: UqAction<ParamBusTestOrderSaleCost, ResultBusTestOrderSaleCost>;
 	CalcMonthSum: UqAction<ParamCalcMonthSum, ResultCalcMonthSum>;
 	ATest: UqAction<ParamATest, ResultATest>;
+	ExecQueueBizOp: UqAction<ParamExecQueueBizOp, ResultExecQueueBizOp>;
+	ExecQueueBizMain: UqAction<ParamExecQueueBizMain, ResultExecQueueBizMain>;
+	DoneDeliver: UqAction<ParamDoneDeliver, ResultDoneDeliver>;
 	$poked: UqQuery<Param$poked, Result$poked>;
 	UserItemPeriodSum: UqQuery<ParamUserItemPeriodSum, ResultUserItemPeriodSum>;
 	UserItemHistory: UqQuery<ParamUserItemHistory, ResultUserItemHistory>;
@@ -644,10 +798,17 @@ export interface UqExt extends Uq {
 	PostBound: UqID<any>;
 	A_Id_Test: UqID<any>;
 	AIdTest: UqID<any>;
+	QueueBizOp: UqID<any>;
+	QueueBizMain: UqID<any>;
+	DeliverDetail: UqID<any>;
+	DeliverMain: UqID<any>;
 	DxOrderDetail: UqIDX<any>;
 	DxOrderMain: UqIDX<any>;
 	UserTimezone: UqIDX<any>;
 	DxOrderAction: UqIDX<any>;
+	DxBizMain: UqIDX<any>;
+	DxBizOp: UqIDX<any>;
+	DxBiz: UqIDX<any>;
 	UserObject: UqIX<any>;
 	PostItemHistory: UqIX<any>;
 	IxOrderBoundTo: UqIX<any>;
@@ -656,6 +817,9 @@ export interface UqExt extends Uq {
 	IxOrderActionBoundPostDone: UqIX<any>;
 	MonthSumProduct: UqIX<any>;
 	MonthSumCustomer: UqIX<any>;
+	IxActionTrack: UqIX<any>;
+	IxBizOpBound: UqIX<any>;
+	IxBizMainBoundTo: UqIX<any>;
 }
 
 export function assign(uq: any, to:string, from:any): void {

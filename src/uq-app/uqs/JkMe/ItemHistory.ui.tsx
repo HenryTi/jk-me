@@ -11,22 +11,22 @@ const fields = {
 		"isKey": false,
 		"label": "Id"
 	} as FieldItemId,
-	track: {
-		"name": "track",
+	biz: {
+		"name": "biz",
 		"type": "id",
 		"isKey": true,
-		"label": "Track"
+		"label": "Biz"
 	} as FieldItemId,
 	item: {
 		"name": "item",
 		"isKey": true,
 		"label": "Item"
 	} as undefined,
-	orderDetail: {
-		"name": "orderDetail",
+	bizOp: {
+		"name": "bizOp",
 		"type": "id",
 		"isKey": false,
-		"label": "OrderDetail"
+		"label": "BizOp"
 	} as FieldItemId,
 	value: {
 		"name": "value",
@@ -46,7 +46,7 @@ const fields = {
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.track, fields.item, fields.orderDetail, fields.value, fields.memo, 
+	fields.biz, fields.item, fields.bizOp, fields.value, fields.memo, 
 ];
 
 export const ui: UI = {

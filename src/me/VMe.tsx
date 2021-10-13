@@ -53,7 +53,10 @@ export class VMe extends VPage<CMe> {
             });
             rows.push(...aboutRows, ...logOutRows);
         }
-        return <PropGrid rows={[...rows]} values={{}} />;
+        return <>
+            <PropGrid rows={[...rows]} values={{}} />
+            <button onClick={this.controller.testPointShop} >test</button>
+        </>;
 	}
 
     private renderAdmin = observer(():JSX.Element => {

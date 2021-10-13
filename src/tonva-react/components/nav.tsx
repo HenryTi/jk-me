@@ -604,9 +604,7 @@ export class Nav {
                 document.onselectstart = function() {return false;}
                 document.oncontextmenu = function() {return false;}
             }
-            //window.setInterval(()=>console.error('tick every 5 seconds'), 5000);
 			nav.clear();
-			//nav.onSysNavRoutes();
 			this.startWait();
             
             let user: User = this.local.user.get();

@@ -27,16 +27,15 @@ ACT CalcMonthSum ver 0.3 (
         SET itemHistoryId=0;
     }
     WHILE 1=1 {
-        VAR product ID, customerAccount ID, value DEC(18,4), historyId ID, date DATE, m INT, item ENUM Item;
+        VAR product ID, customerAccount ID, value DEC(18,4)
+            , biz ID, bizOp ID
+            , historyId ID, date DATE, m INT, item ENUM Item;
         SET historyId=NULL;
         SET historyId=a.id
-            , customerAccount=c.customerAccount
-            , product=b.product
+            , biz=a.biz, bizOp=a.bizOp
             , value=a.value
             , item=a.item
             FROM ItemHistory as a
-                JOIN OrderDetail as b ON a.referer=b.id
-                JOIN OrderMain as c ON b.main=c.id
             WHERE a.id>itemHistoryId
             ORDER BY a.id ASC
             LIMIT 1;
@@ -46,11 +45,30 @@ ACT CalcMonthSum ver 0.3 (
         SET m=YEAR(date)*100+MONTH(date);
 
         TRANSACTION Start;
-        -- product
-        WITH MonthSumProduct as a IXX=item IX=m XI=product SET a.value=a.value + value;
+        IF item=Item.orderAmount {
+            SET customerAccount=c.customerAccount
+                , product=b.product
+                FROM OrderDetail as b
+                    JOIN OrderMain as c ON b.main=c.id
+                WHERE b.id=biz;
 
-        -- customerAccount
-        WITH MonthSumCustomer as a IXX=item IX=m XI=customerAccount SET a.value=a.value + value;
+            -- product
+            WITH MonthSumProduct as a IXX=item IX=m XI=product SET a.value=a.value + value;
+            -- customerAccount
+            WITH MonthSumCustomer as a IXX=item IX=m XI=customerAccount SET a.value=a.value + value;
+        }
+        ELSEIF item=Item.orderReturn {
+            SET customerAccount=c.customerAccount
+                , product=b.product
+                FROM OrderDetail as b
+                    JOIN OrderMain as c ON b.main=c.id
+                WHERE b.id=biz;
+
+            -- product
+            WITH MonthSumProduct as a IXX=item IX=m XI=product SET a.value=a.value + value;
+            -- customerAccount
+            WITH MonthSumCustomer as a IXX=item IX=m XI=customerAccount SET a.value=a.value + value;
+        }
 
         SETTING 'itemHistoryId' BIGINT = itemHistoryId;
         TRANSACTION Commit;

@@ -28,6 +28,12 @@ export const appConfig: AppConfig = {
 			alias: 'Product',
 			version: '0.1.0',
 		},
+		{
+			dev: jk,
+			name: '积分商城',
+			alias: 'PointShop',
+			version: '0.1.0',
+		},
 	],
 	noUnit: true,
     tvs: {},

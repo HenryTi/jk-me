@@ -44,18 +44,31 @@ ID ObjectPostItem (
 ID ItemHistory ver 0.1 MINUTEID (
     -- 26位表达从2021开始的分钟，后面跟16位的序列号。如果重了，就顺序往后加。
     id,                         -- 分钟序id
-    KEY track ID,               -- 原始凭证
+    KEY biz ID,                 -- 原始业务凭证id
     KEY item ENUM Item,         -- 科目
-    referer ID,                 -- 来路。对deliver，receive，return而言，是订单明细ID，上面带产品，可以统计
+    bizOp ID,                   -- 业务操作id。
     value DEC(18,4),            -- 数值
     memo INT,                   -- 文本ID
     INDEX item_id(item, id) UNIQUE,
 );
 
+-- 2021-10-12：ItemHistory可能产生不同的针对个体的操作。如果只有ix-xi，会覆盖
+-- 所以加一级bizOp，形成ixx-ix-xi结构。
 IX PostItemHistory (
-    ix ObjectPostItem,
-    xi ItemHistory,
+    ixx ObjectPostItem,
+    ix ItemHistory,
+    xi,                         -- bizOp
     value DEC(18,4),
+    memo INT,                   -- 文本ID
+);
+
+-- 在生成itemHistory之后，给后续的ACTION准备数据。后面的action可以根据track来获取
+-- 给后续的itemHistory准备数据。
+IX IxActionTrack (
+    ixx ENUM EnumOrderAction,
+    ix,                         -- track action id
+    xi ID itemHistory,
+    stamp TIMESTAMP,
 );
 
 ENUM EnumUserObjectRelation (

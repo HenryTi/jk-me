@@ -27,9 +27,9 @@ RETURNS ret (
         IFNULL(
             (SELECT SUM(t.value)
                 FROM postitemhistory AS t
-                WHERE t.ix=a.id
-                    AND t.xi >= minuteIdFromDate(from, timeZone)
-                    AND t.xi < minuteIdFromDate(to, timeZone)
+                WHERE t.IXX=a.id
+                    AND t.ix >= minuteIdFromDate(from, timeZone)
+                    AND t.ix < minuteIdFromDate(to, timeZone)
             ),
             0
         ) as value
@@ -46,19 +46,21 @@ QUERY UserItemHistory ver 0.1 (
 )
 RETURNS ret (
     minuteId ID,
-    track ID,
-    value DEC(18,4)
+    biz ID,
+    bizOp ID,
+    value DEC(18,4),
+    memo CHAR(200)
 ) {
-    INTO ret SELECT a.xi as minuteId, d.track as track, a.value
+    INTO ret SELECT a.ix as minuteId, d.biz, a.xi as bizOp, a.value, IDTEXT(a.memo) as memo
         FROM PostItemHistory AS a
-            JOIN ObjectPostItem as b ON a.ix=b.id
+            JOIN ObjectPostItem as b ON a.ixx=b.id
             JOIN UserObject as c ON b.object=c.xi
-            JOIN ItemHistory as d ON a.xi=d.id
+            JOIN ItemHistory as d ON a.ix=d.id
         WHERE c.ix=$user
-            AND a.ix=objectPostItem
-            AND a.xi >= minuteIdFromDate(from, timeZone)
-            AND a.xi < minuteIdFromDate(to, timeZone)
-        Order BY a.xi DESC;
+            AND a.ixx=objectPostItem
+            AND a.ix >= minuteIdFromDate(from, timeZone)
+            AND a.ix < minuteIdFromDate(to, timeZone)
+        Order BY a.ix DESC;
 };
 
 QUERY UserItemPeriodHistory ver 0.2 (
@@ -74,11 +76,12 @@ RETURNS ret (
 ) {
     INTO ret SELECT date, SUM(a.value) as value
         FROM postitemhistory AS a
-            JOIN ObjectPostItem as b ON a.ix=b.id
+            JOIN ObjectPostItem as b ON a.ixx=b.id
             JOIN UserObject as c ON b.object=c.xi
         WHERE c.ix=$user
-            AND a.ix=objectPostItem
-            AND a.xi >= minuteIdFromDate(from, timeZone)
-            AND a.xi < minuteIdFromDate(to, timeZone)
-        GROUP BY dateFromMinuteId(a.xi, timeZone, period) as date;
+            AND a.ixx=objectPostItem
+            AND a.ix >= minuteIdFromDate(from, timeZone)
+            AND a.ix < minuteIdFromDate(to, timeZone)
+        GROUP BY dateFromMinuteId(a.ix, timeZone, period) as date
+        ORDER BY date DESC;
 };

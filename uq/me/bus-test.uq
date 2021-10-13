@@ -19,26 +19,19 @@ ACT BusTestBoundStaffSales ver 0.8 (
 };
 
 ACT BusTestOrderSaleCost ver 0.8 (
-    orderMain ID
-)
-RETURNS ret (
-    ok TINYINT,         -- 如果订单还没有到，则OK=0, 订单到了，ok=1
+    order ID,
+    ARR detail (
+        orderDetail ID,
+        cost DEC(18,4),
+    )
 ) {
-    IF NOT exists(SELECT id FROM OrderMain WHERE id=orderMain) {
-        INTO ret SELECT 0 as ok;
-        RETURN;
-    }
-
-    BUS JkOrderBus.[order-sale-cost] SET order=orderMain;
-    FOR (VAR detailId ID, price DEC(18,4) OF 
-        SELECT id as detailId, price FROM OrderDetail WHERE main=orderMain)
+    BUS JkOrderBus.[order-sale-cost] SET order=order;
+    FOR detail 
     {
-        VAR cost DEC(18,4) = price*0.85;
         BUS JkOrderBus.[order-sale-cost] INTO detail 
-            ADD [order-detail]=detailId, [cost]=cost;
+            ADD [order-detail]=orderDetail, [cost]=cost;
     }
     BUS JkOrderBus.[order-sale-cost] LOCAL;
-    INTO ret SELECT 1 as ok;
 };
 
 PROC ProcBusTest(
@@ -68,4 +61,46 @@ PROC ProcBusTest(
     -- BUS JkOrderBus.[deliver-done] LOCAL;
     BUS JkOrderBus.[order-sale-cost] LOCAL;
     BUS JkOrderBus.[order-bound-staff-sales] LOCAL;
+};
+
+ID DeliverMain GLOBAL(
+    id,
+    KEY no,
+    customer ID,
+    contact ID,
+	warehouse ID,
+	cutOffMain ID,          -- 这两个字段放在这儿不对，应该用单独的IX
+	trayNumber int,
+	sys(create),
+);
+
+ID DeliverDetail GLOBAL(
+    id,                     -- 
+    main ID DeliverMain,    -- DeliverMain id	
+	orderDetail ID,			-- OrderDetail ID
+    quantity dec(18, 4),
+);
+
+ACT DoneDeliver (
+	customer ID,
+    contact ID,
+	warehouse ID,
+    ARR detail (
+        orderDetail ID,
+        quantity DEC(18,4),
+    )
+) {
+    LOG CONCAT_WS(' ', customer, contact, warehouse) SUBJECT 'ACT DoneDeliver';
+    VAR deliverMainId ID = ID(DeliverMain new, NO(DeliverMain));
+    WITH DeliverMain as a ID=deliverMainId
+        SET a.customer=customer, a.contact=contact, a.warehouse=warehouse;
+    BUS JkOrderBus.[deliver-done] SET id=deliverMainId;
+    FOR detail {
+        VAR deliverDetailId ID = ID(DeliverDetail new);
+        WITH DeliverDetail as a ID=deliverDetailId
+            SET a.main=deliverMainId, a.quantity=quantity, a.orderDetail=orderDetail;
+        BUS JkOrderBus.[deliver-done] INTO detail
+            ADD id=deliverDetailId, value=quantity, orderDetail=orderDetail;
+    }
+    BUS JkOrderBus.[deliver-done] LOCAL;
 };

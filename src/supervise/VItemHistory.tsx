@@ -21,7 +21,7 @@ export class VItemHistory extends VPage<CSupervise> {
         let {cApp, item} = this.controller;
         let {itemTitles} = cApp;
         let {unit, fixed} = itemTitles[item];
-        let {id, track, value, memo} = row;
+        let {id, biz, bizOp, value, memo} = row;
         let date = dateFromMinuteId(id);
         let left = <div className="small text-muted w-8c">
             <VDate date={date} hideSameYear={true} />
@@ -29,7 +29,7 @@ export class VItemHistory extends VPage<CSupervise> {
         return <LMR className="px-3 py-2 align-items-center" 
             left={left} 
             right={<div>{value.toFixed(fixed??2)} <small className="text-muted">{unit}</small></div>}>
-            <b>{track}</b> {memo}
+            <b>{bizOp}</b> {memo}
         </LMR>;
     }
 

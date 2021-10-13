@@ -2,6 +2,7 @@ BUS JkOrderBus ver 0.7 from 百灵威系统工程部/[jk-order]
 ACCEPT order {
 	VAR mainId ID;
 	SET mainId = id;
+    LOG CONCAT_WS(' ', mainId) SUBJECT 'JkOrderBus ACCEPT order';
 	WITH OrderMain as a ID=mainId SET a.no=no, a.customerAccount=customerAccount;
 	FOR detail {
         LOG CONCAT_WS(' ', id, quantity, item) SUBJECT 'JkOrderBus ACCEPT orderDetail';
@@ -14,9 +15,6 @@ ACCEPT order {
 				, a.amount=amount;
 	}
 
---    PROC ProcBusTest(mainId);
-    VAR orderActionId ID = ID(OrderAction new, mainId, EnumOrderAction.orderAccept);
-
     -- 所有的订单绑定到ManagerIT
     VAR objManagerId ID;
     SET objManagerId=ID(ObjectPost, Post.managerIT);
@@ -24,46 +22,51 @@ ACCEPT order {
         SET objManagerId=ID(Object new);
         WITH ObjectPost as a ID=objManagerId SET a.post=Post.managerIT;
     }
-    WITH IxOrderBoundTo IXX=mainId IX=Post.managerIT XI=objManagerId;
-    VAR actionOrderBoundManagerIT ID = ID(OrderAction new, mainId, EnumOrderAction.orderBoundManagerIT);
+    WITH IxBizMainBoundTo IXX=mainId IX=Post.managerIT XI=objManagerId;
 
-    SCHEDULE ActOrderAction DELAY 1;
+    PROC ProcSetOrderReady(mainId, OrderReady.sheet);
+    PROC ProcQueueBizMain(mainId);
 }
 ACCEPT [deliver-done] {
+    LOG CONCAT_WS(' ', id) SUBJECT 'ACCEPT JkOrderBus.deliver-done';
 	FOR detail {
-        LOG CONCAT_WS(' ', orderDetail, value) SUBJECT 'ACCEPT JkOrderBus.deliver-done';
 		WITH DxOrderDetail ID=orderDetail SET deliverDone += value;
-        PROC SaveOrderAction(id, EnumOrderAction.deliverDone, orderDetail, value, Item.orderDeliver);
+        WITH DxBizOp as a ID=id 
+            SET a.action=EnumBizAction.orderDeliverDone, a.biz=orderDetail, a.value=value;
+        VAR queueId ID = ID(QueueBizOp new, id);
 	}
-    SCHEDULE ActOrderAction DELAY 1;
+    SCHEDULE ExecQueueBizOp DELAY 1;
 }
 ACCEPT [receive-done] {
+    LOG CONCAT_WS(' ', id) SUBJECT 'ACCEPT JkOrderBus.receive-done';
 	FOR detail {
-        LOG CONCAT_WS(' ', orderDetail, value) SUBJECT 'ACCEPT JkOrderBus.receive-done';
 		WITH DxOrderDetail ID=orderDetail SET receiveDone+=value;
-        PROC SaveOrderAction(id, EnumOrderAction.receiveDone, orderDetail, value, Item.orderReceive);
+        WITH DxBizOp as a ID=id 
+            SET a.action=EnumBizAction.orderReceiveDone, a.biz=orderDetail, a.value=value;
+        VAR queueId ID = ID(QueueBizOp new, id);
 	}
-    SCHEDULE ActOrderAction DELAY 1;
+    SCHEDULE ExecQueueBizOp DELAY 1;
 }
 ACCEPT [return] {
 	FOR detail {
 		WITH DxOrderDetail ID=orderDetail SET return+=quantity;
-        PROC SaveOrderAction(id, EnumOrderAction.return, orderDetail, quantity, Item.orderReturn);
+        WITH DxBizOp as a ID=id 
+            SET a.action=EnumBizAction.orderReturn, a.biz=orderDetail, a.value=quantity;
+        VAR queueId ID = ID(QueueBizOp new, id);
 	}
-    SCHEDULE ActOrderAction DELAY 1;
+    SCHEDULE ExecQueueBizOp DELAY 1;
 }
 ACCEPT [order-sale-cost] {
+    LOG CONCAT_WS(' ', order) SUBJECT 'JkOrderBus ACCEPT order-sale-cost';
     FOR detail {
         LOG CONCAT_WS(' ', [order-detail], [cost]) SUBJECT 'ACCEPT JkOrderBus.order-sale-cost';
         WITH DxOrderDetail ID=[order-detail] SET costPrice=[cost];
     }
-    VAR readyStates ENUM ReadyStates;
-    SET readyStates=a.readyStates FROM DxOrderMain as a WHERE a.id=order;
-    WITH DxOrderMain as a ID=order SET a.readyStates=IFNULL(readyStates, ReadyStates.costNone) | ReadyStates.cost;
-    VAR orderActionId ID = ID(OrderAction new, order, EnumOrderAction.orderCost);
-    SCHEDULE ActOrderAction DELAY 1;
+    PROC ProcSetOrderReady(order, OrderReady.cost);
+    PROC ProcQueueBizMain(order);
 }
 ACCEPT [order-bound-staff-sales] {
+    LOG CONCAT_WS(' ', order) SUBJECT 'JkOrderBus ACCEPT order-bound-staff-sales';
     FOR to {
 		VAR toId ID;
         SET toId=ID(ObjectStaff, id);
@@ -71,11 +74,9 @@ ACCEPT [order-bound-staff-sales] {
             SET toId=ID(Object new);
             WITH ObjectStaff ID=toId SET staff=id;
         }
-        WITH IxOrderBoundTo IXX=order IX=Post.staffSales XI=toId;
+        WITH IxBizMainBoundTo IXX=order IX=Post.staffSales XI=toId;
     }
-    -- WITH IxOrderBoundPost IX=order XI=Post.staffSales;
-    VAR orderActionId ID = ID(OrderAction new, order, EnumOrderAction.orderBoundStaffSales);
-    SCHEDULE ActOrderAction DELAY 1;
+    PROC ProcQueueBizMain(order);
 }
 ACCEPT [order-bound-agent] { -- 轻代理
     FOR to {
@@ -85,11 +86,9 @@ ACCEPT [order-bound-agent] { -- 轻代理
             SET toId=ID(Object new);
             WITH ObjectAgent ID=toId SET agent=id;
         }
-        WITH IxOrderBoundTo IXX=order IX=Post.agent XI=toId;
+        WITH IxBizMainBoundTo IXX=order IX=Post.agent XI=toId;
     }
-    -- WITH IxOrderBoundPost IX=order XI=Post.agent;
-    VAR orderActionId ID = ID(OrderAction new, order, EnumOrderAction.orderBoundAgent);
-    SCHEDULE ActOrderAction DELAY 1;
+    PROC ProcQueueBizMain(order);
 }
 ACCEPT [order-bound-distributor] { -- 分销商
     FOR to {
@@ -99,11 +98,9 @@ ACCEPT [order-bound-distributor] { -- 分销商
             SET toId=ID(Object new);
             WITH ObjectDistributor ID=toId SET distributor=id;
         }
-        WITH IxOrderBoundTo IXX=order IX=Post.distributor XI=toId;
+        WITH IxBizMainBoundTo IXX=order IX=Post.distributor XI=toId;
     }
-    -- WITH IxOrderBoundPost IX=order XI=Post.distributor;
-    VAR orderActionId ID = ID(OrderAction new, order, EnumOrderAction.orderBoundDistributor);
-    SCHEDULE ActOrderAction DELAY 1;
+    PROC ProcQueueBizMain(order);
 }
 ACCEPT [order-bound-customer] {
     FOR to {
@@ -113,22 +110,41 @@ ACCEPT [order-bound-customer] {
             SET toId=ID(Object new);
             WITH ObjectCustomer ID=toId SET customer=id;
         }
-        WITH IxOrderBoundTo IXX=order IX=Post.customer XI=toId;
+        WITH IxBizMainBoundTo IXX=order IX=Post.customer XI=toId;
     }
-    -- WITH IxOrderBoundPost IX=order XI=Post.customer;
-    VAR orderActionId ID = ID(OrderAction new, order, EnumOrderAction.orderBoundCustomer);
-    SCHEDULE ActOrderAction DELAY 1;
+    PROC ProcQueueBizMain(order);
 }
 ;
 
-PROC SaveOrderAction(
-    detailId ID,
-    action ENUM EnumOrderAction,
-    orderDetail ID,
-    value DEC(18,4),
-    item ENUM Item,
+PROC ProcQueueBizMain(
+    bizMain ID,
 ) {
-    VAR orderActionId ID = ID(OrderAction new, detailId, action);
-    WITH OrderAction as a ID=orderActionId
-        SET a.orderDetail=orderDetail, a.value=value, a.item=item;
+    
+    IF EXISTS(SELECT id FROM DxBizMain WHERE ready=1 AND id=bizMain)
+        AND NOT EXISTS(SELECT a.id FROM QueueBizMain as a WHERE a.bizMain=bizMain)
+    {
+        VAR queueId ID = ID(QueueBizMain new, bizMain);
+        SCHEDULE ExecQueueBizMain DELAY 1;
+    }
+};
+
+PROC ProcSetOrderReady(
+    order ID,
+    orderReady ENUM OrderReady,
+) {
+    VAR ready ENUM OrderReady;
+    SET ready=a.readyStates FROM DxOrderMain as a WHERE a.id=order;
+    IF ready IS NULL {
+        SET ready = 0;
+    }
+    SET ready = ready | orderReady;
+    WITH DxOrderMain ID=order SET readyStates=ready;
+    IF ready = (OrderReady.sheet | OrderReady.cost) {
+        WITH DxBizMain ID=order SET ready=1;
+        FOR (VAR orderDetail ID 
+            OF SELECT id as orderDetail FROM OrderDetail WHERE main=order)
+        {
+            WITH DxBiz ID=orderDetail SET main=order;
+        }
+    }
 };
