@@ -1,6 +1,6 @@
-//=== UqApp builder created on Sat Oct 09 2021 14:29:16 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Tue Oct 12 2021 22:17:18 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqMap, UqHistory, UqID } from "tonva-react";
+import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqMap, UqHistory } from "tonva-react";
 
 
 //===============================
@@ -395,24 +395,7 @@ export interface ResultProductSearchHistory {
 	$page: ReturnProductSearchHistory$page[];
 }
 
-export interface $PiecewiseDetail {
-	id?: number;
-	main?: number;
-	sec: number;
-	value: number;
-}
-
-export interface $Piecewise {
-	id?: number;
-	name: string;
-	ratio: number;
-	offset: number;
-	asc: number;
-}
-
 export interface ParamActs {
-	$PiecewiseDetail?: $PiecewiseDetail[];
-	$Piecewise?: $Piecewise[];
 }
 
 
@@ -472,8 +455,6 @@ export interface UqExt extends Uq {
 	ProductStandardSample: UqMap;
 	ProductUserManualFile: UqMap;
 	ProductSearchHistory: UqHistory<ParamProductSearchHistory, ResultProductSearchHistory>;
-	$PiecewiseDetail: UqID<any>;
-	$Piecewise: UqID<any>;
 }
 
 export function assign(uq: any, to:string, from:any): void {
