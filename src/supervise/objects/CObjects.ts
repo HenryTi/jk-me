@@ -14,7 +14,7 @@ export abstract class CObjects extends CUqSub<CApp, UQs, CSupervise> {
 
     protected async internalStart() {        
     }
-    header() {return this.caption + '业绩列表'}
+    header() {return this.caption + '销售额列表'}
     protected abstract get caption(): string;
 
     protected async loadList(): Promise<void> {

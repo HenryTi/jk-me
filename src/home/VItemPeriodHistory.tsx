@@ -24,7 +24,7 @@ abstract class VItemPeriodHistory extends VPage<CHome> {
         let {unit, fixed} = itemTitles[item];
         let d = new Date(date);
         let left = <div className="text-muted small">{this.renderDate(d)}</div>;
-        let right = <div>{value.toFixed(fixed??2)} {unit}</div>;
+        let right = <div>{(value??0).toFixed(fixed??2)} {unit}</div>;
         return <LMR className="px-3 py-2" left={left} right={right}></LMR>;
     }
 

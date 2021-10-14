@@ -192,7 +192,12 @@ abstract class MonthSum<T> {
 class MonthSumProduct extends MonthSum<ReturnGetProductSumByMonthRet> {
 	async load(): Promise<void> {
 		let m = this.month.getFullYear() * 100 + (this.month.getMonth() + 1);
-		let ret = await this.controller.uqs.JkMe.GetProductSumByMonth.query({item: this.item, month: m});
+		let param = {
+			item: this.item, 
+			month: m,
+			count: 200,
+		};
+		let ret = await this.controller.uqs.JkMe.GetProductSumByMonth.query(param);
 		let list = ret.ret;
 		let len = list.length;
 		for (let i=0; i<len; i++) {
@@ -207,7 +212,12 @@ class MonthSumProduct extends MonthSum<ReturnGetProductSumByMonthRet> {
 class MonthSumCustomer extends MonthSum<ReturnGetCustomerSumByMonthRet> {
 	async load(): Promise<void> {
 		let m = this.month.getFullYear() * 100 + (this.month.getMonth() + 1);
-		let ret = await this.controller.uqs.JkMe.GetCustomerSumByMonth.query({item: this.item, month: m});
+		let param = {
+			item: this.item, 
+			month: m,
+			count: 200,
+		};
+		let ret = await this.controller.uqs.JkMe.GetCustomerSumByMonth.query(param);
 		let list = ret.ret;
 		let len = list.length;
 		for (let i=0; i<len; i++) {

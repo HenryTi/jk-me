@@ -15,7 +15,7 @@ export class ViewItemDayHistory extends View<CSupervise> {
         let {date, value} = row;
         return <LMR  className="px-3 py-2" 
             left={<div>{new Date(date).toLocaleDateString()}</div>} 
-            right={<div>{value.toFixed(fixed??2)} {unit}</div>} />
+            right={<div>{(value??0).toFixed(fixed??2)} {unit}</div>} />
     }
 
     private onClickDayItem = async (row: ReturnGetItemSumDaysRet) => {

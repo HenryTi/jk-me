@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react';
-import { Image, VPage, nav, IconText, PropGrid, LMR, FA, Prop, UserIcon, UserView, User } from 'tonva-react';
+import { Image, VPage, nav, IconText, PropGrid, LMR, FA, Prop } from 'tonva-react';
 import { CMe } from './CMe';
 import { appConfig } from '../uq-app/appConfig';
 import { VAbout } from './VAbout';
@@ -55,7 +55,6 @@ export class VMe extends VPage<CMe> {
         return <>
             <PropGrid rows={[...rows]} values={{}} />
         </>;
-        // <button onClick={this.controller.testPointShop} >test</button>
     }
 
     private renderAdmin = observer(():JSX.Element => {

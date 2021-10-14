@@ -1,4 +1,4 @@
-//=== UqApp builder created on Wed Oct 13 2021 22:55:19 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Thu Oct 14 2021 15:12:25 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 
@@ -334,6 +334,7 @@ export interface ResultUserItemPeriodHistory {
 export interface ParamGetProductSumByMonth {
 	item: any;
 	month: number;
+	count: number;
 }
 export interface ReturnGetProductSumByMonthRet {
 	id: number;
@@ -382,6 +383,7 @@ export interface ResultGetMonthSumCustomer {
 export interface ParamGetCustomerSumByMonth {
 	item: any;
 	month: number;
+	count: number;
 }
 export interface ReturnGetCustomerSumByMonthRet {
 	id: number;
@@ -464,7 +466,8 @@ export interface ParamGetStaffs {
 export interface ReturnGetStaffsRet {
 	id: number;
 	staff: number;
-	amount: number;
+	amountThisMonth: number;
+	amountLastMonth: number;
 }
 export interface ResultGetStaffs {
 	ret: ReturnGetStaffsRet[];

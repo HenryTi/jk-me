@@ -101,6 +101,7 @@ PAGE (
 QUERY GetProductSumByMonth(
     item ENUM Item,
     month INT,          -- month: 202109
+    count INT,
 )
 RETURNS ret (
     id ID,
@@ -117,7 +118,8 @@ RETURNS ret (
         , (SELECT value FROM MonthSumProduct WHERE ixx=Item.orderReturn AND ix=a.ix AND xi=a.xi) as return
         FROM MonthSumProduct as a
         WHERE a.ixx=item AND a.ix=month
-        ORDER BY a.value ASC;
+        ORDER BY a.value DESC
+        LIMIT count;
 };
 
 QUERY GetMonthSumCustomer (
@@ -146,6 +148,7 @@ PAGE (
 QUERY GetCustomerSumByMonth(
     item ENUM Item,
     month INT,          -- month: 202109
+    count INT,
 )
 RETURNS ret (
     id ID,
@@ -162,5 +165,6 @@ RETURNS ret (
         , (SELECT value FROM MonthSumCustomer WHERE ixx=Item.orderReturn AND ix=a.ix AND xi=a.xi) as return
         FROM MonthSumCustomer as a
         WHERE a.ixx=item AND a.ix=month
-        ORDER BY a.value ASC;
+        ORDER BY a.value DESC
+        LIMIT count;
 };
