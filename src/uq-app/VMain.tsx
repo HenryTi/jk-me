@@ -9,11 +9,11 @@ function caption(label:string|JSX.Element, icon:string) {
 
 export class VMain extends VPage<CApp> {
 	protected get tabsProps(): TabsProps {
-		let { cHome, cMe/*, cBug, cUI*/, cSupervise, superviseObjects, superviseItems } = this.controller;
+		let { cHome, cMe, cSupervise, ops } = this.controller;
 		let tabs: TabProp[] = [
 			{name: 'home', caption: caption(t('home'), 'home'), content: cHome.tab},
 		]
-		if (superviseObjects.length + superviseItems.length > 0) {
+		if (ops.length > 0) {
 			tabs.push(
 				{name: 'supervise', caption: caption(t('supervise'), 'bar-chart'), content: cSupervise.tab, load: cSupervise.load},
 			);	

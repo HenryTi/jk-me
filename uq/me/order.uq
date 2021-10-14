@@ -30,7 +30,7 @@ IDX DxOrderDetail (
     return DEC(18,4) SUM,
     costPrice DEC(18,4),
 );
-
+/*
 ID OrderAction MINUTEID (
     id,
     KEY actionId ID,                    -- orderMain, or detail of deliver, receive, return
@@ -56,15 +56,10 @@ IX IxOrderBoundTo (
     ix ENUM Post,
     xi,					        -- to id, 
 );
-/*
-IX IxOrderBoundPost (
-    ix,                                 -- order main id
-    xi ENUM Post,                       -- post
-    -- done ENUM EnumDone DEFAULT 0,       -- 0: 绑定，1: 无成本已处理，2: 有成本已处理
-);
-*/
+
 IX IxOrderActionBoundPostDone (
     ix,                                 -- order action id
     xi ENUM Post,                       -- post
     done ENUM EnumDone DEFAULT 0,       -- 0: 绑定，1: 无成本已处理，2: 有成本已处理
 );
+*/

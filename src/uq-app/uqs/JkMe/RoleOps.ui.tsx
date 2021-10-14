@@ -2,42 +2,31 @@
 import { Res, setRes, TFunc, UI, uqStringify } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
-import { DxOrderAction } from "./JkMe";
+import { RoleOps } from "./JkMe";
 
 /*--fields--*/
 const fields = {
-	id: {
-		"name": "id",
+	ix: {
+		"name": "ix",
 		"type": "id",
 		"isKey": false,
-		"label": "Id"
+		"label": "Ix"
 	} as FieldItemId,
-	orderMain: {
-		"name": "orderMain",
+	xi: {
+		"name": "xi",
 		"type": "id",
 		"isKey": false,
-		"label": "OrderMain"
+		"label": "Xi"
 	} as FieldItemId,
-	orderDetail: {
-		"name": "orderDetail",
-		"type": "id",
-		"isKey": false,
-		"label": "OrderDetail"
-	} as FieldItemId,
-	done: {
-		"name": "done",
-		"isKey": false,
-		"label": "Done"
-	} as undefined,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.orderMain, fields.orderDetail, fields.done, 
+	fields.xi, 
 ];
 
 export const ui: UI = {
-	label: "DxOrderAction",
+	label: "RoleOps",
 	fieldArr,
 	fields,
 };
@@ -55,6 +44,6 @@ export const t:TFunc = (str:string|JSX.Element): string|JSX.Element => {
 	return res[str as string] ?? str;
 }
 
-export function render(item: DxOrderAction):JSX.Element {
+export function render(item: RoleOps):JSX.Element {
 	return <>{uqStringify(item)}</>;
 };

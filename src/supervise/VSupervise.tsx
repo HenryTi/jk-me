@@ -1,14 +1,13 @@
 import { List, VPage } from "tonva-react";
-import { EnumUserObjectRelation, ReturnGetUserSuperviseItemRet, ReturnGetUserSuperviseObjectRet } from "uq-app/uqs/JkMe";
+import { EnumRoleOp
+    , EnumUserObjectRelation
+    , EnumObjectType
+    , ReturnGetUserSuperviseItemRet, ReturnGetUserSuperviseObjectRet } from "uq-app/uqs/JkMe";
 import { Item  } from "uq-app/uqs/JkMe/JkMe";
 import { CSupervise } from "./CSupervise";
 
 export class VSupervise extends VPage<CSupervise> {
-    superviseObjects: ReturnGetUserSuperviseObjectRet[];
-    superviseItems: ReturnGetUserSuperviseItemRet[];
-
-    header() {return '团队'}
-    content() {
+    private renderOpTest = () => {
         const queryList: {
             caption: string;
             item: Item;
@@ -35,9 +34,15 @@ export class VSupervise extends VPage<CSupervise> {
                 action: this.controller.showCustomerSumByMonth,
             },
         ];
-        let {superviseObjects, superviseItems} = this.controller.cApp;
-    
-        return <div>
+        let {superviseObjects, superviseItems} = this.controller;
+        return <>
+            {this.controller.cObjectsArr.map((v, index) => {
+                return <div key={index} className="px-3 py-2 mb-1 bg-white cursor-pointer" 
+                    onClick={() => v.loadAndShowList()}>
+                    {v.header()}
+                </div>
+            })}
+            <div className="mb-3" />
             {
                 queryList.map((v, index) => {
                     let {caption, item, action} = v;
@@ -48,12 +53,33 @@ export class VSupervise extends VPage<CSupervise> {
                     </div>;
                 })
             }
-
+            <div className="mb-3" />
             <List items={superviseObjects} 
                 item={{render: this.renderSuperviseObject, onClick: this.onClickSuperviseObject}} />
-            <div className="py-1"></div>
+            <div className="mb-3" />
             <List items={superviseItems} 
                 item={{render: this.renderSuperviseItem, onClick: this.onClickSuperviseItem}} />
+        </>;
+    }
+
+    private opRenders: {[key in EnumRoleOp]: () => JSX.Element} = {
+        [EnumRoleOp.test]: this.renderOpTest,
+    }
+
+    superviseObjects: ReturnGetUserSuperviseObjectRet[];
+    superviseItems: ReturnGetUserSuperviseItemRet[];
+
+    header() {return '团队'}
+    content() {    
+        return <div>
+            {
+                this.controller.cApp.ops.map((v, index) => {
+                    let {role, op} = v;
+                    return <div key={index} className="py-2">
+                        {this.opRenders[op]()}
+                    </div>;
+                })
+            }
         </div>;
     }
 

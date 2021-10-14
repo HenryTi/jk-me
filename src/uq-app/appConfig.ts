@@ -34,6 +34,12 @@ export const appConfig: AppConfig = {
 			alias: 'PointShop',
 			version: '0.1.0',
 		},
+		{
+			dev: jk,
+			name: 'hr',
+			alias: 'Hr',
+			version: '0.1.0',
+		},
 	],
 	noUnit: true,
     tvs: {},

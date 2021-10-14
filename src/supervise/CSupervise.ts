@@ -1,5 +1,16 @@
 import { CUqBase, UQs } from "uq-app";
-import { ReturnGetCustomerSumByMonthRet, ReturnGetItemHistory$page, ReturnGetItemSumDaysRet, ReturnGetItemSumMonthsRet, ReturnGetProductSumByMonthRet } from "uq-app/uqs/JkMe";
+import { ReturnGetObjectsRet
+	, ReturnGetGroupsRet
+	, ReturnGetDistributorsRet
+	, ReturnGetAgentsRet
+	, ReturnGetStaffsRet
+	, ReturnGetPostsRet
+	, ReturnGetUserSuperviseObjectRet
+	, ReturnGetUserSuperviseItemRet
+	, ReturnGetCustomerSumByMonthRet, ReturnGetItemHistory$page
+	, ReturnGetItemSumDaysRet, ReturnGetItemSumMonthsRet
+	, ReturnGetProductSumByMonthRet
+	, EnumObjectType } from "uq-app/uqs/JkMe";
 import { Item  } from "uq-app/uqs/JkMe/JkMe";
 import { VSupervise } from "./VSupervise";
 import { VItemSumHistory } from "./VItemSumHistory";
@@ -7,7 +18,10 @@ import { env, PageItems, VPage } from "tonva-react";
 import { VItemHistory } from "./VItemHistory";
 import { VItemDayHistory } from "./VItemDayHistory";
 import { VCustomerSumByMonth, VProductSumByMonth } from "./VSumByMonth";
+import { VObjectDetail } from './VObjectDetail';
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { CObjects } from "./objects/CObjects";
+import { initCObjects } from "./objects";
 
 export class CSupervise extends CUqBase {
 	item: Item;
@@ -15,6 +29,15 @@ export class CSupervise extends CUqBase {
 	itemSumMonths: ReturnGetItemSumMonthsRet[];
 	pageItemHistory: PageItemHistory;
 	monthSum: MonthSum<any>;
+	superviseObjects: ReturnGetUserSuperviseObjectRet[];
+	superviseItems: ReturnGetUserSuperviseItemRet[];
+	objects: ReturnGetObjectsRet[];
+	groups: ReturnGetGroupsRet[];
+	distributors: ReturnGetDistributorsRet[];
+	agents: ReturnGetAgentsRet[];
+	staffs: ReturnGetStaffsRet[];
+	posts: ReturnGetPostsRet[];
+	cObjectsArr: CObjects[];
 
 	protected async internalStart() {
 	}
@@ -22,6 +45,14 @@ export class CSupervise extends CUqBase {
 	tab = () => this.renderView(VSupervise);
 
 	load = async() => {
+		this.cObjectsArr = initCObjects(this);
+		let {JkMe} = this.uqs;
+		let [superviseObjects, superviseItems] = await Promise.all([
+			JkMe.GetUserSuperviseObject.query({}),
+			JkMe.GetUserSuperviseItem.query({}),
+		]);
+		this.superviseObjects = superviseObjects.ret;
+		this.superviseItems = superviseItems.ret;
 	}
 
 	async showItemSumHistory(item: Item) {
@@ -85,6 +116,14 @@ export class CSupervise extends CUqBase {
 		this.monthSum = new MonthSumCustomer(this, caption, item);
 		await this.monthSum.load();
 		this.openVPage(VCustomerSumByMonth);
+	}
+
+	showObjectDetail = async (type: EnumObjectType) => {
+		if (!this.objects) {
+			let ret = await this.uqs.JkMe.GetObjects.query({});
+			this.objects = ret.ret;
+		}
+		this.openVPage(VObjectDetail);
 	}
 }
 

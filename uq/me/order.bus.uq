@@ -20,6 +20,7 @@ ACCEPT order {
     SET objManagerId=ID(ObjectPost, Post.managerIT);
     IF objManagerId IS NULL {
         SET objManagerId=ID(Object new);
+        WITH Object ID=objManagerId SET type=EnumObjectType.post;
         WITH ObjectPost as a ID=objManagerId SET a.post=Post.managerIT;
     }
     WITH IxBizMainBoundTo IXX=mainId IX=Post.managerIT XI=objManagerId;
@@ -72,6 +73,7 @@ ACCEPT [order-bound-staff-sales] {
         SET toId=ID(ObjectStaff, id);
         IF toId IS NULL {
             SET toId=ID(Object new);
+            WITH Object ID=toId SET type=EnumObjectType.staff;
             WITH ObjectStaff ID=toId SET staff=id;
         }
         WITH IxBizMainBoundTo IXX=order IX=Post.staffSales XI=toId;
@@ -84,6 +86,7 @@ ACCEPT [order-bound-agent] { -- 轻代理
 		SET toId=ID(ObjectAgent, id);
         IF toId IS NULL {
             SET toId=ID(Object new);
+            WITH Object ID=toId SET type=EnumObjectType.agent;
             WITH ObjectAgent ID=toId SET agent=id;
         }
         WITH IxBizMainBoundTo IXX=order IX=Post.agent XI=toId;
@@ -96,6 +99,7 @@ ACCEPT [order-bound-distributor] { -- 分销商
         SET toId=ID(ObjectDistributor, id);
         IF toId IS NULL {
             SET toId=ID(Object new);
+            WITH Object ID=toId SET type=EnumObjectType.distributor;
             WITH ObjectDistributor ID=toId SET distributor=id;
         }
         WITH IxBizMainBoundTo IXX=order IX=Post.distributor XI=toId;
@@ -108,6 +112,7 @@ ACCEPT [order-bound-customer] {
         SET toId=ID(ObjectCustomer, id);
         IF toId IS NULL {
             SET toId=ID(Object new);
+            WITH Object ID=toId SET type=EnumObjectType.customer;
             WITH ObjectCustomer ID=toId SET customer=id;
         }
         WITH IxBizMainBoundTo IXX=order IX=Post.customer XI=toId;

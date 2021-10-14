@@ -1,16 +1,11 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Res, setRes, TFunc, UI, uqStringify } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
-import { IxOrderBoundTo } from "./JkMe";
+import { UserRole } from "./JkMe";
 
 /*--fields--*/
 const fields = {
-	ixx: {
-		"name": "ixx",
-		"type": "id",
-		"isKey": false,
-		"label": "Ixx"
-	} as FieldItemId,
 	ix: {
 		"name": "ix",
 		"type": "id",
@@ -27,11 +22,11 @@ const fields = {
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.ixx, fields.xi, 
+	fields.xi, 
 ];
 
 export const ui: UI = {
-	label: "IxOrderBoundTo",
+	label: "UserRole",
 	fieldArr,
 	fields,
 };
@@ -49,6 +44,6 @@ export const t:TFunc = (str:string|JSX.Element): string|JSX.Element => {
 	return res[str as string] ?? str;
 }
 
-export function render(item: IxOrderBoundTo):JSX.Element {
+export function render(item: UserRole):JSX.Element {
 	return <>{uqStringify(item)}</>;
 };

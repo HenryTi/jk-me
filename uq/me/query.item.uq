@@ -1,3 +1,75 @@
+QUERY GetObjects() 
+RETURNS ret (
+    id ID,
+    type ENUM EnumObjectType,
+)
+{
+    INTO ret SELECT a.id, a.type
+        FROM Object as a;
+};
+
+QUERY GetDistributors() 
+RETURNS ret (
+    id ID,
+    distributor ID,
+)
+{
+    INTO ret SELECT a.id, b.distributor
+        FROM Object as a 
+            JOIN ObjectDistributor as b 
+                ON a.id=b.id AND a.type=EnumObjectType.distributor;
+};
+
+QUERY GetAgents() 
+RETURNS ret (
+    id ID,
+    agent ID,
+)
+{
+    INTO ret SELECT a.id, b.agent
+        FROM Object as a 
+            JOIN ObjectAgent as b 
+                ON a.id=b.id AND a.type=EnumObjectType.agent;
+};
+
+QUERY GetStaffs(
+    from DATE,
+    to DATE,
+    timeZone TINYINT,
+) 
+RETURNS ret (
+    id ID,
+    staff ID,
+    amount DEC(18,4),
+)
+{
+    INTO ret SELECT a.id, b.staff, (
+            SELECT SUM(p.value)
+                FROM postitemhistory AS p
+                    JOIN ObjectPostItem as opi ON p.ixx=opi.id
+                WHERE opi.object=a.id
+                    AND opi.post=Post.staffSales
+                    AND opi.item=Item.orderAmount
+                    AND p.ixx=opi.id
+                    AND p.ix >= minuteIdFromDate(from, timeZone)
+                    AND p.ix < minuteIdFromDate(to, timeZone)
+        ) as amount
+        FROM Object as a JOIN ObjectStaff as b 
+            ON a.id=b.id AND a.type=EnumObjectType.staff;
+};
+
+QUERY GetPosts() 
+RETURNS ret (
+    id ID,
+    post ID,
+)
+{
+    INTO ret SELECT a.id, b.post
+        FROM Object as a 
+            JOIN ObjectPost as b 
+                ON a.id=b.id AND a.type=EnumObjectType.post;
+};
+
 QUERY GetUserSuperviseObject()
 RETURNS ret (
     object ID,

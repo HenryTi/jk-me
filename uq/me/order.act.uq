@@ -1,7 +1,4 @@
--- 每次处理最多maxActionRows行，然后退出，进入下一个循环。
--- 这样可以避免数据库被占用太多算力，以至于无法响应访问操作
-CONST maxActionRows = 10;
-
+/*
 ACT ActOrderAction ver 0.3 () {
     VAR orderActionId ID, rowCount INT = 0;
     SETTING 'orderActionId' BIGINT TO orderActionId;
@@ -246,3 +243,4 @@ PROC SaveItemHistory ver 0.1 (
     SET itemHistoryId = ID(ItemHistory new, actionId, item, create);
     WITH ItemHistory as a ID = itemHistoryId SET a.value=value, a.biz=orderDetail, a.bizOp=actionId;
 };
+*/

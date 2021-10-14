@@ -1,3 +1,7 @@
+-- 每次处理最多maxActionRows行，然后退出，进入下一个循环。
+-- 这样可以避免数据库被占用太多算力，以至于无法响应访问操作
+CONST maxActionRows = 10;
+
 -- BizMain ready, 加入这个队列
 ID QueueBizMain MINUTEID (
     id,
