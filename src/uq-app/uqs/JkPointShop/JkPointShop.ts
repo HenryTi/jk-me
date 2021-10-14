@@ -1,4 +1,4 @@
-//=== UqApp builder created on Tue Oct 12 2021 22:19:20 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Wed Oct 13 2021 22:55:19 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqSheet, UqBook, UqQuery, UqMap, UqHistory, UqPending, UqID, UqIDX, UqIX } from "tonva-react";
 
@@ -647,6 +647,14 @@ export interface DxReOrderDetail {
 	$act?: number;
 }
 
+export interface DxExchangeDetail {
+	id: number;
+	deliver?: number;
+	deliverDone?: number;
+	deliverTime?: any;
+	$act?: number;
+}
+
 export interface DxExchangeMainState {
 	id: number;
 	state?: any;
@@ -666,6 +674,14 @@ export interface ActParamDxReOrderDetail {
 	id: number|IDXValue;
 	point?: number|IDXValue;
 	totalPoint?: number|IDXValue;
+	$act?: number;
+}
+
+export interface ActParamDxExchangeDetail {
+	id: number|IDXValue;
+	deliver?: number|IDXValue;
+	deliverDone?: number|IDXValue;
+	deliverTime?: any|IDXValue;
 	$act?: number;
 }
 
@@ -689,6 +705,7 @@ export interface ParamActs {
 	exchangeMain?: ExchangeMain[];
 	dxOrderDetail?: ActParamDxOrderDetail[];
 	dxReOrderDetail?: ActParamDxReOrderDetail[];
+	dxExchangeDetail?: ActParamDxExchangeDetail[];
 	dxExchangeMainState?: ActParamDxExchangeMainState[];
 	ixExchangeMainUsedPoint?: IxExchangeMainUsedPoint[];
 }
@@ -763,10 +780,15 @@ export interface UqExt extends Uq {
 	ExchangeMain: UqID<any>;
 	DxOrderDetail: UqIDX<any>;
 	DxReOrderDetail: UqIDX<any>;
+	DxExchangeDetail: UqIDX<any>;
 	DxExchangeMainState: UqIDX<any>;
 	IxExchangeMainUsedPoint: UqIX<any>;
 }
 
 export function assign(uq: any, to:string, from:any): void {
+	let hasEntity = uq.$.hasEntity(to);
+	if (hasEntity === false) {
+		return;
+	}
 	Object.assign((uq as any)[to], from);
 }

@@ -3,7 +3,6 @@ import { Image, VPage, nav, IconText, PropGrid, LMR, FA, Prop, UserIcon, UserVie
 import { CMe } from './CMe';
 import { appConfig } from '../uq-app/appConfig';
 import { VAbout } from './VAbout';
-import { VUpload } from './VUpload';
 
 export class VMe extends VPage<CMe> {
 	header() {return this.t('me')}
@@ -55,9 +54,9 @@ export class VMe extends VPage<CMe> {
         }
         return <>
             <PropGrid rows={[...rows]} values={{}} />
-            <button onClick={this.controller.testPointShop} >test</button>
         </>;
-	}
+        // <button onClick={this.controller.testPointShop} >test</button>
+    }
 
     private renderAdmin = observer(():JSX.Element => {
         let {isAdmin} = this.controller;
@@ -93,10 +92,6 @@ export class VMe extends VPage<CMe> {
             </div>
         </LMR>;
     });
-
-    private test = () => {
-        this.openVPage(VUpload);
-    }
 
 	/*
 	private renderRolesAdmin = observer(() => {

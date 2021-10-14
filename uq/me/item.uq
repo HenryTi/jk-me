@@ -1,5 +1,16 @@
+ENUM EnumObjectType (
+    none                = 0,
+    user                = 1,
+    customer            = 2,
+    staff               = 3,
+    agent               = 4,
+    distributor         = 5,
+    post                = 6,
+);
+
 ID Object (
     id,
+    type ENUM EnumObjectType DEFAULT 0,
 );
 
 ID ObjectUser (

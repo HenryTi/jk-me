@@ -6,3 +6,50 @@ ROLE creater, owner, admin				-- 设置账号，初始化，设立team，以及t
 	, manager
 	, teamLeader;
 */
+
+ENUM EnumRole (
+	all					= 1,
+	dev					= 2,
+);
+
+ENUM EnumRoleOp (
+	test				= 1,
+);
+
+ID Role CONST (
+	id small,
+	name CHAR(50),
+	discription CHAR(200),
+)
++ (id, name, discription)
+VALUES
+(EnumRole.all, '总管', '查看全部各种数据'),
+(EnumRole.dev, '系统总管', '查看全部各种数据'),
+;
+
+IX UserRole (
+	ix USER,
+	xi Role,
+);
+
+IX RoleOps CONST (
+	ix ENUM EnumRole,
+	xi ENUM EnumRoleOp, 
+)
++ (ix, xi)
+VALUES
+(EnumRole.all, EnumRoleOp.test),
+(EnumRole.dev, EnumRoleOp.test),
+;
+
+QUERY GetRoleOps()
+RETURNS ret (
+	role ENUM EnumRole,
+	op ENUM EnumRoleOp,
+)
+{
+	INTO ret SELECT DISTINCT a.ix as role, a.xi as op
+		FROM RoleOps as a
+			JOIN UserRole as b ON a.ix=b.xi
+		WHERE b.ix=$user;
+};

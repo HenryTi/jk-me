@@ -2,36 +2,44 @@
 import { Res, setRes, TFunc, UI, uqStringify } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
-import { IxOrderActionBoundPostDone } from "./JkMe";
+import { DxExchangeDetail } from "./JkPointShop";
 
 /*--fields--*/
 const fields = {
-	ix: {
-		"name": "ix",
+	id: {
+		"name": "id",
 		"type": "id",
 		"isKey": false,
-		"label": "Ix"
+		"label": "Id"
 	} as FieldItemId,
-	xi: {
-		"name": "xi",
-		"type": "id",
+	deliver: {
+		"name": "deliver",
+		"type": "number",
 		"isKey": false,
-		"label": "Xi"
-	} as FieldItemId,
-	done: {
-		"name": "done",
+		"widget": "number",
+		"label": "Deliver"
+	} as FieldItemNum,
+	deliverDone: {
+		"name": "deliverDone",
+		"type": "number",
 		"isKey": false,
-		"label": "Done"
+		"widget": "number",
+		"label": "DeliverDone"
+	} as FieldItemNum,
+	deliverTime: {
+		"name": "deliverTime",
+		"isKey": false,
+		"label": "DeliverTime"
 	} as undefined,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.xi, fields.done, 
+	fields.deliver, fields.deliverDone, fields.deliverTime, 
 ];
 
 export const ui: UI = {
-	label: "IxOrderActionBoundPostDone",
+	label: "DxExchangeDetail",
 	fieldArr,
 	fields,
 };
@@ -49,6 +57,6 @@ export const t:TFunc = (str:string|JSX.Element): string|JSX.Element => {
 	return res[str as string] ?? str;
 }
 
-export function render(item: IxOrderActionBoundPostDone):JSX.Element {
+export function render(item: DxExchangeDetail):JSX.Element {
 	return <>{uqStringify(item)}</>;
 };

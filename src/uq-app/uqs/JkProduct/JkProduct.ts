@@ -1,4 +1,4 @@
-//=== UqApp builder created on Tue Oct 12 2021 22:19:20 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Wed Oct 13 2021 22:55:19 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqMap, UqHistory } from "tonva-react";
 
@@ -458,5 +458,9 @@ export interface UqExt extends Uq {
 }
 
 export function assign(uq: any, to:string, from:any): void {
+	let hasEntity = uq.$.hasEntity(to);
+	if (hasEntity === false) {
+		return;
+	}
 	Object.assign((uq as any)[to], from);
 }

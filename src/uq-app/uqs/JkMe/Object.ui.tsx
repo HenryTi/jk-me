@@ -11,11 +11,16 @@ const fields = {
 		"isKey": false,
 		"label": "Id"
 	} as FieldItemId,
+	type: {
+		"name": "type",
+		"isKey": false,
+		"label": "Type"
+	} as undefined,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	
+	fields.type, 
 ];
 
 export const ui: UI = {

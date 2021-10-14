@@ -6,7 +6,7 @@ import { res } from "./res";
 import { VMain } from "./VMain";
 import { CTester } from "./test-uqui";
 import { setUI } from "./uqs";
-import { Item, Post, ReturnGetUserSuperviseItemRet, ReturnGetUserSuperviseObjectRet } from "./uqs/JkMe";
+import { Item, Post, EnumRole, EnumRoleOp } from "./uqs/JkMe";
 import { CSupervise } from "supervise";
 
 //const gaps = [10, 3,3,3,3,3,5,5,5,5,5,5,5,5,10,10,10,10,15,15,15,30,30,60];
@@ -27,8 +27,7 @@ export class CApp extends CUqApp {
 	cUI: CTester;
 	readonly itemTitles:{[item in Item]: Title} = {} as any;
 	readonly postTitles:{[post in Post]: Title} = {} as any;
-	superviseObjects: ReturnGetUserSuperviseObjectRet[];
-	superviseItems: ReturnGetUserSuperviseItemRet[];
+	ops: {role: EnumRole; op: EnumRoleOp}[];
 	
 	protected async internalStart(isUserLogin: boolean) {
 		this.setRes(res);
@@ -57,16 +56,14 @@ export class CApp extends CUqApp {
 
 	private async loadBaseData() {
 		let {JkMe} = this.uqs;
-		let [retItemTitles, retPostTitles, superviseObjects, superviseItems] = await Promise.all([
+		let [retItemTitles, retPostTitles, roleOps] = await Promise.all([
 			JkMe.GetItemTitles.query({}),
 			JkMe.GetPostTitles.query({}),
-			JkMe.GetUserSuperviseObject.query({}),
-			JkMe.GetUserSuperviseItem.query({}),
+			JkMe.GetRoleOps.query({}),
 		]);
 		for (let it of retItemTitles.ret) this.itemTitles[it.id as Item] = it;
 		for (let pt of retPostTitles.ret) this.postTitles[pt.id as Post] = pt;
-		this.superviseObjects = superviseObjects.ret;
-		this.superviseItems = superviseItems.ret;
+		this.ops = roleOps.ret;
 	}
 
 	/*
