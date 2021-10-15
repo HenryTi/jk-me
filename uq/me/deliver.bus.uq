@@ -1,0 +1,11 @@
+BUS JkDeliverBus ver 0.7 from 百灵威系统工程部/[jk-deliver]
+ACCEPT [deliver-done] {
+    LOG CONCAT_WS(' ', id) SUBJECT 'ACCEPT JkDeliverBus.deliver-done';
+	FOR detail {
+		WITH DxOrderDetail ID=biz SET deliverDone += value;
+        WITH DxBizOp as a ID=id 
+            SET a.action=EnumBizAction.orderDeliverDone, a.biz=biz, a.value=value;
+        VAR queueId ID = ID(QueueBizOp new, id);
+	}
+    SCHEDULE ExecQueueBizOp DELAY 1;
+};
