@@ -1,5 +1,5 @@
 import { makeObservable, observable } from "mobx";
-import { QueryPager, User } from "tonva-react";
+import { QueryPager, User, VTestMobx } from "tonva-react";
 import { CUqBase } from "uq-app";
 import { VMe } from "./VMe";
 import { VEditMe } from "./VEditMe";
@@ -10,11 +10,24 @@ export class CMe extends CUqBase {
 	rootUnits: QueryPager<any>;
 	admins: {id:number;role:number}[] = null;
 	isAdmin: boolean = false;
+	map = new Map();
 	constructor(res:any) {
 		super(res);
 		makeObservable(this, {
 			isAdmin: observable,
+			map: observable.shallow,
 		});
+	}
+
+	mapAdd = () => {
+		let v = this.map.get(1);
+		if (!v) {
+			v = 1;
+		}
+		else {
+			v = {v};
+		}
+		this.map.set(1, v);
 	}
 
     protected async internalStart() {

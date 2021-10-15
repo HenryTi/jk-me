@@ -40,10 +40,16 @@ QUERY GetStaffs(
 RETURNS ret (
     id ID,
     staff ID,
-    amount DEC(18,4),
+    amountThisMonth DEC(18,4),
+    amountLastMonth DEC(18,4),
 )
 {
-    INTO ret SELECT a.id, b.staff, (
+    VAR d DATE, m0 DATE, m1 DATE;
+    SET d=NOW();
+    SET m0=dateadd(day, DAY(d)+1, d);
+    SET m0=dateadd(MONTH, -1, m0);
+    INTO ret SELECT a.id, b.staff, 
+        (
             SELECT SUM(p.value)
                 FROM postitemhistory AS p
                     JOIN ObjectPostItem as opi ON p.ixx=opi.id
@@ -51,9 +57,20 @@ RETURNS ret (
                     AND opi.post=Post.staffSales
                     AND opi.item=Item.orderAmount
                     AND p.ixx=opi.id
-                    AND p.ix >= minuteIdFromDate(from, timeZone)
-                    AND p.ix < minuteIdFromDate(to, timeZone)
-        ) as amount
+                    AND p.ix >= minuteIdFromDate(m0, timeZone)
+                    AND p.ix < minuteIdFromDate(d, timeZone)
+        ) as amountThisMonth,
+        (
+            SELECT SUM(p.value)
+                FROM postitemhistory AS p
+                    JOIN ObjectPostItem as opi ON p.ixx=opi.id
+                WHERE opi.object=a.id
+                    AND opi.post=Post.staffSales
+                    AND opi.item=Item.orderAmount
+                    AND p.ixx=opi.id
+                    AND p.ix >= minuteIdFromDate(m1, timeZone)
+                    AND p.ix < minuteIdFromDate(m0, timeZone)
+        ) as amountLastMonth
         FROM Object as a JOIN ObjectStaff as b 
             ON a.id=b.id AND a.type=EnumObjectType.staff;
 };

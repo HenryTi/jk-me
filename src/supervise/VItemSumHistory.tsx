@@ -30,7 +30,7 @@ export class VItemSumHistory extends VPage<CSupervise> {
         let d = new Date(date);
         return <LMR  className="px-3 py-2" 
             left={<div>{d.getFullYear()}年{(d.getMonth()+1)}月</div>} 
-            right={<div>{value.toFixed(fixed??2)} {unit}</div>} />
+            right={<div>{(value??0).toFixed(fixed??2)} {unit}</div>} />
     }
 
     private onClickMonthItem = async (row: ReturnGetItemSumMonthsRet) => {

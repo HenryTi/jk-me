@@ -85,7 +85,7 @@ export class VHome extends VPage<CHome> {
 		let {itemTitles} = this.controller.cApp;
 		let {item, value} = ips;
 		let {title, vice, fixed} = itemTitles[item];
-		return <LMR className="px-3 py-2 w-100" right={<div>{value.toFixed(fixed)}</div>}>
+		return <LMR className="px-3 py-2 w-100" right={<div>{(value??0).toFixed(fixed)}</div>}>
 			{title} <small className="text-muted ms-3">{vice}</small>
 		</LMR>;
 	}

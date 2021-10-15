@@ -8,8 +8,10 @@ export abstract class VObjects<T extends CObjects> extends VPage<T> {
     content() {
         return React.createElement(observer(() => {
             return <div className="">
+                {this.renderListHeader()}
                 <List items={this.controller.baseList}
                     item={{render: this.renderRow, onClick: this.onClickRow}} />
+                {this.renderListFooter()}
             </div>
         }));
     }
@@ -20,6 +22,14 @@ export abstract class VObjects<T extends CObjects> extends VPage<T> {
 
     private onClickRow = (v:any) => {
         this.onClickItem(v);
+    }
+
+    protected renderListHeader(): JSX.Element {
+        return <></>;
+    }
+
+    protected renderListFooter(): JSX.Element {
+        return <></>;
     }
 
     protected renderItem(v:any, index:number): JSX.Element {

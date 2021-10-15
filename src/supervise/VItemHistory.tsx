@@ -28,7 +28,7 @@ export class VItemHistory extends VPage<CSupervise> {
         </div>; 
         return <LMR className="px-3 py-2 align-items-center" 
             left={left} 
-            right={<div>{value.toFixed(fixed??2)} <small className="text-muted">{unit}</small></div>}>
+            right={<div>{(value??0).toFixed(fixed??2)} <small className="text-muted">{unit}</small></div>}>
             <b>{bizOp}</b> {memo}
         </LMR>;
     }

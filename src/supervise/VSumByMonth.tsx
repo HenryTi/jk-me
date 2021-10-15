@@ -24,13 +24,15 @@ abstract class VSumByMonth extends VPage<CSupervise> {
 
     private renderDate() {
         let {month, hasNext, prev, next} = this.controller.monthSum;
-        let left = <div className="cursor-pointer p-3" onClick={prev}><FA name="angle-left" /></div>;
-        let right = <div className={' p-3 ' + (hasNext? ' cursor-pointer ':' text-light ')} onClick={next}><FA name="angle-right" /></div>
-        return <div className="d-flex">
-            {left}
-            <div className="text-center flex-fill py-3">{month.getFullYear()}年{month.getMonth()+1}月</div>
-            {right}
-        </div>;    
+        let left = <div className="cursor-pointer px-5 py-3" onClick={prev}><FA name="angle-left" /></div>;
+        let right = <div className={' px-5 py-3 ' + (hasNext? ' cursor-pointer ':' text-light ')} onClick={next}><FA name="angle-right" /></div>
+        return <div className="d-flex justify-content-center">
+            <div className="d-flex mx-auto">
+                {left}
+                <div className="text-center py-3">{month.getFullYear()}年{month.getMonth()+1}月</div>
+                {right}
+            </div>
+        </div>;
 	}
 
     private renderItem = (row: ReturnGetProductSumByMonthRet, index: number) => {
@@ -38,7 +40,7 @@ abstract class VSumByMonth extends VPage<CSupervise> {
         let {$serial} = row as any;
         return <LMR  className="px-3 py-2" 
             left={<div className="w-2c text-center mx-2 text-primary">{$serial}</div>} 
-            right={<div>{value.toFixed(2)} 元</div>}>
+            right={<div>{(value??0).toFixed(2)} 元</div>}>
                 <div>{this.renderId(id)}</div>
             </LMR>
     }
