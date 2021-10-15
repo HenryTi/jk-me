@@ -33,8 +33,6 @@ RETURNS ret (
 };
 
 QUERY GetStaffs(
-    from DATE,
-    to DATE,
     timeZone TINYINT,
 ) 
 RETURNS ret (
@@ -75,16 +73,43 @@ RETURNS ret (
             ON a.id=b.id AND a.type=EnumObjectType.staff;
 };
 
-QUERY GetPosts() 
+QUERY GetPosts(
+    timeZone TINYINT,
+) 
 RETURNS ret (
     id ID,
-    post ID,
+    post ENUM Post,
+    item ENUM Item,
+    amountThisMonth DEC(18,4),
+    amountLastMonth DEC(18,4),
 )
 {
-    INTO ret SELECT a.id, b.post
+    VAR d DATE, m0 DATE, m1 DATE;
+    SET d=NOW();
+    SET m0=dateadd(day, DAY(d)+1, d);
+    SET m0=dateadd(MONTH, -1, m0);
+    INTO ret SELECT a.id, b.post, c.item, 
+        (
+            SELECT SUM(p.value)
+                FROM postitemhistory AS p
+                    JOIN ObjectPostItem as opi ON p.ixx=opi.id
+                WHERE opi.id=c.id
+                    AND p.ix >= minuteIdFromDate(m0, timeZone)
+                    AND p.ix < minuteIdFromDate(d, timeZone)
+        ) as amountThisMonth,
+        (
+            SELECT SUM(p.value)
+                FROM postitemhistory AS p
+                    JOIN ObjectPostItem as opi ON p.ixx=opi.id
+                WHERE opi.id=c.id
+                    AND p.ix >= minuteIdFromDate(m1, timeZone)
+                    AND p.ix < minuteIdFromDate(m0, timeZone)
+        ) as amountLastMonth
         FROM Object as a 
             JOIN ObjectPost as b 
-                ON a.id=b.id AND a.type=EnumObjectType.post;
+                ON a.id=b.id AND a.type=EnumObjectType.post
+            JOIN ObjectPostItem as c
+                ON c.object=a.id AND c.post=b.post;
 };
 
 QUERY GetUserSuperviseObject()

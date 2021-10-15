@@ -1,10 +1,28 @@
-import { List, VPage } from "tonva-react";
+import { FA, List, LMR, VPage } from "tonva-react";
 import { EnumRoleOp
     , EnumUserObjectRelation
     , EnumObjectType
     , ReturnGetUserSuperviseItemRet, ReturnGetUserSuperviseObjectRet } from "uq-app/uqs/JkMe";
 import { Item  } from "uq-app/uqs/JkMe/JkMe";
 import { CSupervise } from "./CSupervise";
+
+interface VIndexProps {
+    key?:string|number; 
+    icon?:string; 
+    iconColor?:string;
+    caption:string; 
+    action: ()=>void;
+}
+
+const VIndex = ({key, icon, caption, action, iconColor}:VIndexProps) => {
+    let fa = <FA name={icon??'chevron-circle-right'} className={'me-3 ' + (iconColor??' text-success ')} />;
+    let right = <FA name="angle-right" />
+    return <LMR key={key} left={fa} right={right}
+        className="px-3 py-2 mb-1 bg-white cursor-pointer align-items-center" 
+        onClick={action}>
+        {caption}
+    </LMR>
+}
 
 export class VSupervise extends VPage<CSupervise> {
     private renderOpTest = () => {
@@ -37,30 +55,43 @@ export class VSupervise extends VPage<CSupervise> {
         let {superviseObjects, superviseItems} = this.controller;
         return <>
             {this.controller.cObjectsArr.map((v, index) => {
+                return <VIndex key={index} 
+                    action={() => v.loadAndShowList()}
+                    caption={v.header()}
+                    iconColor="text-primary" />;
+                /*
                 return <div key={index} className="px-3 py-2 mb-1 bg-white cursor-pointer" 
                     onClick={() => v.loadAndShowList()}>
                     {v.header()}
                 </div>
+                */
             })}
             <div className="mb-3" />
             {
                 queryList.map((v, index) => {
                     let {caption, item, action} = v;
+                    return <VIndex key={index} iconColor="text-danger"
+                        caption={caption} 
+                        action={()=>action(caption, item)} />;
+                    /*
                     return <div key={index} 
                         className="px-3 py-2 mb-1 bg-white cursor-pointer" 
                         onClick={() => action(caption, item)}>
                         {caption}
                     </div>;
+                    */
                 })
             }
             <div className="mb-3" />
-            <List items={superviseObjects} 
-                item={{render: this.renderSuperviseObject, onClick: this.onClickSuperviseObject}} />
-            <div className="mb-3" />
-            <List items={superviseItems} 
+            <List items={superviseItems} none={null}
                 item={{render: this.renderSuperviseItem, onClick: this.onClickSuperviseItem}} />
         </>;
-    }
+        /*
+            <List items={superviseObjects} 
+            item={{render: this.renderSuperviseObject, onClick: this.onClickSuperviseObject}} />
+        <div className="mb-3" />
+        */
+}
 
     private opRenders: {[key in EnumRoleOp]: () => JSX.Element} = {
         [EnumRoleOp.test]: this.renderOpTest,

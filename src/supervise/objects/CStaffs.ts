@@ -20,12 +20,7 @@ export class CStaffs extends CObjects {
     protected get caption(): string {return '员工'}
 
     protected async internalLoadList(): Promise<void> {
-        let to = new Date();
-        let from = new Date(to);
-        from.setDate(from.getDate() - 7);
         let ret = await this.uqs.JkMe.GetStaffs.query({
-            from,
-            to,
             timeZone: 8,
         });
         this.list = ret.ret;

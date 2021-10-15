@@ -1,4 +1,4 @@
-//=== UqApp builder created on Thu Oct 14 2021 15:12:25 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Thu Oct 14 2021 22:28:09 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 
@@ -439,10 +439,14 @@ export interface ResultGetGroups {
 }
 
 export interface ParamGetPosts {
+	timeZone: number;
 }
 export interface ReturnGetPostsRet {
 	id: number;
-	post: number;
+	post: any;
+	item: any;
+	amountThisMonth: number;
+	amountLastMonth: number;
 }
 export interface ResultGetPosts {
 	ret: ReturnGetPostsRet[];
@@ -459,8 +463,6 @@ export interface ResultGetDistributors {
 }
 
 export interface ParamGetStaffs {
-	from: any;
-	to: any;
 	timeZone: number;
 }
 export interface ReturnGetStaffsRet {

@@ -7,9 +7,12 @@ export class CPosts extends CObjects {
     get baseList(): any[] {return this.list}
 
     protected get caption(): string {return '岗位'}
+    header() {return this.caption + '绩效列表'}
 
     protected async internalLoadList(): Promise<void> {
-        let ret = await this.uqs.JkMe.GetPosts.query({});
+        let ret = await this.uqs.JkMe.GetPosts.query({
+            timeZone: 8,
+        });
         this.list = ret.ret;
     }
 
@@ -17,4 +20,3 @@ export class CPosts extends CObjects {
         this.openVPage(VPosts);
     }
 }
-
