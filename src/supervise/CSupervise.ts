@@ -10,15 +10,14 @@ import { ReturnGetObjectsRet
 	, ReturnGetCustomerSumByMonthRet, ReturnGetItemHistory$page
 	, ReturnGetItemSumDaysRet, ReturnGetItemSumMonthsRet
 	, ReturnGetProductSumByMonthRet
-	, EnumObjectType } from "uq-app/uqs/JkMe";
+} from "uq-app/uqs/JkMe";
 import { Item  } from "uq-app/uqs/JkMe/JkMe";
 import { VSupervise } from "./VSupervise";
 import { VItemSumHistory } from "./VItemSumHistory";
-import { env, PageItems, VPage } from "tonva-react";
+import { env, PageItems } from "tonva-react";
 import { VItemHistory } from "./VItemHistory";
 import { VItemDayHistory } from "./VItemDayHistory";
 import { VCustomerSumByMonth, VProductSumByMonth } from "./VSumByMonth";
-import { VObjectDetail } from './VObjectDetail';
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { CObjects } from "./objects/CObjects";
 import { initCObjects } from "./objects";
@@ -116,14 +115,6 @@ export class CSupervise extends CUqBase {
 		this.monthSum = new MonthSumCustomer(this, caption, item);
 		await this.monthSum.load();
 		this.openVPage(VCustomerSumByMonth);
-	}
-
-	showObjectDetail = async (type: EnumObjectType) => {
-		if (!this.objects) {
-			let ret = await this.uqs.JkMe.GetObjects.query({});
-			this.objects = ret.ret;
-		}
-		this.openVPage(VObjectDetail);
 	}
 }
 
