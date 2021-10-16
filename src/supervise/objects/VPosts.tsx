@@ -1,4 +1,5 @@
 import { LMR } from "tonva-react";
+import { cnAmount } from "tools";
 import { Item, Post } from "uq-app/uqs/JkMe";
 import { CPosts } from "./CPosts";
 import { VObjects } from "./VObjects";
@@ -8,10 +9,10 @@ export class VPosts extends VObjects<CPosts> {
 		let {postTitles, itemTitles} = this.controller.cApp;
         let {id, post, item, amountThisMonth, amountLastMonth} = v;
 		let {title:postTitle} = postTitles[post as Post];
-		let {fixed, unit, title:itemTitle} = itemTitles[item as Item];
+		let {title:itemTitle} = itemTitles[item as Item];
         let right = <div className="d-flex align-items-center">
-            <div className="w-10c text-end">{((amountThisMonth??0) as number).toFixed(fixed)} {unit}</div>
-            <div className="w-10c text-end">{((amountLastMonth??0) as number).toFixed(fixed)} {unit}</div>
+            {this.vAmount(amountThisMonth, item)}
+            {this.vAmount(amountLastMonth, item)}
         </div>;
         return <LMR className="px-3 py-2" right={right}>
             {postTitle} {itemTitle}
@@ -22,9 +23,18 @@ export class VPosts extends VObjects<CPosts> {
         return <div>
             <div className="d-flex px-3 py-3 border-bottom border-primary">
                 <div className="flex-fill"></div>
-                <div className="w-10c text-end">本月</div>
-                <div className="w-10c text-end">上月</div>
+                <div className={cnAmount}>本月</div>
+                <div className={cnAmount}>上月</div>
             </div>
+        </div>;
+    }
+
+    private vAmount(amount:number, item:Item):JSX.Element {
+		let {itemTitles} = this.controller.cApp;
+		let {fixed, unit} = itemTitles[item];
+        return <div className={cnAmount}>
+            {((amount??0) as number).toFixed(fixed)} 
+            <small className="text-muted">{unit}</small>
         </div>;
     }
 

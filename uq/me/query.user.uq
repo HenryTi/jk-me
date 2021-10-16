@@ -63,7 +63,10 @@ RETURNS ret (
         Order BY a.ix DESC;
 };
 
-QUERY UserItemPeriodHistory ver 0.2 (
+QUERY UserItemPeriodHistory ver 0.5
+Proxy ProxyCheck 
+Auth AuthCheck
+(
     objectPostItem ID ObjectPostItem,
     from DATE,
     to DATE,
@@ -84,4 +87,17 @@ RETURNS ret (
             AND a.ix < minuteIdFromDate(to, timeZone)
         GROUP BY dateFromMinuteId(a.ix, timeZone, period) as date
         ORDER BY date DESC;
+};
+
+SYSPROC ProxyCheck ver 0.2 (
+    proxy ID,           -- $user是不是可以代理proxy用户
+    OUT ok TINYINT,
+) {
+    SET ok = 1;
+};
+
+SYSPROC AuthCheck ver 0.2 (
+    OUT ok TINYINT,
+) {      -- $user有没有访问权限
+    SET ok = 1;
 };

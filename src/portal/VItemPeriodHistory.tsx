@@ -1,16 +1,16 @@
 import { List, LMR, VPage } from "tonva-react";
 import { ReturnUserItemPeriodHistoryRet } from "uq-app/uqs/JkMe";
-import { CHome } from "./CHome";
+import { CPeriodSum } from "./CPortal";
 
-abstract class VItemPeriodHistory extends VPage<CHome> {
+abstract class VItemPeriodHistory extends VPage<CPeriodSum> {
 	header() {
         let {itemTitles, postTitles} = this.controller.cApp;
-        let {itemPeriodSum} = this.controller.periodSum;
+        let {itemPeriodSum} = this.controller;
         let {post, item} = itemPeriodSum;
         return `${postTitles[post].title} - ${itemTitles[item].title}`;
     }
 	content() {
-        let {periodHistory} = this.controller.periodSum;
+        let {periodHistory} = this.controller;
 		return <div className="">
             <List items={periodHistory} 
                 item={{render: this.renderItem, onClick: this.onClickItem}} />
@@ -20,7 +20,7 @@ abstract class VItemPeriodHistory extends VPage<CHome> {
     private renderItem = (history: ReturnUserItemPeriodHistoryRet, index: number) => {
         let {itemTitles} = this.controller.cApp;
         let {date, value} = history;
-        let {item} = this.controller.periodSum.itemPeriodSum;
+        let {item} = this.controller.itemPeriodSum;
         let {unit, fixed} = itemTitles[item];
         let d = new Date(date);
         let left = <div className="text-muted small">{this.renderDate(d)}</div>;

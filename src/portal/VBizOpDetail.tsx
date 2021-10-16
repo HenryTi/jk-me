@@ -1,13 +1,13 @@
 import { dateFromMinuteId, EasyTime, FA, VPage } from "tonva-react";
-import { CHome } from "./CHome";
+import { CPeriodSum } from "./CPortal";
 
-export class VBizOpDetail extends VPage<CHome> {    
+export class VBizOpDetail extends VPage<CPeriodSum> {
     header() {return '业务详情'}
     content() {
         let {bizOpDetail} = this.controller;
         let {minuteId, bizOp, memo, value} = bizOpDetail.item;
         let {itemTitles} = this.controller.cApp;
-        let {item} = this.controller.periodSum.itemPeriodSum;
+        let {item} = this.controller.itemPeriodSum;
         let {unit, fixed} = itemTitles[item];
         let d = dateFromMinuteId(minuteId);
         return <div className="p-3">
