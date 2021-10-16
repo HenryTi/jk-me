@@ -1,8 +1,8 @@
 import { dateFromMinuteId, EasyTime, List, LMR, VPage } from "tonva-react";
-import { ReturnUserItemHistoryRet } from "uq-app/uqs/JkMe";
-import { CPeriodSum } from "./CPortal";
+import { ReturnGetObjectItemHistoryRet } from "uq-app/uqs/JkMe";
+import { CPortal } from "./CPortal";
 
-export class VItemHistory extends VPage<CPeriodSum> {
+export class VPostItemHistory extends VPage<CPortal> {
 	header() {
         let {itemTitles, postTitles} = this.controller.cApp;
         let {itemPeriodSum} = this.controller;
@@ -17,7 +17,7 @@ export class VItemHistory extends VPage<CPeriodSum> {
         </div>;
     }
 
-    private renderItem = (history: ReturnUserItemHistoryRet, index: number) => {
+    private renderItem = (history: ReturnGetObjectItemHistoryRet, index: number) => {
         let {itemTitles} = this.controller.cApp;
         let {minuteId, value, biz, bizOp, memo} = history;
         let {item} = this.controller.itemPeriodSum;
@@ -30,7 +30,7 @@ export class VItemHistory extends VPage<CPeriodSum> {
         </LMR>;
     }
 
-    private onClickItem = (item: ReturnUserItemHistoryRet) => {
+    private onClickItem = (item: ReturnGetObjectItemHistoryRet) => {
         this.controller.showBizOpDetail(item);
     }
 }

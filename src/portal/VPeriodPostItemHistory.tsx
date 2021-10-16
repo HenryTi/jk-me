@@ -1,8 +1,8 @@
 import { List, LMR, VPage } from "tonva-react";
-import { ReturnUserItemPeriodHistoryRet } from "uq-app/uqs/JkMe";
-import { CPeriodSum } from "./CPortal";
+import { ReturnGetObjectItemPeriodHistoryRet } from "uq-app/uqs/JkMe";
+import { CPortal } from "./CPortal";
 
-abstract class VItemPeriodHistory extends VPage<CPeriodSum> {
+abstract class VPeriodPostItemHistory extends VPage<CPortal> {
 	header() {
         let {itemTitles, postTitles} = this.controller.cApp;
         let {itemPeriodSum} = this.controller;
@@ -17,7 +17,7 @@ abstract class VItemPeriodHistory extends VPage<CPeriodSum> {
         </div>;
     }
 
-    private renderItem = (history: ReturnUserItemPeriodHistoryRet, index: number) => {
+    private renderItem = (history: ReturnGetObjectItemPeriodHistoryRet, index: number) => {
         let {itemTitles} = this.controller.cApp;
         let {date, value} = history;
         let {item} = this.controller.itemPeriodSum;
@@ -28,36 +28,36 @@ abstract class VItemPeriodHistory extends VPage<CPeriodSum> {
         return <LMR className="px-3 py-2" left={left} right={right}></LMR>;
     }
 
-    private onClickItem = async (item: ReturnUserItemPeriodHistoryRet) => {
+    private onClickItem = async (item: ReturnGetObjectItemPeriodHistoryRet) => {
         await this.clickItem(item);
     }
 
     protected abstract renderDate(date: Date): JSX.Element;
-    protected abstract clickItem(item: ReturnUserItemPeriodHistoryRet): Promise<void>;
+    protected abstract clickItem(item: ReturnGetObjectItemPeriodHistoryRet): Promise<void>;
 }
 
-export class VItemDayHistory extends VItemPeriodHistory {
+export class VDayPostItemHistory extends VPeriodPostItemHistory {
     protected renderDate(d: Date): JSX.Element {
         return <>{d.getMonth()+1}月{String(100+d.getDate()).substr(1)}日</>;
     }
 
-    protected async clickItem(item: ReturnUserItemPeriodHistoryRet): Promise<void> {
+    protected async clickItem(item: ReturnGetObjectItemPeriodHistoryRet): Promise<void> {
         let from: Date = item.date;
         let to: Date = new Date(from);
         to.setDate(to.getDate()+1);
-        await this.controller.showItemHistory(undefined, from, to);
+        await this.controller.showPostItemHistory(undefined, from, to);
     }
 }
 
-export class VItemMonthHistory extends VItemPeriodHistory {
+export class VMonthPostItemHistory extends VPeriodPostItemHistory {
     protected renderDate(d: Date): JSX.Element {
         return <>{d.getMonth()+1}月</>;
     }
 
-    protected async clickItem(item: ReturnUserItemPeriodHistoryRet): Promise<void> {
+    protected async clickItem(item: ReturnGetObjectItemPeriodHistoryRet): Promise<void> {
         let from: Date = item.date;
         let to: Date = new Date(from);
         to.setMonth(to.getMonth()+1);
-        await this.controller.showItemDayHistory(undefined, from, to);
+        await this.controller.showDayPostItemHistory(undefined, from, to);
     }
 }

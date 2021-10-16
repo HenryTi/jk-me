@@ -6,9 +6,9 @@ import { res } from "./res";
 import { VMain } from "./VMain";
 import { CTester } from "./test-uqui";
 import { setUI } from "./uqs";
-import { Item, Post, EnumRole, EnumRoleOp } from "./uqs/JkMe";
+import { Item, Post, EnumRole, EnumRoleOp, ObjectPostItem } from "./uqs/JkMe";
 import { CSupervise } from "supervise";
-import { CPeriodSum } from "portal";
+import { CPortal, CObjectPortal } from "portal";
 
 //const gaps = [10, 3,3,3,3,3,5,5,5,5,5,5,5,5,10,10,10,10,15,15,15,30,30,60];
 
@@ -26,7 +26,7 @@ export class CApp extends CUqApp {
 	cBug: CBug;
 	cMe: CMe;
 	cUI: CTester;
-	cPeriodSum: CPeriodSum;
+	cPortal: CPortal;
 
 	readonly itemTitles:{[item in Item]: Title} = {} as any;
 	readonly postTitles:{[post in Post]: Title} = {} as any;
@@ -43,7 +43,7 @@ export class CApp extends CUqApp {
 		this.cBug = this.newC(CBug);
 		this.cMe = this.newC(CMe);
 		this.cUI = this.newC(CTester) as CTester;
-		this.cPeriodSum = this.newC(CPeriodSum);
+		this.cPortal = this.newC(CPortal);
 		this.cHome.load();
 		this.openVPage(VMain, undefined, this.dispose);
 		// 加上下面一句，可以实现主动页面刷新
@@ -71,7 +71,12 @@ export class CApp extends CUqApp {
 	}
 	
 	renderVPortal() {
-		return this.cPeriodSum.renderVPortal();
+		return this.cPortal.renderVPortal();
+	}
+
+	newCObjectPortal(objectPostItemId: number, pageTop: JSX.Element): CObjectPortal {
+		let ret = this.newC(CObjectPortal, objectPostItemId, pageTop);
+		return ret;
 	}
 
 	/*

@@ -1,7 +1,7 @@
 import { dateFromMinuteId, EasyTime, FA, VPage } from "tonva-react";
-import { CPeriodSum } from "./CPortal";
+import { CPortal } from "./CPortal";
 
-export class VBizOpDetail extends VPage<CPeriodSum> {
+export class VBizOpDetail extends VPage<CPortal> {
     header() {return '业务详情'}
     content() {
         let {bizOpDetail} = this.controller;

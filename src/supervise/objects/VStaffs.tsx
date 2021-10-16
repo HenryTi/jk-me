@@ -1,3 +1,4 @@
+import { CObjectPortal } from "portal/CObjectPortal";
 import { LMR } from "tonva-react";
 import { cnAmount } from "tools";
 import { Item } from "uq-app/uqs/JkMe";
@@ -43,6 +44,14 @@ export class VStaffs extends VObjects<CStaffs> {
             {((amount??0) as number).toFixed(fixed)} 
             <small className="text-muted">{unit}</small>
         </div>;
+    }
+
+    protected onClickItem(v:any) {
+        let {opi, staff} = v;
+        let pageTop = <div className="px-3 py-4">
+            <div>职员 <b>{this.controller.uqs.JkHr.Employee.tv(staff, renderEmployee)}</b></div>
+        </div>;
+        this.controller.showObjectPortal(opi, pageTop);
     }
 }
 

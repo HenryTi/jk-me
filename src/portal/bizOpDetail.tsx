@@ -1,11 +1,11 @@
 import { UQs } from "uq-app";
-import { ReturnUserItemHistoryRet } from "uq-app/uqs/JkMe";
+import { ReturnGetObjectItemHistoryRet } from "uq-app/uqs/JkMe";
 
 export class BizOpDetail {
     private uqs: UQs;
-    item: ReturnUserItemHistoryRet;
+    item: ReturnGetObjectItemHistoryRet;
 
-    constructor(uqs: UQs, item: ReturnUserItemHistoryRet) {
+    constructor(uqs: UQs, item: ReturnGetObjectItemHistoryRet) {
         this.uqs = uqs;
         this.item = item;
     }

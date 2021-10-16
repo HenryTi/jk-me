@@ -1,17 +1,17 @@
 import React from "react";
 import { observer } from "mobx-react";
 import { FA, List, LMR, VPage } from "tonva-react";
-import { CPeriodSum } from "./CPortal";
+import { CPortal } from "./CPortal";
 import { View } from "tonva-react";
 import { EnumPeriod, PostPeriodSum, ItemPeriodSum } from "./period";
-import { ReturnUserItemPeriodSumRet } from "uq-app/uqs/JkMe";
+import { ReturnGetObjectItemPeriodSumRet } from "uq-app/uqs/JkMe";
 
 const cnColPeriod = "col text-center";
 const cnPeriod = " py-2 px-3 ";
 const cnTabCur = ' border-2 border-bottom border-primary fw-bold bg-light ';
 const cnTab = ' border-bottom border-muted cursor-pointer text-muted ';
 
-export class VPeriodSum extends View<CPeriodSum> {
+export class VPeriodSum extends View<CPortal> {
     render(): JSX.Element {
 		return React.createElement(observer(() => {
 			let periodList:[EnumPeriod, string, string][] = [
@@ -59,7 +59,7 @@ export class VPeriodSum extends View<CPeriodSum> {
 		</div>;
 	}
 
-	private onClickItem = (item: ReturnUserItemPeriodSumRet) => {
+	private onClickItem = (item: ReturnGetObjectItemPeriodSumRet) => {
 		//this.controller.showItemHistory(item.id, EnumSumPeriod.day);
 	}
 
@@ -91,14 +91,14 @@ export class VPeriodSum extends View<CPeriodSum> {
 	private onClickItemPeriodSum = (ips: ItemPeriodSum) => {
 		switch (this.controller.period.type) {
 			case EnumPeriod.day:
-				this.controller.showItemHistory(ips, undefined, undefined);
+				this.controller.showPostItemHistory(ips, undefined, undefined);
 				break;
 			case EnumPeriod.month:
 			case EnumPeriod.week:
-				this.controller.showItemDayHistory(ips, undefined, undefined);
+				this.controller.showDayPostItemHistory(ips, undefined, undefined);
 				break;
 			case EnumPeriod.year:
-				this.controller.showItemMonthHistory(ips, undefined, undefined);
+				this.controller.showMonthPostItemHistory(ips, undefined, undefined);
 				break;
 		}
 	}

@@ -32,11 +32,14 @@ RETURNS ret (
                 ON a.id=b.id AND a.type=EnumObjectType.agent;
 };
 
+-- post ENUM Post = Post.staffSales
+-- item ENUM Item = Item.orderAmount
 QUERY GetStaffs(
     timeZone TINYINT,
 ) 
 RETURNS ret (
-    id ID,
+    opi ID,
+    obj ID,
     staff ID,
     amountThisMonth DEC(18,4),
     amountLastMonth DEC(18,4),
@@ -46,7 +49,7 @@ RETURNS ret (
     SET d=NOW();
     SET m0=dateadd(day, DAY(d)+1, d);
     SET m0=dateadd(MONTH, -1, m0);
-    INTO ret SELECT a.id, b.staff, 
+    INTO ret SELECT c.id as opi, a.id as obj, b.staff, 
         (
             SELECT SUM(p.value)
                 FROM postitemhistory AS p
@@ -69,15 +72,19 @@ RETURNS ret (
                     AND p.ix >= minuteIdFromDate(m1, timeZone)
                     AND p.ix < minuteIdFromDate(m0, timeZone)
         ) as amountLastMonth
-        FROM Object as a JOIN ObjectStaff as b 
-            ON a.id=b.id AND a.type=EnumObjectType.staff;
+        FROM Object as a 
+            JOIN ObjectStaff as b 
+                ON a.id=b.id AND a.type=EnumObjectType.staff
+            JOIN ObjectPostItem as c
+                ON c.object=a.id AND c.post=Post.staffSales AND c.item=Item.orderAmount;
 };
 
 QUERY GetPosts(
     timeZone TINYINT,
 ) 
 RETURNS ret (
-    id ID,
+    opi ID,
+    obj ID,
     post ENUM Post,
     item ENUM Item,
     amountThisMonth DEC(18,4),
@@ -88,7 +95,7 @@ RETURNS ret (
     SET d=NOW();
     SET m0=dateadd(day, DAY(d)+1, d);
     SET m0=dateadd(MONTH, -1, m0);
-    INTO ret SELECT a.id, b.post, c.item, 
+    INTO ret SELECT c.id as opi, a.id as obj, b.post, c.item,
         (
             SELECT SUM(p.value)
                 FROM postitemhistory AS p

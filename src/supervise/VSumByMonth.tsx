@@ -38,9 +38,9 @@ abstract class VSumByMonth extends VPage<CSupervise> {
     private renderItem = (row: ReturnGetProductSumByMonthRet, index: number) => {
         let {id, value} = row;
         let {$serial} = row as any;
-        return <LMR  className="px-3 py-2" 
-            left={<div className="w-2c text-center mx-2 text-primary">{$serial}</div>} 
-            right={<div>{(value??0).toFixed(2)} 元</div>}>
+        return <LMR  className="pe-2 pe-sm-3 py-2" 
+            left={<div className="w-min-2c text-center text-primary me-1 small">{$serial}</div>} 
+            right={<div className="ms-1">{(value??0).toFixed(2)}<small className="text-muted">元</small></div>}>
                 <div>{this.renderId(id)}</div>
             </LMR>
     }

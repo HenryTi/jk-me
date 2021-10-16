@@ -1,9 +1,9 @@
 import { action, computed, makeObservable, observable } from "mobx";
-import { Item, Post, ReturnUserItemPeriodSumRet } from "uq-app/uqs/JkMe";
+import { Item, Post, ReturnGetObjectItemPeriodSumRet } from "uq-app/uqs/JkMe";
 
 export enum EnumPeriod {day = 0, month = 1, week = 2, year = 3}
 
-export interface ItemPeriodSum extends ReturnUserItemPeriodSumRet {
+export interface ItemPeriodSum extends ReturnGetObjectItemPeriodSumRet {
 	id: number;
 	object: number;
 	post: Post;

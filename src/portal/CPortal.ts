@@ -1,15 +1,17 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { env } from "tonva-react";
 import { CApp, CUqBase } from "uq-app";
-import { Item, ObjectPostItem, Post, ReturnUserItemHistoryRet, ReturnUserItemPeriodHistoryRet, ReturnUserItemPeriodSumRet } from "uq-app/uqs/JkMe";
+import { Item, ObjectPostItem, Post
+    , ResultGetObjectItemPeriodSum, ResultGetUserObjectItemPeriodSum, ReturnGetObjectItemHistoryRet, ReturnGetObjectItemPeriodHistoryRet
+    , ReturnGetObjectItemPeriodSumRet } from "uq-app/uqs/JkMe";
 import { BizOpDetail } from "./bizOpDetail";
 import { PostPeriodSum, Period, ItemPeriodSum, EnumPeriod, createPeriod } from "./period";
 import { VBizOpDetail } from "./VBizOpDetail";
-import { VItemHistory } from "./VItemHistory";
-import { VItemDayHistory, VItemMonthHistory } from "./VItemPeriodHistory";
+import { VPostItemHistory } from "./VPostItemHistory";
+import { VDayPostItemHistory, VMonthPostItemHistory } from "./VPeriodPostItemHistory";
 import { VPeriodSum } from "./VPortal";
 
-export class CPeriodSum extends  CUqBase {
+export class CPortal extends  CUqBase {
 	bizOpDetail: BizOpDetail;
 
     period: Period;
@@ -17,8 +19,8 @@ export class CPeriodSum extends  CUqBase {
     postPeriodSumList: PostPeriodSum[];
     objectPostItem: ObjectPostItem;
     itemPeriodSum: ItemPeriodSum;
-    history: ReturnUserItemHistoryRet[];
-    periodHistory: ReturnUserItemPeriodHistoryRet[];
+    history: ReturnGetObjectItemHistoryRet[];
+    periodHistory: ReturnGetObjectItemPeriodHistoryRet[];
 
     constructor(cApp: CApp) {
 		super(cApp);
@@ -30,7 +32,7 @@ export class CPeriodSum extends  CUqBase {
             postPeriodSumList: observable.shallow,
             internalSetPeriod: action,
         });
-        this.setPeriod(EnumPeriod.day);
+        this.internalSetPeriod(EnumPeriod.day);
     }
 
     protected async internalStart() {        
@@ -45,14 +47,19 @@ export class CPeriodSum extends  CUqBase {
         await this.load();
     }
 
-    async load() {
-        let {from, to} = this.period;
-        let ret = await this.uqs.JkMe.UserItemPeriodSum.query({
+    protected async GetObjectItemPeriodSum(from: Date, to: Date):Promise<ResultGetObjectItemPeriodSum> {
+        let ret = await this.uqs.JkMe.GetUserObjectItemPeriodSum.query({
 			from,
 			to,
             timeZone: env.timeZone,
 		});
-        let arr: ReturnUserItemPeriodSumRet[] = ret.ret;
+        return ret;
+    }
+
+    async load() {
+        let {from, to} = this.period;
+        let ret = await this.GetObjectItemPeriodSum(from, to);
+        let arr: ReturnGetObjectItemPeriodSumRet[] = ret.ret;
         let postPeriodSumColl = {} as any;
         let postPeriodSumList:PostPeriodSum[] = [];
         for (let n of arr) {
@@ -78,7 +85,7 @@ export class CPeriodSum extends  CUqBase {
         });
     }
 
-    async loadHistory(ips: ItemPeriodSum, fromDate: Date, toDate: Date) {
+    private async loadPostItemHistory(ips: ItemPeriodSum, fromDate: Date, toDate: Date) {
         if (!ips) {
             ips = this.itemPeriodSum;
         }
@@ -91,7 +98,7 @@ export class CPeriodSum extends  CUqBase {
         if (fromDate) from = fromDate;
         if (toDate) to = toDate;
         let {timeZone} = env;
-		let ret = await this.uqs.JkMe.UserItemHistory.query({
+		let ret = await this.uqs.JkMe.GetObjectItemHistory.query({
 			objectPostItem, 
 			from,
 			to,
@@ -102,7 +109,7 @@ export class CPeriodSum extends  CUqBase {
         });
 	}
 
-    async loadPeriodHistory(ips: ItemPeriodSum, fromDate: Date, toDate: Date, sumPeriod: EnumPeriod) {
+    private async loadPeriodPostItemHistory(ips: ItemPeriodSum, fromDate: Date, toDate: Date, sumPeriod: EnumPeriod) {
         if (ips) {
             this.itemPeriodSum = ips;
         }
@@ -114,7 +121,7 @@ export class CPeriodSum extends  CUqBase {
         if (fromDate) from = fromDate;
         if (toDate) to = toDate;
         let {timeZone} = env;
-		let ret = await this.uqs.JkMe.UserItemPeriodHistory.query({
+		let ret = await this.uqs.JkMe.GetObjectItemPeriodHistory.query({
 			objectPostItem, 
 			from,
 			to,
@@ -137,24 +144,24 @@ export class CPeriodSum extends  CUqBase {
         await this.load();
     }
 
-	async showBizOpDetail(item: ReturnUserItemHistoryRet) {
+	async showBizOpDetail(item: ReturnGetObjectItemHistoryRet) {
 		this.bizOpDetail = new BizOpDetail(this.uqs, item);
 		this.openVPage(VBizOpDetail);
 	}
 
-	async showItemHistory(ips: ItemPeriodSum, from: Date, to: Date) {
-		await this.loadHistory(ips, from, to);
-		this.openVPage(VItemHistory);
+	async showPostItemHistory(ips: ItemPeriodSum, from: Date, to: Date) {
+		await this.loadPostItemHistory(ips, from, to);
+		this.openVPage(VPostItemHistory);
 	}
 
-	async showItemDayHistory(ips: ItemPeriodSum, from: Date, to: Date) {
-		await this.loadPeriodHistory(ips, from, to, EnumPeriod.day);
-		this.openVPage(VItemDayHistory);
+	async showDayPostItemHistory(ips: ItemPeriodSum, from: Date, to: Date) {
+		await this.loadPeriodPostItemHistory(ips, from, to, EnumPeriod.day);
+		this.openVPage(VDayPostItemHistory);
 	}
 
-	async showItemMonthHistory(ips: ItemPeriodSum, from: Date, to: Date) {
-		await this.loadPeriodHistory(ips, from, to, EnumPeriod.month);
-		this.openVPage(VItemMonthHistory);
+	async showMonthPostItemHistory(ips: ItemPeriodSum, from: Date, to: Date) {
+		await this.loadPeriodPostItemHistory(ips, from, to, EnumPeriod.month);
+		this.openVPage(VMonthPostItemHistory);
 	}
 
     renderVPortal() {

@@ -22,6 +22,6 @@ export class CHome extends CUqBase {
 	tab = () => this.renderView(VHome);
 
 	load = async () => {
-		await this.cApp.cPeriodSum.load();
+		await this.cApp.cPortal.load();
 	}
 }
