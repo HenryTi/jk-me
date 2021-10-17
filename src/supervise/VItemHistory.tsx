@@ -23,7 +23,7 @@ export class VItemHistory extends VPage<CSupervise> {
         let {unit, fixed} = itemTitles[item];
         let {id, biz, bizOp, value, memo} = row;
         let date = dateFromMinuteId(id);
-        let left = <div className="small text-muted w-8c">
+        let left = <div className="small text-muted w-min-6c">
             <VDate date={date} hideSameYear={true} />
         </div>; 
         return <LMR className="px-3 py-2 align-items-center" 

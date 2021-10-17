@@ -1,4 +1,4 @@
-//=== UqApp builder created on Thu Oct 14 2021 22:28:09 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Sat Oct 16 2021 13:55:40 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 
@@ -182,39 +182,6 @@ export interface Result$poked {
 	ret: Return$pokedRet[];
 }
 
-export interface ParamUserItemPeriodSum {
-	from: any;
-	to: any;
-	timeZone: number;
-}
-export interface ReturnUserItemPeriodSumRet {
-	id: number;
-	object: number;
-	post: any;
-	item: any;
-	value: number;
-}
-export interface ResultUserItemPeriodSum {
-	ret: ReturnUserItemPeriodSumRet[];
-}
-
-export interface ParamUserItemHistory {
-	objectPostItem: number;
-	from: any;
-	to: any;
-	timeZone: number;
-}
-export interface ReturnUserItemHistoryRet {
-	minuteId: number;
-	biz: number;
-	bizOp: number;
-	value: number;
-	memo: string;
-}
-export interface ResultUserItemHistory {
-	ret: ReturnUserItemHistoryRet[];
-}
-
 export interface ParamGetPostTitles {
 }
 export interface ReturnGetPostTitlesRet {
@@ -314,21 +281,6 @@ export interface ReturnGetItemHistory$page {
 }
 export interface ResultGetItemHistory {
 	$page: ReturnGetItemHistory$page[];
-}
-
-export interface ParamUserItemPeriodHistory {
-	objectPostItem: number;
-	from: any;
-	to: any;
-	period: number;
-	timeZone: number;
-}
-export interface ReturnUserItemPeriodHistoryRet {
-	date: any;
-	value: number;
-}
-export interface ResultUserItemPeriodHistory {
-	ret: ReturnUserItemPeriodHistoryRet[];
 }
 
 export interface ParamGetProductSumByMonth {
@@ -442,7 +394,8 @@ export interface ParamGetPosts {
 	timeZone: number;
 }
 export interface ReturnGetPostsRet {
-	id: number;
+	opi: number;
+	obj: number;
 	post: any;
 	item: any;
 	amountThisMonth: number;
@@ -466,7 +419,8 @@ export interface ParamGetStaffs {
 	timeZone: number;
 }
 export interface ReturnGetStaffsRet {
-	id: number;
+	opi: number;
+	obj: number;
 	staff: number;
 	amountThisMonth: number;
 	amountLastMonth: number;
@@ -483,6 +437,84 @@ export interface ReturnGetAgentsRet {
 }
 export interface ResultGetAgents {
 	ret: ReturnGetAgentsRet[];
+}
+
+export interface ParamGetObjectItemPeriodHistory {
+	objectPostItem: number;
+	from: any;
+	to: any;
+	period: number;
+	timeZone: number;
+}
+export interface ReturnGetObjectItemPeriodHistoryRet {
+	date: any;
+	value: number;
+}
+export interface ResultGetObjectItemPeriodHistory {
+	ret: ReturnGetObjectItemPeriodHistoryRet[];
+}
+
+export interface ParamGetObjectPostItem {
+	object: number;
+}
+export interface ReturnGetObjectPostItemRet {
+	id: number;
+	object: number;
+	post: any;
+	item: any;
+}
+export interface ResultGetObjectPostItem {
+	ret: ReturnGetObjectPostItemRet[];
+}
+
+export interface ParamGetObjectItemHistory {
+	objectPostItem: number;
+	from: any;
+	to: any;
+	timeZone: number;
+}
+export interface ReturnGetObjectItemHistoryRet {
+	minuteId: number;
+	biz: number;
+	bizOp: number;
+	value: number;
+	memo: string;
+}
+export interface ResultGetObjectItemHistory {
+	ret: ReturnGetObjectItemHistoryRet[];
+}
+
+export interface ParamGetObjectItemPeriodSum {
+	objectPostItem: number;
+	from: any;
+	to: any;
+	timeZone: number;
+}
+export interface ReturnGetObjectItemPeriodSumRet {
+	id: number;
+	object: number;
+	post: any;
+	item: any;
+	value: number;
+}
+export interface ResultGetObjectItemPeriodSum {
+	ret: ReturnGetObjectItemPeriodSumRet[];
+}
+
+export interface ParamGetUserObjectItemPeriodSum {
+	from: any;
+	to: any;
+	timeZone: number;
+}
+export interface ReturnGetUserObjectItemPeriodSumRet {
+	id: number;
+	object: number;
+	post: any;
+	item: any;
+	value: number;
+}
+export interface ResultGetUserObjectItemPeriodSum {
+	ret: ReturnGetUserObjectItemPeriodSumRet[];
 }
 
 export interface Object {
@@ -828,8 +860,6 @@ export interface UqExt extends Uq {
 	ExecQueueBizMain: UqAction<ParamExecQueueBizMain, ResultExecQueueBizMain>;
 	DoneDeliver: UqAction<ParamDoneDeliver, ResultDoneDeliver>;
 	$poked: UqQuery<Param$poked, Result$poked>;
-	UserItemPeriodSum: UqQuery<ParamUserItemPeriodSum, ResultUserItemPeriodSum>;
-	UserItemHistory: UqQuery<ParamUserItemHistory, ResultUserItemHistory>;
 	GetPostTitles: UqQuery<ParamGetPostTitles, ResultGetPostTitles>;
 	GetItemTitles: UqQuery<ParamGetItemTitles, ResultGetItemTitles>;
 	UserObjectPostItem: UqQuery<ParamUserObjectPostItem, ResultUserObjectPostItem>;
@@ -838,7 +868,6 @@ export interface UqExt extends Uq {
 	GetItemSumMonths: UqQuery<ParamGetItemSumMonths, ResultGetItemSumMonths>;
 	GetItemSumDays: UqQuery<ParamGetItemSumDays, ResultGetItemSumDays>;
 	GetItemHistory: UqQuery<ParamGetItemHistory, ResultGetItemHistory>;
-	UserItemPeriodHistory: UqQuery<ParamUserItemPeriodHistory, ResultUserItemPeriodHistory>;
 	GetProductSumByMonth: UqQuery<ParamGetProductSumByMonth, ResultGetProductSumByMonth>;
 	GetMonthSumProduct: UqQuery<ParamGetMonthSumProduct, ResultGetMonthSumProduct>;
 	GetMonthSumCustomer: UqQuery<ParamGetMonthSumCustomer, ResultGetMonthSumCustomer>;
@@ -851,6 +880,11 @@ export interface UqExt extends Uq {
 	GetDistributors: UqQuery<ParamGetDistributors, ResultGetDistributors>;
 	GetStaffs: UqQuery<ParamGetStaffs, ResultGetStaffs>;
 	GetAgents: UqQuery<ParamGetAgents, ResultGetAgents>;
+	GetObjectItemPeriodHistory: UqQuery<ParamGetObjectItemPeriodHistory, ResultGetObjectItemPeriodHistory>;
+	GetObjectPostItem: UqQuery<ParamGetObjectPostItem, ResultGetObjectPostItem>;
+	GetObjectItemHistory: UqQuery<ParamGetObjectItemHistory, ResultGetObjectItemHistory>;
+	GetObjectItemPeriodSum: UqQuery<ParamGetObjectItemPeriodSum, ResultGetObjectItemPeriodSum>;
+	GetUserObjectItemPeriodSum: UqQuery<ParamGetUserObjectItemPeriodSum, ResultGetUserObjectItemPeriodSum>;
 	Object: UqID<any>;
 	ItemHistory: UqID<any>;
 	OrderDetail: UqID<any>;

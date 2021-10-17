@@ -1,5 +1,6 @@
 import { makeObservable, observable } from "mobx";
 import { CSupervise } from "supervise";
+import { ObjectPostItem } from "uq-app/uqs/JkMe";
 import { CObjects } from "./CObjects";
 import { VStaffs } from "./VStaffs";
 
@@ -37,5 +38,10 @@ export class CStaffs extends CObjects {
 
     protected async showList(): Promise<void> {
         this.openVPage(VStaffs);
+    }
+
+    async showObjectPortal(objectPostItemId: number, pageTop: JSX.Element) {
+        let cObjectPortal = this.cApp.newCObjectPortal(objectPostItemId, pageTop);
+        cObjectPortal.showObjectPortal();
     }
 }

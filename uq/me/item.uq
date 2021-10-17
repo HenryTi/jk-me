@@ -65,6 +65,8 @@ ID ItemHistory ver 0.1 MINUTEID (
 
 -- 2021-10-12：ItemHistory可能产生不同的针对个体的操作。如果只有ix-xi，会覆盖
 -- 所以加一级bizOp，形成ixx-ix-xi结构。
+-- the item in ObjectPostItem and the item in ItemHistory may not be the same
+-- e.g.: 提成和取款，可以放到自己的结余Item，在ItemHistory上，应该是不同item 
 IX PostItemHistory (
     ixx ObjectPostItem,
     ix ItemHistory,

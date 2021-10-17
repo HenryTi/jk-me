@@ -11,7 +11,22 @@ RETURNS ret (
         WHERE b.ix=$user AND b.relation=EnumUserObjectRelation.self;
 };
 
-QUERY UserItemPeriodSum ver 0.1 (
+QUERY GetObjectPostItem(
+    object ID,
+)
+RETURNS ret (
+    id ID,
+    object ID,
+    post ENUM Post,
+    item ENUM Item,
+) {
+    INTO ret SELECT a.id, a.object, a.post, a.item
+        FROM ObjectPostItem as a
+        WHERE a.object=object;
+};
+
+QUERY GetUserObjectItemPeriodSum ver 0.1 
+(
     from DATE,
     to DATE,
     timeZone TINYINT,
@@ -38,7 +53,41 @@ RETURNS ret (
         WHERE b.ix=$user;
 };
 
-QUERY UserItemHistory ver 0.1 (
+QUERY GetObjectItemPeriodSum ver 0.1 
+AUTH AuthCheck
+(
+    objectPostItem ID ObjectPostItem,
+    from DATE,
+    to DATE,
+    timeZone TINYINT,
+)
+RETURNS ret (
+    id ID,
+    object ID,
+    post ENUM Post,
+    item ENUM Item,
+    value DEC(18,4)
+) {
+    INTO ret SELECT a.id, a.object, a.post, a.item,
+        IFNULL(
+            (SELECT SUM(t.value)
+                FROM postitemhistory AS t
+                WHERE t.IXX=a.id
+                    AND t.ix >= minuteIdFromDate(from, timeZone)
+                    AND t.ix < minuteIdFromDate(to, timeZone)
+            ),
+            0
+        ) as value
+        FROM ObjectPostItem as a
+            -- JOIN UserObject as b ON a.object=b.xi
+        -- WHERE b.ix=$user;
+        WHERE a.id=objectPostItem;
+};
+
+QUERY GetObjectItemHistory ver 0.2 
+-- Proxy ProxyCheck 
+Auth AuthCheck
+(
     objectPostItem ID ObjectPostItem,
     from DATE,
     to DATE,
@@ -54,16 +103,19 @@ RETURNS ret (
     INTO ret SELECT a.ix as minuteId, d.biz, a.xi as bizOp, a.value, IDTEXT(a.memo) as memo
         FROM PostItemHistory AS a
             JOIN ObjectPostItem as b ON a.ixx=b.id
-            JOIN UserObject as c ON b.object=c.xi
+            -- JOIN UserObject as c ON b.object=c.xi
             JOIN ItemHistory as d ON a.ix=d.id
-        WHERE c.ix=$user
-            AND a.ixx=objectPostItem
+        WHERE a.ixx=objectPostItem
             AND a.ix >= minuteIdFromDate(from, timeZone)
             AND a.ix < minuteIdFromDate(to, timeZone)
         Order BY a.ix DESC;
+        -- c.ix=$user AND 
 };
 
-QUERY UserItemPeriodHistory ver 0.2 (
+QUERY GetObjectItemPeriodHistory ver 0.7
+-- Proxy ProxyCheck 
+Auth AuthCheck
+(
     objectPostItem ID ObjectPostItem,
     from DATE,
     to DATE,
@@ -77,11 +129,24 @@ RETURNS ret (
     INTO ret SELECT date, SUM(a.value) as value
         FROM postitemhistory AS a
             JOIN ObjectPostItem as b ON a.ixx=b.id
-            JOIN UserObject as c ON b.object=c.xi
-        WHERE c.ix=$user
-            AND a.ixx=objectPostItem
+            -- JOIN UserObject as c ON b.object=c.xi
+        WHERE a.ixx=objectPostItem
             AND a.ix >= minuteIdFromDate(from, timeZone)
             AND a.ix < minuteIdFromDate(to, timeZone)
         GROUP BY dateFromMinuteId(a.ix, timeZone, period) as date
         ORDER BY date DESC;
+        -- c.ix=$user AND 
+};
+
+SYSPROC ProxyCheck ver 0.2 (
+    proxy ID,           -- $user是不是可以代理proxy用户
+    OUT ok TINYINT,
+) {
+    SET ok = 1;
+};
+
+SYSPROC AuthCheck ver 0.2 (
+    OUT ok TINYINT,
+) {      -- $user有没有访问权限
+    SET ok = 1;
 };
