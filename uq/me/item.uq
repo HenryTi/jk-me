@@ -72,9 +72,42 @@ IX PostItemHistory (
     ix ItemHistory,
     xi,                         -- bizOp
     value DEC(18,4),
-    memo INT,                   -- 文本ID
+    memo INT,                   -- 文本ID，记录业务行为
 );
 
+-- OPI = object post item
+ID OPIHistory MINUTEID (
+    id,
+    opi ID ObjectPostItem,
+    itemHistory ID,
+    bizOp ID,
+    value DEC(18,4),
+    booking ID PostBound,      -- 记账动作
+    INDEX opi_id(opi, id),
+);
+
+ENUM EnumAccount (
+    commission              = 10,
+);
+
+ID ObjectAccount (
+    id,
+    KEY object ID,
+    KEY account ENUM EnumAccount,   -- 比如提成-commission
+    balance DEC(18,4) DEFAULT 0,
+);
+
+ID ObjectAccountHistory MINUTEID (
+    id,
+    objectAccount ID ObjectAccount,
+    value DEC(18,4),
+    opi ID ObjectPostItem,
+    historyFrom ID OPIHistory,
+    historyTo ID OPIHistory,
+    INDEX account_id(objectAccount, id),
+);
+
+/*
 -- 在生成itemHistory之后，给后续的ACTION准备数据。后面的action可以根据track来获取
 -- 给后续的itemHistory准备数据。
 IX IxActionTrack (
@@ -83,6 +116,7 @@ IX IxActionTrack (
     xi ID itemHistory,
     stamp TIMESTAMP,
 );
+*/
 
 ENUM EnumUserObjectRelation (
     self = 0,                   -- 自己的数据

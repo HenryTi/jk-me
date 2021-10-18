@@ -11,6 +11,7 @@ export const en = {
 	aboutTheApp: 'About the APP',
 	logout: 'Logout',
 	pleaseLogin: 'Login',
+	userQuit: 'User quit',
 
 	content: 'Content',
 	backend: 'Backend Management',

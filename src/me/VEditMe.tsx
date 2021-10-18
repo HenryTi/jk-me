@@ -49,14 +49,24 @@ export class VEditMe extends VPage<CMe>{
         await nav.changePassword();
     }
 
+    private userQuit = async () => {
+        await nav.userQuit();
+    }
+
     private page = () => {
 		let { schema, uiSchema, data, onItemChanged } = this;
 		let gridRows: Prop[] = [
 			'',
 			{
 				type: 'component',
-				component: <IconText iconClass="text-info mr-2" icon="key" text={this.t('changePassword')} />,
+				component: <IconText iconClass="text-info me-2" icon="key" text={this.t('changePassword')} />,
 				onClick: this.changePassword
+			},
+			'',
+			{
+				type: 'component',
+				component: <IconText iconClass="text-danger me-2" icon="ban" text={this.t('userQuit')} />,
+				onClick: this.userQuit
 			},
 			'',
 			'',
