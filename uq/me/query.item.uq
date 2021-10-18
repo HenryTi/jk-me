@@ -52,25 +52,23 @@ RETURNS ret (
     INTO ret SELECT c.id as opi, a.id as obj, b.staff, 
         (
             SELECT SUM(p.value)
-                FROM postitemhistory AS p
-                    JOIN ObjectPostItem as opi ON p.ixx=opi.id
+                FROM OPIHistory AS p
+                    JOIN ObjectPostItem as opi ON p.opi=opi.id
                 WHERE opi.object=a.id
                     AND opi.post=Post.staffSales
                     AND opi.item=Item.orderAmount
-                    AND p.ixx=opi.id
-                    AND p.ix >= minuteIdFromDate(m0, timeZone)
-                    AND p.ix < minuteIdFromDate(d, timeZone)
+                    AND p.id >= minuteIdFromDate(m0, timeZone)
+                    AND p.id < minuteIdFromDate(d, timeZone)
         ) as amountThisMonth,
         (
             SELECT SUM(p.value)
-                FROM postitemhistory AS p
-                    JOIN ObjectPostItem as opi ON p.ixx=opi.id
+                FROM OPIHistory AS p
+                    JOIN ObjectPostItem as opi ON p.opi=opi.id
                 WHERE opi.object=a.id
                     AND opi.post=Post.staffSales
                     AND opi.item=Item.orderAmount
-                    AND p.ixx=opi.id
-                    AND p.ix >= minuteIdFromDate(m1, timeZone)
-                    AND p.ix < minuteIdFromDate(m0, timeZone)
+                    AND p.id >= minuteIdFromDate(m1, timeZone)
+                    AND p.id < minuteIdFromDate(m0, timeZone)
         ) as amountLastMonth
         FROM Object as a 
             JOIN ObjectStaff as b 
@@ -98,19 +96,19 @@ RETURNS ret (
     INTO ret SELECT c.id as opi, a.id as obj, b.post, c.item,
         (
             SELECT SUM(p.value)
-                FROM postitemhistory AS p
-                    JOIN ObjectPostItem as opi ON p.ixx=opi.id
+                FROM OPIHistory AS p
+                    JOIN ObjectPostItem as opi ON p.opi=opi.id
                 WHERE opi.id=c.id
-                    AND p.ix >= minuteIdFromDate(m0, timeZone)
-                    AND p.ix < minuteIdFromDate(d, timeZone)
+                    AND p.id >= minuteIdFromDate(m0, timeZone)
+                    AND p.id < minuteIdFromDate(d, timeZone)
         ) as amountThisMonth,
         (
             SELECT SUM(p.value)
-                FROM postitemhistory AS p
-                    JOIN ObjectPostItem as opi ON p.ixx=opi.id
+                FROM OPIHistory AS p
+                    JOIN ObjectPostItem as opi ON p.opi=opi.id
                 WHERE opi.id=c.id
-                    AND p.ix >= minuteIdFromDate(m1, timeZone)
-                    AND p.ix < minuteIdFromDate(m0, timeZone)
+                    AND p.id >= minuteIdFromDate(m1, timeZone)
+                    AND p.id < minuteIdFromDate(m0, timeZone)
         ) as amountLastMonth
         FROM Object as a 
             JOIN ObjectPost as b 

@@ -41,10 +41,10 @@ RETURNS ret (
     INTO ret SELECT a.id, a.object, a.post, a.item,
         IFNULL(
             (SELECT SUM(t.value)
-                FROM postitemhistory AS t
-                WHERE t.IXX=a.id
-                    AND t.ix >= minuteIdFromDate(from, timeZone)
-                    AND t.ix < minuteIdFromDate(to, timeZone)
+                FROM OPIHistory AS t
+                WHERE t.opi=a.id
+                    AND t.id >= minuteIdFromDate(from, timeZone)
+                    AND t.id < minuteIdFromDate(to, timeZone)
             ),
             0
         ) as value
@@ -71,10 +71,10 @@ RETURNS ret (
     INTO ret SELECT a.id, a.object, a.post, a.item,
         IFNULL(
             (SELECT SUM(t.value)
-                FROM postitemhistory AS t
-                WHERE t.IXX=a.id
-                    AND t.ix >= minuteIdFromDate(from, timeZone)
-                    AND t.ix < minuteIdFromDate(to, timeZone)
+                FROM OPIHistory AS t
+                WHERE t.opi=a.id
+                    AND t.id >= minuteIdFromDate(from, timeZone)
+                    AND t.id < minuteIdFromDate(to, timeZone)
             ),
             0
         ) as value
@@ -100,15 +100,16 @@ RETURNS ret (
     value DEC(18,4),
     memo CHAR(200)
 ) {
-    INTO ret SELECT a.ix as minuteId, d.biz, a.xi as bizOp, a.value, IDTEXT(a.memo) as memo
-        FROM PostItemHistory AS a
-            JOIN ObjectPostItem as b ON a.ixx=b.id
+    INTO ret SELECT a.id as minuteId, d.biz, a.bizOp, a.value, IDTEXT(e.memo) as memo
+        FROM OPIHistory AS a
+            JOIN ObjectPostItem as b ON a.opi=b.id
             -- JOIN UserObject as c ON b.object=c.xi
-            JOIN ItemHistory as d ON a.ix=d.id
-        WHERE a.ixx=objectPostItem
-            AND a.ix >= minuteIdFromDate(from, timeZone)
-            AND a.ix < minuteIdFromDate(to, timeZone)
-        Order BY a.ix DESC;
+            JOIN ItemHistory as d ON a.itemHistory=d.id
+            LEFT JOIN PostBound as e ON a.booking=e.id
+        WHERE a.opi=objectPostItem
+            AND a.id >= minuteIdFromDate(from, timeZone)
+            AND a.id < minuteIdFromDate(to, timeZone)
+        Order BY a.id DESC;
         -- c.ix=$user AND 
 };
 
@@ -127,13 +128,13 @@ RETURNS ret (
     value DEC(18,4)
 ) {
     INTO ret SELECT date, SUM(a.value) as value
-        FROM postitemhistory AS a
-            JOIN ObjectPostItem as b ON a.ixx=b.id
+        FROM OPIHistory AS a
+            JOIN ObjectPostItem as b ON a.opi=b.id
             -- JOIN UserObject as c ON b.object=c.xi
-        WHERE a.ixx=objectPostItem
-            AND a.ix >= minuteIdFromDate(from, timeZone)
-            AND a.ix < minuteIdFromDate(to, timeZone)
-        GROUP BY dateFromMinuteId(a.ix, timeZone, period) as date
+        WHERE a.opi=objectPostItem
+            AND a.id >= minuteIdFromDate(from, timeZone)
+            AND a.id < minuteIdFromDate(to, timeZone)
+        GROUP BY dateFromMinuteId(a.id, timeZone, period) as date
         ORDER BY date DESC;
         -- c.ix=$user AND 
 };

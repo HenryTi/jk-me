@@ -112,13 +112,14 @@ VALUES
 (Post.customer, '顾客', null)
 ;
 
+-- OPIBooking
 ID PostBound ver 0.5 CONST (
-    id,
-    action ENUM EnumOrderAction,
+    id small,
+    action ENUM EnumBizAction,
     post ENUM Post,
-    item ENUM Item,                     -- item to itemHistory
-    itemToObj ENUM Item,                -- item to PostItemHistory
-    ratio DEC(6,2) DEFAULT 100,         -- 百分比，从itemHistory的value，折算到PostItemHistory, 未来有可能是分段公式
+    item ENUM Item,                     -- item to ItemHistory
+    itemToObj ENUM Item,                -- item to OPIHistory
+    ratio DEC(6,2) DEFAULT 100,         -- 百分比，从itemHistory的value，折算到 OPIHistory, 未来有可能是分段公式
     memo INT,                           -- 文本id
     INDEX action_post(action, post),
 )

@@ -11,6 +11,7 @@ export const zh = {
 	aboutTheApp: '关于本APP',
 	logout: '退出登录',
 	pleaseLogin: '登录',
+	userQuit: '注销用户',
 
 	content: '内容',
 	backend: '后台管理',

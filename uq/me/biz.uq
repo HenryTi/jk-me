@@ -122,8 +122,9 @@ PROC ProcBizOp(
 
     -- biz bound post history
     LOG CONCAT_WS(' ', 'action', action, 'biz', biz, 'bizOp', bizOp) SUBJECT 'ProcBizOp';
-    FOR (VAR itemHistoryId ID, post ENUM Post, value DEC(18,4), itemToObj ENUM Item, ratio DEC(6,2), to ID, memo INT
-        OF SELECT c.id as itemHistoryId, a.post, c.value, a.itemToObj, a.ratio, e.xi as to, a.memo
+    FOR (VAR booking ID, itemHistoryId ID, post ENUM Post, value DEC(18,4), itemToObj ENUM Item, ratio DEC(6,2), to ID
+        OF SELECT a.id as booking, c.id as itemHistoryId, a.post
+            , c.value, a.itemToObj, a.ratio, e.xi as to
             FROM PostBound as a
                 JOIN DxBizOp as b ON a.action=b.action
                 JOIN ItemHistory as c ON c.item=a.item AND c.biz=b.biz
@@ -132,11 +133,14 @@ PROC ProcBizOp(
                 LEFT JOIN IxBizOpBound as f ON f.ixx=b.id AND f.ix=a.post AND f.xi=a.itemToObj
             WHERE b.id=bizOp AND f.bound IS NULL)
     {
-        LOG CONCAT_WS(' ', 'action', action, itemHistoryId, post, itemToObj, to) SUBJECT 'ProcBizOp Bound 1';
+        -- LOG CONCAT_WS(' ', 'action', action, itemHistoryId, post, itemToObj, to) SUBJECT 'ProcBizOp Bound 1';
         VAR objectPostItemId ID = ID(ObjectPostItem new, to, post, itemToObj);
-        LOG CONCAT_WS(' ', 'memo', memo, objectPostItemId, itemHistoryId) SUBJECT 'ProcBizOp Bound 2';
-        WITH PostItemHistory as a IXX=objectPostItemId IX=itemHistoryId XI=bizOp
-            SET a.value=value * IFNULL(ratio, 100) / 100, a.memo=memo;
+        -- LOG CONCAT_WS(' ', 'memo', memo, objectPostItemId, itemHistoryId) SUBJECT 'ProcBizOp Bound 2';
+        VAR opiHistoryId ID;
+        SET opiHistoryId=ID(OPIHistory new);
+        WITH OPIHistory as a ID=opiHistoryId
+            SET a.opi=objectPostItemId, a.itemHistory=itemHistoryId, a.bizOp=bizOp
+            , a.value=value * IFNULL(ratio, 100) / 100, a.booking=booking;
         WITH IxBizOpBound IXX=bizOp IX=post XI=itemToObj SET bound=1;
     }
 };

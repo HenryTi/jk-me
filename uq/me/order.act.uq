@@ -184,9 +184,9 @@ PROC ProcBoundPost (
             WITH IxActionTrack IXX=action IX=referer XI=itemHistoryId DEL;
         }
 
-        -- LOG CONCAT_WS(' ', itemHistoryId, item, itemToObj) SUBJECT 'ProcBoundPost PostItemHistory';
+        -- LOG CONCAT_WS(' ', itemHistoryId, item, itemToObj) SUBJECT 'ProcBoundPost OPIHistory';
         VAR objectPostItemId ID = ID(ObjectPostItem new, to, post, itemToObj);
-        WITH PostItemHistory as a IXX=objectPostItemId IX=itemHistoryId XI=0
+        WITH OPIHistory as a IXX=objectPostItemId IX=itemHistoryId XI=0
             SET a.value=itemValue * IFNULL(ratio, 100) / 100, a.memo=memo;
     }
 };
