@@ -6,12 +6,6 @@ import { IxBizOpBound } from "./JkMe";
 
 /*--fields--*/
 const fields = {
-	ixx: {
-		"name": "ixx",
-		"type": "id",
-		"isKey": false,
-		"label": "Ixx"
-	} as FieldItemId,
 	ix: {
 		"name": "ix",
 		"type": "id",
@@ -33,7 +27,7 @@ const fields = {
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.ixx, fields.xi, fields.bound, 
+	fields.xi, fields.bound, 
 ];
 
 export const ui: UI = {

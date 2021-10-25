@@ -32,23 +32,36 @@ IDX DxBizOp (
     biz ID,                             -- 指向biz
     value DEC(18,4),
     done TINYINT DEFAULT 0,             -- 1: done
+    stamp INT,
     INDEX biz_id(biz),
 );
 
 IX IxBizOpBound (
-    ixx,                                -- bizOp id
-    ix ENUM Post,                       -- POST
-    xi ENUM ITEM,                       -- post item
-    bound TINYINT DEFAULT 0,            -- 1: bound
+    /*
+    ixx,                        -- bizOp id
+    ix ENUM Post,               -- POST
+    xi ENUM ITEM,               -- post item
+    */
+    ix,                         -- bizOp id
+    xi BizMainBound,
+    bound TINYINT DEFAULT 0,    -- 1: bound
 );
 
 -- 1. 订单跟岗位和个人的绑定关系。
 -- 2. 从订单绑定管理发送过来。
 -- 3. 一直保留
+ID BizMainBound (
+    id,
+    KEY bizMain ID,
+    KEY post ENUM Post,
+    KEY item ENUM Item,
+    KEY to ID,
+);
+
 IX IxBizMainBoundTo (
     ixx,				        -- bizMain id
     ix ENUM Post,
-    xi,					        -- to id, 
+    xi,					        -- to object id, 
 );
 
 -- 处理的是 biz main sheet
@@ -122,26 +135,30 @@ PROC ProcBizOp(
 
     -- biz bound post history
     LOG CONCAT_WS(' ', 'action', action, 'biz', biz, 'bizOp', bizOp) SUBJECT 'ProcBizOp';
-    FOR (VAR booking ID, itemHistoryId ID, post ENUM Post, value DEC(18,4), itemToObj ENUM Item, ratio DEC(6,2), to ID
-        OF SELECT a.id as booking, c.id as itemHistoryId, a.post
-            , c.value, a.itemToObj, a.ratio, e.xi as to
+    FOR (VAR booking ID, itemHistoryId ID, post ENUM Post, stamp INT, value DEC(18,4)
+        , postItem ENUM Item, ratio DEC(6,2), to ID, bizMainBoundId ID
+        OF SELECT a.id as booking, c.id as itemHistoryId, a.post, b.stamp
+            , c.value, a.postItem, a.ratio, e.to, e.id as bizMainBoundId
             FROM PostBound as a
                 JOIN DxBizOp as b ON a.action=b.action
                 JOIN ItemHistory as c ON c.item=a.item AND c.biz=b.biz
                 JOIN DxBiz as d ON d.id=c.biz
-                JOIN IxBizMainBoundTo as e ON e.ixx=d.main AND e.ix=a.post
-                LEFT JOIN IxBizOpBound as f ON f.ixx=b.id AND f.ix=a.post AND f.xi=a.itemToObj
+                JOIN BizMainBound as e ON e.bizMain=d.main AND e.post=a.post AND e.item=a.postItem
+                LEFT JOIN IxBizOpBound as f ON f.ix=b.id AND f.xi=e.id
             WHERE b.id=bizOp AND f.bound IS NULL)
     {
-        -- LOG CONCAT_WS(' ', 'action', action, itemHistoryId, post, itemToObj, to) SUBJECT 'ProcBizOp Bound 1';
-        VAR objectPostItemId ID = ID(ObjectPostItem new, to, post, itemToObj);
-        -- LOG CONCAT_WS(' ', 'memo', memo, objectPostItemId, itemHistoryId) SUBJECT 'ProcBizOp Bound 2';
+        -- LOG CONCAT_WS(' ', 'action', action, itemHistoryId, post, postItem, to) SUBJECT 'ProcBizOp Bound 1';
+        VAR objectPostItemId ID = ID(
+            ObjectPostItem new
+            KEY object=to, post=post, item=postItem
+        );
+        LOG CONCAT_WS(' ', objectPostItemId, itemHistoryId, action, post, postItem, to) SUBJECT 'ProcBizOp Bound 2';
         VAR opiHistoryId ID;
-        SET opiHistoryId=ID(OPIHistory new);
+        SET opiHistoryId=ID(OPIHistory new STAMP stamp);
         WITH OPIHistory as a ID=opiHistoryId
             SET a.opi=objectPostItemId, a.itemHistory=itemHistoryId, a.bizOp=bizOp
             , a.value=value * IFNULL(ratio, 100) / 100, a.booking=booking;
-        WITH IxBizOpBound IXX=bizOp IX=post XI=itemToObj SET bound=1;
+        WITH IxBizOpBound IX=bizOp XI=bizMainBoundId SET bound=1;
     }
 };
 
@@ -149,21 +166,20 @@ PROC ProcWriteItemHistory(
     bizOp ID,
 ) {
     VAR biz ID, action ENUM EnumBizAction, value DEC(18,4);
+    VAR price DEC(18,4), cost DEC(18,4), stamp TIMESTAMP;
     SET biz=a.biz, action=a.action, value=a.value 
         FROM DxBizOp as a 
         WHERE a.id=bizOp;
     IF action=EnumBizAction.orderDeliverDone {
-        VAR price DEC(18,4), cost DEC(18,4), create TIMESTAMP;
-        SET price=a.price, create=b.[$create]
+        SET price=a.price, stamp=IFNULL(b.stamp, UNIX_TIMESTAMP(b.[$create]))
             FROM OrderDetail as a JOIN OrderMain as b ON a.main=b.id
             WHERE a.id=biz;
         SET cost=a.costPrice FROM DxOrderDetail as a WHERE a.id=biz;
-        PROC ProcItemHistory(biz, bizOp, Item.orderProfit, (price-cost)*value, create);
-        PROC ProcItemHistory(biz, bizOp, Item.orderAmount, price*value, create);
+        PROC ProcItemHistory(biz, bizOp, Item.orderProfit, (price-cost)*value, stamp);
+        PROC ProcItemHistory(biz, bizOp, Item.orderAmount, price*value, stamp);
     }
     ELSEIF action=EnumBizAction.orderReceiveDone {
-        VAR price DEC(18,4), cost DEC(18,4), create TIMESTAMP;
-        SET price=a.price, create=b.[$create]
+        SET price=a.price, stamp=IFNULL(b.stamp, UNIX_TIMESTAMP(b.[$create]))
             FROM OrderDetail as a JOIN OrderMain as b ON a.main=b.id
             WHERE a.id=biz;
         SET cost=a.costPrice FROM DxOrderDetail as a WHERE a.id=biz;
@@ -174,8 +190,8 @@ PROC ProcWriteItemHistory(
         ELSE {
             SET profit = (price - cost)/price * value;
         }
-        PROC ProcItemHistory(biz, bizOp, Item.orderProfit, profit, create);
-        PROC ProcItemHistory(biz, bizOp, Item.orderAmount, value, create);
+        PROC ProcItemHistory(biz, bizOp, Item.orderProfit, profit, stamp);
+        PROC ProcItemHistory(biz, bizOp, Item.orderAmount, value, stamp);
         PROC ProcItemHistory(biz, bizOp, Item.orderReceive, value, NULL);
     }
     ELSEIF action=EnumBizAction.orderReturn {
@@ -188,12 +204,16 @@ PROC ProcItemHistory(
     bizOp ID,
     item ENUM Item,
     value DEC(18,4),
-    stamp TIMESTAMP,
+    stamp INT,
 ) {
     VAR itemHistoryId ID;
     SET itemHistoryId = a.id FROM ItemHistory as a WHERE a.biz=biz AND a.item=item;
     IF itemHistoryId IS NULL {
-        SET itemHistoryId = ID(ItemHistory new, biz, item, stamp);
+        SET itemHistoryId = ID(
+            ItemHistory new
+            KEY biz=biz, item=item
+            STAMP stamp
+        );
         WITH ItemHistory as a ID = itemHistoryId SET a.value=value, a.bizOp=bizOp;
     }
 };

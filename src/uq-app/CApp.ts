@@ -74,8 +74,8 @@ export class CApp extends CUqApp {
 		return this.cPortal.renderVPortal();
 	}
 
-	newCObjectPortal(objectPostItemId: number, pageTop: JSX.Element): CObjectPortal {
-		let ret = this.newC(CObjectPortal, objectPostItemId, pageTop);
+	newCObjectPortal(object: number, pageTop: JSX.Element): CObjectPortal {
+		let ret = this.newC(CObjectPortal, object, pageTop);
 		return ret;
 	}
 

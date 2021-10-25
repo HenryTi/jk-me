@@ -67,7 +67,7 @@ ID ItemHistory ver 0.1 MINUTEID (
 -- 所以加一级bizOp，形成ixx-ix-xi结构。
 -- the item in ObjectPostItem and the item in ItemHistory may not be the same
 -- e.g.: 提成和取款，可以放到自己的结余Item，在ItemHistory上，应该是不同item 
-IX PostItemHistory (
+IX PostItemHistory1 (
     ixx ObjectPostItem,
     ix ItemHistory,
     xi,                         -- bizOp
@@ -106,17 +106,6 @@ ID ObjectAccountHistory MINUTEID (
     historyTo ID OPIHistory,
     INDEX account_id(objectAccount, id),
 );
-
-/*
--- 在生成itemHistory之后，给后续的ACTION准备数据。后面的action可以根据track来获取
--- 给后续的itemHistory准备数据。
-IX IxActionTrack (
-    ixx ENUM EnumOrderAction,
-    ix,                         -- track action id
-    xi ID itemHistory,
-    stamp TIMESTAMP,
-);
-*/
 
 ENUM EnumUserObjectRelation (
     self = 0,                   -- 自己的数据

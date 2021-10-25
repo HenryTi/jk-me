@@ -48,15 +48,16 @@ RETURNS ret (
             ),
             0
         ) as value
-        FROM ObjectPostItem as a
-            JOIN UserObject as b ON a.object=b.xi
+        FROM UserObject as b 
+            JOIN ObjectPostItem as a ON a.object=b.xi
         WHERE b.ix=$user;
 };
 
 QUERY GetObjectItemPeriodSum ver 0.1 
 AUTH AuthCheck
 (
-    objectPostItem ID ObjectPostItem,
+    -- objectPostItem ID ObjectPostItem,
+    object ID Object,
     from DATE,
     to DATE,
     timeZone TINYINT,
@@ -79,9 +80,9 @@ RETURNS ret (
             0
         ) as value
         FROM ObjectPostItem as a
-            -- JOIN UserObject as b ON a.object=b.xi
-        -- WHERE b.ix=$user;
-        WHERE a.id=objectPostItem;
+--            JOIN UserObject as b ON a.object=b.xi
+--        WHERE a.id=objectPostItem;
+        WHERE a.object=object;
 };
 
 QUERY GetObjectItemHistory ver 0.2 

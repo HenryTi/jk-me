@@ -1,27 +1,34 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Res, setRes, TFunc, UI, uqStringify } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
-import { PostItemHistory } from "./JkMe";
+import { OPIHistory } from "./JkMe";
 
 /*--fields--*/
 const fields = {
-	ixx: {
-		"name": "ixx",
+	id: {
+		"name": "id",
 		"type": "id",
 		"isKey": false,
-		"label": "Ixx"
+		"label": "Id"
 	} as FieldItemId,
-	ix: {
-		"name": "ix",
+	opi: {
+		"name": "opi",
 		"type": "id",
 		"isKey": false,
-		"label": "Ix"
+		"label": "Opi"
 	} as FieldItemId,
-	xi: {
-		"name": "xi",
+	itemHistory: {
+		"name": "itemHistory",
 		"type": "id",
 		"isKey": false,
-		"label": "Xi"
+		"label": "ItemHistory"
+	} as FieldItemId,
+	bizOp: {
+		"name": "bizOp",
+		"type": "id",
+		"isKey": false,
+		"label": "BizOp"
 	} as FieldItemId,
 	value: {
 		"name": "value",
@@ -30,22 +37,21 @@ const fields = {
 		"widget": "number",
 		"label": "Value"
 	} as FieldItemNum,
-	memo: {
-		"name": "memo",
-		"type": "integer",
+	booking: {
+		"name": "booking",
+		"type": "id",
 		"isKey": false,
-		"widget": "updown",
-		"label": "Memo"
-	} as FieldItemInt,
+		"label": "Booking"
+	} as FieldItemId,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.ixx, fields.xi, fields.value, fields.memo, 
+	fields.opi, fields.itemHistory, fields.bizOp, fields.value, fields.booking, 
 ];
 
 export const ui: UI = {
-	label: "PostItemHistory",
+	label: "OPIHistory",
 	fieldArr,
 	fields,
 };
@@ -63,6 +69,6 @@ export const t:TFunc = (str:string|JSX.Element): string|JSX.Element => {
 	return res[str as string] ?? str;
 }
 
-export function render(item: PostItemHistory):JSX.Element {
+export function render(item: OPIHistory):JSX.Element {
 	return <>{uqStringify(item)}</>;
 };
