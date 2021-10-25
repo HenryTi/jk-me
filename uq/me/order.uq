@@ -5,6 +5,7 @@ ID OrderMain ver 0.5 GLOBAL (
 	customerAccount ID,                 -- customerAccount
     currency ID,
 	sumAmount DEC(18,4),	            -- 订单总金额。各行金额
+	stamp INT,
     sys (create),
 );
 
@@ -30,36 +31,3 @@ IDX DxOrderDetail (
     return DEC(18,4) SUM,
     costPrice DEC(18,4),
 );
-/*
-ID OrderAction MINUTEID (
-    id,
-    KEY actionId ID,                    -- orderMain, or detail of deliver, receive, return
-    KEY action ENUM EnumOrderAction,    -- orderMainAction
-    orderDetail ID,                     -- orderDetail
-    value DEC(18,4),                    -- action value
-    item ENUM Item,                     -- for ItemHistory
-);
-
-IDX DxOrderAction (
-    id,                                     -- OrderAction
-    orderMain ID OrderMain,
-    orderDetail ID OrderDetail,
-    done ENUM EnumDone DEFAULT 0,        
-    INDEX order (orderMain, orderDetail),   -- 不能unique
-);
-
--- 1. 订单跟岗位和个人的绑定关系。
--- 2. 从订单绑定管理发送过来。
--- 3. 一直保留
-IX IxOrderBoundTo (
-    ixx,				        -- orderMain id
-    ix ENUM Post,
-    xi,					        -- to id, 
-);
-
-IX IxOrderActionBoundPostDone (
-    ix,                                 -- order action id
-    xi ENUM Post,                       -- post
-    done ENUM EnumDone DEFAULT 0,       -- 0: 绑定，1: 无成本已处理，2: 有成本已处理
-);
-*/

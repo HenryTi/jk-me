@@ -2,42 +2,43 @@
 import { Res, setRes, TFunc, UI, uqStringify } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
-import { IxActionTrack } from "./JkMe";
+import { ObjectAccount } from "./JkMe";
 
 /*--fields--*/
 const fields = {
-	ixx: {
-		"name": "ixx",
+	id: {
+		"name": "id",
 		"type": "id",
 		"isKey": false,
-		"label": "Ixx"
+		"label": "Id"
 	} as FieldItemId,
-	ix: {
-		"name": "ix",
+	object: {
+		"name": "object",
 		"type": "id",
-		"isKey": false,
-		"label": "Ix"
+		"isKey": true,
+		"label": "Object"
 	} as FieldItemId,
-	xi: {
-		"name": "xi",
-		"type": "id",
-		"isKey": false,
-		"label": "Xi"
-	} as FieldItemId,
-	stamp: {
-		"name": "stamp",
-		"isKey": false,
-		"label": "Stamp"
+	account: {
+		"name": "account",
+		"isKey": true,
+		"label": "Account"
 	} as undefined,
+	balance: {
+		"name": "balance",
+		"type": "number",
+		"isKey": false,
+		"widget": "number",
+		"label": "Balance"
+	} as FieldItemNum,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.ixx, fields.xi, fields.stamp, 
+	fields.object, fields.account, fields.balance, 
 ];
 
 export const ui: UI = {
-	label: "IxActionTrack",
+	label: "ObjectAccount",
 	fieldArr,
 	fields,
 };
@@ -55,6 +56,6 @@ export const t:TFunc = (str:string|JSX.Element): string|JSX.Element => {
 	return res[str as string] ?? str;
 }
 
-export function render(item: IxActionTrack):JSX.Element {
+export function render(item: ObjectAccount):JSX.Element {
 	return <>{uqStringify(item)}</>;
 };

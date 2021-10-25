@@ -1,4 +1,4 @@
-import { dateFromMinuteId, EasyTime, List, LMR, VPage } from "tonva-react";
+import { dateFromMinuteId, EasyTime, List, LMR, VDate, VPage } from "tonva-react";
 import { ReturnGetObjectItemHistoryRet } from "uq-app/uqs/JkMe";
 import { CPortal } from "./CPortal";
 
@@ -23,9 +23,11 @@ export class VPostItemHistory extends VPage<CPortal> {
         let {item} = this.controller.itemPeriodSum;
         let {unit, fixed} = itemTitles[item];
         let d = dateFromMinuteId(minuteId);
-        let left = <div className="text-muted small w-min-4c"><EasyTime date={d} timeZone={-5} /></div>;
+        let left = <div className="text-muted small w-min-4c me-2">
+            <VDate date={d} hideSameYear={true} />
+        </div>;
         let right = <div className="ms-2">{(value??0).toFixed(fixed??2)} {unit}</div>;
-        return <LMR className="px-3 py-2" left={left} right={right}>
+        return <LMR className="px-3 py-2 align-items-center" left={left} right={right}>
             <small>{bizOp}{memo? ': ' + memo : ''}</small>
         </LMR>;
     }

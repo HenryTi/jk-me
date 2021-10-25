@@ -16,6 +16,7 @@ ACT BusTestBoundStaffSales ver 0.8 (
     BUS JkOrderBus.[order-bound-staff-sales] SET order=orderMain;
     BUS JkOrderBus.[order-bound-staff-sales] INTO to ADD id=999;
     BUS JkOrderBus.[order-bound-staff-sales] LOCAL;
+    BUS JkOrderBus.[order-bound-staff-sales] STAMP unix_timestamp();
 };
 
 ACT BusTestOrderSaleCost ver 0.8 (
@@ -91,7 +92,7 @@ ACT DoneDeliver (
     )
 ) {
     LOG CONCAT_WS(' ', customer, contact, warehouse) SUBJECT 'ACT DoneDeliver';
-    VAR deliverMainId ID = ID(DeliverMain new, NO(DeliverMain));
+    VAR deliverMainId ID = ID(DeliverMain new KEY no=NO(DeliverMain));
     WITH DeliverMain as a ID=deliverMainId
         SET a.customer=customer, a.contact=contact, a.warehouse=warehouse;
     BUS JkOrderBus.[deliver-done] SET id=deliverMainId;

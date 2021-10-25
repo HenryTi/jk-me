@@ -2,30 +2,51 @@
 import { Res, setRes, TFunc, UI, uqStringify } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
-import { ItemReadyStates } from "./JkMe";
+import { PostItemHistory1 } from "./JkMe";
 
 /*--fields--*/
 const fields = {
-	id: {
-		"name": "id",
+	ixx: {
+		"name": "ixx",
 		"type": "id",
 		"isKey": false,
-		"label": "Id"
+		"label": "Ixx"
 	} as FieldItemId,
-	readyStates: {
-		"name": "readyStates",
+	ix: {
+		"name": "ix",
+		"type": "id",
 		"isKey": false,
-		"label": "ReadyStates"
-	} as undefined,
+		"label": "Ix"
+	} as FieldItemId,
+	xi: {
+		"name": "xi",
+		"type": "id",
+		"isKey": false,
+		"label": "Xi"
+	} as FieldItemId,
+	value: {
+		"name": "value",
+		"type": "number",
+		"isKey": false,
+		"widget": "number",
+		"label": "Value"
+	} as FieldItemNum,
+	memo: {
+		"name": "memo",
+		"type": "integer",
+		"isKey": false,
+		"widget": "updown",
+		"label": "Memo"
+	} as FieldItemInt,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.readyStates, 
+	fields.ixx, fields.xi, fields.value, fields.memo, 
 ];
 
 export const ui: UI = {
-	label: "ItemReadyStates",
+	label: "PostItemHistory1",
 	fieldArr,
 	fields,
 };
@@ -43,6 +64,6 @@ export const t:TFunc = (str:string|JSX.Element): string|JSX.Element => {
 	return res[str as string] ?? str;
 }
 
-export function render(item: ItemReadyStates):JSX.Element {
+export function render(item: PostItemHistory1):JSX.Element {
 	return <>{uqStringify(item)}</>;
 };

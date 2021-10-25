@@ -7,8 +7,9 @@ ENUM Item (
     orderReceive                = 1030,             -- 订单收款
     orderReceiveReturn          = 1040,             -- 订单退款
 
-    commissionFromProfit        = 1110,             -- 订单毛利提成
-    commissionFromAmount        = 1120,             -- 订单销售额提成
+    profitFee                   = 1110,             -- 订单毛利提成
+    couponFee                   = 1111,             -- 发券毛利提成
+    amountFee                   = 1120,             -- 订单销售额提成
     
     customerPoint               = 2010,             -- 客户普通积分
 );
@@ -28,31 +29,6 @@ ENUM Post (
     customer                    = 8010,
 );
 
-ENUM EnumOrderAction (
-    none                        = 0,
-	deliverDone                 = 1, 
-	receiveDone                 = 2,
-	return                      = 3,
-    orderMain                   = 1000,
-    orderAccept                 = 1001,
-    orderCost                   = 1002,
-    orderBoundStaffSales        = 1101,
-    orderBoundAgent             = 1102,
-    orderBoundDistributor       = 1103,
-    orderBoundCustomer          = 1104,
-    orderBoundManagerIT         = 1120,
-);
-
-ENUM EnumBoundAction (
-    orderBound                  = 100,
-    orderStaffSales             = 101,
-    orderAgent                  = 102,
-    orderDistributor            = 103,
-    orderCustomer               = 104,
-    orderManagerIT              = 120,
-    orderBoundMax               = 199,
-);
-
 ENUM EnumBizAction (
     none                        = 0,
 	orderDeliverDone            = 101, 
@@ -70,12 +46,6 @@ ENUM OrderReady (
     cost                        = 0x0002,
 );
 
-ENUM EnumDone (
-    withCost                    = 0x0001,
-    withoutCost                 = 0x0002,
-);
-
-
 ID ItemTitle ver 0.1 CONST (
     id small,
     title CHAR(50),
@@ -91,8 +61,9 @@ VALUES
 (Item.orderReturn, '退货', null, '元', 2),
 (Item.orderReceive, '收款', null, '元', 2),
 (Item.orderReceiveReturn, '退款', null, '元', 2),
-(Item.commissionFromProfit, '订单毛利提成', null, '元', 2),
-(Item.commissionFromAmount, '订单销售额提成', null, '元', 2),
+(Item.profitFee, '毛利提成', null, '元', 2),
+(Item.amountFee, '销售额提成', null, '元', 2),
+(Item.couponFee, '发券提成', null, '元', 2),
 (Item.customerPoint, '客户积分', null, '点', 2)
 ;
 
@@ -117,31 +88,23 @@ ID PostBound ver 0.5 CONST (
     id small,
     action ENUM EnumBizAction,
     post ENUM Post,
+    postItem ENUM Item,                 -- item to OPIHistory
     item ENUM Item,                     -- item to ItemHistory
-    itemToObj ENUM Item,                -- item to OPIHistory
     ratio DEC(6,2) DEFAULT 100,         -- 百分比，从itemHistory的value，折算到 OPIHistory, 未来有可能是分段公式
     memo INT,                           -- 文本id
     INDEX action_post(action, post),
 )
-+ (action, post, item, itemToObj, ratio, memo)
++ (action, post, postItem, item, ratio, memo)
 VALUES
 -- EnumOrderAction.orderDeliverDone
 (EnumBizAction.orderDeliverDone, Post.staffSales, Item.orderAmount, Item.orderAmount, null, TEXTID('销售额')),
-(EnumBizAction.orderDeliverDone, Post.staffSales, Item.orderProfit, Item.commissionFromProfit, 4, TEXTID('发货后毛利提成')),
-(EnumBizAction.orderDeliverDone, Post.managerIT, Item.orderAmount, Item.commissionFromAmount, 0.1, TEXTID('销售额提成')),
+(EnumBizAction.orderDeliverDone, Post.staffSales, Item.profitFee, Item.orderProfit, 4, TEXTID('发货后毛利提成')),
+(EnumBizAction.orderDeliverDone, Post.staffSales, Item.couponFee, Item.orderProfit, 1, TEXTID('发货后发券提成')),
+(EnumBizAction.orderDeliverDone, Post.managerIT, Item.amountFee, Item.orderAmount, 0.1, TEXTID('销售额提成')),
 
 -- EnumOrderAction.receiveDone
-(EnumBizAction.orderReceiveDone, Post.staffSales, Item.orderProfit, Item.commissionFromProfit, 4, TEXTID('收款后毛利提成')),
-;
-
-ID ItemReadyStates CONST (
-    id small,                           -- Enum Item
-    readyStates ENUM ReadyStates,
-)
-+ (id, readyStates)
-VALUES
-(Item.orderAmount, ReadyStates.costNone),
-(Item.orderProfit, ReadyStates.cost),
+(EnumBizAction.orderReceiveDone, Post.staffSales, Item.profitFee, Item.orderProfit, 4, TEXTID('收款后毛利提成')),
+(EnumBizAction.orderReceiveDone, Post.staffSales, Item.couponFee, Item.orderProfit, 1, TEXTID('收款后发券提成')),
 ;
 
 QUERY GetItemTitles()

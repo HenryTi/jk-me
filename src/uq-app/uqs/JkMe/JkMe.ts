@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sat Oct 16 2021 13:55:40 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Fri Oct 22 2021 10:13:35 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 
@@ -14,8 +14,9 @@ export enum Item {
 	orderReturn = 1020,
 	orderReceive = 1030,
 	orderReceiveReturn = 1040,
-	commissionFromProfit = 1110,
-	commissionFromAmount = 1120,
+	profitFee = 1110,
+	couponFee = 1111,
+	amountFee = 1120,
 	customerPoint = 2010
 }
 
@@ -32,21 +33,6 @@ export enum Post {
 	customer = 8010
 }
 
-export enum EnumOrderAction {
-	none = 0,
-	deliverDone = 1,
-	receiveDone = 2,
-	return = 3,
-	orderMain = 1000,
-	orderAccept = 1001,
-	orderCost = 1002,
-	orderBoundStaffSales = 1101,
-	orderBoundAgent = 1102,
-	orderBoundDistributor = 1103,
-	orderBoundCustomer = 1104,
-	orderBoundManagerIT = 1120
-}
-
 export enum EnumUserObjectRelation {
 	self = 0,
 	other = 1,
@@ -56,11 +42,6 @@ export enum EnumUserObjectRelation {
 export enum ReadyStates {
 	costNone = 1,
 	cost = 2
-}
-
-export enum EnumDone {
-	withCost = 1,
-	withoutCost = 2
 }
 
 export enum EnumBizAction {
@@ -73,16 +54,6 @@ export enum EnumBizAction {
 export enum OrderReady {
 	sheet = 1,
 	cost = 2
-}
-
-export enum EnumBoundAction {
-	orderBound = 100,
-	orderStaffSales = 101,
-	orderAgent = 102,
-	orderDistributor = 103,
-	orderCustomer = 104,
-	orderManagerIT = 120,
-	orderBoundMax = 199
 }
 
 export enum EnumRole {
@@ -102,6 +73,10 @@ export enum EnumObjectType {
 	agent = 4,
 	distributor = 5,
 	post = 6
+}
+
+export enum EnumAccount {
+	commission = 10
 }
 
 export interface Tuid$sheet {
@@ -420,10 +395,11 @@ export interface ParamGetStaffs {
 }
 export interface ReturnGetStaffsRet {
 	opi: number;
+	item: any;
 	obj: number;
 	staff: number;
-	amountThisMonth: number;
-	amountLastMonth: number;
+	valueThisMonth: number;
+	valueLastMonth: number;
 }
 export interface ResultGetStaffs {
 	ret: ReturnGetStaffsRet[];
@@ -485,7 +461,7 @@ export interface ResultGetObjectItemHistory {
 }
 
 export interface ParamGetObjectItemPeriodSum {
-	objectPostItem: number;
+	object: number;
 	from: any;
 	to: any;
 	timeZone: number;
@@ -606,17 +582,12 @@ export interface ObjectAgent {
 	agent: number;
 }
 
-export interface ItemReadyStates {
-	id?: number;
-	readyStates: any;
-}
-
 export interface PostBound {
 	id?: number;
 	action: any;
 	post: any;
+	postItem: any;
 	item: any;
-	itemToObj: any;
 	ratio: number;
 	memo: number;
 }
@@ -652,6 +623,39 @@ export interface Role {
 	id?: number;
 	name: string;
 	discription: string;
+}
+
+export interface OPIHistory {
+	id?: number;
+	opi: number;
+	itemHistory: number;
+	bizOp: number;
+	value: number;
+	booking: number;
+}
+
+export interface ObjectAccount {
+	id?: number;
+	object: number;
+	account: any;
+	balance: number;
+}
+
+export interface ObjectAccountHistory {
+	id?: number;
+	objectAccount: number;
+	value: number;
+	opi: number;
+	historyFrom: number;
+	historyTo: number;
+}
+
+export interface BizMainBound {
+	id?: number;
+	bizMain: number;
+	post: any;
+	item: any;
+	to: number;
 }
 
 export interface DxOrderDetail {
@@ -744,14 +748,6 @@ export interface UserObject {
 	relation: any;
 }
 
-export interface PostItemHistory {
-	ixx: number;
-	ix: number;
-	xi: number;
-	value: number;
-	memo: number;
-}
-
 export interface GroupObject {
 	ix: number;
 	xi: number;
@@ -776,15 +772,7 @@ export interface MonthSumCustomer {
 	value: number;
 }
 
-export interface IxActionTrack {
-	ixx: number;
-	ix: number;
-	xi: number;
-	stamp: any;
-}
-
 export interface IxBizOpBound {
-	ixx: number;
 	ix: number;
 	xi: number;
 	bound: number;
@@ -806,6 +794,14 @@ export interface RoleOps {
 	xi: number;
 }
 
+export interface PostItemHistory1 {
+	ixx: number;
+	ix: number;
+	xi: number;
+	value: number;
+	memo: number;
+}
+
 export interface ParamActs {
 	object?: Object[];
 	itemHistory?: ItemHistory[];
@@ -821,13 +817,16 @@ export interface ParamActs {
 	group?: Group[];
 	objectDistributor?: ObjectDistributor[];
 	objectAgent?: ObjectAgent[];
-	itemReadyStates?: ItemReadyStates[];
 	postBound?: PostBound[];
 	queueBizOp?: QueueBizOp[];
 	queueBizMain?: QueueBizMain[];
 	deliverDetail?: DeliverDetail[];
 	deliverMain?: DeliverMain[];
 	role?: Role[];
+	oPIHistory?: OPIHistory[];
+	objectAccount?: ObjectAccount[];
+	objectAccountHistory?: ObjectAccountHistory[];
+	bizMainBound?: BizMainBound[];
 	dxOrderDetail?: ActParamDxOrderDetail[];
 	dxOrderMain?: ActParamDxOrderMain[];
 	userTimezone?: ActParamUserTimezone[];
@@ -835,16 +834,15 @@ export interface ParamActs {
 	dxBizOp?: ActParamDxBizOp[];
 	dxBiz?: ActParamDxBiz[];
 	userObject?: UserObject[];
-	postItemHistory?: PostItemHistory[];
 	groupObject?: GroupObject[];
 	userSuperviseItem?: UserSuperviseItem[];
 	monthSumProduct?: MonthSumProduct[];
 	monthSumCustomer?: MonthSumCustomer[];
-	ixActionTrack?: IxActionTrack[];
 	ixBizOpBound?: IxBizOpBound[];
 	ixBizMainBoundTo?: IxBizMainBoundTo[];
 	userRole?: UserRole[];
 	roleOps?: RoleOps[];
+	postItemHistory1?: PostItemHistory1[];
 }
 
 
@@ -899,13 +897,16 @@ export interface UqExt extends Uq {
 	Group: UqID<any>;
 	ObjectDistributor: UqID<any>;
 	ObjectAgent: UqID<any>;
-	ItemReadyStates: UqID<any>;
 	PostBound: UqID<any>;
 	QueueBizOp: UqID<any>;
 	QueueBizMain: UqID<any>;
 	DeliverDetail: UqID<any>;
 	DeliverMain: UqID<any>;
 	Role: UqID<any>;
+	OPIHistory: UqID<any>;
+	ObjectAccount: UqID<any>;
+	ObjectAccountHistory: UqID<any>;
+	BizMainBound: UqID<any>;
 	DxOrderDetail: UqIDX<any>;
 	DxOrderMain: UqIDX<any>;
 	UserTimezone: UqIDX<any>;
@@ -913,16 +914,15 @@ export interface UqExt extends Uq {
 	DxBizOp: UqIDX<any>;
 	DxBiz: UqIDX<any>;
 	UserObject: UqIX<any>;
-	PostItemHistory: UqIX<any>;
 	GroupObject: UqIX<any>;
 	UserSuperviseItem: UqIX<any>;
 	MonthSumProduct: UqIX<any>;
 	MonthSumCustomer: UqIX<any>;
-	IxActionTrack: UqIX<any>;
 	IxBizOpBound: UqIX<any>;
 	IxBizMainBoundTo: UqIX<any>;
 	UserRole: UqIX<any>;
 	RoleOps: UqIX<any>;
+	PostItemHistory1: UqIX<any>;
 }
 
 export function assign(uq: any, to:string, from:any): void {
