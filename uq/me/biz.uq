@@ -71,7 +71,9 @@ ACT ExecQueueBizMain () {
                 JOIN DxBizOp as c ON c.biz=b.id
             WHERE b.main=bizMain)
     {
+        TRANSACTION Start;
         PROC ProcBizOp(bizOp);
+        TRANSACTION Commit;
     }
     WITH QueueBizMain ID=queueId DEL;
     SCHEDULE ExecQueueBizMain;
