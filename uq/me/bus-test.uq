@@ -95,13 +95,13 @@ ACT DoneDeliver (
     VAR deliverMainId ID = ID(DeliverMain new KEY no=NO(DeliverMain));
     WITH DeliverMain as a ID=deliverMainId
         SET a.customer=customer, a.contact=contact, a.warehouse=warehouse;
-    BUS JkOrderBus.[deliver-done] SET id=deliverMainId;
+    BUS JkDeliverBus.[deliver-done] SET id=deliverMainId;
     FOR detail {
         VAR deliverDetailId ID = ID(DeliverDetail new);
         WITH DeliverDetail as a ID=deliverDetailId
             SET a.main=deliverMainId, a.quantity=quantity, a.orderDetail=orderDetail;
-        BUS JkOrderBus.[deliver-done] INTO detail
-            ADD id=deliverDetailId, value=quantity, orderDetail=orderDetail;
+        BUS JkDeliverBus.[deliver-done] INTO detail
+            ADD id=deliverDetailId, value=quantity, biz=orderDetail;
     }
-    BUS JkOrderBus.[deliver-done] LOCAL;
+    BUS JkDeliverBus.[deliver-done] LOCAL;
 };

@@ -7,6 +7,7 @@ import { VStaffs } from "./VStaffs";
 export interface MonthValues {
 	opi: number;
     item: Item;
+    dThis: number;
     mThis: number;
     mLast: number;
 }
@@ -25,7 +26,7 @@ export interface StaffRow {
 
 export class CStaffs extends CObjects {
     list: StaffRow[];
-    sum: {item: Item; mThis: number; mLast: number; }[] = [];
+    sum: {item: Item; dThis: number; mThis: number; mLast: number; }[] = [];
 
     get baseList(): any[] {return this.list}
 
@@ -45,9 +46,9 @@ export class CStaffs extends CObjects {
         let list = ret.ret;
         let coll:{[staff:number]: StaffRow} = {};
         let arr: StaffRow[] = [];
-        let sum: {[key in Item]?: {item: Item; mThis: number; mLast: number; }} = {};
+        let sum: {[key in Item]?: {item: Item; dThis: number; mThis: number; mLast: number; }} = {};
         for (let r of list) {
-            let {opi, item, obj, staff, valueThisMonth, valueLastMonth} = r;
+            let {opi, item, obj, staff, valueToday, valueThisMonth, valueLastMonth} = r;
             let staffRow = coll[staff];
             if (staffRow === undefined) {
                 coll[staff] = staffRow = {
@@ -61,6 +62,7 @@ export class CStaffs extends CObjects {
             monthValuesArr.push({
                 opi,
                 item,
+                dThis: valueToday,
                 mThis: valueThisMonth,
                 mLast: valueLastMonth,
             });
@@ -68,11 +70,13 @@ export class CStaffs extends CObjects {
             if (sumItem === undefined) {
                 sumItem = {
                     item,
+                    dThis: 0,
                     mThis: 0,
                     mLast: 0,
                 };
                 this.sum[item as Item] = sumItem;
             }
+            sumItem.dThis += (valueToday ?? 0);
             sumItem.mThis += (valueThisMonth ?? 0);
             sumItem.mLast += (valueLastMonth ?? 0);
         }

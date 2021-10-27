@@ -10,12 +10,13 @@ export class VStaffs extends VObjects<CStaffs> {
         let {staff, monthValuesArr} = v;
         let right = <div className="d-block">
             {monthValuesArr.map((v, index) => {
-                let {item, mThis, mLast} = v;
+                let {item, dThis, mThis, mLast} = v;
                 if (mThis === undefined && mLast === undefined) return null;
                 let {itemTitles} = this.controller.cApp;
                 let {title} = itemTitles[item];
                 return <div key={index} className="d-flex">
                     <div className="flex-fill text-end">{title}</div>
+                    <div>{this.vValue(dThis)}</div>
                     <div>{this.vValue(mThis)}</div>
                     <div>{this.vValue(mLast)}</div>
                 </div>
@@ -30,6 +31,7 @@ export class VStaffs extends VObjects<CStaffs> {
         return <div>
             <div className="d-flex px-3 py-3 border-bottom border-primary">
                 <div className="flex-fill">员工</div>
+                <div className={cnAmount}>今天</div>
                 <div className={cnAmount}>本月</div>
                 <div className={cnAmount}>上月</div>
             </div>
@@ -43,13 +45,14 @@ export class VStaffs extends VObjects<CStaffs> {
             <div className="flex-fill fw-bold">合计</div>
             <div>
                 {sum.map((v, index) => {
-                    let {item, mThis, mLast} = v;
+                    let {item, dThis, mThis, mLast} = v;
                     if ((mThis === 0 || mThis === undefined) 
                         && (mLast === 0 || mLast === undefined)) return null;
                     let {itemTitles} = this.controller.cApp;
                     let {title} = itemTitles[item];
                     return <div key={index} className="d-flex">
                         <div className="flex-fill text-end">{title}</div>
+                        <div>{this.vValue(dThis)}</div>
                         <div>{this.vValue(mThis)}</div>
                         <div>{this.vValue(mLast)}</div>
                     </div>

@@ -23,7 +23,6 @@ ACCEPT order {
         WITH Object ID=objManagerId SET type=EnumObjectType.post;
         WITH ObjectPost as a ID=objManagerId SET a.post=Post.managerIT;
     }
-    -- WITH IxBizMainBoundTo IXX=mainId IX=Post.managerIT XI=objManagerId;
     VAR bizMainBoundId ID = ID(
         BizMainBound new 
         KEY bizMain=mainId, post=POST.managerIT, item=ITEM.amountFee, to=objManagerId
@@ -83,7 +82,6 @@ ACCEPT [order-bound-staff-sales] {
             WITH Object ID=toId SET type=EnumObjectType.staff;
             WITH ObjectStaff ID=toId SET staff=id;
         }
-        -- WITH IxBizMainBoundTo IXX=order IX=Post.staffSales XI=toId;
         -- 指定客户之后的提成
         IF [bound-type]='assign' {
             SET bizMainBoundId = ID(
