@@ -8,7 +8,7 @@ import { CTester } from "./test-uqui";
 import { setUI } from "./uqs";
 import { Item, Post, EnumRole, EnumRoleOp, ObjectPostItem } from "./uqs/JkMe";
 import { CSupervise } from "supervise";
-import { CPortal, CObjectPortal } from "portal";
+import { CPortal, CObjectPortal, CUnitPortal } from "portal";
 
 //const gaps = [10, 3,3,3,3,3,5,5,5,5,5,5,5,5,10,10,10,10,15,15,15,30,30,60];
 
@@ -77,6 +77,12 @@ export class CApp extends CUqApp {
 	newCObjectPortal(object: number, pageTop: JSX.Element): CObjectPortal {
 		let ret = this.newC(CObjectPortal, object, pageTop);
 		return ret;
+	}
+
+	renderVUnitSum() {
+		let ret = this.newC(CUnitPortal);
+		ret.load();
+		return ret.renderVPortal();
 	}
 
 	/*

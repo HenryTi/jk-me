@@ -116,6 +116,10 @@ export class CSupervise extends CUqBase {
 		await this.monthSum.load();
 		this.openVPage(VCustomerSumByMonth);
 	}
+
+	renderVUnitSum() {
+		return this.cApp.renderVUnitSum();
+	}
 }
 
 class PageItemHistory extends PageItems<ReturnGetItemHistory$page> {

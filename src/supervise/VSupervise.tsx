@@ -53,6 +53,16 @@ export class VSupervise extends VPage<CSupervise> {
         ];
         let {superviseObjects, superviseItems} = this.controller;
         return <>
+            <div className="mb-4">
+                <div className="my-2 mx-1 border border-info rounded">
+                    <div className="p-3 border-bottom border-info bg-white">
+                        <b>公司业务</b>
+                    </div>
+                    <div>
+                        {this.controller.renderVUnitSum()}
+                    </div>
+                </div>
+            </div>
             {this.controller.cObjectsArr.map((v, index) => {
                 return <VIndex key={index} 
                     action={() => v.loadAndShowList()}

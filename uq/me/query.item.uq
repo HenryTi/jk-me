@@ -139,6 +139,20 @@ RETURNS ret (
     INTO ret SELECT a.xi as item FROM UserSuperviseItem as a WHERE a.ix=$user;
 };
 
+QUERY GetItemPeriodSum(
+    date DATE,
+    days INT,
+)
+RETURNS ret (
+    item ENUM Item,
+    value DEC(18,4),
+) {
+    INTO ret SELECT item, sum(b.value) as value
+        FROM DaySumItem as b
+        WHERE b.xi>=date AND b.xi<DATEADD(day, days, date)
+        GROUP BY b.ix as item;
+};
+
 -- 从date开始，往前days天的按日汇总
 QUERY GetItemSumDays ver 0.1 (
     item ENUM Item,

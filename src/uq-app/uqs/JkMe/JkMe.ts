@@ -1,4 +1,4 @@
-//=== UqApp builder created on Mon Oct 25 2021 21:07:49 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Wed Oct 27 2021 18:28:12 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 
@@ -146,6 +146,11 @@ export interface ParamDoneDeliver {
 
 }
 export interface ResultDoneDeliver {
+}
+
+export interface ParamCalcDaySum {
+}
+export interface ResultCalcDaySum {
 }
 
 export interface Param$poked {
@@ -494,6 +499,18 @@ export interface ResultGetUserObjectItemPeriodSum {
 	ret: ReturnGetUserObjectItemPeriodSumRet[];
 }
 
+export interface ParamGetItemPeriodSum {
+	date: any;
+	days: number;
+}
+export interface ReturnGetItemPeriodSumRet {
+	item: any;
+	value: number;
+}
+export interface ResultGetItemPeriodSum {
+	ret: ReturnGetItemPeriodSumRet[];
+}
+
 export interface Object {
 	id?: number;
 	type: any;
@@ -782,12 +799,6 @@ export interface IxBizOpBound {
 	bound: number;
 }
 
-export interface IxBizMainBoundTo {
-	ixx: number;
-	ix: number;
-	xi: number;
-}
-
 export interface UserRole {
 	ix: number;
 	xi: number;
@@ -804,6 +815,12 @@ export interface PostItemHistory1 {
 	xi: number;
 	value: number;
 	memo: number;
+}
+
+export interface DaySumItem {
+	ix: number;
+	xi: any;
+	value: number;
 }
 
 export interface ParamActs {
@@ -843,10 +860,10 @@ export interface ParamActs {
 	monthSumProduct?: MonthSumProduct[];
 	monthSumCustomer?: MonthSumCustomer[];
 	ixBizOpBound?: IxBizOpBound[];
-	ixBizMainBoundTo?: IxBizMainBoundTo[];
 	userRole?: UserRole[];
 	roleOps?: RoleOps[];
 	postItemHistory1?: PostItemHistory1[];
+	daySumItem?: DaySumItem[];
 }
 
 
@@ -861,6 +878,7 @@ export interface UqExt extends Uq {
 	ExecQueueBizOp: UqAction<ParamExecQueueBizOp, ResultExecQueueBizOp>;
 	ExecQueueBizMain: UqAction<ParamExecQueueBizMain, ResultExecQueueBizMain>;
 	DoneDeliver: UqAction<ParamDoneDeliver, ResultDoneDeliver>;
+	CalcDaySum: UqAction<ParamCalcDaySum, ResultCalcDaySum>;
 	$poked: UqQuery<Param$poked, Result$poked>;
 	GetPostTitles: UqQuery<ParamGetPostTitles, ResultGetPostTitles>;
 	GetItemTitles: UqQuery<ParamGetItemTitles, ResultGetItemTitles>;
@@ -887,6 +905,7 @@ export interface UqExt extends Uq {
 	GetObjectItemHistory: UqQuery<ParamGetObjectItemHistory, ResultGetObjectItemHistory>;
 	GetObjectItemPeriodSum: UqQuery<ParamGetObjectItemPeriodSum, ResultGetObjectItemPeriodSum>;
 	GetUserObjectItemPeriodSum: UqQuery<ParamGetUserObjectItemPeriodSum, ResultGetUserObjectItemPeriodSum>;
+	GetItemPeriodSum: UqQuery<ParamGetItemPeriodSum, ResultGetItemPeriodSum>;
 	Object: UqID<any>;
 	ItemHistory: UqID<any>;
 	OrderDetail: UqID<any>;
@@ -923,10 +942,10 @@ export interface UqExt extends Uq {
 	MonthSumProduct: UqIX<any>;
 	MonthSumCustomer: UqIX<any>;
 	IxBizOpBound: UqIX<any>;
-	IxBizMainBoundTo: UqIX<any>;
 	UserRole: UqIX<any>;
 	RoleOps: UqIX<any>;
 	PostItemHistory1: UqIX<any>;
+	DaySumItem: UqIX<any>;
 }
 
 export function assign(uq: any, to:string, from:any): void {
