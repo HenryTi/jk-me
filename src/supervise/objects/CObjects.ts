@@ -18,7 +18,7 @@ export abstract class CObjects extends CUqSub<CApp, UQs, CSupervise> {
     protected abstract get caption(): string;
 
     protected async loadList(): Promise<void> {
-        if (this.baseList) return;
+        // if (this.baseList) return;
         await this.internalLoadList();
     }
     protected abstract internalLoadList(): Promise<void>;

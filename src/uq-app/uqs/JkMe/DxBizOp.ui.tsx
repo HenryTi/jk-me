@@ -35,11 +35,18 @@ const fields = {
 		"isKey": false,
 		"label": "Done"
 	} as undefined,
+	stamp: {
+		"name": "stamp",
+		"type": "integer",
+		"isKey": false,
+		"widget": "updown",
+		"label": "Stamp"
+	} as FieldItemInt,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.action, fields.biz, fields.value, fields.done, 
+	fields.action, fields.biz, fields.value, fields.done, fields.stamp, 
 ];
 
 export const ui: UI = {

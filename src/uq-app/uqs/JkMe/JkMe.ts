@@ -1,4 +1,4 @@
-//=== UqApp builder created on Fri Oct 22 2021 10:13:35 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Mon Oct 25 2021 21:07:49 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 
@@ -398,6 +398,7 @@ export interface ReturnGetStaffsRet {
 	item: any;
 	obj: number;
 	staff: number;
+	valueToday: number;
 	valueThisMonth: number;
 	valueLastMonth: number;
 }
@@ -524,6 +525,7 @@ export interface OrderMain {
 	customerAccount: number;
 	currency: number;
 	sumAmount: number;
+	stamp: number;
 }
 
 export interface ItemTitle {
@@ -691,6 +693,7 @@ export interface DxBizOp {
 	biz?: number;
 	value?: number;
 	done?: number;
+	stamp?: number;
 	$act?: number;
 }
 
@@ -733,6 +736,7 @@ export interface ActParamDxBizOp {
 	biz?: number|IDXValue;
 	value?: number|IDXValue;
 	done?: number|IDXValue;
+	stamp?: number|IDXValue;
 	$act?: number;
 }
 

@@ -43,11 +43,18 @@ const fields = {
 		"widget": "number",
 		"label": "SumAmount"
 	} as FieldItemNum,
+	stamp: {
+		"name": "stamp",
+		"type": "integer",
+		"isKey": false,
+		"widget": "updown",
+		"label": "Stamp"
+	} as FieldItemInt,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.no, fields.webUser, fields.customerAccount, fields.currency, fields.sumAmount, 
+	fields.no, fields.webUser, fields.customerAccount, fields.currency, fields.sumAmount, fields.stamp, 
 ];
 
 export const ui: UI = {

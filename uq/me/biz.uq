@@ -37,11 +37,6 @@ IDX DxBizOp (
 );
 
 IX IxBizOpBound (
-    /*
-    ixx,                        -- bizOp id
-    ix ENUM Post,               -- POST
-    xi ENUM ITEM,               -- post item
-    */
     ix,                         -- bizOp id
     xi BizMainBound,
     bound TINYINT DEFAULT 0,    -- 1: bound
@@ -56,12 +51,6 @@ ID BizMainBound (
     KEY post ENUM Post,
     KEY item ENUM Item,
     KEY to ID,
-);
-
-IX IxBizMainBoundTo (
-    ixx,				        -- bizMain id
-    ix ENUM Post,
-    xi,					        -- to object id, 
 );
 
 -- 处理的是 biz main sheet
@@ -166,7 +155,7 @@ PROC ProcWriteItemHistory(
     bizOp ID,
 ) {
     VAR biz ID, action ENUM EnumBizAction, value DEC(18,4);
-    VAR price DEC(18,4), cost DEC(18,4), stamp TIMESTAMP;
+    VAR price DEC(18,4), cost DEC(18,4), stamp INT;
     SET biz=a.biz, action=a.action, value=a.value 
         FROM DxBizOp as a 
         WHERE a.id=bizOp;

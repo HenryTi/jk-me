@@ -42,32 +42,35 @@ RETURNS ret (
     item Enum Item,
     obj ID,
     staff ID,
+    valueToday DEC(18,4),
     valueThisMonth DEC(18,4),
     valueLastMonth DEC(18,4),
 )
 {
-    VAR d DATE, m0 DATE, m1 DATE;
+    VAR d DATETIME, d0 DATE, m0 DATE, m1 DATE;
     SET d=NOW();
-    SET m0=dateadd(day, DAY(d)+1, d);
-    SET m0=dateadd(MONTH, -1, m0);
+    SET d0=d;
+    SET m0=dateadd(day, -DAY(d)+1, d);
+    SET m1=dateadd(MONTH, -1, m0);
     INTO ret SELECT c.id as opi, c.item, a.id as obj, b.staff, 
         (
             SELECT SUM(p.value)
                 FROM OPIHistory AS p
---                    JOIN ObjectPostItem as opi ON p.opi=opi.id
                 WHERE p.opi=c.id
---                    AND opi.post=c.post
---                    AND opi.item=c.item
+                    AND p.id >= minuteIdFromDate(d0, timeZone)
+                    AND p.id < minuteIdFromDate(d, timeZone)
+        ) as valueToday,
+        (
+            SELECT SUM(p.value)
+                FROM OPIHistory AS p
+                WHERE p.opi=c.id
                     AND p.id >= minuteIdFromDate(m0, timeZone)
                     AND p.id < minuteIdFromDate(d, timeZone)
         ) as valueThisMonth,
         (
             SELECT SUM(p.value)
                 FROM OPIHistory AS p
---                    JOIN ObjectPostItem as opi ON p.opi=opi.id
                 WHERE p.opi=c.id
---                    AND opi.post=c.post
---                    AND opi.item=c.item
                     AND p.id >= minuteIdFromDate(m1, timeZone)
                     AND p.id < minuteIdFromDate(m0, timeZone)
         ) as valueLastMonth
@@ -77,7 +80,6 @@ RETURNS ret (
             JOIN ObjectPostItem as c
                 ON c.object=a.id AND c.post=Post.staffSales; -- AND c.item=Item.orderAmount;
 };
-
 
 QUERY GetPosts(
     timeZone TINYINT,

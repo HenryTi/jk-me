@@ -7,17 +7,16 @@ import { Item  } from "uq-app/uqs/JkMe/JkMe";
 import { CSupervise } from "./CSupervise";
 
 interface VIndexProps {
-    key?:string|number; 
     icon?:string; 
     iconColor?:string;
     caption:string; 
     action: ()=>void;
 }
 
-const VIndex = ({key, icon, caption, action, iconColor}:VIndexProps) => {
+const VIndex = ({icon, caption, action, iconColor}:VIndexProps) => {
     let fa = <FA name={icon??'chevron-circle-right'} className={'me-3 ' + (iconColor??' text-success ')} />;
     let right = <FA name="angle-right" />
-    return <LMR key={key} left={fa} right={right}
+    return <LMR left={fa} right={right}
         className="px-3 py-2 mb-1 bg-white cursor-pointer align-items-center" 
         onClick={action}>
         {caption}
