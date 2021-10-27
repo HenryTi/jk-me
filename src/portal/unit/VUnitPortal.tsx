@@ -23,7 +23,12 @@ export class VUnitPortal extends VPeriodSum<CUnitPortal> {
             {title}
         </div>;
         let right = <div>
-            {nf.format(value??0)} 
+            {
+                value<0?
+                <span className="text-danger">({nf.format(-value)})</span>
+                :
+                <>{nf.format(value??0)}</>
+            } 
             <small className="text-muted ms-1">{unit}</small>
         </div>;
         return <LMR className="py-2 px-3 d-flex align-items-center"

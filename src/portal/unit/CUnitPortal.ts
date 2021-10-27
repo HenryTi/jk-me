@@ -1,9 +1,16 @@
 import { runInAction } from "mobx";
+import { EnumPeriod } from "portal";
+import { CApp } from "uq-app";
 import { ResultGetItemPeriodSum } from "uq-app/uqs/JkMe";
 import { CPortal } from '../CPortal';
 import { VUnitPortal } from "./VUnitPortal";
 
 export class CUnitPortal extends CPortal {
+    constructor(cApp: CApp) {
+		super(cApp);
+        this.internalSetPeriod(EnumPeriod.month);
+    }
+
     protected async GetPeriodSum(from: Date, to: Date):Promise<ResultGetItemPeriodSum> {
         let ret = await this.uqs.JkMe.GetItemPeriodSum.query({
 			date: from,
