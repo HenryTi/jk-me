@@ -35,10 +35,10 @@ import * as UserSuperviseItem from './UserSuperviseItem.ui';
 import * as MonthSumProduct from './MonthSumProduct.ui';
 import * as MonthSumCustomer from './MonthSumCustomer.ui';
 import * as IxBizOpBound from './IxBizOpBound.ui';
-import * as IxBizMainBoundTo from './IxBizMainBoundTo.ui';
 import * as UserRole from './UserRole.ui';
 import * as RoleOps from './RoleOps.ui';
 import * as PostItemHistory1 from './PostItemHistory1.ui';
+import * as DaySumItem from './DaySumItem.ui';
 	
 export function setUI(uq: Uq) {
 	assign(uq, 'Object', Object);
@@ -77,9 +77,9 @@ export function setUI(uq: Uq) {
 	assign(uq, 'MonthSumProduct', MonthSumProduct);
 	assign(uq, 'MonthSumCustomer', MonthSumCustomer);
 	assign(uq, 'IxBizOpBound', IxBizOpBound);
-	assign(uq, 'IxBizMainBoundTo', IxBizMainBoundTo);
 	assign(uq, 'UserRole', UserRole);
 	assign(uq, 'RoleOps', RoleOps);
 	assign(uq, 'PostItemHistory1', PostItemHistory1);
+	assign(uq, 'DaySumItem', DaySumItem);
 }
 export * from './JkMe';

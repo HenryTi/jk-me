@@ -1,7 +1,7 @@
 import { env } from "tonva-react";
 import { ResultGetUserObjectItemPeriodSum } from "uq-app/uqs/JkMe";
-import { EnumPeriod } from "./period";
-import { CPortal } from './CPortal';
+import { EnumPeriod } from "../period";
+import { CPortal } from '../CPortal';
 import { VObjectPortal } from "./VObjectPortal";
 
 export class CObjectPortal extends CPortal {
@@ -13,7 +13,7 @@ export class CObjectPortal extends CPortal {
         this.pageTop = pageTop;
     }
 
-    protected async GetObjectItemPeriodSum(from: Date, to: Date):Promise<ResultGetUserObjectItemPeriodSum> {
+    protected async GetPeriodSum(from: Date, to: Date):Promise<ResultGetUserObjectItemPeriodSum> {
         let ret = await this.uqs.JkMe.GetObjectItemPeriodSum.query({
             object: this.object,
 			from,

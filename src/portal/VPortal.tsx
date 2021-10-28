@@ -11,7 +11,7 @@ const cnPeriod = " py-2 px-3 ";
 const cnTabCur = ' border-2 border-bottom border-primary fw-bold bg-light ';
 const cnTab = ' border-bottom border-muted cursor-pointer text-muted ';
 
-export class VPeriodSum extends View<CPortal> {
+export class VPeriodSum<T extends CPortal = CPortal> extends View<T> {
     render(): JSX.Element {
 		return React.createElement(observer(() => {
 			let periodList:[EnumPeriod, string, string][] = [
@@ -40,7 +40,7 @@ export class VPeriodSum extends View<CPortal> {
 				</div>
 				{this.renderDate()}
 				<div className="">
-					<List items={this.controller.postPeriodSumList} 
+					<List items={this.controller.list} 
 						item={{render: this.renderItem, onClick: undefined/*this.onClickItem*/}} />
 				</div>
 			</div>;
@@ -63,7 +63,7 @@ export class VPeriodSum extends View<CPortal> {
 		//this.controller.showItemHistory(item.id, EnumSumPeriod.day);
 	}
 
-	private renderItem = (postPeriodSum: PostPeriodSum, index: number) => {
+	protected renderItem = (postPeriodSum: PostPeriodSum, index: number) => {
 		let {postTitles} = this.controller.cApp;
 		let {post, itemList} = postPeriodSum;
 		let {title, vice} = postTitles[post];

@@ -16,6 +16,47 @@ IX MonthSumCustomer (
     INDEX ixx_xi_ix(ixx, xi, ix),
 );
 
+IX DaySumItem (
+    ix ENUM Item,
+    xi DATE,                -- date
+    value DEC(18,4),        -- 日合计
+);
+
+-- 定期计算，每小时计算一次。把新的业务添加到日业务表
+ACT CalcDaySum ()
+{
+    TRANSACTION OFF;                     -- 去掉每一个ACT开始的Start Transaction和结尾的Commit
+    VAR timeZone TINYINT = 8;
+    VAR itemHistoryId ID;
+    SETTING 'dayItemHistoryId' BIGINT TO itemHistoryId;
+    IF itemHistoryId IS NULL {
+        SET itemHistoryId=0;
+    }
+
+    WHILE 1=1 {
+        VAR value DEC(18,4)
+            , biz ID, bizOp ID
+            , historyId ID, date DATE, m INT, item ENUM Item;
+        SET historyId=NULL;
+        SET historyId=a.id
+            , biz=a.biz, bizOp=a.bizOp
+            , value=a.value
+            , item=a.item
+            FROM ItemHistory as a
+            WHERE a.id>itemHistoryId
+            ORDER BY a.id ASC
+            LIMIT 1;
+        IF historyId IS NULL { BREAK; }
+
+        SET itemHistoryId=historyId;
+        SET date=dateFromMinuteId(historyId, timeZone, 0);
+        TRANSACTION Start;
+        WITH DaySumItem as a IX=item XI=date SET a.value=IFNULL(a.value,0) + IFNULL(value,0);
+        SETTING 'dayItemHistoryId' BIGINT = itemHistoryId;
+        TRANSACTION Commit;
+    }
+};
+
 -- 定期计算，每小时计算一次。把新的销售添加到月销量表
 ACT CalcMonthSum ver 0.3 (
 ) {

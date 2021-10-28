@@ -15,8 +15,9 @@ export class CPortal extends  CUqBase {
 	bizOpDetail: BizOpDetail;
 
     period: Period;
-    postPeriodSumColl: {[post in keyof typeof Post]: PostPeriodSum};
-    postPeriodSumList: PostPeriodSum[];
+    //postPeriodSumColl: {[post in keyof typeof Post]: PostPeriodSum};
+    //postPeriodSumList: PostPeriodSum[];
+    list: any[];
     objectPostItem: ObjectPostItem;
     itemPeriodSum: ItemPeriodSum;
     history: ReturnGetObjectItemHistoryRet[];
@@ -28,8 +29,9 @@ export class CPortal extends  CUqBase {
             period: observable,
             history: observable.shallow,
             periodHistory: observable.shallow,
-            postPeriodSumColl: observable.ref,
-            postPeriodSumList: observable.shallow,
+            //postPeriodSumColl: observable.ref,
+            //postPeriodSumList: observable.shallow,
+            list: observable.shallow,
             internalSetPeriod: action,
         });
         this.internalSetPeriod(EnumPeriod.day);
@@ -47,7 +49,7 @@ export class CPortal extends  CUqBase {
         await this.load();
     }
 
-    protected async GetObjectItemPeriodSum(from: Date, to: Date):Promise<ResultGetObjectItemPeriodSum> {
+    protected async GetPeriodSum(from: Date, to: Date):Promise<{ret:any[]}> {
         let ret = await this.uqs.JkMe.GetUserObjectItemPeriodSum.query({
 			from,
 			to,
@@ -58,7 +60,7 @@ export class CPortal extends  CUqBase {
 
     async load() {
         let {from, to} = this.period;
-        let ret = await this.GetObjectItemPeriodSum(from, to);
+        let ret = await this.GetPeriodSum(from, to);
         let arr: ReturnGetObjectItemPeriodSumRet[] = ret.ret;
         let postPeriodSumColl = {} as any;
         let postPeriodSumList:PostPeriodSum[] = [];
@@ -80,8 +82,9 @@ export class CPortal extends  CUqBase {
             postPeriodSum.itemList.push(ips);
         }
         runInAction(() => {
-            this.postPeriodSumColl = postPeriodSumColl;
-            this.postPeriodSumList = postPeriodSumList;    
+            //this.postPeriodSumColl = postPeriodSumColl;
+            //this.postPeriodSumList = postPeriodSumList;
+            this.list = postPeriodSumList;
         });
     }
 
@@ -165,6 +168,6 @@ export class CPortal extends  CUqBase {
 	}
 
     renderVPortal() {
-        return this.renderView(VPeriodSum);
+        return this.renderView(VPeriodSum as any);
     }
 }

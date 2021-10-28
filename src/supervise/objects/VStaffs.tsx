@@ -1,7 +1,6 @@
-import { CObjectPortal } from "portal/CObjectPortal";
 import { LMR } from "tonva-react";
 import { cnAmount } from "tools";
-import { Item, ReturnGetStaffsRet } from "uq-app/uqs/JkMe";
+import { Item } from "uq-app/uqs/JkMe";
 import { CStaffs, StaffRow } from "./CStaffs";
 import { VObjects } from "./VObjects";
 
