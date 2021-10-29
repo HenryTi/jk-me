@@ -63,18 +63,6 @@ ID ItemHistory ver 0.1 MINUTEID (
     INDEX item_id(item, id) UNIQUE,
 );
 
--- 2021-10-12：ItemHistory可能产生不同的针对个体的操作。如果只有ix-xi，会覆盖
--- 所以加一级bizOp，形成ixx-ix-xi结构。
--- the item in ObjectPostItem and the item in ItemHistory may not be the same
--- e.g.: 提成和取款，可以放到自己的结余Item，在ItemHistory上，应该是不同item 
-IX PostItemHistory1 (
-    ixx ObjectPostItem,
-    ix ItemHistory,
-    xi,                         -- bizOp
-    value DEC(18,4),
-    memo INT,                   -- 文本ID，记录业务行为
-);
-
 -- OPI = object post item
 ID OPIHistory MINUTEID (
     id,
@@ -114,16 +102,11 @@ ENUM EnumUserObjectRelation (
 );
 IX UserObject (
     IX user,
-    XI ID Object,
+    XI ID Object INDEX,
     relation ENUM EnumUserObjectRelation DEFAULT 0,
 );
 
 IX UserSuperviseItem (
     IX user,
     XI ENUM Item,
-);
-
-IDX UserTimezone (
-    id,
-    timeZone TINYINT,               -- 时区
 );

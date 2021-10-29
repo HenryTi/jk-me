@@ -26,7 +26,7 @@ IX DaySumItem (
 ACT CalcDaySum ()
 {
     TRANSACTION OFF;                     -- 去掉每一个ACT开始的Start Transaction和结尾的Commit
-    VAR timeZone TINYINT = 8;
+    VAR timeZone TINYINT = unittimezone();
     VAR itemHistoryId ID;
     SETTING 'dayItemHistoryId' BIGINT TO itemHistoryId;
     IF itemHistoryId IS NULL {
@@ -49,7 +49,7 @@ ACT CalcDaySum ()
         IF historyId IS NULL { BREAK; }
 
         SET itemHistoryId=historyId;
-        SET date=dateFromMinuteId(historyId, timeZone, 0);
+        SET date=MinuteIdDate(historyId, timeZone);
         TRANSACTION Start;
         WITH DaySumItem as a IX=item XI=date SET a.value=IFNULL(a.value,0) + IFNULL(value,0);
         SETTING 'dayItemHistoryId' BIGINT = itemHistoryId;
@@ -61,7 +61,7 @@ ACT CalcDaySum ()
 ACT CalcMonthSum ver 0.3 (
 ) {
     TRANSACTION OFF;                     -- 去掉每一个ACT开始的Start Transaction和结尾的Commit
-    VAR timeZone TINYINT = 8;
+    VAR timeZone TINYINT = unittimezone();
     VAR itemHistoryId ID;
     SETTING 'itemHistoryId' BIGINT TO itemHistoryId;
     IF itemHistoryId IS NULL {
@@ -82,7 +82,7 @@ ACT CalcMonthSum ver 0.3 (
             LIMIT 1;
         IF historyId IS NULL { BREAK; }
         SET itemHistoryId=historyId;
-        SET date=dateFromMinuteId(historyId, timeZone, 1);
+        SET date=MinuteIdMonth(historyId, timeZone);
         SET m=YEAR(date)*100+MONTH(date);
 
         TRANSACTION Start;

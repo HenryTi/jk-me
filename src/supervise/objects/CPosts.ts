@@ -11,7 +11,6 @@ export class CPosts extends CObjects {
 
     protected async internalLoadList(): Promise<void> {
         let ret = await this.uqs.JkMe.GetPosts.query({
-            timeZone: 8,
         });
         this.list = ret.ret;
     }

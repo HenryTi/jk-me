@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { FA, List, LMR, VPage } from "tonva-react";
+import { EasyTime, FA, List, LMR, VPage } from "tonva-react";
 import { CPortal } from "./CPortal";
 import { View } from "tonva-react";
 import { EnumPeriod, PostPeriodSum, ItemPeriodSum } from "./period";
@@ -26,6 +26,7 @@ export class VPeriodSum<T extends CPortal = CPortal> extends View<T> {
 				let [ep] = p;
 				p[2] = cnPeriod + (ep === type? cnTabCur : cnTab);
 			}
+			let VRefreshTime = observer(() => <EasyTime date={this.controller.cApp.refreshTime}/>);
 			return <div className="">
 				<div className="row g-0">
 					{
@@ -42,6 +43,13 @@ export class VPeriodSum<T extends CPortal = CPortal> extends View<T> {
 				<div className="">
 					<List items={this.controller.list} 
 						item={{render: this.renderItem, onClick: undefined/*this.onClickItem*/}} />
+				</div>
+				<div className="d-flex py-2 px-3">
+					<div className="flex-fill"></div>
+					<div className="small text-muted cursor-pointer"
+						onClick={this.controller.cApp.refresh}>
+						<FA name="refresh" /> <VRefreshTime />
+					</div>
 				</div>
 			</div>;
 		}));

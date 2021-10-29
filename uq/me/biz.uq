@@ -149,6 +149,13 @@ PROC ProcBizOp(
         WITH OPIHistory as a ID=opiHistoryId
             SET a.opi=objectPostItemId, a.itemHistory=itemHistoryId, a.bizOp=bizOp
             , a.value=value * IFNULL(ratio, 100) / 100, a.booking=booking;
+        FOR (VAR user ID
+            OF SELECT b.ix as user
+                FROM ObjectPostItem as a JOIN UserObject as b ON a.object=b.xi
+                WHERE a.id=objectPostItemId)
+        {
+            POKE user;
+        }
         WITH IxBizOpBound IX=bizOp XI=bizMainBoundId SET bound=1;
     }
 };

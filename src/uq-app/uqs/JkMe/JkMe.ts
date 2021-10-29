@@ -1,4 +1,4 @@
-//=== UqApp builder created on Wed Oct 27 2021 18:28:12 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Thu Oct 28 2021 17:11:40 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 
@@ -101,6 +101,7 @@ export interface Tuid$user {
 	icon: string;
 	assigned: string;
 	poke: number;
+	timezone: number;
 }
 
 export interface ParamBusTestBoundStaffSales {
@@ -151,6 +152,12 @@ export interface ResultDoneDeliver {
 export interface ParamCalcDaySum {
 }
 export interface ResultCalcDaySum {
+}
+
+export interface Param$setMyTimezone {
+	_timezone: number;
+}
+export interface Result$setMyTimezone {
 }
 
 export interface Param$poked {
@@ -221,7 +228,6 @@ export interface ParamGetItemSumMonths {
 	item: any;
 	date: any;
 	months: number;
-	timeZone: number;
 }
 export interface ReturnGetItemSumMonthsRet {
 	date: any;
@@ -235,7 +241,6 @@ export interface ParamGetItemSumDays {
 	item: any;
 	date: any;
 	days: number;
-	timeZone: number;
 }
 export interface ReturnGetItemSumDaysRet {
 	date: any;
@@ -249,7 +254,6 @@ export interface ParamGetItemHistory {
 	item: any;
 	from: any;
 	to: any;
-	timeZone: number;
 }
 export interface ReturnGetItemHistory$page {
 	id: number;
@@ -371,7 +375,6 @@ export interface ResultGetGroups {
 }
 
 export interface ParamGetPosts {
-	timeZone: number;
 }
 export interface ReturnGetPostsRet {
 	opi: number;
@@ -396,7 +399,6 @@ export interface ResultGetDistributors {
 }
 
 export interface ParamGetStaffs {
-	timeZone: number;
 }
 export interface ReturnGetStaffsRet {
 	opi: number;
@@ -426,7 +428,6 @@ export interface ParamGetObjectItemPeriodHistory {
 	from: any;
 	to: any;
 	period: number;
-	timeZone: number;
 }
 export interface ReturnGetObjectItemPeriodHistoryRet {
 	date: any;
@@ -453,7 +454,6 @@ export interface ParamGetObjectItemHistory {
 	objectPostItem: number;
 	from: any;
 	to: any;
-	timeZone: number;
 }
 export interface ReturnGetObjectItemHistoryRet {
 	minuteId: number;
@@ -470,7 +470,6 @@ export interface ParamGetObjectItemPeriodSum {
 	object: number;
 	from: any;
 	to: any;
-	timeZone: number;
 }
 export interface ReturnGetObjectItemPeriodSumRet {
 	id: number;
@@ -486,7 +485,6 @@ export interface ResultGetObjectItemPeriodSum {
 export interface ParamGetUserObjectItemPeriodSum {
 	from: any;
 	to: any;
-	timeZone: number;
 }
 export interface ReturnGetUserObjectItemPeriodSumRet {
 	id: number;
@@ -509,6 +507,15 @@ export interface ReturnGetItemPeriodSumRet {
 }
 export interface ResultGetItemPeriodSum {
 	ret: ReturnGetItemPeriodSumRet[];
+}
+
+export interface Param$getMyTimezone {
+}
+export interface Return$getMyTimezoneRet {
+	timezone: number;
+}
+export interface Result$getMyTimezone {
+	ret: Return$getMyTimezoneRet[];
 }
 
 export interface Object {
@@ -543,6 +550,7 @@ export interface OrderMain {
 	currency: number;
 	sumAmount: number;
 	stamp: number;
+	$create?: any;
 }
 
 export interface ItemTitle {
@@ -636,6 +644,7 @@ export interface DeliverMain {
 	warehouse: number;
 	cutOffMain: number;
 	trayNumber: number;
+	$create?: any;
 }
 
 export interface Role {
@@ -692,12 +701,6 @@ export interface DxOrderMain {
 	$act?: number;
 }
 
-export interface UserTimezone {
-	id: number;
-	timeZone?: number;
-	$act?: number;
-}
-
 export interface DxBizMain {
 	id: number;
 	ready?: number;
@@ -732,12 +735,6 @@ export interface ActParamDxOrderDetail {
 export interface ActParamDxOrderMain {
 	id: number|IDXValue;
 	readyStates?: any|IDXValue;
-	$act?: number;
-}
-
-export interface ActParamUserTimezone {
-	id: number|IDXValue;
-	timeZone?: number|IDXValue;
 	$act?: number;
 }
 
@@ -809,14 +806,6 @@ export interface RoleOps {
 	xi: number;
 }
 
-export interface PostItemHistory1 {
-	ixx: number;
-	ix: number;
-	xi: number;
-	value: number;
-	memo: number;
-}
-
 export interface DaySumItem {
 	ix: number;
 	xi: any;
@@ -850,7 +839,6 @@ export interface ParamActs {
 	bizMainBound?: BizMainBound[];
 	dxOrderDetail?: ActParamDxOrderDetail[];
 	dxOrderMain?: ActParamDxOrderMain[];
-	userTimezone?: ActParamUserTimezone[];
 	dxBizMain?: ActParamDxBizMain[];
 	dxBizOp?: ActParamDxBizOp[];
 	dxBiz?: ActParamDxBiz[];
@@ -862,7 +850,6 @@ export interface ParamActs {
 	ixBizOpBound?: IxBizOpBound[];
 	userRole?: UserRole[];
 	roleOps?: RoleOps[];
-	postItemHistory1?: PostItemHistory1[];
 	daySumItem?: DaySumItem[];
 }
 
@@ -879,6 +866,7 @@ export interface UqExt extends Uq {
 	ExecQueueBizMain: UqAction<ParamExecQueueBizMain, ResultExecQueueBizMain>;
 	DoneDeliver: UqAction<ParamDoneDeliver, ResultDoneDeliver>;
 	CalcDaySum: UqAction<ParamCalcDaySum, ResultCalcDaySum>;
+	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
 	$poked: UqQuery<Param$poked, Result$poked>;
 	GetPostTitles: UqQuery<ParamGetPostTitles, ResultGetPostTitles>;
 	GetItemTitles: UqQuery<ParamGetItemTitles, ResultGetItemTitles>;
@@ -906,6 +894,7 @@ export interface UqExt extends Uq {
 	GetObjectItemPeriodSum: UqQuery<ParamGetObjectItemPeriodSum, ResultGetObjectItemPeriodSum>;
 	GetUserObjectItemPeriodSum: UqQuery<ParamGetUserObjectItemPeriodSum, ResultGetUserObjectItemPeriodSum>;
 	GetItemPeriodSum: UqQuery<ParamGetItemPeriodSum, ResultGetItemPeriodSum>;
+	$getMyTimezone: UqQuery<Param$getMyTimezone, Result$getMyTimezone>;
 	Object: UqID<any>;
 	ItemHistory: UqID<any>;
 	OrderDetail: UqID<any>;
@@ -932,7 +921,6 @@ export interface UqExt extends Uq {
 	BizMainBound: UqID<any>;
 	DxOrderDetail: UqIDX<any>;
 	DxOrderMain: UqIDX<any>;
-	UserTimezone: UqIDX<any>;
 	DxBizMain: UqIDX<any>;
 	DxBizOp: UqIDX<any>;
 	DxBiz: UqIDX<any>;
@@ -944,7 +932,6 @@ export interface UqExt extends Uq {
 	IxBizOpBound: UqIX<any>;
 	UserRole: UqIX<any>;
 	RoleOps: UqIX<any>;
-	PostItemHistory1: UqIX<any>;
 	DaySumItem: UqIX<any>;
 }
 

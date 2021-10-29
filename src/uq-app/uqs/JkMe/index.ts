@@ -25,7 +25,6 @@ import * as ObjectAccountHistory from './ObjectAccountHistory.ui';
 import * as BizMainBound from './BizMainBound.ui';
 import * as DxOrderDetail from './DxOrderDetail.ui';
 import * as DxOrderMain from './DxOrderMain.ui';
-import * as UserTimezone from './UserTimezone.ui';
 import * as DxBizMain from './DxBizMain.ui';
 import * as DxBizOp from './DxBizOp.ui';
 import * as DxBiz from './DxBiz.ui';
@@ -37,7 +36,6 @@ import * as MonthSumCustomer from './MonthSumCustomer.ui';
 import * as IxBizOpBound from './IxBizOpBound.ui';
 import * as UserRole from './UserRole.ui';
 import * as RoleOps from './RoleOps.ui';
-import * as PostItemHistory1 from './PostItemHistory1.ui';
 import * as DaySumItem from './DaySumItem.ui';
 	
 export function setUI(uq: Uq) {
@@ -67,7 +65,6 @@ export function setUI(uq: Uq) {
 	assign(uq, 'BizMainBound', BizMainBound);
 	assign(uq, 'DxOrderDetail', DxOrderDetail);
 	assign(uq, 'DxOrderMain', DxOrderMain);
-	assign(uq, 'UserTimezone', UserTimezone);
 	assign(uq, 'DxBizMain', DxBizMain);
 	assign(uq, 'DxBizOp', DxBizOp);
 	assign(uq, 'DxBiz', DxBiz);
@@ -79,7 +76,6 @@ export function setUI(uq: Uq) {
 	assign(uq, 'IxBizOpBound', IxBizOpBound);
 	assign(uq, 'UserRole', UserRole);
 	assign(uq, 'RoleOps', RoleOps);
-	assign(uq, 'PostItemHistory1', PostItemHistory1);
 	assign(uq, 'DaySumItem', DaySumItem);
 }
 export * from './JkMe';
