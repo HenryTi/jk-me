@@ -41,7 +41,6 @@ export class CStaffs extends CObjects {
 
     protected async internalLoadList(): Promise<void> {
         let ret = await this.uqs.JkMe.GetStaffs.query({
-            timeZone: 8,
         });
         let list = ret.ret;
         let coll:{[staff:number]: StaffRow} = {};

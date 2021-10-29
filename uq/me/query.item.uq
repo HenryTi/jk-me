@@ -35,7 +35,6 @@ RETURNS ret (
 -- post ENUM Post = Post.staffSales
 -- item ENUM Item = Item.orderAmount, Item.profitFee
 QUERY GetStaffs(
-    timeZone TINYINT,
 ) 
 RETURNS ret (
     opi ID,
@@ -47,6 +46,7 @@ RETURNS ret (
     valueLastMonth DEC(18,4),
 )
 {
+    VAR timeZone TINYINT = timezone();
     VAR d DATETIME, d0 DATE, m0 DATE, m1 DATE;
     SET d=NOW();
     SET d0=d;
@@ -82,7 +82,6 @@ RETURNS ret (
 };
 
 QUERY GetPosts(
-    timeZone TINYINT,
 ) 
 RETURNS ret (
     opi ID,
@@ -93,6 +92,7 @@ RETURNS ret (
     amountLastMonth DEC(18,4),
 )
 {
+    VAR timeZone TINYINT = timezone();
     VAR d DATE, m0 DATE, m1 DATE;
     SET d=NOW();
     SET m0=dateadd(day, DAY(d)+1, d);
@@ -158,12 +158,12 @@ QUERY GetItemSumDays ver 0.1 (
     item ENUM Item,
     date DATE,
     days INT,
-    timeZone TINYINT,
 )
 RETURNS ret (
     date DATE,
     value DEC(18,4),
 ) {
+    VAR timeZone TINYINT = timezone();
     LOG CONCAT_WS(' ', item, date, days, timeZone) SUBJECT 'GetItemSumDays';
     INTO ret SELECT gDate as date, sum(a.value) as value
         FROM ItemHistory as a
@@ -172,7 +172,7 @@ RETURNS ret (
             AND a.item=item
             AND a.id>=minuteIdFromDate(DATEADD(day, -days, date), timeZone)
             AND a.id<minuteIdFromDate(date, timeZone)
-        GROUP BY dateFromMinuteId(a.id, timeZone, 0) as gDate
+        GROUP BY MinuteIdDate(a.id, timeZone) as gDate
         ORDER BY gDate DESC;
 };
 
@@ -181,12 +181,12 @@ QUERY GetItemSumMonths(
     item ENUM Item,
     date DATE,
     months INT,
-    timeZone TINYINT,
 )
 RETURNS ret (
     date DATE,
     value DEC(18,4),
 ) {
+    VAR timeZone TINYINT = timezone();
     INTO ret SELECT gDate as date, sum(a.value) as value
         FROM ItemHistory as a
             JOIN UserSuperviseItem as b ON a.item=b.xi
@@ -194,7 +194,7 @@ RETURNS ret (
             AND a.item=item
             AND a.id>=minuteIdFromDate(DATEADD(month, -months, date), timeZone)
             AND a.id<minuteIdFromDate(date, timeZone)
-        GROUP BY dateFromMinuteId(a.id, timeZone, 1) as gDate
+        GROUP BY MinuteIdMonth(a.id, timeZone) as gDate
         ORDER BY gDate DESC;
 };
 
@@ -203,7 +203,6 @@ QUERY GetItemHistory (
     item ENUM Item,
     from DATE,
     to DATE,
-    timeZone TINYINT,
 )
 PAGE (
     id ID DESC,                 -- 分钟序id
@@ -213,6 +212,7 @@ PAGE (
     value DEC(18,4),            -- 数值
     memo CHAR(100),             -- 文本ID
 ) {
+    VAR timeZone TINYINT = timezone();
     PAGE SELECT a.id, a.biz, a.bizOp, a.item, a.value, idtext(a.memo) as memo
         FROM ItemHistory as a
             JOIN UserSuperviseItem as b ON a.item=b.xi

@@ -18,7 +18,6 @@ export class CObjectPortal extends CPortal {
             object: this.object,
 			from,
 			to,
-            timeZone: env.timeZone,
 		});
         return ret;
     }

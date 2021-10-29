@@ -64,13 +64,11 @@ export class CSupervise extends CUqBase {
 				item, 
 				date, 
 				days: 30,
-				timeZone: env.timeZone,
 			}),
 			this.uqs.JkMe.GetItemSumMonths.query({
 				item, 
 				date, 
 				months: 12,
-				timeZone: env.timeZone,
 			}),
 		]);
 		this.itemSumDays = itemSumDays.ret;
@@ -87,7 +85,6 @@ export class CSupervise extends CUqBase {
 				item, 
 				date: to, 
 				days,
-				timeZone: env.timeZone,
 			})
 		]);
 		this.itemSumDays = itemSumDays.ret;
@@ -100,7 +97,6 @@ export class CSupervise extends CUqBase {
 			item:this.item, 
 			from, 
 			to,
-			timeZone: env.timeZone,
 		});
 		this.openVPage(VItemHistory);
 	}

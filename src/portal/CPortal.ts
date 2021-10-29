@@ -53,7 +53,6 @@ export class CPortal extends  CUqBase {
         let ret = await this.uqs.JkMe.GetUserObjectItemPeriodSum.query({
 			from,
 			to,
-            timeZone: env.timeZone,
 		});
         return ret;
     }
@@ -100,12 +99,10 @@ export class CPortal extends  CUqBase {
         let {from, to} = this.period;
         if (fromDate) from = fromDate;
         if (toDate) to = toDate;
-        let {timeZone} = env;
 		let ret = await this.uqs.JkMe.GetObjectItemHistory.query({
 			objectPostItem, 
 			from,
 			to,
-            timeZone,
 		});
         runInAction(() => {
             this.history = ret.ret;
@@ -123,13 +120,11 @@ export class CPortal extends  CUqBase {
         let {from, to} = this.period;
         if (fromDate) from = fromDate;
         if (toDate) to = toDate;
-        let {timeZone} = env;
 		let ret = await this.uqs.JkMe.GetObjectItemPeriodHistory.query({
 			objectPostItem, 
 			from,
 			to,
 			period: sumPeriod,
-            timeZone,
 		});
         runInAction(() => {
             this.periodHistory = ret.ret;

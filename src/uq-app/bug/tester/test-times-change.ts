@@ -26,7 +26,6 @@ export const testTimesChange = {
 			field: 'onsite',
 			id,
 			log: 'month',
-			timeZone: -5,
 			page: {
 				start: undefined,
 				end: new Date(2021,0,1).getTime(),

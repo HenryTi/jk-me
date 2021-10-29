@@ -29,7 +29,6 @@ QUERY GetUserObjectItemPeriodSum ver 0.1
 (
     from DATE,
     to DATE,
-    timeZone TINYINT,
 )
 RETURNS ret (
     id ID,
@@ -38,6 +37,7 @@ RETURNS ret (
     item ENUM Item,
     value DEC(18,4)
 ) {
+    VAR timeZone TINYINT = timezone();
     INTO ret SELECT a.id, a.object, a.post, a.item,
         IFNULL(
             (SELECT SUM(t.value)
@@ -60,7 +60,6 @@ AUTH AuthCheck
     object ID Object,
     from DATE,
     to DATE,
-    timeZone TINYINT,
 )
 RETURNS ret (
     id ID,
@@ -69,6 +68,7 @@ RETURNS ret (
     item ENUM Item,
     value DEC(18,4)
 ) {
+    VAR timeZone TINYINT = timezone();
     INTO ret SELECT a.id, a.object, a.post, a.item,
         IFNULL(
             (SELECT SUM(t.value)
@@ -92,7 +92,6 @@ Auth AuthCheck
     objectPostItem ID ObjectPostItem,
     from DATE,
     to DATE,
-    timeZone TINYINT,
 )
 RETURNS ret (
     minuteId ID,
@@ -101,6 +100,7 @@ RETURNS ret (
     value DEC(18,4),
     memo CHAR(200)
 ) {
+    VAR timeZone TINYINT = timezone();
     INTO ret SELECT a.id as minuteId, d.biz, a.bizOp, a.value, IDTEXT(e.memo) as memo
         FROM OPIHistory AS a
             JOIN ObjectPostItem as b ON a.opi=b.id
@@ -122,12 +122,12 @@ Auth AuthCheck
     from DATE,
     to DATE,
     period TINYINT,         -- 0: day, 1: month
-    timeZone TINYINT,
 )
 RETURNS ret (
     date Date,
     value DEC(18,4)
 ) {
+    VAR timeZone TINYINT = timezone();
     INTO ret SELECT date, SUM(a.value) as value
         FROM OPIHistory AS a
             JOIN ObjectPostItem as b ON a.opi=b.id
@@ -135,7 +135,7 @@ RETURNS ret (
         WHERE a.opi=objectPostItem
             AND a.id >= minuteIdFromDate(from, timeZone)
             AND a.id < minuteIdFromDate(to, timeZone)
-        GROUP BY dateFromMinuteId(a.id, timeZone, period) as date
+        GROUP BY MinuteIdPeriod(a.id, timeZone, period) as date
         ORDER BY date DESC;
         -- c.ix=$user AND 
 };
