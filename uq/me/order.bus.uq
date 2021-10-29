@@ -163,6 +163,7 @@ PROC ProcQueueBizMain(
     }
 };
 
+-- 订单ready后放入DxBizMain / DxBiz
 PROC ProcSetOrderReady(
     order ID,
     orderReady ENUM OrderReady,

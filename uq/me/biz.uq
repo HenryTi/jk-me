@@ -36,6 +36,7 @@ IDX DxBizOp (
     INDEX biz_id(biz),
 );
 
+-- 标记BizMainBound是否已经处理,bound = 1表示已经处理；
 IX IxBizOpBound (
     ix,                         -- bizOp id
     xi BizMainBound,
