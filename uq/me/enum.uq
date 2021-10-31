@@ -12,6 +12,8 @@ ENUM Item (
     amountFee                   = 1120,             -- 订单销售额提成
     
     customerPoint               = 2010,             -- 客户普通积分
+
+    pickup                      = 3010,             -- 拣货数量，value是数量
 );
 
 -- 业务岗位
@@ -27,6 +29,8 @@ ENUM Post (
     distributor                 = 7500,
     distributorSales            = 7501,
     customer                    = 8010,
+
+    staffPicker                 = 1200,
 );
 
 ENUM EnumBizAction (
@@ -34,6 +38,8 @@ ENUM EnumBizAction (
 	orderDeliverDone            = 101, 
 	orderReceiveDone            = 102,
 	orderReturn                 = 103,
+
+	pickupDone                  = 104,
 );
 
 ENUM ReadyStates (
@@ -64,7 +70,8 @@ VALUES
 (Item.profitFee, '毛利提成', null, '元', 2),
 (Item.amountFee, '销售额提成', null, '元', 2),
 (Item.couponFee, '发券提成', null, '元', 2),
-(Item.customerPoint, '客户积分', null, '点', 2)
+(Item.customerPoint, '客户积分', null, '点', 2),
+(Item.pickup, '拣货瓶数', null, '个', 0)
 ;
 
 ID PostTitle ver 0.2 CONST (
@@ -80,7 +87,8 @@ VALUES
 (Post.managerIT, 'IT总监', null),
 (Post.agent, '轻代理', null),
 (Post.agentSales, '轻代理销售员', null),
-(Post.customer, '顾客', null)
+(Post.customer, '顾客', null),
+(Post.staffPicker, '拣货员', null)
 ;
 
 -- OPIBooking
@@ -105,6 +113,9 @@ VALUES
 -- EnumOrderAction.receiveDone
 (EnumBizAction.orderReceiveDone, Post.staffSales, Item.profitFee, Item.orderProfit, 4, TEXTID('收款后毛利提成')),
 (EnumBizAction.orderReceiveDone, Post.staffSales, Item.couponFee, Item.orderProfit, 1, TEXTID('收款后发券提成')),
+
+-- 
+(EnumBizAction.pickupDone, Post.staffPicker, Item.pickup, Item.pickup, 10, TEXTID('拣货计件工资')),
 ;
 
 QUERY GetItemTitles()
