@@ -18,11 +18,11 @@ export class VPostItemHistory extends VPage<CPortal> {
     }
 
     private renderItem = (history: ReturnGetObjectItemHistoryRet, index: number) => {
-        let {itemTitles} = this.controller.cApp;
+        let {itemTitles, timezone} = this.controller.cApp;
         let {minuteId, value, biz, bizOp, memo} = history;
         let {item} = this.controller.itemPeriodSum;
         let {unit, fixed} = itemTitles[item];
-        let d = dateFromMinuteId(minuteId);
+        let d = dateFromMinuteId(minuteId, timezone);
         let left = <div className="text-muted small w-min-4c me-2">
             <VDate date={d} hideSameYear={true} />
         </div>;

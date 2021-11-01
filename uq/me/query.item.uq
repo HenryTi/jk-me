@@ -121,17 +121,6 @@ RETURNS ret (
                 ON c.object=a.id AND c.post=b.post;
 };
 
-QUERY GetUserSuperviseObject()
-RETURNS ret (
-    object ID,
-    relation ENUM EnumUserObjectRelation,
-) {
-    INTO ret SELECT a.xi as object, a.relation
-        FROM UserObject as a
-        WHERE a.ix=$user 
-            AND a.relation in (EnumUserObjectRelation.other, EnumUserObjectRelation.group);
-};
-
 QUERY GetUserSuperviseItem() 
 RETURNS ret (
     item ENUM Item,
@@ -213,9 +202,10 @@ PAGE (
     memo CHAR(100),             -- 文本ID
 ) {
     VAR timeZone TINYINT = timezone();
-    PAGE SELECT a.id, a.biz, a.bizOp, a.item, a.value, idtext(a.memo) as memo
+    PAGE SELECT a.id, c.biz, a.bizOp, a.item, a.value, idtext(a.memo) as memo
         FROM ItemHistory as a
             JOIN UserSuperviseItem as b ON a.item=b.xi
+            JOIN DxBizOp as c ON c.id=a.bizOp
         WHERE b.ix=$user
             AND a.item=item
             AND a.id<$pageStart

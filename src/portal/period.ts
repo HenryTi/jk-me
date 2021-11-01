@@ -1,4 +1,5 @@
 import { action, computed, makeObservable, observable } from "mobx";
+import { env } from "tonva-react";
 import { Item, Post, ReturnGetObjectItemPeriodSumRet } from "uq-app/uqs/JkMe";
 
 export enum EnumPeriod {day = 0, month = 1, week = 2, year = 3}
@@ -18,12 +19,19 @@ export interface PostPeriodSum {
 }
 
 export abstract class Period {
-    constructor() {
-        this.to = new Date();
-        this.to.setHours(0, 0, 0, 0);
+    private timezone: number;
+    constructor(timezone: number) {
+        this.timezone = timezone;
+        this.to = this.newDate();
         this.from = new Date(this.to);
         this.init();
         this.initObservable();
+    }
+    private newDate():Date {
+        let ret = new Date();
+        ret.setHours(ret.getHours() - env.timeZone + this.timezone)
+        ret.setHours(0, 0, 0, 0);
+        return ret;
     }
     protected initObservable() {
         makeObservable(this, {
@@ -41,9 +49,7 @@ export abstract class Period {
     abstract prev(): void;
     abstract next(): void;
     get hasNext(): boolean {
-        let date = new Date();
-        date.setHours(0, 0, 0, 0);
-        //date.setDate(date.getDate()+1);
+        let date = this.newDate();
         return this.to <= date;
     }
     abstract render(): string;
@@ -122,13 +128,13 @@ class YearPeriod extends Period {
     render(): string {return `${this.from.getFullYear()}年`}
 }
 
-export function createPeriod(periodType: EnumPeriod): Period {
+export function createPeriod(periodType: EnumPeriod, timezone:number): Period {
     let period: Period;
     switch (periodType) {
-        case EnumPeriod.day: period = new DayPeriod(); break;
-        case EnumPeriod.week: period = new WeekPeriod(); break;
-        case EnumPeriod.month: period = new MonthPeriod(); break;
-        case EnumPeriod.year: period = new YearPeriod(); break;
+        case EnumPeriod.day: period = new DayPeriod(timezone); break;
+        case EnumPeriod.week: period = new WeekPeriod(timezone); break;
+        case EnumPeriod.month: period = new MonthPeriod(timezone); break;
+        case EnumPeriod.year: period = new YearPeriod(timezone); break;
     }
     return period;
 }

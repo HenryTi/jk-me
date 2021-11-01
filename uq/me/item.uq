@@ -55,9 +55,9 @@ ID ObjectPostItem (
 ID ItemHistory ver 0.1 MINUTEID (
     -- 26位表达从2021开始的分钟，后面跟16位的序列号。如果重了，就顺序往后加。
     id,                         -- 分钟序id
-    KEY biz ID,                 -- 原始业务凭证id
+    KEY bizOp ID,               -- 业务操作id。
     KEY item ENUM Item,         -- 科目
-    bizOp ID,                   -- 业务操作id。
+    -- biz ID,                  -- 原始业务凭证id
     value DEC(18,4),            -- 数值
     memo INT,                   -- 文本ID
     INDEX item_id(item, id) UNIQUE,
@@ -68,9 +68,9 @@ ID OPIHistory MINUTEID (
     id,
     opi ID ObjectPostItem,
     itemHistory ID,
-    bizOp ID,
+    -- bizOp ID,
     value DEC(18,4),
-    booking ID PostBound,      -- 记账动作
+    booking ID OPIBooking,      -- 记账动作
     INDEX opi_id(opi, id),
 );
 
@@ -95,15 +95,9 @@ ID ObjectAccountHistory MINUTEID (
     INDEX account_id(objectAccount, id),
 );
 
-ENUM EnumUserObjectRelation (
-    self = 0,                   -- 自己的数据
-    other = 1,                  -- 别人的数据
-    group = 2,                  -- 自己管理的group的数据
-);
 IX UserObject (
     IX user,
     XI ID Object INDEX,
-    relation ENUM EnumUserObjectRelation DEFAULT 0,
 );
 
 IX UserSuperviseItem (

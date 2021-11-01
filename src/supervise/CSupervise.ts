@@ -5,7 +5,6 @@ import { ReturnGetObjectsRet
 	, ReturnGetAgentsRet
 	, ReturnGetStaffsRet
 	, ReturnGetPostsRet
-	, ReturnGetUserSuperviseObjectRet
 	, ReturnGetUserSuperviseItemRet
 	, ReturnGetCustomerSumByMonthRet, ReturnGetItemHistory$page
 	, ReturnGetItemSumDaysRet, ReturnGetItemSumMonthsRet
@@ -28,7 +27,6 @@ export class CSupervise extends CUqBase {
 	itemSumMonths: ReturnGetItemSumMonthsRet[];
 	pageItemHistory: PageItemHistory;
 	monthSum: MonthSum<any>;
-	superviseObjects: ReturnGetUserSuperviseObjectRet[];
 	superviseItems: ReturnGetUserSuperviseItemRet[];
 	objects: ReturnGetObjectsRet[];
 	groups: ReturnGetGroupsRet[];
@@ -46,11 +44,9 @@ export class CSupervise extends CUqBase {
 	load = async() => {
 		this.cObjectsArr = initCObjects(this);
 		let {JkMe} = this.uqs;
-		let [superviseObjects, superviseItems] = await Promise.all([
-			JkMe.GetUserSuperviseObject.query({}),
+		let [superviseItems] = await Promise.all([
 			JkMe.GetUserSuperviseItem.query({}),
 		]);
-		this.superviseObjects = superviseObjects.ret;
 		this.superviseItems = superviseItems.ret;
 	}
 

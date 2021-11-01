@@ -11,23 +11,17 @@ const fields = {
 		"isKey": false,
 		"label": "Id"
 	} as FieldItemId,
-	biz: {
-		"name": "biz",
+	bizOp: {
+		"name": "bizOp",
 		"type": "id",
 		"isKey": true,
-		"label": "Biz"
+		"label": "BizOp"
 	} as FieldItemId,
 	item: {
 		"name": "item",
 		"isKey": true,
 		"label": "Item"
 	} as undefined,
-	bizOp: {
-		"name": "bizOp",
-		"type": "id",
-		"isKey": false,
-		"label": "BizOp"
-	} as FieldItemId,
 	value: {
 		"name": "value",
 		"type": "number",
@@ -46,7 +40,7 @@ const fields = {
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.biz, fields.item, fields.bizOp, fields.value, fields.memo, 
+	fields.bizOp, fields.item, fields.value, fields.memo, 
 ];
 
 export const ui: UI = {

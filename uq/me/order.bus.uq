@@ -37,7 +37,7 @@ ACCEPT [deliver-done] {
 	FOR detail {
 		WITH DxOrderDetail ID=orderDetail SET deliverDone += value;
         WITH DxBizOp as a ID=id 
-            SET a.action=EnumBizAction.orderDeliverDone, a.biz=orderDetail, a.value=value, a.stamp=$stamp;
+            SET a.action=EnumBizOpType.orderDeliverDone, a.biz=orderDetail, a.value=value, a.stamp=$stamp;
         VAR queueId ID = ID(QueueBizOp new, id);
 	}
     SCHEDULE ExecQueueBizOp DELAY 1;
@@ -48,7 +48,7 @@ ACCEPT [receive-done] {
 	FOR detail {
 		WITH DxOrderDetail ID=orderDetail SET receiveDone+=value;
         WITH DxBizOp as a ID=id 
-            SET a.action=EnumBizAction.orderReceiveDone, a.biz=orderDetail, a.value=value, a.stamp=$stamp;
+            SET a.type=EnumBizOpType.orderReceiveDone, a.biz=orderDetail, a.value=value, a.stamp=$stamp;
         VAR queueId ID = ID(QueueBizOp new, id);
 	}
     SCHEDULE ExecQueueBizOp DELAY 1;
@@ -57,7 +57,7 @@ ACCEPT [return] {
 	FOR detail {
 		WITH DxOrderDetail ID=orderDetail SET return+=quantity;
         WITH DxBizOp as a ID=id 
-            SET a.action=EnumBizAction.orderReturn, a.biz=orderDetail, a.value=quantity, a.stamp=$stamp;
+            SET a.type=EnumBizOpType.orderReturn, a.biz=orderDetail, a.value=quantity, a.stamp=$stamp;
         VAR queueId ID = ID(QueueBizOp new, id);
 	}
     SCHEDULE ExecQueueBizOp DELAY 1;

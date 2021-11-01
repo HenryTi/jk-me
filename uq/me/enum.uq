@@ -16,8 +16,6 @@ ENUM Item (
 
 -- 业务岗位
 ENUM Post (
-    none                        = 0,
-
     staff                       = 1010,
     staffSales                  = 1100,
     manager                     = 2010,
@@ -29,8 +27,7 @@ ENUM Post (
     customer                    = 8010,
 );
 
-ENUM EnumBizAction (
-    none                        = 0,
+ENUM EnumBizOpType (
 	orderDeliverDone            = 101, 
 	orderReceiveDone            = 102,
 	orderReturn                 = 103,
@@ -84,27 +81,27 @@ VALUES
 ;
 
 -- OPIBooking
-ID PostBound ver 0.5 CONST (
+ID OPIBooking ver 0.5 CONST (
     id small,
-    action ENUM EnumBizAction,
+    bizOpType ENUM EnumBizOpType,
     post ENUM Post,
     postItem ENUM Item,                 -- item to OPIHistory
     item ENUM Item,                     -- item to ItemHistory
     ratio DEC(6,2) DEFAULT 100,         -- 百分比，从itemHistory的value，折算到 OPIHistory, 未来有可能是分段公式
     memo INT,                           -- 文本id
-    INDEX action_post(action, post),
+    INDEX bizOpType_post(bizOpType, post),
 )
-+ (action, post, postItem, item, ratio, memo)
++ (bizOpType, post, postItem, item, ratio, memo)
 VALUES
 -- EnumOrderAction.orderDeliverDone
-(EnumBizAction.orderDeliverDone, Post.staffSales, Item.orderAmount, Item.orderAmount, null, TEXTID('销售额')),
-(EnumBizAction.orderDeliverDone, Post.staffSales, Item.profitFee, Item.orderProfit, 4, TEXTID('发货后毛利提成')),
-(EnumBizAction.orderDeliverDone, Post.staffSales, Item.couponFee, Item.orderProfit, 1, TEXTID('发货后发券提成')),
-(EnumBizAction.orderDeliverDone, Post.managerIT, Item.amountFee, Item.orderAmount, 0.1, TEXTID('销售额提成')),
+(EnumBizOpType.orderDeliverDone, Post.staffSales, Item.orderAmount, Item.orderAmount, null, TEXTID('销售额')),
+(EnumBizOpType.orderDeliverDone, Post.staffSales, Item.profitFee, Item.orderProfit, 4, TEXTID('发货后毛利提成')),
+(EnumBizOpType.orderDeliverDone, Post.staffSales, Item.couponFee, Item.orderProfit, 1, TEXTID('发货后发券提成')),
+(EnumBizOpType.orderDeliverDone, Post.managerIT, Item.amountFee, Item.orderAmount, 0.1, TEXTID('销售额提成')),
 
 -- EnumOrderAction.receiveDone
-(EnumBizAction.orderReceiveDone, Post.staffSales, Item.profitFee, Item.orderProfit, 4, TEXTID('收款后毛利提成')),
-(EnumBizAction.orderReceiveDone, Post.staffSales, Item.couponFee, Item.orderProfit, 1, TEXTID('收款后发券提成')),
+(EnumBizOpType.orderReceiveDone, Post.staffSales, Item.profitFee, Item.orderProfit, 4, TEXTID('收款后毛利提成')),
+(EnumBizOpType.orderReceiveDone, Post.staffSales, Item.couponFee, Item.orderProfit, 1, TEXTID('收款后发券提成')),
 ;
 
 QUERY GetItemTitles()

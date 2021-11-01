@@ -6,10 +6,10 @@ export class VBizOpDetail extends VPage<CPortal> {
     content() {
         let {bizOpDetail} = this.controller;
         let {minuteId, bizOp, memo, value} = bizOpDetail.item;
-        let {itemTitles} = this.controller.cApp;
+        let {itemTitles, timezone} = this.controller.cApp;
         let {item} = this.controller.itemPeriodSum;
         let {unit, fixed} = itemTitles[item];
-        let d = dateFromMinuteId(minuteId);
+        let d = dateFromMinuteId(minuteId, timezone);
         return <div className="p-3">
             <div>业务编号：{bizOp}</div>
             <div>发生时间：<EasyTime date={d} timeZone={-5} /></div>

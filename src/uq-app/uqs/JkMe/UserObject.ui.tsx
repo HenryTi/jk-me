@@ -17,16 +17,11 @@ const fields = {
 		"isKey": false,
 		"label": "Xi"
 	} as FieldItemId,
-	relation: {
-		"name": "relation",
-		"isKey": false,
-		"label": "Relation"
-	} as undefined,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.xi, fields.relation, 
+	fields.xi, 
 ];
 
 export const ui: UI = {

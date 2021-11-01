@@ -50,16 +50,11 @@ const fields = {
 		"widget": "updown",
 		"label": "Stamp"
 	} as FieldItemInt,
-	$create: {
-		"name": "$create",
-		"isKey": false,
-		"label": "$create"
-	} as undefined,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.no, fields.webUser, fields.customerAccount, fields.currency, fields.sumAmount, fields.stamp, fields.$create, 
+	fields.no, fields.webUser, fields.customerAccount, fields.currency, fields.sumAmount, fields.stamp, 
 ];
 
 export const ui: UI = {

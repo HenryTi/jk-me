@@ -1,4 +1,4 @@
-//=== UqApp builder created on Thu Oct 28 2021 17:11:40 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Sun Oct 31 2021 23:39:25 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 
@@ -21,7 +21,6 @@ export enum Item {
 }
 
 export enum Post {
-	none = 0,
 	staff = 1010,
 	staffSales = 1100,
 	manager = 2010,
@@ -33,22 +32,9 @@ export enum Post {
 	customer = 8010
 }
 
-export enum EnumUserObjectRelation {
-	self = 0,
-	other = 1,
-	group = 2
-}
-
 export enum ReadyStates {
 	costNone = 1,
 	cost = 2
-}
-
-export enum EnumBizAction {
-	none = 0,
-	orderDeliverDone = 101,
-	orderReceiveDone = 102,
-	orderReturn = 103
 }
 
 export enum OrderReady {
@@ -77,6 +63,12 @@ export enum EnumObjectType {
 
 export enum EnumAccount {
 	commission = 10
+}
+
+export enum EnumBizOpType {
+	orderDeliverDone = 101,
+	orderReceiveDone = 102,
+	orderReturn = 103
 }
 
 export interface Tuid$sheet {
@@ -212,16 +204,6 @@ export interface ReturnGetUserSuperviseItemRet {
 }
 export interface ResultGetUserSuperviseItem {
 	ret: ReturnGetUserSuperviseItemRet[];
-}
-
-export interface ParamGetUserSuperviseObject {
-}
-export interface ReturnGetUserSuperviseObjectRet {
-	object: number;
-	relation: any;
-}
-export interface ResultGetUserSuperviseObject {
-	ret: ReturnGetUserSuperviseObjectRet[];
 }
 
 export interface ParamGetItemSumMonths {
@@ -513,6 +495,7 @@ export interface Param$getMyTimezone {
 }
 export interface Return$getMyTimezoneRet {
 	timezone: number;
+	unitTimeZone: number;
 }
 export interface Result$getMyTimezone {
 	ret: Return$getMyTimezoneRet[];
@@ -525,9 +508,8 @@ export interface Object {
 
 export interface ItemHistory {
 	id?: number;
-	biz: number;
-	item: any;
 	bizOp: number;
+	item: any;
 	value: number;
 	memo: number;
 }
@@ -550,7 +532,6 @@ export interface OrderMain {
 	currency: number;
 	sumAmount: number;
 	stamp: number;
-	$create?: any;
 }
 
 export interface ItemTitle {
@@ -609,16 +590,6 @@ export interface ObjectAgent {
 	agent: number;
 }
 
-export interface PostBound {
-	id?: number;
-	action: any;
-	post: any;
-	postItem: any;
-	item: any;
-	ratio: number;
-	memo: number;
-}
-
 export interface QueueBizOp {
 	id?: number;
 	bizOp: number;
@@ -644,7 +615,6 @@ export interface DeliverMain {
 	warehouse: number;
 	cutOffMain: number;
 	trayNumber: number;
-	$create?: any;
 }
 
 export interface Role {
@@ -657,7 +627,6 @@ export interface OPIHistory {
 	id?: number;
 	opi: number;
 	itemHistory: number;
-	bizOp: number;
 	value: number;
 	booking: number;
 }
@@ -686,6 +655,16 @@ export interface BizMainBound {
 	to: number;
 }
 
+export interface OPIBooking {
+	id?: number;
+	bizOpType: any;
+	post: any;
+	postItem: any;
+	item: any;
+	ratio: number;
+	memo: number;
+}
+
 export interface DxOrderDetail {
 	id: number;
 	deliverDone?: number;
@@ -709,7 +688,7 @@ export interface DxBizMain {
 
 export interface DxBizOp {
 	id: number;
-	action?: any;
+	type?: any;
 	biz?: number;
 	value?: number;
 	done?: number;
@@ -746,7 +725,7 @@ export interface ActParamDxBizMain {
 
 export interface ActParamDxBizOp {
 	id: number|IDXValue;
-	action?: any|IDXValue;
+	type?: any|IDXValue;
 	biz?: number|IDXValue;
 	value?: number|IDXValue;
 	done?: number|IDXValue;
@@ -763,7 +742,6 @@ export interface ActParamDxBiz {
 export interface UserObject {
 	ix: number;
 	xi: number;
-	relation: any;
 }
 
 export interface GroupObject {
@@ -827,7 +805,6 @@ export interface ParamActs {
 	group?: Group[];
 	objectDistributor?: ObjectDistributor[];
 	objectAgent?: ObjectAgent[];
-	postBound?: PostBound[];
 	queueBizOp?: QueueBizOp[];
 	queueBizMain?: QueueBizMain[];
 	deliverDetail?: DeliverDetail[];
@@ -837,6 +814,7 @@ export interface ParamActs {
 	objectAccount?: ObjectAccount[];
 	objectAccountHistory?: ObjectAccountHistory[];
 	bizMainBound?: BizMainBound[];
+	oPIBooking?: OPIBooking[];
 	dxOrderDetail?: ActParamDxOrderDetail[];
 	dxOrderMain?: ActParamDxOrderMain[];
 	dxBizMain?: ActParamDxBizMain[];
@@ -872,7 +850,6 @@ export interface UqExt extends Uq {
 	GetItemTitles: UqQuery<ParamGetItemTitles, ResultGetItemTitles>;
 	UserObjectPostItem: UqQuery<ParamUserObjectPostItem, ResultUserObjectPostItem>;
 	GetUserSuperviseItem: UqQuery<ParamGetUserSuperviseItem, ResultGetUserSuperviseItem>;
-	GetUserSuperviseObject: UqQuery<ParamGetUserSuperviseObject, ResultGetUserSuperviseObject>;
 	GetItemSumMonths: UqQuery<ParamGetItemSumMonths, ResultGetItemSumMonths>;
 	GetItemSumDays: UqQuery<ParamGetItemSumDays, ResultGetItemSumDays>;
 	GetItemHistory: UqQuery<ParamGetItemHistory, ResultGetItemHistory>;
@@ -909,7 +886,6 @@ export interface UqExt extends Uq {
 	Group: UqID<any>;
 	ObjectDistributor: UqID<any>;
 	ObjectAgent: UqID<any>;
-	PostBound: UqID<any>;
 	QueueBizOp: UqID<any>;
 	QueueBizMain: UqID<any>;
 	DeliverDetail: UqID<any>;
@@ -919,6 +895,7 @@ export interface UqExt extends Uq {
 	ObjectAccount: UqID<any>;
 	ObjectAccountHistory: UqID<any>;
 	BizMainBound: UqID<any>;
+	OPIBooking: UqID<any>;
 	DxOrderDetail: UqIDX<any>;
 	DxOrderMain: UqIDX<any>;
 	DxBizMain: UqIDX<any>;

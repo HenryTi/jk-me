@@ -19,10 +19,10 @@ export class VItemHistory extends VPage<CSupervise> {
 
     private renderItem = (row: ReturnGetItemHistory$page, index: number) => {
         let {cApp, item} = this.controller;
-        let {itemTitles} = cApp;
+        let {itemTitles, timezone} = cApp;
         let {unit, fixed} = itemTitles[item];
         let {id, biz, bizOp, value, memo} = row;
-        let date = dateFromMinuteId(id);
+        let date = dateFromMinuteId(id, timezone);
         let left = <div className="small text-muted w-min-6c">
             <VDate date={date} hideSameYear={true} />
         </div>; 

@@ -2,7 +2,7 @@
 import { Res, setRes, TFunc, UI, uqStringify } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
-import { PostBound } from "./JkMe";
+import { OPIBooking } from "./JkMe";
 
 /*--fields--*/
 const fields = {
@@ -12,10 +12,10 @@ const fields = {
 		"isKey": false,
 		"label": "Id"
 	} as FieldItemId,
-	action: {
-		"name": "action",
+	bizOpType: {
+		"name": "bizOpType",
 		"isKey": false,
-		"label": "Action"
+		"label": "BizOpType"
 	} as undefined,
 	post: {
 		"name": "post",
@@ -50,11 +50,11 @@ const fields = {
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.action, fields.post, fields.postItem, fields.item, fields.ratio, fields.memo, 
+	fields.bizOpType, fields.post, fields.postItem, fields.item, fields.ratio, fields.memo, 
 ];
 
 export const ui: UI = {
-	label: "PostBound",
+	label: "OPIBooking",
 	fieldArr,
 	fields,
 };
@@ -72,6 +72,6 @@ export const t:TFunc = (str:string|JSX.Element): string|JSX.Element => {
 	return res[str as string] ?? str;
 }
 
-export function render(item: PostBound):JSX.Element {
+export function render(item: OPIBooking):JSX.Element {
 	return <>{uqStringify(item)}</>;
 };

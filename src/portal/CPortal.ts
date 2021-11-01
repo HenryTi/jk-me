@@ -41,7 +41,7 @@ export class CPortal extends  CUqBase {
     }
 
     internalSetPeriod(periodType: EnumPeriod) {
-        this.period = createPeriod(periodType);
+        this.period = createPeriod(periodType, this.cApp.timezone);
     }
 
     async setPeriod(periodType: EnumPeriod) {
