@@ -4,7 +4,7 @@ ACCEPT [deliver-done] {
 	FOR detail {
 		WITH DxOrderDetail ID=biz SET deliverDone += value;
         WITH DxBizOp as a ID=id 
-            SET a.action=EnumBizAction.orderDeliverDone, a.biz=biz, a.value=value, a.stamp=$stamp;
+            SET a.type=EnumBizOpType.orderDeliverDone, a.biz=biz, a.value=value, a.stamp=$stamp;
         VAR queueId ID = ID(QueueBizOp new, id);
 	}
     SCHEDULE ExecQueueBizOp DELAY 1;
@@ -20,7 +20,7 @@ ACCEPT [pickup-done] {
         WITH DxBiz ID = id set main = mainId;
 
         WITH DxBizOp as a ID = id
-            SET a.action = EnumBizAction.pickupDone, a.biz = id, a.value = value, a.stamp = $stamp;
+            SET a.type = EnumBizOpType.pickupDone, a.biz = id, a.value = value, a.stamp = $stamp;
         VAR queueId ID = ID(QueueBizOp new, id);
         -- TODO: 还需要改造ProcWriteItemHistory，使之能调用ProcItemHistory以便写ItemHistory
     }

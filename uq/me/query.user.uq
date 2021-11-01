@@ -8,7 +8,7 @@ RETURNS ret (
     INTO ret SELECT a.id, a.object, a.post, a.item
         FROM ObjectPostItem as a
             JOIN UserObject as b ON a.object=b.xi
-        WHERE b.ix=$user AND b.relation=EnumUserObjectRelation.self;
+        WHERE b.ix=$user;
 };
 
 QUERY GetObjectPostItem(
@@ -101,12 +101,13 @@ RETURNS ret (
     memo CHAR(200)
 ) {
     VAR timeZone TINYINT = timezone();
-    INTO ret SELECT a.id as minuteId, d.biz, a.bizOp, a.value, IDTEXT(e.memo) as memo
+    INTO ret SELECT a.id as minuteId, f.biz, d.bizOp, a.value, IDTEXT(e.memo) as memo
         FROM OPIHistory AS a
             JOIN ObjectPostItem as b ON a.opi=b.id
             -- JOIN UserObject as c ON b.object=c.xi
             JOIN ItemHistory as d ON a.itemHistory=d.id
-            LEFT JOIN PostBound as e ON a.booking=e.id
+            LEFT JOIN OPIBooking as e ON a.booking=e.id
+            JOIN DxBizOp as f ON f.id=d.bizOp
         WHERE a.opi=objectPostItem
             AND a.id >= minuteIdFromDate(from, timeZone)
             AND a.id < minuteIdFromDate(to, timeZone)

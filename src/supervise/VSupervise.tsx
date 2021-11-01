@@ -1,8 +1,6 @@
 import { FA, List, LMR, VPage } from "tonva-react";
 import { EnumRoleOp
-    , EnumUserObjectRelation
-    , EnumObjectType
-    , ReturnGetUserSuperviseItemRet, ReturnGetUserSuperviseObjectRet } from "uq-app/uqs/JkMe";
+    , ReturnGetUserSuperviseItemRet } from "uq-app/uqs/JkMe";
 import { Item  } from "uq-app/uqs/JkMe/JkMe";
 import { CSupervise } from "./CSupervise";
 
@@ -51,7 +49,7 @@ export class VSupervise extends VPage<CSupervise> {
                 action: this.controller.showCustomerSumByMonth,
             },
         ];
-        let {superviseObjects, superviseItems} = this.controller;
+        let {superviseItems} = this.controller;
         return <>
             <div className="mb-4">
                 <div className="my-2 mx-1 border border-info rounded">
@@ -106,7 +104,6 @@ export class VSupervise extends VPage<CSupervise> {
         [EnumRoleOp.test]: this.renderOpTest,
     }
 
-    superviseObjects: ReturnGetUserSuperviseObjectRet[];
     superviseItems: ReturnGetUserSuperviseItemRet[];
 
     header() {return '团队'}
@@ -121,26 +118,6 @@ export class VSupervise extends VPage<CSupervise> {
                 })
             }
         </div>;
-    }
-
-    private renderSuperviseObject = (row: ReturnGetUserSuperviseObjectRet, index: number) => {
-        let {object, relation} = row;
-        let content: any;
-        switch (Number(relation) as EnumUserObjectRelation) {
-            case EnumUserObjectRelation.other:
-                content = <>{object}</>;
-                break;
-            case EnumUserObjectRelation.group:
-                content = this.controller.uqs.JkMe.IDLocalRender(object);
-                break;
-        }
-        return <div className="px-3 py-2">
-            {content}
-        </div>;
-    }
-    
-    private onClickSuperviseObject = (row: ReturnGetUserSuperviseObjectRet) => {
-        alert(JSON.stringify(row));
     }
 
     private renderSuperviseItem = (row: ReturnGetUserSuperviseItemRet, index: number) => {
