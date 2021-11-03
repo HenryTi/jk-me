@@ -1,4 +1,4 @@
-BUS JkOrderBus ver 0.7 from 百灵威系统工程部/[jk-order]
+BUS JkOrderBus ver 0.5 from 百灵威系统工程部/[jk-order]
 ACCEPT order {
 	VAR mainId ID;
 	SET mainId = id;
@@ -117,6 +117,8 @@ ACCEPT [order-bound-agent] { -- 轻代理
 }
 ACCEPT [order-bound-distributor] { -- 分销商
     VAR bizMainBoundId ID;
+    BUS JkOrderBus.[order-sale-cost] SET order=0;
+    SEND EMAIL ON webUserAuditPassET to 0;
     FOR to {
 		VAR toId ID;
         SET toId=ID(ObjectDistributor, id);
@@ -150,6 +152,13 @@ ACCEPT [order-bound-customer] {
     PROC ProcQueueBizMain(order);
 }
 ;
+
+templet webUserAuditPassET (
+    name
+)
+subject /- 恭喜你 -/
+/-
+-/;
 
 PROC ProcQueueBizMain(
     bizMain ID,

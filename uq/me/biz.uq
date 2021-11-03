@@ -16,12 +16,14 @@ ID QueueBizOp MINUTEID (
 IDX DxBizMain (
     id,
     ready INT DEFAULT 0,                -- ready状态
+    sys (create, update),
 );
 
 -- biz是核心
 IDX DxBiz (
     id,
     main ID,
+    sys (create, update),
     INDEX main_id(main),
 );
 
@@ -33,6 +35,7 @@ IDX DxBizOp (
     value DEC(18,4),
     done TINYINT DEFAULT 0,             -- 1: done
     stamp INT,
+    sys (create, update),
     INDEX biz_id(biz),
 );
 
@@ -40,6 +43,7 @@ IX IxBizOpBound (
     ix,                         -- bizOp id
     xi BizMainBound,
     bound TINYINT DEFAULT 0,    -- 1: bound
+    sys (create, update),
 );
 
 -- 1. 订单跟岗位和个人的绑定关系。
@@ -51,6 +55,7 @@ ID BizMainBound (
     KEY post ENUM Post,
     KEY item ENUM Item,
     KEY to ID,
+    sys (create),
 );
 
 -- 处理的是 biz main sheet
@@ -163,7 +168,7 @@ PROC ProcBizOp(
 -- 这个是需要根据不同的业务，调整代码的。目前无法直接用表达式实现
 -- 如果要记orderProfit和orderAmount，必须有orderDeliverDone操作。
 -- 如果先收到orderReceiveDone，先记receive账。
-PROC ProcWriteItemHistory(
+PROC ProcWriteItemHistory ver 0.1 (
     bizOp ID,
 ) {
     VAR biz ID, bizOpType ENUM EnumBizOpType, value DEC(18,4);
@@ -176,8 +181,11 @@ PROC ProcWriteItemHistory(
             FROM OrderDetail as a -- JOIN OrderMain as b ON a.main=b.id
             WHERE a.id=biz;
         SET cost=a.costPrice FROM DxOrderDetail as a WHERE a.id=biz;
-        PROC ProcItemHistory(bizOp, Item.orderProfit, (price-cost)*value);
-        PROC ProcItemHistory(bizOp, Item.orderAmount, price*value);
+        -- 可能是积分兑换单引发的deliver-done，这时候，就没有cost和price，所以不写帐
+        IF NOT price IS NULL AND NOT cost IS NULL {
+            PROC ProcItemHistory(bizOp, Item.orderProfit, (price-cost)*value);
+            PROC ProcItemHistory(bizOp, Item.orderAmount, price*value);
+        }
     }
     ELSEIF bizOpType=EnumBizOpType.orderReceiveDone {
         /*

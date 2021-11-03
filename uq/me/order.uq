@@ -22,6 +22,7 @@ ID OrderDetail ver 0.5 GLOBAL (
 IDX DxOrderMain (
     id,
     readyStates ENUM ReadyStates DEFAULT 0,
+    sys (create, update),
 );
 
 IDX DxOrderDetail (
@@ -30,4 +31,5 @@ IDX DxOrderDetail (
     receiveDone DEC(18,4) SUM,
     return DEC(18,4) SUM,
     costPrice DEC(18,4),
+    sys (create, update),
 );

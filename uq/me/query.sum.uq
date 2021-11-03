@@ -34,14 +34,9 @@ ACT CalcDaySum ()
     }
 
     WHILE 1=1 {
-        VAR value DEC(18,4)
-            -- , biz ID
-            , bizOp ID
-            , historyId ID, date DATE, m INT, item ENUM Item;
+        VAR value DEC(18,4), historyId ID, date DATE, item ENUM Item;
         SET historyId=NULL;
         SET historyId=a.id
-            -- , biz=a.biz
-            , bizOp=a.bizOp
             , value=a.value
             , item=a.item
             FROM ItemHistory as a
