@@ -47,10 +47,11 @@ RETURNS ret (
 )
 {
     VAR timeZone TINYINT = timezone();
-    VAR d DATETIME, d0 DATE, m0 DATE, m1 DATE;
+    VAR d DATETIME, d0 DATE, d1 DATE, m0 DATE, m1 DATE;
     SET d=NOW();
-    SET d0=d;
-    SET m0=dateadd(day, -DAY(d)+1, d);
+    SET d0=DATE(d);
+    SET d1=dateadd(day, 1, d0);
+    SET m0=dateadd(day, -DAY(d0)+1, d0);
     SET m1=dateadd(MONTH, -1, m0);
     INTO ret SELECT c.id as opi, c.item, a.id as obj, b.staff, 
         (
@@ -58,14 +59,14 @@ RETURNS ret (
                 FROM OPIHistory AS p
                 WHERE p.opi=c.id
                     AND p.id >= minuteIdFromDate(d0, timeZone)
-                    AND p.id < minuteIdFromDate(d, timeZone)
+                    AND p.id < minuteIdFromDate(d1, timeZone)
         ) as valueToday,
         (
             SELECT SUM(p.value)
                 FROM OPIHistory AS p
                 WHERE p.opi=c.id
                     AND p.id >= minuteIdFromDate(m0, timeZone)
-                    AND p.id < minuteIdFromDate(d, timeZone)
+                    AND p.id < minuteIdFromDate(d1, timeZone)
         ) as valueThisMonth,
         (
             SELECT SUM(p.value)
