@@ -3,6 +3,7 @@ ID OrderMain ver 0.5 GLOBAL (
 	KEY no,
     webUser ID,                         -- 下单user注册账号
 	customerAccount ID,                 -- customerAccount
+	seller ID,
     currency ID,
 	sumAmount DEC(18,4),	            -- 订单总金额。各行金额
 	stamp INT,
@@ -21,7 +22,7 @@ ID OrderDetail ver 0.5 GLOBAL (
 
 IDX DxOrderMain (
     id,
-    readyStates ENUM ReadyStates DEFAULT 0,
+    readyStates ENUM OrderReady DEFAULT 0,
     sys (create, update),
 );
 

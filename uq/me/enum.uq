@@ -33,10 +33,12 @@ ENUM EnumBizOpType (
 	orderReturn                 = 103,
 );
 
+/*
 ENUM ReadyStates (
     costNone                    = 0x0001,
     cost                        = 0x0002,
 );
+*/
 
 ENUM OrderReady (
     sheet                       = 0x0001,

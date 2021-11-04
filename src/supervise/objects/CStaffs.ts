@@ -65,7 +65,7 @@ export class CStaffs extends CObjects {
                 mThis: valueThisMonth,
                 mLast: valueLastMonth,
             });
-            let sumItem = this.sum[item as Item];
+            let sumItem = sum[item as Item];
             if (sumItem === undefined) {
                 sumItem = {
                     item,
@@ -73,12 +73,13 @@ export class CStaffs extends CObjects {
                     mThis: 0,
                     mLast: 0,
                 };
-                this.sum[item as Item] = sumItem;
+                sum[item as Item] = sumItem;
             }
             sumItem.dThis += (valueToday ?? 0);
             sumItem.mThis += (valueThisMonth ?? 0);
             sumItem.mLast += (valueLastMonth ?? 0);
         }
+        this.sum.splice(0, this.sum.length);
         for (let i in sum) this.sum.push(sum[Number(i) as Item]);
         this.list = arr;
     }

@@ -3,7 +3,10 @@ ACCEPT order {
 	VAR mainId ID;
 	SET mainId = id;
     LOG CONCAT_WS(' ', mainId) SUBJECT 'JkOrderBus ACCEPT order';
-	WITH OrderMain as a ID=mainId SET a.no=no, a.customerAccount=customerAccount, a.stamp=$stamp;
+	WITH OrderMain as a ID=mainId SET a.no=no
+        , a.customerAccount=customerAccount
+        , a.seller=seller
+        , a.stamp=$stamp;
 	FOR detail {
         LOG CONCAT_WS(' ', id, quantity, item) SUBJECT 'JkOrderBus ACCEPT orderDetail';
 		WITH OrderDetail as a 
@@ -46,6 +49,9 @@ ACCEPT [deliver-done] {
 ACCEPT [receive-done] {
     LOG CONCAT_WS(' ', id) SUBJECT 'ACCEPT JkOrderBus.receive-done';
 	FOR detail {
+        IF exists(SELECT a.id FROM DxBizOp as a WHERE a.id=id) {
+            CONTINUE;
+        }
 		WITH DxOrderDetail ID=orderDetail SET receiveDone+=value;
         WITH DxBizOp as a ID=id 
             SET a.type=EnumBizOpType.orderReceiveDone, a.biz=orderDetail, a.value=value, a.stamp=$stamp;
@@ -55,6 +61,9 @@ ACCEPT [receive-done] {
 }
 ACCEPT [return] {
 	FOR detail {
+        IF exists(SELECT a.id FROM DxBizOp as a WHERE a.id=id) {
+            CONTINUE;
+        }
 		WITH DxOrderDetail ID=orderDetail SET return+=quantity;
         WITH DxBizOp as a ID=id 
             SET a.type=EnumBizOpType.orderReturn, a.biz=orderDetail, a.value=quantity, a.stamp=$stamp;
@@ -82,6 +91,10 @@ ACCEPT [order-bound-staff-sales] {
             WITH Object ID=toId SET type=EnumObjectType.staff;
             WITH ObjectStaff ID=toId SET staff=id;
         }
+        SET bizMainBoundId = ID(
+            BizMainBound new 
+            KEY bizMain=order, post=Post.staffSales, item=ITEM.orderAmount, to=toId
+        );
         -- 指定客户之后的提成
         IF [bound-type]='assign' {
             SET bizMainBoundId = ID(
