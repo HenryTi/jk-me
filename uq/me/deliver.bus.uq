@@ -2,6 +2,9 @@ BUS JkDeliverBus ver 0.9 from 百灵威系统工程部/[jk-deliver]
 ACCEPT [deliver-done] {
     LOG CONCAT_WS(' ', id) SUBJECT 'ACCEPT JkDeliverBus.deliver-done';
 	FOR detail {
+        IF exists(SELECT a.id FROM DxBizOp as a WHERE a.id=id) {
+            CONTINUE;
+        }
 		WITH DxOrderDetail ID=biz SET deliverDone += value;
         WITH DxBizOp as a ID=id 
             SET a.type=EnumBizOpType.orderDeliverDone, a.biz=biz, a.value=value, a.stamp=$stamp;
