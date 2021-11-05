@@ -2,7 +2,7 @@
 import { Res, setRes, TFunc, UI, uqStringify } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
-import { ObjectAccountHistory } from "./JkMe";
+import { AccountBooking } from "./JkMe";
 
 /*--fields--*/
 const fields = {
@@ -18,28 +18,22 @@ const fields = {
 		"isKey": false,
 		"label": "Xi"
 	} as FieldItemId,
-	value: {
-		"name": "value",
+	radio: {
+		"name": "radio",
 		"type": "number",
 		"isKey": false,
 		"widget": "number",
-		"label": "Value"
+		"label": "Radio"
 	} as FieldItemNum,
-	opi: {
-		"name": "opi",
-		"type": "id",
-		"isKey": false,
-		"label": "Opi"
-	} as FieldItemId,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.xi, fields.value, fields.opi, 
+	fields.xi, fields.radio, 
 ];
 
 export const ui: UI = {
-	label: "ObjectAccountHistory",
+	label: "AccountBooking",
 	fieldArr,
 	fields,
 };
@@ -57,6 +51,6 @@ export const t:TFunc = (str:string|JSX.Element): string|JSX.Element => {
 	return res[str as string] ?? str;
 }
 
-export function render(item: ObjectAccountHistory):JSX.Element {
+export function render(item: AccountBooking):JSX.Element {
 	return <>{uqStringify(item)}</>;
 };

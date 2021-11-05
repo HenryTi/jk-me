@@ -2,7 +2,7 @@
 import { Res, setRes, TFunc, UI, uqStringify } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
-import { ObjectAccountHistory } from "./JkMe";
+import { ExchangeDetailDeliver } from "./JkPointShop";
 
 /*--fields--*/
 const fields = {
@@ -18,28 +18,27 @@ const fields = {
 		"isKey": false,
 		"label": "Xi"
 	} as FieldItemId,
-	value: {
-		"name": "value",
+	deliverDone: {
+		"name": "deliverDone",
 		"type": "number",
 		"isKey": false,
 		"widget": "number",
-		"label": "Value"
+		"label": "DeliverDone"
 	} as FieldItemNum,
-	opi: {
-		"name": "opi",
-		"type": "id",
+	deliverTime: {
+		"name": "deliverTime",
 		"isKey": false,
-		"label": "Opi"
-	} as FieldItemId,
+		"label": "DeliverTime"
+	} as undefined,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.xi, fields.value, fields.opi, 
+	fields.xi, fields.deliverDone, fields.deliverTime, 
 ];
 
 export const ui: UI = {
-	label: "ObjectAccountHistory",
+	label: "ExchangeDetailDeliver",
 	fieldArr,
 	fields,
 };
@@ -57,6 +56,6 @@ export const t:TFunc = (str:string|JSX.Element): string|JSX.Element => {
 	return res[str as string] ?? str;
 }
 
-export function render(item: ObjectAccountHistory):JSX.Element {
+export function render(item: ExchangeDetailDeliver):JSX.Element {
 	return <>{uqStringify(item)}</>;
 };

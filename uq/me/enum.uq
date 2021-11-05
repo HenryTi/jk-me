@@ -90,6 +90,18 @@ VALUES
 (Post.staffPicker, '拣货员', null)
 ;
 
+ID AccountTitle ver 0.1 CONST (
+    id small,
+    title CHAR(50),
+    vice CHAR(100),
+    unit CHAR(10),
+    fixed TINYINT DEFAULT 2,
+)
++ (id, title, vice, unit, fixed)
+VALUES
+(EnumAccount.commission, '业绩提成', null, '元', 2),
+;
+
 -- OPIBooking
 ID OPIBooking ver 0.5 CONST (
     id small,
@@ -131,4 +143,12 @@ RETURNS ret (
 ) {
     INTO ret SELECT id, title, vice
         FROM PostTitle;
+};
+
+QUERY GetAccountTitles()
+RETURNS ret (
+    #AccountTitle
+) {
+    INTO ret SELECT id, title, vice, unit, fixed
+        FROM AccountTitle;
 };

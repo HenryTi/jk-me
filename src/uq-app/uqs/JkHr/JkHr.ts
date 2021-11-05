@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sun Oct 31 2021 23:39:25 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Thu Nov 04 2021 18:26:43 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqMap } from "tonva-react";
 
@@ -14,6 +14,7 @@ export interface Tuid$user {
 	icon: string;
 	assigned: string;
 	poke: number;
+	timezone: number;
 }
 
 export interface Tuid$sheet {
@@ -51,6 +52,12 @@ export interface TuidRole {
 	CreateTime: any;
 }
 
+export interface TuidCompany {
+	id?: number;
+	no: string;
+	name: string;
+}
+
 export interface ParamDeleteWebuseEmployee {
 	webuser: number;
 	employee: number;
@@ -63,6 +70,12 @@ export interface ParamAddWebuseEmployee {
 	employee: number;
 }
 export interface ResultAddWebuseEmployee {
+}
+
+export interface Param$setMyTimezone {
+	_timezone: number;
+}
+export interface Result$setMyTimezone {
 }
 
 export interface ParamSearchEmployee {
@@ -116,6 +129,16 @@ export interface ResultGetWebUser {
 	ret: ReturnGetWebUserRet[];
 }
 
+export interface Param$getMyTimezone {
+}
+export interface Return$getMyTimezoneRet {
+	timezone: number;
+	unitTimeZone: number;
+}
+export interface Result$getMyTimezone {
+	ret: Return$getMyTimezoneRet[];
+}
+
 export interface ParamActs {
 }
 
@@ -127,12 +150,15 @@ export interface UqExt extends Uq {
 	$sheet: UqTuid<Tuid$sheet>;
 	Employee: UqTuid<TuidEmployee>;
 	Role: UqTuid<TuidRole>;
+	Company: UqTuid<TuidCompany>;
 	DeleteWebuseEmployee: UqAction<ParamDeleteWebuseEmployee, ResultDeleteWebuseEmployee>;
 	AddWebuseEmployee: UqAction<ParamAddWebuseEmployee, ResultAddWebuseEmployee>;
+	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
 	SearchEmployee: UqQuery<ParamSearchEmployee, ResultSearchEmployee>;
 	SearchTeam: UqQuery<ParamSearchTeam, ResultSearchTeam>;
 	$poked: UqQuery<Param$poked, Result$poked>;
 	GetWebUser: UqQuery<ParamGetWebUser, ResultGetWebUser>;
+	$getMyTimezone: UqQuery<Param$getMyTimezone, Result$getMyTimezone>;
 	EmployeeRole: UqMap;
 	WebuserEmployee: UqMap;
 	EmployeeRelation: UqMap;

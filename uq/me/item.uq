@@ -78,6 +78,17 @@ ENUM EnumAccount (
     commission              = 10,
 );
 
+IX AccountBooking ver 0.1 CONST (
+    ix ENUM Item,
+    xi ENUM EnumAccount,
+    radio DEC(6,2) DEFAULT 100,           -- 百分数
+)
++ (ix, xi)
+VALUES
+(Item.profitFee, EnumAccount.commission),
+(Item.amountFee, EnumAccount.commission),
+;
+
 ID ObjectAccount (
     id,
     KEY object ID,
@@ -85,14 +96,11 @@ ID ObjectAccount (
     balance DEC(18,4) DEFAULT 0,
 );
 
-ID ObjectAccountHistory MINUTEID (
-    id,
-    objectAccount ID ObjectAccount,
+IX ObjectAccountHistory (
+    ix ObjectAccount,
+    xi,                         -- date HourID
     value DEC(18,4),
     opi ID ObjectPostItem,
-    historyFrom ID OPIHistory,
-    historyTo ID OPIHistory,
-    INDEX account_id(objectAccount, id),
 );
 
 IX UserObject (

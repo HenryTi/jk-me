@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sun Oct 31 2021 23:39:25 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Thu Nov 04 2021 18:26:43 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-react";
 
@@ -30,11 +30,6 @@ export enum Post {
 	distributor = 7500,
 	distributorSales = 7501,
 	customer = 8010
-}
-
-export enum ReadyStates {
-	costNone = 1,
-	cost = 2
 }
 
 export enum OrderReady {
@@ -150,6 +145,16 @@ export interface Param$setMyTimezone {
 	_timezone: number;
 }
 export interface Result$setMyTimezone {
+}
+
+export interface Param_BuildLostSalesStaffOrderAmount {
+}
+export interface Result_BuildLostSalesStaffOrderAmount {
+}
+
+export interface ParamCalcAccount {
+}
+export interface ResultCalcAccount {
 }
 
 export interface Param$poked {
@@ -501,6 +506,44 @@ export interface Result$getMyTimezone {
 	ret: Return$getMyTimezoneRet[];
 }
 
+export interface ParamGetUserObjectAccount {
+}
+export interface ReturnGetUserObjectAccountRet {
+	objectAccount: number;
+	object: number;
+	account: any;
+	balance: number;
+}
+export interface ResultGetUserObjectAccount {
+	ret: ReturnGetUserObjectAccountRet[];
+}
+
+export interface ParamGetAccountTitles {
+}
+export interface ReturnGetAccountTitlesRet {
+	id: number;
+	title: string;
+	vice: string;
+	unit: string;
+	fixed: number;
+}
+export interface ResultGetAccountTitles {
+	ret: ReturnGetAccountTitlesRet[];
+}
+
+export interface ParamGetObjectAccountHistory {
+	objectAccount: number;
+}
+export interface ReturnGetObjectAccountHistoryRet {
+	date: number;
+	value: number;
+	post: any;
+	item: any;
+}
+export interface ResultGetObjectAccountHistory {
+	ret: ReturnGetObjectAccountHistoryRet[];
+}
+
 export interface Object {
 	id?: number;
 	type: any;
@@ -529,6 +572,7 @@ export interface OrderMain {
 	no?: string;
 	webUser: number;
 	customerAccount: number;
+	seller: number;
 	currency: number;
 	sumAmount: number;
 	stamp: number;
@@ -638,15 +682,6 @@ export interface ObjectAccount {
 	balance: number;
 }
 
-export interface ObjectAccountHistory {
-	id?: number;
-	objectAccount: number;
-	value: number;
-	opi: number;
-	historyFrom: number;
-	historyTo: number;
-}
-
 export interface BizMainBound {
 	id?: number;
 	bizMain: number;
@@ -663,6 +698,14 @@ export interface OPIBooking {
 	item: any;
 	ratio: number;
 	memo: number;
+}
+
+export interface AccountTitle {
+	id?: number;
+	title: string;
+	vice: string;
+	unit: string;
+	fixed: number;
 }
 
 export interface DxOrderDetail {
@@ -784,10 +827,23 @@ export interface RoleOps {
 	xi: number;
 }
 
+export interface ObjectAccountHistory {
+	ix: number;
+	xi: number;
+	value: number;
+	opi: number;
+}
+
 export interface DaySumItem {
 	ix: number;
 	xi: any;
 	value: number;
+}
+
+export interface AccountBooking {
+	ix: number;
+	xi: number;
+	radio: number;
 }
 
 export interface ParamActs {
@@ -812,9 +868,9 @@ export interface ParamActs {
 	role?: Role[];
 	oPIHistory?: OPIHistory[];
 	objectAccount?: ObjectAccount[];
-	objectAccountHistory?: ObjectAccountHistory[];
 	bizMainBound?: BizMainBound[];
 	oPIBooking?: OPIBooking[];
+	accountTitle?: AccountTitle[];
 	dxOrderDetail?: ActParamDxOrderDetail[];
 	dxOrderMain?: ActParamDxOrderMain[];
 	dxBizMain?: ActParamDxBizMain[];
@@ -828,7 +884,9 @@ export interface ParamActs {
 	ixBizOpBound?: IxBizOpBound[];
 	userRole?: UserRole[];
 	roleOps?: RoleOps[];
+	objectAccountHistory?: ObjectAccountHistory[];
 	daySumItem?: DaySumItem[];
+	accountBooking?: AccountBooking[];
 }
 
 
@@ -845,6 +903,8 @@ export interface UqExt extends Uq {
 	DoneDeliver: UqAction<ParamDoneDeliver, ResultDoneDeliver>;
 	CalcDaySum: UqAction<ParamCalcDaySum, ResultCalcDaySum>;
 	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
+	_BuildLostSalesStaffOrderAmount: UqAction<Param_BuildLostSalesStaffOrderAmount, Result_BuildLostSalesStaffOrderAmount>;
+	CalcAccount: UqAction<ParamCalcAccount, ResultCalcAccount>;
 	$poked: UqQuery<Param$poked, Result$poked>;
 	GetPostTitles: UqQuery<ParamGetPostTitles, ResultGetPostTitles>;
 	GetItemTitles: UqQuery<ParamGetItemTitles, ResultGetItemTitles>;
@@ -872,6 +932,9 @@ export interface UqExt extends Uq {
 	GetUserObjectItemPeriodSum: UqQuery<ParamGetUserObjectItemPeriodSum, ResultGetUserObjectItemPeriodSum>;
 	GetItemPeriodSum: UqQuery<ParamGetItemPeriodSum, ResultGetItemPeriodSum>;
 	$getMyTimezone: UqQuery<Param$getMyTimezone, Result$getMyTimezone>;
+	GetUserObjectAccount: UqQuery<ParamGetUserObjectAccount, ResultGetUserObjectAccount>;
+	GetAccountTitles: UqQuery<ParamGetAccountTitles, ResultGetAccountTitles>;
+	GetObjectAccountHistory: UqQuery<ParamGetObjectAccountHistory, ResultGetObjectAccountHistory>;
 	Object: UqID<any>;
 	ItemHistory: UqID<any>;
 	OrderDetail: UqID<any>;
@@ -893,9 +956,9 @@ export interface UqExt extends Uq {
 	Role: UqID<any>;
 	OPIHistory: UqID<any>;
 	ObjectAccount: UqID<any>;
-	ObjectAccountHistory: UqID<any>;
 	BizMainBound: UqID<any>;
 	OPIBooking: UqID<any>;
+	AccountTitle: UqID<any>;
 	DxOrderDetail: UqIDX<any>;
 	DxOrderMain: UqIDX<any>;
 	DxBizMain: UqIDX<any>;
@@ -909,7 +972,9 @@ export interface UqExt extends Uq {
 	IxBizOpBound: UqIX<any>;
 	UserRole: UqIX<any>;
 	RoleOps: UqIX<any>;
+	ObjectAccountHistory: UqIX<any>;
 	DaySumItem: UqIX<any>;
+	AccountBooking: UqIX<any>;
 }
 
 export function assign(uq: any, to:string, from:any): void {

@@ -20,9 +20,9 @@ import * as DeliverMain from './DeliverMain.ui';
 import * as Role from './Role.ui';
 import * as OPIHistory from './OPIHistory.ui';
 import * as ObjectAccount from './ObjectAccount.ui';
-import * as ObjectAccountHistory from './ObjectAccountHistory.ui';
 import * as BizMainBound from './BizMainBound.ui';
 import * as OPIBooking from './OPIBooking.ui';
+import * as AccountTitle from './AccountTitle.ui';
 import * as DxOrderDetail from './DxOrderDetail.ui';
 import * as DxOrderMain from './DxOrderMain.ui';
 import * as DxBizMain from './DxBizMain.ui';
@@ -36,7 +36,9 @@ import * as MonthSumCustomer from './MonthSumCustomer.ui';
 import * as IxBizOpBound from './IxBizOpBound.ui';
 import * as UserRole from './UserRole.ui';
 import * as RoleOps from './RoleOps.ui';
+import * as ObjectAccountHistory from './ObjectAccountHistory.ui';
 import * as DaySumItem from './DaySumItem.ui';
+import * as AccountBooking from './AccountBooking.ui';
 	
 export function setUI(uq: Uq) {
 	assign(uq, 'Object', Object);
@@ -60,9 +62,9 @@ export function setUI(uq: Uq) {
 	assign(uq, 'Role', Role);
 	assign(uq, 'OPIHistory', OPIHistory);
 	assign(uq, 'ObjectAccount', ObjectAccount);
-	assign(uq, 'ObjectAccountHistory', ObjectAccountHistory);
 	assign(uq, 'BizMainBound', BizMainBound);
 	assign(uq, 'OPIBooking', OPIBooking);
+	assign(uq, 'AccountTitle', AccountTitle);
 	assign(uq, 'DxOrderDetail', DxOrderDetail);
 	assign(uq, 'DxOrderMain', DxOrderMain);
 	assign(uq, 'DxBizMain', DxBizMain);
@@ -76,6 +78,8 @@ export function setUI(uq: Uq) {
 	assign(uq, 'IxBizOpBound', IxBizOpBound);
 	assign(uq, 'UserRole', UserRole);
 	assign(uq, 'RoleOps', RoleOps);
+	assign(uq, 'ObjectAccountHistory', ObjectAccountHistory);
 	assign(uq, 'DaySumItem', DaySumItem);
+	assign(uq, 'AccountBooking', AccountBooking);
 }
 export * from './JkMe';

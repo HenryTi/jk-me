@@ -6,7 +6,7 @@ import { res } from "./res";
 import { VMain } from "./VMain";
 import { CTester } from "./test-uqui";
 import { setUI } from "./uqs";
-import { Item, Post, EnumRole, EnumRoleOp, ObjectPostItem } from "./uqs/JkMe";
+import { Item, Post, EnumRole, EnumRoleOp, ObjectPostItem, EnumAccount } from "./uqs/JkMe";
 import { CSupervise } from "supervise";
 import { CPortal, CObjectPortal, CUnitPortal } from "portal";
 import { makeObservable, observable } from "mobx";
@@ -28,9 +28,11 @@ export class CApp extends CUqApp {
 	cMe: CMe;
 	cUI: CTester;
 	cPortal: CPortal;
+	cUnitPortal: CUnitPortal;
 
 	readonly itemTitles:{[item in Item]: Title} = {} as any;
 	readonly postTitles:{[post in Post]: Title} = {} as any;
+	readonly accountTitles:{[acount in EnumAccount]: Title} = {} as any;
 	ops: {role: EnumRole; op: EnumRoleOp}[];
 	
 	protected async internalStart(isUserLogin: boolean) {
@@ -64,14 +66,16 @@ export class CApp extends CUqApp {
 
 	private async loadBaseData() {
 		let {JkMe} = this.uqs;
-		let [retItemTitles, retPostTitles, roleOps, myTimezone] = await Promise.all([
+		let [retItemTitles, retPostTitles, retAccountTitles, roleOps, myTimezone] = await Promise.all([
 			JkMe.GetItemTitles.query({}),
 			JkMe.GetPostTitles.query({}),
+			JkMe.GetAccountTitles.query({}),
 			JkMe.GetRoleOps.query({}),
 			JkMe.$getMyTimezone.query({}),
 		]);
 		for (let it of retItemTitles.ret) this.itemTitles[it.id as Item] = it;
 		for (let pt of retPostTitles.ret) this.postTitles[pt.id as Post] = pt;
+		for (let at of retAccountTitles.ret) this.accountTitles[at.id as EnumAccount] = at;
 		this.ops = roleOps.ret;
 		let tz = myTimezone.ret[0];
 		this.timezone = tz.timezone;
@@ -88,16 +92,21 @@ export class CApp extends CUqApp {
 	}
 
 	renderVUnitSum() {
-		let ret = this.newC(CUnitPortal);
-		ret.load();
-		return ret.renderVPortal();
+		if (!this.cUnitPortal) {
+			this.cUnitPortal = this.newC(CUnitPortal);
+			this.cUnitPortal.load();
+		}
+		return this.cUnitPortal.renderVPortal();
 	}
 
 	// 数据服务器提醒客户端刷新，下面代码重新调入的数据
 	refresh = async () => {
 		let d = Date.now() / 1000;
 		if (d - this.refreshTime < 30) return;
-		await this.cPortal.load();
+		await Promise.all([
+			this.cHome.load(),
+			this.cUnitPortal?.load(),
+		]);
 		this.refreshTime = d;
 	}
 
