@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sun Oct 31 2021 23:39:25 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Thu Nov 04 2021 18:26:43 GMT-0400 (北美东部夏令时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqSheet, UqBook, UqQuery, UqMap, UqHistory, UqPending, UqID, UqIDX, UqIX } from "tonva-react";
 
@@ -36,6 +36,7 @@ export interface Tuid$user {
 	icon: string;
 	assigned: string;
 	poke: number;
+	timezone: number;
 }
 
 export interface TuidProductX {
@@ -164,6 +165,12 @@ export interface ParamPointChanged {
 	comments: string;
 }
 export interface ResultPointChanged {
+}
+
+export interface Param$setMyTimezone {
+	_timezone: number;
+}
+export interface Result$setMyTimezone {
 }
 
 export interface SheetPointExchangeSheet {
@@ -429,6 +436,16 @@ export interface ReturnSearchExchangeOrders$page {
 }
 export interface ResultSearchExchangeOrders {
 	$page: ReturnSearchExchangeOrders$page[];
+}
+
+export interface Param$getMyTimezone {
+}
+export interface Return$getMyTimezoneRet {
+	timezone: number;
+	unitTimeZone: number;
+}
+export interface Result$getMyTimezone {
+	ret: Return$getMyTimezoneRet[];
 }
 
 export interface ParamPointBook {
@@ -698,6 +715,13 @@ export interface IxExchangeMainUsedPoint {
 	point: number;
 }
 
+export interface ExchangeDetailDeliver {
+	ix: number;
+	xi: number;
+	deliverDone: number;
+	deliverTime: any;
+}
+
 export interface ParamActs {
 	orderMain?: OrderMain[];
 	orderDetail?: OrderDetail[];
@@ -708,6 +732,7 @@ export interface ParamActs {
 	dxExchangeDetail?: ActParamDxExchangeDetail[];
 	dxExchangeMainState?: ActParamDxExchangeMainState[];
 	ixExchangeMainUsedPoint?: IxExchangeMainUsedPoint[];
+	exchangeDetailDeliver?: ExchangeDetailDeliver[];
 }
 
 
@@ -732,6 +757,7 @@ export interface UqExt extends Uq {
 	SetPointProductVisits: UqAction<ParamSetPointProductVisits, ResultSetPointProductVisits>;
 	PointProductGenreDelete: UqAction<ParamPointProductGenreDelete, ResultPointProductGenreDelete>;
 	PointChanged: UqAction<ParamPointChanged, ResultPointChanged>;
+	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
 	PointExchangeSheet: UqSheet<SheetPointExchangeSheet, any>;
 	PointBook: UqBook<ParamPointBook, ResultPointBook>;
 	PointBookByCustomer: UqBook<ParamPointBookByCustomer, ResultPointBookByCustomer>;
@@ -756,6 +782,7 @@ export interface UqExt extends Uq {
 	GetPointProductsByPage: UqQuery<ParamGetPointProductsByPage, ResultGetPointProductsByPage>;
 	GetBrandMinDiscount: UqQuery<ParamGetBrandMinDiscount, ResultGetBrandMinDiscount>;
 	SearchExchangeOrders: UqQuery<ParamSearchExchangeOrders, ResultSearchExchangeOrders>;
+	$getMyTimezone: UqQuery<Param$getMyTimezone, Result$getMyTimezone>;
 	PointProduct: UqMap;
 	PlatformOrder: UqMap;
 	PlatformOrderUsed: UqMap;
@@ -783,6 +810,7 @@ export interface UqExt extends Uq {
 	DxExchangeDetail: UqIDX<any>;
 	DxExchangeMainState: UqIDX<any>;
 	IxExchangeMainUsedPoint: UqIX<any>;
+	ExchangeDetailDeliver: UqIX<any>;
 }
 
 export function assign(uq: any, to:string, from:any): void {

@@ -25,6 +25,21 @@ RETURNS ret (
         WHERE a.object=object;
 };
 
+QUERY GetUserObjectAccount (
+)
+RETURNS ret (
+    objectAccount ID,
+    object ID,
+    account ENUM EnumAccount,
+    balance DEC(18,4),
+) {
+    INTO ret SELECT b.id as objectAccount, b.object, b.account, b.balance
+        FROM UserObject as a
+            JOIN ObjectAccount as b ON b.object=a.xi
+            JOIN AccountTitle as c ON c.id=b.account
+        WHERE a.ix=$user;
+};
+
 QUERY GetUserObjectItemPeriodSum ver 0.1 
 (
     from DATE,
@@ -152,4 +167,21 @@ SYSPROC AuthCheck ver 0.2 (
     OUT ok TINYINT,
 ) {      -- $user有没有访问权限
     SET ok = 1;
+};
+
+QUERY GetObjectAccountHistory(
+    objectAccount ID,
+)
+RETURNS ret (
+    date INT,               -- hourID
+    value DEC(18,4),
+    post ENUM Post,
+    item ENUM Item,
+) {
+    INTO ret SELECT a.xi as date, a.value, b.post, b.item
+        FROM ObjectAccountHistory as a
+            JOIN ObjectPostItem as b ON b.id=a.opi
+        WHERE a.ix=objectAccount
+        ORDER BY a.xi DESC
+        LIMIT 200;
 };

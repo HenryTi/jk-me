@@ -30,6 +30,12 @@ const fields = {
 		"isKey": false,
 		"label": "CustomerAccount"
 	} as FieldItemId,
+	seller: {
+		"name": "seller",
+		"type": "id",
+		"isKey": false,
+		"label": "Seller"
+	} as FieldItemId,
 	currency: {
 		"name": "currency",
 		"type": "id",
@@ -54,7 +60,7 @@ const fields = {
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.no, fields.webUser, fields.customerAccount, fields.currency, fields.sumAmount, fields.stamp, 
+	fields.no, fields.webUser, fields.customerAccount, fields.seller, fields.currency, fields.sumAmount, fields.stamp, 
 ];
 
 export const ui: UI = {

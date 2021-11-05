@@ -2,44 +2,51 @@
 import { Res, setRes, TFunc, UI, uqStringify } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
-import { ObjectAccountHistory } from "./JkMe";
+import { AccountTitle } from "./JkMe";
 
 /*--fields--*/
 const fields = {
-	ix: {
-		"name": "ix",
+	id: {
+		"name": "id",
 		"type": "id",
 		"isKey": false,
-		"label": "Ix"
+		"label": "Id"
 	} as FieldItemId,
-	xi: {
-		"name": "xi",
-		"type": "id",
+	title: {
+		"name": "title",
+		"type": "string",
 		"isKey": false,
-		"label": "Xi"
-	} as FieldItemId,
-	value: {
-		"name": "value",
-		"type": "number",
+		"widget": "string",
+		"label": "Title"
+	} as FieldItemString,
+	vice: {
+		"name": "vice",
+		"type": "string",
 		"isKey": false,
-		"widget": "number",
-		"label": "Value"
-	} as FieldItemNum,
-	opi: {
-		"name": "opi",
-		"type": "id",
+		"widget": "string",
+		"label": "Vice"
+	} as FieldItemString,
+	unit: {
+		"name": "unit",
+		"type": "string",
 		"isKey": false,
-		"label": "Opi"
-	} as FieldItemId,
+		"widget": "string",
+		"label": "Unit"
+	} as FieldItemString,
+	fixed: {
+		"name": "fixed",
+		"isKey": false,
+		"label": "Fixed"
+	} as undefined,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.xi, fields.value, fields.opi, 
+	fields.title, fields.vice, fields.unit, fields.fixed, 
 ];
 
 export const ui: UI = {
-	label: "ObjectAccountHistory",
+	label: "AccountTitle",
 	fieldArr,
 	fields,
 };
@@ -57,6 +64,6 @@ export const t:TFunc = (str:string|JSX.Element): string|JSX.Element => {
 	return res[str as string] ?? str;
 }
 
-export function render(item: ObjectAccountHistory):JSX.Element {
+export function render(item: AccountTitle):JSX.Element {
 	return <>{uqStringify(item)}</>;
 };

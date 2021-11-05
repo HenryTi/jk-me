@@ -1,4 +1,3 @@
-import { env } from "tonva-react";
 import { ResultGetUserObjectItemPeriodSum } from "uq-app/uqs/JkMe";
 import { EnumPeriod } from "../period";
 import { CPortal } from '../CPortal';

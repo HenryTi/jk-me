@@ -1,8 +1,6 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
-import { env } from "tonva-react";
 import { CApp, CUqBase } from "uq-app";
-import { Item, ObjectPostItem, Post
-    , ResultGetObjectItemPeriodSum, ResultGetUserObjectItemPeriodSum, ReturnGetObjectItemHistoryRet, ReturnGetObjectItemPeriodHistoryRet
+import { Item, ObjectPostItem, ReturnGetObjectItemHistoryRet, ReturnGetObjectItemPeriodHistoryRet
     , ReturnGetObjectItemPeriodSumRet } from "uq-app/uqs/JkMe";
 import { BizOpDetail } from "./bizOpDetail";
 import { PostPeriodSum, Period, ItemPeriodSum, EnumPeriod, createPeriod } from "./period";
@@ -15,8 +13,6 @@ export class CPortal extends  CUqBase {
 	bizOpDetail: BizOpDetail;
 
     period: Period;
-    //postPeriodSumColl: {[post in keyof typeof Post]: PostPeriodSum};
-    //postPeriodSumList: PostPeriodSum[];
     list: any[];
     objectPostItem: ObjectPostItem;
     itemPeriodSum: ItemPeriodSum;
@@ -51,9 +47,9 @@ export class CPortal extends  CUqBase {
 
     protected async GetPeriodSum(from: Date, to: Date):Promise<{ret:any[]}> {
         let ret = await this.uqs.JkMe.GetUserObjectItemPeriodSum.query({
-			from,
-			to,
-		});
+            from,
+            to,
+        });
         return ret;
     }
 
