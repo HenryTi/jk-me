@@ -108,7 +108,7 @@ ID OPIBooking ver 0.5 CONST (
     bizOpType ENUM EnumBizOpType,
     post ENUM Post,
     postItem ENUM Item,                 -- item to OPIHistory
-    item ENUM Item,                     -- item to ItemHistory
+    item ENUM Item,                     -- item to ItemHistory, 为了在计算opihistory时去使用ItemHistory中的值
     ratio DEC(6,2) DEFAULT 100,         -- 百分比，从itemHistory的value，折算到 OPIHistory, 未来有可能是分段公式
     memo INT,                           -- 文本id
     INDEX bizOpType_post(bizOpType, post),
