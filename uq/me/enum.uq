@@ -39,13 +39,6 @@ ENUM EnumBizOpType (
 	pickupDone                  = 104,
 );
 
-/*
-ENUM ReadyStates (
-    costNone                    = 0x0001,
-    cost                        = 0x0002,
-);
-*/
-
 ENUM OrderReady (
     sheet                       = 0x0001,   -- 订单到达
     cost                        = 0x0002,   -- 成本到达，两个都到达后进行后续计算，否则等待；

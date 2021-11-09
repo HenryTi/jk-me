@@ -183,9 +183,17 @@ PROC ProcWriteItemHistory ver 0.1 (
             WHERE a.id=biz;
         SET cost=a.costPrice FROM DxOrderDetail as a WHERE a.id=biz;
         -- 可能是积分兑换单引发的deliver-done，这时候，就没有cost和price，所以不写帐
-        IF NOT price IS NULL AND NOT cost IS NULL {
-            PROC ProcItemHistory(bizOp, Item.orderProfit, (price-cost)*value);
+        IF price IS NOT NULL {
             PROC ProcItemHistory(bizOp, Item.orderAmount, price*value);
+            IF cost IS NOT NULL {
+                PROC ProcItemHistory(bizOp, Item.orderProfit, (price-cost)*value);
+            }
+            ELSE {
+                LOG CONCAT_WS(' ', bizOp, bizOpType, price, cost, value) SUBJECT 'Failed BizOp ItemHistory Cost IS NULL';
+            }
+        }
+        ELSE {
+            LOG CONCAT_WS(' ', bizOp, bizOpType, price, cost, value) SUBJECT 'Failed BizOp ItemHistory Price IS NULL';
         }
     }
     ELSEIF bizOpType=EnumBizOpType.orderReceiveDone {
