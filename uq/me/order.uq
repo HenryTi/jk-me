@@ -22,7 +22,7 @@ ID OrderDetail ver 0.5 GLOBAL (
 
 IDX DxOrderMain (
     id,
-    readyStates ENUM OrderReady DEFAULT 0,
+    orderReady ENUM OrderReady DEFAULT 0,
     sys (create, update),
 );
 
