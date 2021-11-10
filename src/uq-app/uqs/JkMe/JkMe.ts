@@ -1,4 +1,4 @@
-//=== UqApp builder created on Thu Nov 04 2021 18:26:43 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Wed Nov 10 2021 14:08:14 GMT-0500 (北美东部标准时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-core";
 
@@ -507,10 +507,12 @@ export interface Result$getMyTimezone {
 }
 
 export interface ParamGetUserObjectAccount {
+	object: number;
 }
 export interface ReturnGetUserObjectAccountRet {
 	objectAccount: number;
 	object: number;
+	post: any;
 	account: any;
 	balance: number;
 }
@@ -719,7 +721,7 @@ export interface DxOrderDetail {
 
 export interface DxOrderMain {
 	id: number;
-	readyStates?: any;
+	orderReady?: any;
 	$act?: number;
 }
 
@@ -756,7 +758,7 @@ export interface ActParamDxOrderDetail {
 
 export interface ActParamDxOrderMain {
 	id: number|IDXValue;
-	readyStates?: any|IDXValue;
+	orderReady?: any|IDXValue;
 	$act?: number;
 }
 

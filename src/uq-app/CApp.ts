@@ -48,7 +48,7 @@ export class CApp extends CUqApp {
 		this.cSupervise = this.newC(CSupervise);
 		this.cBug = this.newC(CBug);
 		this.cMe = this.newC(CMe);
-		this.cUI = this.newC(CTester) as CTester;
+		this.cUI = this.newC(CTester);
 		this.cPortal = this.newC(CPortal);
 		this.cHome.load();
 		this.openVPage(VMain, undefined, this.dispose);

@@ -32,7 +32,8 @@ function saveTuidAndIDTsIndexAndRender(uqFolder:string, uq: UqMan, uqAlias:strin
 
 		let tsUI = `// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Res, setRes, TFunc } from 'tonva-react';
-import { FieldItem, FieldItemNumber, FieldItemString, FieldItemId, UI, uqStringify } from "tonva-core";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { FieldItem, FieldItemNum, FieldItemString, FieldItemId, UI, uqStringify } from "tonva-core";
 import { Tuid${cName} } from "./${uqAlias}";
 
 const resRaw: Res<any> = {
@@ -67,9 +68,9 @@ export function render(item: Tuid${cName}):JSX.Element {
 		sets += `\n	assign(uq, '${cName}', ${cName});`;
 
 		let tsUI = `// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Res, setRes, TFunc, UI, uqStringify } from "tonva-react";
+import { Res, setRes, TFunc, uqStringify } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FieldItem, FieldItemNumber, FieldItemString, FieldItemId } from "tonva-react";
+import { UI, FieldItem, FieldItemNum, FieldItemString, FieldItemId } from "tonva-core";
 import { ${cName} } from "./${uqAlias}";
 
 /*--fields--*/

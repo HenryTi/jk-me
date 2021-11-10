@@ -25,19 +25,29 @@ RETURNS ret (
         WHERE a.object=object;
 };
 
-QUERY GetUserObjectAccount (
+QUERY GetUserObjectAccount 
+Proxy ProxyCheck
+(
+    object ID,
 )
 RETURNS ret (
     objectAccount ID,
     object ID,
+    post ENUM Post,
     account ENUM EnumAccount,
     balance DEC(18,4),
 ) {
-    INTO ret SELECT b.id as objectAccount, b.object, b.account, b.balance
-        FROM UserObject as a
-            JOIN ObjectAccount as b ON b.object=a.xi
-            JOIN AccountTitle as c ON c.id=b.account
-        WHERE a.ix=$user;
+    TABLE tblObjects(object ID KEY);
+    IF object IS NULL {
+        INTO tblObjects SELECT a.xi as object FROM UserObject as a WHERE a.ix=$user;
+    }
+    ELSE {
+        INTO tblObjects SELECT object;
+    }
+    INTO ret SELECT b.id as objectAccount, b.object, c.post, b.account, b.balance
+        FROM tblObjects as a
+            JOIN ObjectAccount as b ON b.object=a.object
+            LEFT JOIN ObjectPost as c ON c.id=a.object;
 };
 
 QUERY GetUserObjectItemPeriodSum ver 0.1 

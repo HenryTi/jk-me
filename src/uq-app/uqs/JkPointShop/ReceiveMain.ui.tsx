@@ -1,7 +1,8 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Res, setRes, TFunc, uqStringify } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { UI, FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-core";
-import { DxOrderMain } from "./JkMe";
+import { UI, FieldItem, FieldItemNumber, FieldItemString, FieldItemId } from "tonva-core";
+import { ReceiveMain } from "./JkPointShop";
 
 /*--fields--*/
 const fields = {
@@ -11,20 +12,20 @@ const fields = {
 		"isKey": false,
 		"label": "Id"
 	} as FieldItemId,
-	orderReady: {
-		"name": "orderReady",
+	createDate: {
+		"name": "createDate",
 		"isKey": false,
-		"label": "OrderReady"
+		"label": "CreateDate"
 	} as undefined,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.orderReady, 
+	fields.createDate, 
 ];
 
 export const ui: UI = {
-	label: "DxOrderMain",
+	label: "ReceiveMain",
 	fieldArr,
 	fields,
 };
@@ -42,6 +43,6 @@ export const t:TFunc = (str:string|JSX.Element): string|JSX.Element => {
 	return res[str as string] ?? str;
 }
 
-export function render(item: DxOrderMain):JSX.Element {
+export function render(item: ReceiveMain):JSX.Element {
 	return <>{uqStringify(item)}</>;
 };

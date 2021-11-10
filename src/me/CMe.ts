@@ -61,6 +61,6 @@ export class CMe extends CUqBase {
 	}
 
 	testPointShop = async () => {
-		let ret = await this.uqs.JkPointShop.GetPoints.query({customer: 1});
+		//let ret = await this.uqs.JkPointShop.GetPoints.query({customer: 1});
 	}
 }

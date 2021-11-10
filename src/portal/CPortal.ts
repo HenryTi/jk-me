@@ -33,7 +33,7 @@ export class CPortal extends  CUqBase {
         this.internalSetPeriod(EnumPeriod.day);
     }
 
-    protected async internalStart() {        
+    protected async internalStart() {
     }
 
     internalSetPeriod(periodType: EnumPeriod) {

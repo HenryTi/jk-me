@@ -65,7 +65,7 @@ export function assign(uq: any, to:string, from:any): void {
 }
 `;
 	
-	tsImport += ' } from "tonva-react";';
+	tsImport += ' } from "tonva-core";';
 	return tsImport + ts;
 }
 

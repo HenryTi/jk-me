@@ -7,6 +7,7 @@ import { UQs } from './uqs';
 import { CApp } from './CApp';
 
 export abstract class CUqBase extends CBase<CApp, UQs> {
+	protected async internalStart(param?:any, ...params:any[]):Promise<void> {}
 }
 
 export abstract class CUqSub<A extends CAppBase<U>, U, T extends CBase<A,U>> extends CSub<A, U, T> {
