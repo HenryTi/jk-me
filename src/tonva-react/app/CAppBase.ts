@@ -1,9 +1,9 @@
-import { centerApi, logoutApis, AppConfig as AppConfigCore } from "tonva-core";
+import { centerApi, logoutApis, AppConfig as AppConfigCore, Web } from "tonva-core";
 import { User, UqsConfig as UqsConfigCore } from 'tonva-core';
 import { nav, RouteFunc, Hooks, Navigo, NamedRoute } from "../components";
 import { t, setGlobalRes } from '../res';
 import { Controller } from '../vm';
-import { UQsLoader, UQsMan, TVs } from "../uq";
+import { UQsLoader, UQsMan, TVs } from "tonva-core";
 import { VErrorsPage, VStartError } from "./vMain";
 
 export interface IConstructor<T> {
@@ -58,14 +58,16 @@ export interface Elements {
 }
 
 export abstract class CAppBase<U> extends Controller {
+	private web: Web;
 	private appConfig: AppConfig;
 	private uqsMan: UQsMan;
     protected _uqs: U;
 	timezone: number;
 	unitTimezone: number;
 
-    constructor(config?: AppConfig) {
+    constructor(web: Web, config?: AppConfig) {
 		super();
+		this.web = web;
 		this.appConfig = config || (nav.navSettings as AppConfig);
 		if (this.appConfig) {
 			let {app, uqs} = this.appConfig;
@@ -93,7 +95,7 @@ export abstract class CAppBase<U> extends Controller {
 		if (user === this.uqsUser) return;
 		this.uqsUser = user;
 		logoutApis();
-		let uqsLoader = new UQsLoader(this.appConfig);
+		let uqsLoader = new UQsLoader(this.web, this.appConfig);
 		let retErrors = await uqsLoader.build();
 		this.uqsMan = uqsLoader.uqsMan;
 		this._uqs = this.uqsMan.proxy;

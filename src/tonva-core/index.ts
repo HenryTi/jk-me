@@ -5,3 +5,4 @@ export * from './web';
 export * from './uqBuild';
 export * from './uqCore';
 export * from './appConfig';
+export * from './ui';

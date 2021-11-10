@@ -1,6 +1,6 @@
-import { Res, UI } from "tonva-react";
+import { Res } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
+import { UI, FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-core";
 import { Tag } from "./BzHelloTonva";
 
 /*--fields--*/
