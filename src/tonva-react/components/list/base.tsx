@@ -1,5 +1,5 @@
 import { IObservableArray, computed, makeObservable } from 'mobx';
-import { PageItems } from '../../tool/pageItems';
+import { PageItems } from 'tonva-core';
 import {List} from './index';
 
 export abstract class ListBase {

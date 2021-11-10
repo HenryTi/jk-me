@@ -1,8 +1,6 @@
-import { UqApi } from 'tonva-core';
-import { LocalCache } from '../tool';
+import { UqApi, LocalCache, getObjPropIgnoreCase } from 'tonva-core';
 import { UqMan, Field, ArrFields, FieldMap } from './uqMan';
 import { Tuid } from './tuid';
-import { getObjPropIgnoreCase } from '../tool';
 
 const tab = '\t';
 const ln = '\n';

@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react';
 import _ from 'lodash';
-import { LocalArr } from '../../tool';
+import { LocalArr } from 'tonva-core';
 import { Entity } from '../entity';
 import { UqMan, ArrFields, Field, SchemaFrom } from '../uqMan';
 import { EntityCaller } from '../caller';

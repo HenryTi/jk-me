@@ -1,9 +1,8 @@
 import * as React from 'react';
 import {observable, IObservableArray, isObservableArray, observe, makeObservable} from 'mobx';
 import classNames from 'classnames';
+import { uid, PageItems } from 'tonva-core';
 import {ListBase} from './base';
-import {uid} from '../../tool/uid';
-import { PageItems } from '../../tool/pageItems';
 import { List } from './index';
 import { observer } from 'mobx-react';
 

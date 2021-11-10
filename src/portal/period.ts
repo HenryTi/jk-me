@@ -1,5 +1,5 @@
 import { action, computed, makeObservable, observable } from "mobx";
-import { env } from "tonva-react";
+import { env } from "tonva-core";
 import { Item, Post, ReturnGetObjectItemPeriodSumRet } from "uq-app/uqs/JkMe";
 
 export enum EnumPeriod {day = 0, month = 1, week = 2, year = 3}

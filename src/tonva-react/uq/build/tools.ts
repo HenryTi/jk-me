@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { capitalCase } from "../../tool";
+import { capitalCase } from "tonva-core";
 import { UqMan } from "../uqMan";
 import { BuildContext } from './context';
 

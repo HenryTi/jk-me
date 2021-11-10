@@ -1,4 +1,4 @@
-import { capitalCase } from "../../tool";
+import { capitalCase } from "tonva-core";
 import { FieldItem, FieldUIType } from "../../ui";
 
 export function buildFieldItem(field:any, isKey:boolean):FieldItem {

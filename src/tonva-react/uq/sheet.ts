@@ -1,5 +1,5 @@
+import { PageItems } from 'tonva-core';
 import { Entity } from './entity';
-import { PageItems } from '../tool/pageItems';
 import { EntityCaller } from './caller';
 import { ArrFields } from './uqMan';
 

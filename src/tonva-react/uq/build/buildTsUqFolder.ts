@@ -1,5 +1,5 @@
 import fs from "fs";
-import { capitalCase } from "../../tool";
+import { capitalCase } from "tonva-core";
 import { FieldItem } from "../../ui";
 import { Entity } from "../entity";
 import { ID, IDX, IX } from "../ID";

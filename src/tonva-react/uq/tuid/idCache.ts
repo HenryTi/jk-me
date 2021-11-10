@@ -1,6 +1,6 @@
 import { action, isObservableMap, makeObservable, observable, ObservableMap } from 'mobx';
 import _ from 'lodash';
-import { LocalArr } from '../../tool';
+import { LocalArr } from 'tonva-core';
 import { BoxId } from './boxId';
 import { TuidInner, TuidDiv } from './tuid';
 

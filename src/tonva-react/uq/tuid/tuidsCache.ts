@@ -1,6 +1,6 @@
+import { env } from 'tonva-core';
 import { UqMan, TuidModify } from '../uqMan';
 import { Tuid } from "./tuid";
-import { env } from '../../tool';
 
 interface Modify {
     id: number;

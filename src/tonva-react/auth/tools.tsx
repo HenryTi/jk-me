@@ -1,6 +1,5 @@
-import * as React from 'react';
+import { mobileRegex, emailRegex } from 'tonva-core';
 import { nav } from '../components';
-import { mobileRegex, emailRegex } from '../tool';
 import logo from '../img/logo.svg';
 
 export function tonvaTop() {

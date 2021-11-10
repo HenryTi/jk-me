@@ -1,11 +1,10 @@
-import { AppConfig as AppConfigCore } from "tonva-core";
+import { centerApi, logoutApis, AppConfig as AppConfigCore } from "tonva-core";
+import { User, UqsConfig as UqsConfigCore } from 'tonva-core';
 import { nav, RouteFunc, Hooks, Navigo, NamedRoute } from "../components";
 import { t, setGlobalRes } from '../res';
 import { Controller } from '../vm';
 import { UQsLoader, UQsMan, TVs } from "../uq";
-import { centerApi, logoutApis } from "tonva-core";
 import { VErrorsPage, VStartError } from "./vMain";
-import { User } from "../tool";
 
 export interface IConstructor<T> {
     new (...args: any[]): T;
@@ -34,7 +33,6 @@ export interface UqsConfig {
 	uqs?: UqConfig[];
 }
 */
-import { UqsConfig as UqsConfigCore } from 'tonva-core';
 export type UqsConfig = UqsConfigCore;
 export interface AppConfig extends AppConfigCore /*UqsConfig*/ {
 	/*

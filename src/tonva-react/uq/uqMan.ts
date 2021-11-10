@@ -8,7 +8,7 @@ import { History } from './history';
 import { Map } from './map';
 import { Pending } from './pending';
 import { CreateBoxId, BoxId } from './tuid';
-import { LocalMap, LocalCache, env, capitalCase } from '../tool';
+import { LocalMap, LocalCache, env, capitalCase } from 'tonva-core';
 import { UQsMan } from './uqsMan';
 import { ReactBoxId } from './tuid/reactBoxId';
 import { Tag } from './tag/tag';

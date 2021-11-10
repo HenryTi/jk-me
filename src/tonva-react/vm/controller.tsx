@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import {nav, Page, PageHeaderProps, PageWebNav} from '../components';
 import {resOptions, t} from '../res';
-import { User, env } from '../tool';
+import { User, env } from 'tonva-core';
 import { VPage } from './vpage';
 import { View } from './view';
 import { messageHub } from 'tonva-core';

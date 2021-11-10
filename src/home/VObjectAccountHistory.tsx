@@ -1,4 +1,5 @@
-import { dateFromHourId, EasyDate, List, LMR, toLocaleDateString, VPage } from "tonva-react";
+import { dateFromHourId } from 'tonva-core';
+import { EasyDate, List, LMR, VPage } from "tonva-react";
 import { Item, Post, ReturnGetObjectAccountHistoryRet } from "uq-app/uqs/JkMe";
 import { CHome } from "./CHome";
 

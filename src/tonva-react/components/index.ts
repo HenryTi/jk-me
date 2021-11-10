@@ -7,7 +7,6 @@ export * from './edit';
 export * from './loading';
 export * from './image';
 export * from './resUploader';
-export * from '../tool/rules';
 export * from './list';
 export * from './dropDownActions';
 export * from './easyDate';

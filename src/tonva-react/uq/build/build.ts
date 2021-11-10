@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { env } from '../../tool';
+import { env } from 'tonva-core';
 import { AppConfig } from '../../app';
 import { lastBuildTime, red, saveTsFile, saveSrcTsFileIfNotExists } from './tools';
 import { buildUqsFolder } from './uqsFolder';

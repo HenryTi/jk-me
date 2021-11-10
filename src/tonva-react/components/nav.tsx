@@ -1,12 +1,12 @@
 import * as React from 'react';
 import {makeObservable, observable} from 'mobx';
 import _ from 'lodash';
-import {User, Guest/*, UserInNav*/} from '../tool/user';
+import {User, Guest/*, UserInNav*/} from 'tonva-core';
 import {Page} from './page/page';
 import {netToken} from 'tonva-core';
 import FetchErrorView, { SystemNotifyPage } from './fetchErrorView';
 import {FetchError} from 'tonva-core';
-import {LocalData, env} from '../tool';
+import {LocalData, env} from 'tonva-core';
 import {guestApi, logoutApis, setCenterUrl, setCenterToken, host, resUrlFromHost, messageHub} from 'tonva-core';
 import { resOptions } from '../res/res';
 import { Loading } from './loading';

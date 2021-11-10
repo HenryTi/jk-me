@@ -2,7 +2,7 @@ import * as React from 'react';
 import classNames from 'classnames';
 import {observer} from 'mobx-react';
 import _ from 'lodash';
-import {PageItems} from '../../tool/pageItems';
+import {PageItems} from 'tonva-core';
 import {ListBase} from './base';
 import {Clickable} from './clickable';
 import {Static} from './static';

@@ -1,4 +1,3 @@
-export * from './tool';
 //export * from './net';
 export * from './components';
 export * from './auth';

@@ -1,4 +1,4 @@
-import { User } from '../tool';
+import { User } from 'tonva-core';
 import { nav, Login } from '../components';
 import { Controller, VPage } from "../vm";
 import { VLogout } from './VLogout';

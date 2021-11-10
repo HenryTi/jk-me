@@ -1,6 +1,6 @@
 //import { AppConfig, UqConfig } from '../app';
 import { UQsMan, TVs } from "./uqsMan";
-import { LocalMap, LocalCache, env } from '../tool';
+import { LocalMap, LocalCache, env } from 'tonva-core';
 import { UqData, UqAppData, CenterAppApi } from 'tonva-core';
 import { UqConfig, AppConfig as AppConfigCore } from "tonva-core";
 

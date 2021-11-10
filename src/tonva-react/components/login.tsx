@@ -1,4 +1,4 @@
-import { User } from '../tool';
+import { User } from 'tonva-core';
 
 export interface Login {
 	showLogin(callback?: (user:User)=>Promise<void>, withBack?:boolean):void;

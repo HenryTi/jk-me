@@ -1,4 +1,4 @@
-import { env } from '../tool';
+import { env } from 'tonva-core';
 import { UqData } from 'tonva-core';
 import { UqMan } from './uqMan';
 import { TuidImport, TuidInner } from './tuid';

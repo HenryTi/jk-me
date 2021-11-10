@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Page, Image, UserView } from '../components';
-import { env, User } from '../tool';
+import { env, User } from 'tonva-core';
 import { Controller } from './controller';
 import { VPage } from './vpage';
 

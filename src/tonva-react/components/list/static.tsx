@@ -1,7 +1,6 @@
-import * as React from 'react';
 import classNames from 'classnames';
+import { uid } from 'tonva-core';
 import { ListBase } from './base';
-import { uid } from '../../tool/uid';
 
 export class Static extends ListBase {
     render = (item:any, index:number):JSX.Element => {

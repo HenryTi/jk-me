@@ -1,4 +1,4 @@
-import { camelCase, capitalCase } from "../../tool";
+import { camelCase, capitalCase } from "tonva-core";
 import { UqMan } from "../uqMan";
 import { Action } from '../action';
 import { Book } from '../book';
