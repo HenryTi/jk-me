@@ -55,6 +55,7 @@ export abstract class Period {
     abstract render(): string;
 }
 
+const weekday = '日一二三四五六';
 class DayPeriod extends Period {
     init(): void {
         this.type = EnumPeriod.day;
@@ -68,7 +69,14 @@ class DayPeriod extends Period {
         this.to = new Date(this.to.setDate(this.to.getDate()+1));
         this.from = new Date(this.from.setDate(this.from.getDate()+1));
     }
-    render(): string {return this.from.toLocaleDateString()}
+    render(): string {
+        let year = new Date().getFullYear();
+        let y = this.from.getFullYear();
+        let m = this.from.getMonth();
+        let d = this.from.getDate();
+        let dw = this.from.getDay();
+        return (y === year? '': `${y}年`) + `${m+1}月${d}日 星期${weekday[dw]}`;
+    }
 }
 
 class WeekPeriod extends Period {
@@ -88,9 +96,14 @@ class WeekPeriod extends Period {
         this.to = new Date(this.to.setDate(this.to.getDate() + 7));
     }
     render(): string {
-        let to = new Date(this.to);
-        to.setDate(to.getDate() - 1);
-        return `${this.from.toLocaleDateString()} - ${to.toLocaleDateString()}`;
+        let year = new Date().getFullYear();
+        let yf = this.from.getFullYear();
+        let mf = this.from.getMonth();
+        let df = this.from.getDate();
+        let mt = this.to.getMonth();
+        let dt = this.to.getDate();
+        return (yf === year? '': `${yf}年`) + `${mf+1}月${df}日 - `
+            + (mt === mf? '': `${mt}月`) + `${dt}日`;
     }
 }
 
@@ -108,7 +121,11 @@ class MonthPeriod extends Period {
         this.from = new Date(this.from.setMonth(this.from.getMonth() + 1));
         this.to = new Date(this.to.setMonth(this.to.getMonth() + 1));
     }
-    render(): string {return `${this.from.getFullYear()}年${this.from.getMonth()+1}月`;}
+    render(): string {
+        let year = new Date().getFullYear();
+        let yf = this.from.getFullYear();
+        return `${year===yf? '': year+'年'}${this.from.getMonth()+1}月`;
+    }
 }
 
 class YearPeriod extends Period {

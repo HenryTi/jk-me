@@ -11,10 +11,11 @@ export class VHome extends VPage<CHome> {
 			let {accounts, cApp, onAccountClick} = this.controller;
 			if (!accounts) return null;
 			let {accountTitles} = cApp;
-			return <>{accounts.map(v => {
+			return <>{accounts.map((v, index) => {
 				let {objectAccount, account, balance} = v;
 				let {title, vice, unit, fixed} = accountTitles[account as EnumAccount];
-				return <div className="m-2 p-3 border border-info rounded rounded-3 bg-white text-center cursor-pointer"
+				return <div key={index}
+					className="m-2 p-3 border border-info rounded rounded-3 bg-white text-center cursor-pointer"
 					onClick={() => onAccountClick(v)}>
 					<div className="mb-1 text-primary small">{title}</div>
 					<div>

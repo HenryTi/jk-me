@@ -1,9 +1,9 @@
-import * as React from 'react';
 import { observable } from 'mobx';
 import {
-    userApi, ItemSchema, StringSchema, ImageSchema, UiTextItem, UiImageItem, nav, Page,
+    ItemSchema, StringSchema, ImageSchema, UiTextItem, UiImageItem, nav, Page,
     Edit, UiSchema, VPage, Prop, FA, IconText, PropGrid
 } from 'tonva-react';
+import { userApi } from 'tonva-core';
 import { CMe } from './CMe';
 
 export class VEditMe extends VPage<CMe>{

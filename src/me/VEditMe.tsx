@@ -1,7 +1,7 @@
-import * as React from 'react';
 import { observable } from 'mobx';
+import { userApi } from 'tonva-core';
 import {
-    userApi, ItemSchema, StringSchema, ImageSchema, UiTextItem, UiImageItem, nav, Page,
+    ItemSchema, StringSchema, ImageSchema, UiTextItem, UiImageItem, nav, Page,
     Edit, UiSchema, VPage, Prop, FA, IconText, PropGrid
 } from 'tonva-react';
 import { CMe } from './CMe';
