@@ -1,8 +1,9 @@
-import { dateFromHourId, EasyDate, List, LMR, toLocaleDateString, VPage } from "tonva-react";
+import { CAccount } from 'account';
+import { dateFromHourId } from 'tonva-core';
+import { EasyDate, List, LMR, VPage } from "tonva-react";
 import { Item, Post, ReturnGetObjectAccountHistoryRet } from "uq-app/uqs/JkMe";
-import { CHome } from "./CHome";
 
-export class VObjectAccountHistory extends VPage<CHome> {
+export class VObjectAccountHistory extends VPage<CAccount> {
     header() {return '账户明细'}
     content() {
         let {accountHistory} = this.controller;

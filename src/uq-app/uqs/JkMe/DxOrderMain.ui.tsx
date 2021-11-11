@@ -1,6 +1,6 @@
-import { Res, setRes, TFunc, UI, uqStringify } from "tonva-react";
+import { Res, setRes, TFunc, uqStringify } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-react";
+import { UI, FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-core";
 import { DxOrderMain } from "./JkMe";
 
 /*--fields--*/
@@ -11,16 +11,16 @@ const fields = {
 		"isKey": false,
 		"label": "Id"
 	} as FieldItemId,
-	readyStates: {
-		"name": "readyStates",
+	orderReady: {
+		"name": "orderReady",
 		"isKey": false,
-		"label": "ReadyStates"
+		"label": "OrderReady"
 	} as undefined,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.readyStates, 
+	fields.orderReady, 
 ];
 
 export const ui: UI = {

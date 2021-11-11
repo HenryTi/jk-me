@@ -3,7 +3,7 @@ import { CBase/*, Context*/ } from "tonva-react";
 import { CID, MidID, CIDX, MidIDX, MidTag, CIDTagList, CTagIDList
 	, SheetUI, MidIDTagList, CSheetNew, MidSheet } from "tonva-uqui";
 */
-import { CApp, UQs } from "uq-app";
+import { CApp, CUqBase, UQs } from "uq-app";
 //import { OrderDetail, OrderMaster } from "uq-app/uqs/BzHelloTonva";
 import { VTester } from "./VTest";
 //import { isNumber } from "lodash";
@@ -14,7 +14,7 @@ export interface UIItem {
 	click: () => Promise<void>;
 }
 
-export class CTester extends CBase<CApp,UQs> {
+export class CTester extends CUqBase {
 	readonly uiItems:UIItem[] = [
 		/*
 		{

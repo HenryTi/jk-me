@@ -14,25 +14,41 @@ export class VStaffs extends VObjects<CStaffs> {
                 let {itemTitles} = this.controller.cApp;
                 let {title} = itemTitles[item];
                 return <div key={index} className="d-flex">
-                    <div className="flex-fill text-end">{title}</div>
-                    <div>{this.vValue(dThis)}</div>
-                    <div>{this.vValue(mThis)}</div>
-                    <div>{this.vValue(mLast)}</div>
+                    <div className="flex-fill text-sm-end small text-muted">{title}</div>
+                    <div className="d-sm-flex">
+                        <div className="d-flex d-sm-block">
+                            <div className="flex-fill small text-muted d-sm-none">今日</div>
+                            <div>{this.vValue(dThis)}</div>
+                        </div>
+                        <div className="d-flex d-sm-block">
+                            <div className="flex-fill small text-muted d-sm-none">本月</div>
+                            <div>{this.vValue(mThis)}</div>
+                        </div>
+                        <div className="d-flex d-sm-block">
+                            <div className="flex-fill small text-muted d-sm-none">上月</div>
+                            <div>{this.vValue(mLast)}</div>
+                        </div>
+                    </div>
                 </div>
             })}
         </div>;
-        return <LMR className="px-3 py-2" right={right}>
-            {this.controller.uqs.JkHr.Employee.tv(staff, renderEmployee)}
-        </LMR>;
+        return <div className="px-3 py-2 d-block d-sm-flex">
+            <div className="flex-fill">
+                {this.controller.uqs.JkHr.Employee.tv(staff, renderEmployee)}
+            </div>
+            {right}
+        </div>;
     }
 
     protected renderListHeader(): JSX.Element {
         return <div>
             <div className="d-flex px-3 py-3 border-bottom border-primary">
                 <div className="flex-fill">员工</div>
-                <div className={cnAmount}>今天</div>
-                <div className={cnAmount}>本月</div>
-                <div className={cnAmount}>上月</div>
+                <div className="d-none d-sm-flex">
+                    <div className={cnAmount}>今天</div>
+                    <div className={cnAmount}>本月</div>
+                    <div className={cnAmount}>上月</div>
+                </div>
             </div>
             {this.renderListFooter()}
         </div>;
@@ -40,8 +56,8 @@ export class VStaffs extends VObjects<CStaffs> {
 
     protected renderListFooter(): JSX.Element {
         let {sum} = this.controller;
-        return <div className="d-flex px-3 py-3">
-            <div className="flex-fill fw-bold">合计</div>
+        return <div className="px-3 py-3 d-block d-sm-flex">
+            <div className="flex-fill fw-bold text-sm-end small text-muted me-3">合计</div>
             <div>
                 {sum.map((v, index) => {
                     let {item, dThis, mThis, mLast} = v;
@@ -50,10 +66,21 @@ export class VStaffs extends VObjects<CStaffs> {
                     let {itemTitles} = this.controller.cApp;
                     let {title} = itemTitles[item];
                     return <div key={index} className="d-flex">
-                        <div className="flex-fill text-end">{title}</div>
-                        <div>{this.vValue(dThis)}</div>
-                        <div>{this.vValue(mThis)}</div>
-                        <div>{this.vValue(mLast)}</div>
+                        <div className="flex-fill text-sm-end small text-muted">{title}</div>
+                        <div className="d-sm-flex">
+                            <div className="d-flex d-sm-block">
+                                <div className="flex-fill small text-muted d-sm-none">今日</div>
+                                <div>{this.vValue(dThis)}</div>
+                            </div>
+                            <div className="d-flex d-sm-block">
+                                <div className="flex-fill small text-muted d-sm-none">本月</div>
+                                <div>{this.vValue(mThis)}</div>
+                            </div>
+                            <div className="d-flex d-sm-block">
+                                <div className="flex-fill small text-muted d-sm-none">上月</div>
+                                <div>{this.vValue(mLast)}</div>
+                            </div>
+                        </div>
                     </div>
                 })}
             </div>

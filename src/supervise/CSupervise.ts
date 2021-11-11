@@ -13,7 +13,7 @@ import { ReturnGetObjectsRet
 import { Item  } from "uq-app/uqs/JkMe/JkMe";
 import { VSupervise } from "./VSupervise";
 import { VItemSumHistory } from "./VItemSumHistory";
-import { env, PageItems } from "tonva-react";
+import { env, PageItems } from "tonva-core";
 import { VItemHistory } from "./VItemHistory";
 import { VItemDayHistory } from "./VItemDayHistory";
 import { VCustomerSumByMonth, VProductSumByMonth } from "./VSumByMonth";

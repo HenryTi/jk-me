@@ -1,6 +1,6 @@
-//=== UqApp builder created on Thu Nov 04 2021 18:26:43 GMT-0400 (北美东部夏令时间) ===//
+//=== UqApp builder created on Wed Nov 10 2021 18:48:18 GMT-0500 (北美东部标准时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqMap, UqHistory } from "tonva-react";
+import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqMap, UqHistory } from "tonva-core";
 
 
 //===============================
@@ -108,6 +108,12 @@ export interface TuidPackSalesLevel {
 export interface ParamCountProductCategoryInclusion {
 }
 export interface ResultCountProductCategoryInclusion {
+}
+
+export interface Param$setMyTimezone {
+	_timezone: number;
+}
+export interface Result$setMyTimezone {
 }
 
 export interface ParamGetRootCategory {
@@ -381,6 +387,33 @@ export interface ResultGetProductLotNumber {
 	ret: ReturnGetProductLotNumberRet[];
 }
 
+export interface Param$getMyTimezone {
+}
+export interface Return$getMyTimezoneRet {
+	timezone: number;
+	unitTimeZone: number;
+}
+export interface Result$getMyTimezone {
+	ret: Return$getMyTimezoneRet[];
+}
+
+export interface ParamPriceXquery {
+	product: number;
+	pack: number;
+	salesRegion: number;
+}
+export interface ReturnPriceXqueryRet {
+	product: number;
+	pack: number;
+	salesRegion: number;
+	expireDate: any;
+	discountinued: number;
+	retail: number;
+}
+export interface ResultPriceXquery {
+	ret: ReturnPriceXqueryRet[];
+}
+
 export interface ParamProductSearchHistory {
 	webUser: number;
 	salesRegion: number;
@@ -417,6 +450,7 @@ export interface UqExt extends Uq {
 	Lot: UqTuid<TuidLot>;
 	PackSalesLevel: UqTuid<TuidPackSalesLevel>;
 	CountProductCategoryInclusion: UqAction<ParamCountProductCategoryInclusion, ResultCountProductCategoryInclusion>;
+	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
 	GetRootCategory: UqQuery<ParamGetRootCategory, ResultGetRootCategory>;
 	GetChildrenCategory: UqQuery<ParamGetChildrenCategory, ResultGetChildrenCategory>;
 	SearchProductByCategory: UqQuery<ParamSearchProductByCategory, ResultSearchProductByCategory>;
@@ -433,6 +467,8 @@ export interface UqExt extends Uq {
 	GetProductPackByOrigin: UqQuery<ParamGetProductPackByOrigin, ResultGetProductPackByOrigin>;
 	GetProductPrices: UqQuery<ParamGetProductPrices, ResultGetProductPrices>;
 	GetProductLotNumber: UqQuery<ParamGetProductLotNumber, ResultGetProductLotNumber>;
+	$getMyTimezone: UqQuery<Param$getMyTimezone, Result$getMyTimezone>;
+	PriceXquery: UqQuery<ParamPriceXquery, ResultPriceXquery>;
 	AgentPrice: UqMap;
 	BrandSalesRegion: UqMap;
 	BrandDeliveryTime: UqMap;

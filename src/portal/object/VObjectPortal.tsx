@@ -6,6 +6,9 @@ export class VObjectPortal extends VPage<CObjectPortal> {
     content() {
         return <div>
             <div>{this.controller.pageTop}</div>
+            <div className="d-flex flex-wrap p-2">
+                {this.controller.cAccount?.renderAccounts()}
+            </div>
             <div>{this.controller.renderVPortal()}</div>
         </div>;
     }

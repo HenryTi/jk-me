@@ -1,5 +1,5 @@
 import { makeObservable, observable } from "mobx";
-import { QueryPager, User, VTestMobx } from "tonva-react";
+import { QueryPager, User } from "tonva-core";
 import { CUqBase } from "uq-app";
 import { VMe } from "./VMe";
 import { VEditMe } from "./VEditMe";
@@ -61,6 +61,6 @@ export class CMe extends CUqBase {
 	}
 
 	testPointShop = async () => {
-		let ret = await this.uqs.JkPointShop.GetPoints.query({customer: 1});
+		//let ret = await this.uqs.JkPointShop.GetPoints.query({customer: 1});
 	}
 }

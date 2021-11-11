@@ -10,6 +10,8 @@ import { Item, Post, EnumRole, EnumRoleOp, ObjectPostItem, EnumAccount } from ".
 import { CSupervise } from "supervise";
 import { CPortal, CObjectPortal, CUnitPortal } from "portal";
 import { makeObservable, observable } from "mobx";
+import { nav, start } from "tonva-react";
+import { appConfig } from "./appConfig";
 
 const gaps = [10, 3,3,3,3,3,5,5,5,5,5,5,5,5,10,10,10,10,15,15,15,30,30,60];
 
@@ -22,6 +24,10 @@ export interface Title {
 
 
 export class CApp extends CUqApp {
+	constructor() {
+		super(appConfig);
+	}
+
 	cHome: CHome;
 	cSupervise: CSupervise;
 	cBug: CBug;
@@ -48,7 +54,7 @@ export class CApp extends CUqApp {
 		this.cSupervise = this.newC(CSupervise);
 		this.cBug = this.newC(CBug);
 		this.cMe = this.newC(CMe);
-		this.cUI = this.newC(CTester) as CTester;
+		this.cUI = this.newC(CTester);
 		this.cPortal = this.newC(CPortal);
 		this.cHome.load();
 		this.openVPage(VMain, undefined, this.dispose);
@@ -56,6 +62,16 @@ export class CApp extends CUqApp {
 		this.timer = setInterval(this.callTick, 1000);
 		// uq 里面加入这一句，会让相应的$Poked查询返回poke=1：
 		// TUID [$User] ID (member) SET poke=1;
+	}
+
+	renderApp(loginedOnly: boolean = true):JSX.Element {
+		const onLogined = async (isUserLogin?:boolean) => {
+			await start(CApp, appConfig, isUserLogin);
+		}
+		let onNotLogined: () => Promise<void>;
+		if (loginedOnly === false) onNotLogined = onLogined;
+		nav.appStart();
+		return nav.renderNavView(onLogined, onNotLogined);
 	}
 
 	private timer:any;
