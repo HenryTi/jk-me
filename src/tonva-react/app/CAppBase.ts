@@ -1,6 +1,6 @@
 import { centerApi, logoutApis, AppConfig as AppConfigCore, Web } from "tonva-core";
 import { User, UqsConfig as UqsConfigCore } from 'tonva-core';
-import { RouteFunc, Hooks, Navigo, NamedRoute } from "../components";
+import { RouteFunc, Hooks, Navigo, NamedRoute } from "tonva-core";
 import { nav, Nav } from '../nav';
 import { t, setGlobalRes } from '../res';
 import { Controller } from '../vm';

@@ -593,6 +593,3 @@ export class Navigo {
 		}
 	}
 }
-
-//export default Navigo;
-export const navigo = new Navigo();

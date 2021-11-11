@@ -1,8 +1,8 @@
 import {makeObservable, observable} from 'mobx';
 import _ from 'lodash';
-import {Page} from '../components/page/page';
+import {Page} from '../components';
 import { resOptions } from '../res/res';
-import { Navigo, RouteFunc, Hooks, NamedRoute } from '../components/navigo';
+import { Navigo, RouteFunc, Hooks, NamedRoute } from 'tonva-core';
 import { NavPage } from './NavPage';
 
 import 'font-awesome/css/font-awesome.min.css';
