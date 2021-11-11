@@ -1,6 +1,6 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { nav } from './nav';
+import { nav } from '../nav';
 
 export interface ImageProps {
     src: string;

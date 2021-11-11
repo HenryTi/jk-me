@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FetchError, refetchApi } from 'tonva-core';
-import { Page } from './page/page';
+import { Page } from '../components';
 
 export interface FetchErrorProps extends FetchError {
     clearError: ()=>void

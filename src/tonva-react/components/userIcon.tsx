@@ -1,6 +1,6 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { nav } from './nav';
+import { nav } from '../nav';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { User, userApi } from 'tonva-core';

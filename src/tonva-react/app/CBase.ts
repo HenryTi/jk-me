@@ -1,29 +1,37 @@
 import _ from 'lodash';
+import { Web } from 'tonva-core';
+import { Nav } from 'tonva-react';
 import { Controller, WebNav } from "../vm";
 import { CAppBase, IConstructor } from "./CAppBase";
 
 export abstract class CBase<A extends CAppBase<U>, U> extends Controller {
-    protected readonly _uqs: U;
-    protected readonly _cApp: A;
-
-    constructor(cApp: any) {
+    constructor(cApp: A) {
         super();
-        this._cApp = cApp;
-        this._uqs = cApp?.uqs;
+        this.cApp = cApp;
+		if (cApp) {
+			let {uqs, web, nav} = cApp;
+			this.uqs = uqs;
+			this.web = web;
+			this.nav = nav;
+		}
 	}
 
-    get uqs(): U {return this._uqs}
-	get cApp(): A {return this._cApp}
-	get timezone():number {return this._cApp.timezone;}
-	get unitTimezone():number {return this._cApp.unitTimezone;}
+    readonly cApp: A;
+    readonly uqs: U;
+	readonly web: Web;
+	readonly nav: Nav;
+    //get uqs(): U {return this._uqs}
+	//get cApp(): A {return this._cApp}
+	get timezone():number {return this.cApp.timezone;}
+	get unitTimezone():number {return this.cApp.unitTimezone;}
 	async getUqRoles(uqName:string):Promise<string[]> {
-		return this._cApp?.getUqRoles(uqName);
+		return this.cApp?.getUqRoles(uqName);
 	}
 
 	internalT(str:string):any {
 		let r = super.internalT(str);
 		if (r!==undefined) return r;
-		return this._cApp.internalT(str);
+		return this.cApp.internalT(str);
 	}
 
     protected newC<T extends CBase<A,U>>(type: IConstructor<T>, ...param:any[]):T {
@@ -39,7 +47,7 @@ export abstract class CBase<A extends CAppBase<U>, U> extends Controller {
 	}
 	
 	getWebNav(): WebNav<any> {
-		let wn = this._cApp?.getWebNav();
+		let wn = this.cApp?.getWebNav();
 		if (wn === undefined) return;
 		let ret = _.clone(wn);
 		_.merge(ret, this.webNav);
@@ -64,7 +72,7 @@ export abstract class CSub<A extends CAppBase<U>, U, T extends CBase<A, U>> exte
     protected get owner(): T {return this._owner}
 	
 	getWebNav(): WebNav<any> {
-		let wn = this._cApp?.getWebNav();
+		let wn = this.cApp?.getWebNav();
 		if (wn === undefined) return;
 		let ownerWNs:WebNav<any>[] = [];
 		for (let p = this.owner; p!==undefined; p = (p as any)?.owner) {

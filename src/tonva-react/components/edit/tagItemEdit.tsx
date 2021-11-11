@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { UiTag } from '../schema';
-import { nav } from '../nav';
+import { nav } from '../../nav';
 import { Page } from '../page/page';
 import { observer } from 'mobx-react';
 import { ItemEdit } from './itemEdit';

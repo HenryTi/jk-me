@@ -8,3 +8,4 @@ export * from './test';
 export { CStringEdit } from './CStringEdit';
 export * from './WebReact';
 export * from './uqStringify';
+export * from './nav';

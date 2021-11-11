@@ -3,7 +3,7 @@ import {observer} from 'mobx-react';
 import {PageHeaderProps, renderPageHeader} from './pageHeader';
 import { TabsProps, TabsView } from './tabs';
 import { ScrollProps, ScrollView, PageWebNav, WebNavScrollView } from './scrollView';
-import { nav } from '../nav';
+import { nav } from '../../nav';
 
 export interface IVPage {
 	content():JSX.Element;

@@ -1,5 +1,5 @@
 import { ItemSchema, UiItem, UiSelectBase } from '../schema';
-import { nav } from '../nav';
+import { nav } from '../../nav';
 import { makeObservable, observable } from 'mobx';
 import { Image } from '../image';
 import { Edit } from './edit';

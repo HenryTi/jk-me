@@ -1,6 +1,7 @@
 import _ from 'lodash';
-import {nav, Page, PageHeaderProps, PageWebNav} from '../components';
-import {resOptions, t} from '../res';
+import { Page, PageHeaderProps, PageWebNav } from '../components';
+import { nav } from '../nav';
+import { resOptions, t } from '../res';
 import { User, env } from 'tonva-core';
 import { VPage } from './vpage';
 import { View } from './view';

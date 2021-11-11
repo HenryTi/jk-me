@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { nav } from './nav';
+import { nav } from '../nav';
 import { Loading } from './loading';
 import { Image as ImageControl } from './image';
 import { Page } from './page/page';

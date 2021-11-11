@@ -1,10 +1,12 @@
 import { centerApi, logoutApis, AppConfig as AppConfigCore, Web } from "tonva-core";
 import { User, UqsConfig as UqsConfigCore } from 'tonva-core';
-import { nav, RouteFunc, Hooks, Navigo, NamedRoute } from "../components";
+import { RouteFunc, Hooks, Navigo, NamedRoute } from "../components";
+import { nav, Nav } from '../nav';
 import { t, setGlobalRes } from '../res';
 import { Controller } from '../vm';
 import { UQsLoader, UQsMan, TVs } from "tonva-core";
 import { VErrorsPage, VStartError } from "./vMain";
+import { WebReact } from "tonva-react";
 
 export interface IConstructor<T> {
     new (...args: any[]): T;
@@ -58,16 +60,18 @@ export interface Elements {
 }
 
 export abstract class CAppBase<U> extends Controller {
-	private web: Web;
 	private appConfig: AppConfig;
 	private uqsMan: UQsMan;
     protected _uqs: U;
+	readonly web: Web;
+	readonly nav: Nav;
 	timezone: number;
 	unitTimezone: number;
 
-    constructor(web: Web, config?: AppConfig) {
+    constructor(config?: AppConfig) {
 		super();
-		this.web = web;
+		this.web = new WebReact();
+		this.nav = nav;
 		this.appConfig = config || (nav.navSettings as AppConfig);
 		if (this.appConfig) {
 			let {app, uqs} = this.appConfig;

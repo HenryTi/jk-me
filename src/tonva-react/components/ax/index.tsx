@@ -1,6 +1,6 @@
 import React from "react";
 import classNames from 'classnames';
-import { nav } from "../nav";
+import { nav } from "../../nav";
 
 export interface AxProps extends React.DetailedHTMLProps<React.AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement> {
 	//children: React.ReactNode;
