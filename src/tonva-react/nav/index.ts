@@ -1,8 +1,9 @@
-import { Nav } from './nav';
+import { Nav } from './Nav';
 import { NavView } from './NavView';
 
 export const nav: Nav = new Nav();
 export class TonvaView extends NavView {
 
 }
-export * from './nav';
+export * from './Nav';
+export * from './NavView';

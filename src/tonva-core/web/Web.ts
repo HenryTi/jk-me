@@ -17,6 +17,12 @@ export interface PromiseValue<T> {
 }
 
 export abstract class Web {
+    // ----- 从nav搬移过来的内容
+
+
+
+    // ===== nav搬移内容结束
+
 	abstract navInit(): Promise<void>
 	reload() {
 		throw new Error('Method not implemented.');

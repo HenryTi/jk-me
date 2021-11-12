@@ -106,6 +106,7 @@ IX ObjectAccountHistory (
 IX UserObject (
     IX user,
     XI ID Object INDEX,
+    on TINYINT DEFAULT 0,
 );
 
 IX UserSuperviseItem (

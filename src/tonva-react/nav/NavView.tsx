@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { env, FetchError } from 'tonva-core';
 import { Loading } from '../components';
-import FetchErrorView from './fetchErrorView';
+import FetchErrorView from './FetchErrorView';
 import { FA } from '../components';
 
 export interface Props
