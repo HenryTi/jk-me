@@ -1,5 +1,5 @@
 -- 定期计算，每小时计算一次。把新的业务添加到日业务表
-ACT CalcDaySum ()
+ACT CalcDaySum ver 0.1 ()
 {
     TRANSACTION OFF;                     -- 去掉每一个ACT开始的Start Transaction和结尾的Commit
     VAR timeZone TINYINT = unittimezone();

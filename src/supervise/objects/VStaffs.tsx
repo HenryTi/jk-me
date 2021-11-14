@@ -1,4 +1,3 @@
-import { LMR } from "tonva-react";
 import { cnAmount } from "tools";
 import { Item } from "uq-app/uqs/JkMe";
 import { CStaffs, StaffRow } from "./CStaffs";

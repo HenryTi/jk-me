@@ -1,6 +1,6 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { CApp, CUqBase } from "uq-app";
-import { Item, ObjectPostItem, ReturnGetObjectItemHistoryRet, ReturnGetObjectItemPeriodHistoryRet
+import { Item, ReturnGetObjectItemHistoryRet, ReturnGetObjectItemPeriodHistoryRet
     , ReturnGetObjectItemPeriodSumRet } from "uq-app/uqs/JkMe";
 import { BizOpDetail } from "./bizOpDetail";
 import { PostPeriodSum, Period, ItemPeriodSum, EnumPeriod, createPeriod } from "./period";
@@ -14,7 +14,7 @@ export class CPortal extends  CUqBase {
 
     period: Period;
     list: any[];
-    objectPostItem: ObjectPostItem;
+    // objectPostItem: ObjectPostItem;
     itemPeriodSum: ItemPeriodSum;
     history: ReturnGetObjectItemHistoryRet[];
     periodHistory: ReturnGetObjectItemPeriodHistoryRet[];

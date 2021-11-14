@@ -1,4 +1,4 @@
-import { action, isObservableMap, makeObservable, observable, ObservableMap } from 'mobx';
+import { action, makeObservable, observable } from 'mobx';
 import _ from 'lodash';
 import { LocalArr } from '../../tool';
 import { BoxId } from './boxId';

@@ -1,4 +1,4 @@
-//=== UqApp builder created on Wed Nov 10 2021 18:48:18 GMT-0500 (北美东部标准时间) ===//
+//=== UqApp builder created on Sat Nov 13 2021 19:38:53 GMT-0500 (北美东部标准时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-core";
 
@@ -113,16 +113,6 @@ export interface ParamCalcMonthSum {
 export interface ResultCalcMonthSum {
 }
 
-export interface ParamExecQueueBizOp {
-}
-export interface ResultExecQueueBizOp {
-}
-
-export interface ParamExecQueueBizMain {
-}
-export interface ResultExecQueueBizMain {
-}
-
 export interface ParamDoneDeliver {
 	customer: number;
 	contact: number;
@@ -134,11 +124,6 @@ export interface ParamDoneDeliver {
 
 }
 export interface ResultDoneDeliver {
-}
-
-export interface ParamCalcDaySum {
-}
-export interface ResultCalcDaySum {
 }
 
 export interface Param$setMyTimezone {
@@ -546,9 +531,24 @@ export interface ResultGetObjectAccountHistory {
 	ret: ReturnGetObjectAccountHistoryRet[];
 }
 
+export interface ParamGetAccounts {
+}
+export interface ReturnGetAccountsRet {
+	id: number;
+	object: number;
+	account: any;
+	balance: number;
+	objectType: any;
+	objectTo: number;
+}
+export interface ResultGetAccounts {
+	ret: ReturnGetAccountsRet[];
+}
+
 export interface Object {
 	id?: number;
 	type: any;
+	to: number;
 }
 
 export interface ItemHistory {
@@ -614,13 +614,6 @@ export interface ObjectCustomer {
 	customer: number;
 }
 
-export interface ObjectPostItem {
-	id?: number;
-	object: number;
-	post: any;
-	item: any;
-}
-
 export interface Group {
 	id?: number;
 	name: string;
@@ -634,16 +627,6 @@ export interface ObjectDistributor {
 export interface ObjectAgent {
 	id?: number;
 	agent: number;
-}
-
-export interface QueueBizOp {
-	id?: number;
-	bizOp: number;
-}
-
-export interface QueueBizMain {
-	id?: number;
-	bizMain: number;
 }
 
 export interface DeliverDetail {
@@ -684,14 +667,6 @@ export interface ObjectAccount {
 	balance: number;
 }
 
-export interface BizMainBound {
-	id?: number;
-	bizMain: number;
-	post: any;
-	item: any;
-	to: number;
-}
-
 export interface OPIBooking {
 	id?: number;
 	bizOpType: any;
@@ -725,28 +700,6 @@ export interface DxOrderMain {
 	$act?: number;
 }
 
-export interface DxBizMain {
-	id: number;
-	ready?: number;
-	$act?: number;
-}
-
-export interface DxBizOp {
-	id: number;
-	type?: any;
-	biz?: number;
-	value?: number;
-	done?: number;
-	stamp?: number;
-	$act?: number;
-}
-
-export interface DxBiz {
-	id: number;
-	main?: number;
-	$act?: number;
-}
-
 export interface ActParamDxOrderDetail {
 	id: number|IDXValue;
 	deliverDone?: number|IDXValue;
@@ -762,31 +715,10 @@ export interface ActParamDxOrderMain {
 	$act?: number;
 }
 
-export interface ActParamDxBizMain {
-	id: number|IDXValue;
-	ready?: number|IDXValue;
-	$act?: number;
-}
-
-export interface ActParamDxBizOp {
-	id: number|IDXValue;
-	type?: any|IDXValue;
-	biz?: number|IDXValue;
-	value?: number|IDXValue;
-	done?: number|IDXValue;
-	stamp?: number|IDXValue;
-	$act?: number;
-}
-
-export interface ActParamDxBiz {
-	id: number|IDXValue;
-	main?: number|IDXValue;
-	$act?: number;
-}
-
 export interface UserObject {
 	ix: number;
 	xi: number;
+	on: number;
 }
 
 export interface GroupObject {
@@ -813,12 +745,6 @@ export interface MonthSumCustomer {
 	value: number;
 }
 
-export interface IxBizOpBound {
-	ix: number;
-	xi: number;
-	bound: number;
-}
-
 export interface UserRole {
 	ix: number;
 	xi: number;
@@ -842,12 +768,6 @@ export interface DaySumItem {
 	value: number;
 }
 
-export interface AccountBooking {
-	ix: number;
-	xi: number;
-	radio: number;
-}
-
 export interface ParamActs {
 	object?: Object[];
 	itemHistory?: ItemHistory[];
@@ -859,36 +779,27 @@ export interface ParamActs {
 	objectStaff?: ObjectStaff[];
 	objectPost?: ObjectPost[];
 	objectCustomer?: ObjectCustomer[];
-	objectPostItem?: ObjectPostItem[];
 	group?: Group[];
 	objectDistributor?: ObjectDistributor[];
 	objectAgent?: ObjectAgent[];
-	queueBizOp?: QueueBizOp[];
-	queueBizMain?: QueueBizMain[];
 	deliverDetail?: DeliverDetail[];
 	deliverMain?: DeliverMain[];
 	role?: Role[];
 	oPIHistory?: OPIHistory[];
 	objectAccount?: ObjectAccount[];
-	bizMainBound?: BizMainBound[];
 	oPIBooking?: OPIBooking[];
 	accountTitle?: AccountTitle[];
 	dxOrderDetail?: ActParamDxOrderDetail[];
 	dxOrderMain?: ActParamDxOrderMain[];
-	dxBizMain?: ActParamDxBizMain[];
-	dxBizOp?: ActParamDxBizOp[];
-	dxBiz?: ActParamDxBiz[];
 	userObject?: UserObject[];
 	groupObject?: GroupObject[];
 	userSuperviseItem?: UserSuperviseItem[];
 	monthSumProduct?: MonthSumProduct[];
 	monthSumCustomer?: MonthSumCustomer[];
-	ixBizOpBound?: IxBizOpBound[];
 	userRole?: UserRole[];
 	roleOps?: RoleOps[];
 	objectAccountHistory?: ObjectAccountHistory[];
 	daySumItem?: DaySumItem[];
-	accountBooking?: AccountBooking[];
 }
 
 
@@ -900,10 +811,7 @@ export interface UqExt extends Uq {
 	BusTestBoundStaffSales: UqAction<ParamBusTestBoundStaffSales, ResultBusTestBoundStaffSales>;
 	BusTestOrderSaleCost: UqAction<ParamBusTestOrderSaleCost, ResultBusTestOrderSaleCost>;
 	CalcMonthSum: UqAction<ParamCalcMonthSum, ResultCalcMonthSum>;
-	ExecQueueBizOp: UqAction<ParamExecQueueBizOp, ResultExecQueueBizOp>;
-	ExecQueueBizMain: UqAction<ParamExecQueueBizMain, ResultExecQueueBizMain>;
 	DoneDeliver: UqAction<ParamDoneDeliver, ResultDoneDeliver>;
-	CalcDaySum: UqAction<ParamCalcDaySum, ResultCalcDaySum>;
 	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
 	_BuildLostSalesStaffOrderAmount: UqAction<Param_BuildLostSalesStaffOrderAmount, Result_BuildLostSalesStaffOrderAmount>;
 	CalcAccount: UqAction<ParamCalcAccount, ResultCalcAccount>;
@@ -937,6 +845,7 @@ export interface UqExt extends Uq {
 	GetUserObjectAccount: UqQuery<ParamGetUserObjectAccount, ResultGetUserObjectAccount>;
 	GetAccountTitles: UqQuery<ParamGetAccountTitles, ResultGetAccountTitles>;
 	GetObjectAccountHistory: UqQuery<ParamGetObjectAccountHistory, ResultGetObjectAccountHistory>;
+	GetAccounts: UqQuery<ParamGetAccounts, ResultGetAccounts>;
 	Object: UqID<any>;
 	ItemHistory: UqID<any>;
 	OrderDetail: UqID<any>;
@@ -947,36 +856,27 @@ export interface UqExt extends Uq {
 	ObjectStaff: UqID<any>;
 	ObjectPost: UqID<any>;
 	ObjectCustomer: UqID<any>;
-	ObjectPostItem: UqID<any>;
 	Group: UqID<any>;
 	ObjectDistributor: UqID<any>;
 	ObjectAgent: UqID<any>;
-	QueueBizOp: UqID<any>;
-	QueueBizMain: UqID<any>;
 	DeliverDetail: UqID<any>;
 	DeliverMain: UqID<any>;
 	Role: UqID<any>;
 	OPIHistory: UqID<any>;
 	ObjectAccount: UqID<any>;
-	BizMainBound: UqID<any>;
 	OPIBooking: UqID<any>;
 	AccountTitle: UqID<any>;
 	DxOrderDetail: UqIDX<any>;
 	DxOrderMain: UqIDX<any>;
-	DxBizMain: UqIDX<any>;
-	DxBizOp: UqIDX<any>;
-	DxBiz: UqIDX<any>;
 	UserObject: UqIX<any>;
 	GroupObject: UqIX<any>;
 	UserSuperviseItem: UqIX<any>;
 	MonthSumProduct: UqIX<any>;
 	MonthSumCustomer: UqIX<any>;
-	IxBizOpBound: UqIX<any>;
 	UserRole: UqIX<any>;
 	RoleOps: UqIX<any>;
 	ObjectAccountHistory: UqIX<any>;
 	DaySumItem: UqIX<any>;
-	AccountBooking: UqIX<any>;
 }
 
 export function assign(uq: any, to:string, from:any): void {

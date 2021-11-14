@@ -5,7 +5,6 @@ import {uqTokenApi, callCenterapi, centerToken, setCenterToken, UqTokenApi} from
 import {setSubAppWindow} from './wsChannel';
 import { host } from './host';
 import { env } from '../tool';
-import { Web } from 'tonva-core';
 
 export interface UqToken {
     name: string;

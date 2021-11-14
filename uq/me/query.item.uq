@@ -215,3 +215,19 @@ PAGE (
         ORDER BY a.id DESC
         LIMIT $pageSize;
 };
+
+QUERY GetAccounts (
+)
+RETURNS ret (
+    id ID,
+    object ID,
+    account ENUM EnumAccount,   -- 比如提成-commission
+    balance DEC(18,4),
+    objectType ENUM EnumObjectType,
+    objectTo ID,
+) {
+    INTO ret SELECT a.id, a.object, a.account, a.balance, b.type as objectType, b.to as objectTo
+        FROM ObjectAccount as a
+            JOIN Object as b ON a.object=b.id
+        ORDER BY a.object, a.account;
+};

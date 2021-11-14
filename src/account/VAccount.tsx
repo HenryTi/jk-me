@@ -10,8 +10,8 @@ export class VAccount extends View<CAccount> {
 			if (!accounts) return null;
 			let {accountTitles, postTitles} = cApp;
 			return <>{accounts.map((v, index) => {
-				let {objectAccount, post, account, balance} = v;
-				let {title, vice, unit, fixed} = accountTitles[account as EnumAccount];
+				let {post, account, balance} = v;
+				let {title, unit, fixed} = accountTitles[account as EnumAccount];
 				let postTitle = postTitles[post as Post];
 				return <div key={index}
 					className="m-2 p-3 border border-info rounded rounded-3 bg-white text-center cursor-pointer"

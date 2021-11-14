@@ -18,7 +18,7 @@ export async function startApp() {
             <NavView ref={navView => nav.set(navView)} 
                 onLogined={onLogined}
                 notLogined={notLogined}
-                userPassword={userPassword} />;
+                userPassword={userPassword} />
         </React.StrictMode>,
         document.getElementById('root')
     );

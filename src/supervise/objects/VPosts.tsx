@@ -7,7 +7,7 @@ import { VObjects } from "./VObjects";
 export class VPosts extends VObjects<CPosts> {
     protected renderItem(v:any, index:number): JSX.Element {
 		let {postTitles, itemTitles} = this.controller.cApp;
-        let {id, post, item, amountThisMonth, amountLastMonth} = v;
+        let {post, item, amountThisMonth, amountLastMonth} = v;
 		let {title:postTitle} = postTitles[post as Post];
 		let {title:itemTitle} = itemTitles[item as Item];
         let right = <div className="d-flex align-items-center">

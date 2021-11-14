@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { CBase/*, Context*/ } from "tonva-react";
 /*
 import { CID, MidID, CIDX, MidIDX, MidTag, CIDTagList, CTagIDList

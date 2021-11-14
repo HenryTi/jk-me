@@ -1,6 +1,6 @@
 import React from "react";
 import { observer } from "mobx-react";
-import { EasyTime, FA, List, LMR, VPage } from "tonva-react";
+import { EasyTime, FA, List, LMR } from "tonva-react";
 import { CPortal } from "./CPortal";
 import { View } from "tonva-react";
 import { EnumPeriod, PostPeriodSum, ItemPeriodSum } from "./period";

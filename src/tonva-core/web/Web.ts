@@ -1,3 +1,4 @@
+/* eslint-disable */
 //import { Tonva } from "../Tonva";
 import { AppBridge } from "./appBridge";
 import { CenterApi } from "./centerApi";

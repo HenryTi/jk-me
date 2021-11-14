@@ -11,6 +11,7 @@ ENUM EnumObjectType (
 ID Object (
     id,
     type ENUM EnumObjectType DEFAULT 0,
+    to ID,
 );
 
 ID ObjectUser (
@@ -44,7 +45,7 @@ ID ObjectPost (
     KEY post ENUM Post,
 );
 
-ID ObjectPostItem (
+ID #ObjectPostItem (
     id,
     KEY object ID,
     KEY post ENUM Post,
@@ -55,9 +56,8 @@ ID ObjectPostItem (
 ID ItemHistory ver 0.1 MINUTEID (
     -- 26位表达从2021开始的分钟，后面跟16位的序列号。如果重了，就顺序往后加。
     id,                         -- 分钟序id
-    KEY bizOp ID,               -- 业务操作id。
+    KEY bizOp ID,               -- 业务操作id。包含biz
     KEY item ENUM Item,         -- 科目
-    -- biz ID,                  -- 原始业务凭证id
     value DEC(18,4),            -- 数值
     memo INT,                   -- 文本ID
     INDEX item_id(item, id) UNIQUE,
@@ -68,7 +68,6 @@ ID OPIHistory MINUTEID (
     id,
     opi ID ObjectPostItem,
     itemHistory ID,
-    -- bizOp ID,
     value DEC(18,4),
     booking ID OPIBooking,      -- 记账动作
     INDEX opi_id(opi, id),
@@ -78,7 +77,7 @@ ENUM EnumAccount (
     commission              = 10,
 );
 
-IX AccountBooking ver 0.1 CONST (
+IX #AccountBooking ver 0.1 CONST (
     ix ENUM Item,
     xi ENUM EnumAccount,
     radio DEC(6,2) DEFAULT 100,           -- 百分数

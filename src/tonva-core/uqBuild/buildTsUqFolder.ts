@@ -30,7 +30,8 @@ function saveTuidAndIDTsIndexAndRender(uqFolder:string, uq: UqMan, uqAlias:strin
 		imports += `\nimport * as ${cName} from './${cName}.ui';`;
 		sets += `\n	assign(uq, '${cName}', ${cName});`;
 
-		let tsUI = `// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		let tsUI = `/* eslint-disable */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Res, setRes, TFunc } from 'tonva-react';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FieldItem, FieldItemNum, FieldItemString, FieldItemId, UI, uqStringify } from "tonva-core";

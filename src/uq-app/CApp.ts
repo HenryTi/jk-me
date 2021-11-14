@@ -6,7 +6,7 @@ import { res } from "./res";
 import { VMain } from "./VMain";
 import { CTester } from "./test-uqui";
 import { setUI } from "./uqs";
-import { Item, Post, EnumRole, EnumRoleOp, ObjectPostItem, EnumAccount } from "./uqs/JkMe";
+import { Item, Post, EnumRole, EnumRoleOp, EnumAccount } from "./uqs/JkMe";
 import { CSupervise } from "supervise";
 import { CPortal, CObjectPortal, CUnitPortal } from "portal";
 import { makeObservable, observable } from "mobx";

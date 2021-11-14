@@ -20,7 +20,7 @@ export class VPostItemHistory extends VPage<CPortal> {
 
     private renderItem = (history: ReturnGetObjectItemHistoryRet, index: number) => {
         let {itemTitles, timezone} = this.controller.cApp;
-        let {minuteId, value, biz, bizOp, memo} = history;
+        let {minuteId, value, bizOp, memo} = history;
         let {item} = this.controller.itemPeriodSum;
         let {unit, fixed} = itemTitles[item];
         let d = dateFromMinuteId(minuteId, timezone);

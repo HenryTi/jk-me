@@ -1,6 +1,6 @@
 import { CAccount } from 'account';
 import { dateFromHourId } from 'tonva-core';
-import { EasyDate, List, LMR, VPage } from "tonva-react";
+import { List, LMR, VPage } from "tonva-react";
 import { Item, Post, ReturnGetObjectAccountHistoryRet } from "uq-app/uqs/JkMe";
 
 export class VObjectAccountHistory extends VPage<CAccount> {

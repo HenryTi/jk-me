@@ -7,8 +7,8 @@ const waitingTime = '一小时';
 
 abstract class VUserQuitBase extends VPage<CLogin> {
     protected abstract get note(): any;
-    protected get button1Caption(): string {return;}
-    protected get button2Caption(): string {return;}
+    protected get button1Caption(): string {return undefined;}
+    protected get button2Caption(): string {return undefined;}
     protected renderButton1():JSX.Element {
         let caption = this.button1Caption;
         if (caption === null) return null;

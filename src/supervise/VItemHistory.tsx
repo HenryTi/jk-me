@@ -7,7 +7,7 @@ export class VItemHistory extends VPage<CSupervise> {
     header() {
         let {cApp, item} = this.controller;
         let {itemTitles} = cApp;
-		let {title, vice} = itemTitles[item];
+		let {title} = itemTitles[item];
         return title + '明细';
     }
 
@@ -22,7 +22,7 @@ export class VItemHistory extends VPage<CSupervise> {
         let {cApp, item} = this.controller;
         let {itemTitles, timezone} = cApp;
         let {unit, fixed} = itemTitles[item];
-        let {id, biz, bizOp, value, memo} = row;
+        let {id, bizOp, value, memo} = row;
         let date = dateFromMinuteId(id, timezone);
         let left = <div className="small text-muted w-min-6c">
             <VDate date={date} hideSameYear={true} />

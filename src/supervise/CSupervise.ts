@@ -9,17 +9,19 @@ import { ReturnGetObjectsRet
 	, ReturnGetCustomerSumByMonthRet, ReturnGetItemHistory$page
 	, ReturnGetItemSumDaysRet, ReturnGetItemSumMonthsRet
 	, ReturnGetProductSumByMonthRet
+	, ReturnGetAccountsRet
 } from "uq-app/uqs/JkMe";
-import { Item  } from "uq-app/uqs/JkMe/JkMe";
+import { Item } from "uq-app/uqs/JkMe/JkMe";
 import { VSupervise } from "./VSupervise";
 import { VItemSumHistory } from "./VItemSumHistory";
-import { env, PageItems } from "tonva-core";
+import { PageItems } from "tonva-core";
 import { VItemHistory } from "./VItemHistory";
 import { VItemDayHistory } from "./VItemDayHistory";
 import { VCustomerSumByMonth, VProductSumByMonth } from "./VSumByMonth";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { CObjects } from "./objects/CObjects";
 import { initCObjects } from "./objects";
+import { VAccounts } from "./VAccounts";
 
 export class CSupervise extends CUqBase {
 	item: Item;
@@ -35,6 +37,7 @@ export class CSupervise extends CUqBase {
 	staffs: ReturnGetStaffsRet[];
 	posts: ReturnGetPostsRet[];
 	cObjectsArr: CObjects[];
+	accounts: ReturnGetAccountsRet[];
 
 	protected async internalStart() {
 	}
@@ -111,6 +114,16 @@ export class CSupervise extends CUqBase {
 
 	renderVUnitSum() {
 		return this.cApp.renderVUnitSum();
+	}
+
+	showAccounts = async () => {
+		let ret = await this.uqs.JkMe.GetAccounts.query({});
+		this.accounts = ret.ret;
+		this.openVPage(VAccounts);
+	}
+
+	showAccountHistory = async () => {
+		alert('显示账户明细 正在设计中...');
 	}
 }
 
