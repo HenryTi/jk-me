@@ -117,7 +117,7 @@ VALUES
 (EnumBizOpType.orderReceiveDone, Post.staffSales, Item.couponFee, Item.orderProfit, 1, TEXTID('收款后发券提成')),
 
 -- 
-(EnumBizOpType.pickupDone, Post.staffPicker, Item.pickup, Item.pickup, 10, TEXTID('拣货计件工资')),
+(EnumBizOpType.pickupDone, Post.staff, Item.pickupPoint, Item.pickupPoint, 100, TEXTID('拣货计件积分')),
 ;
 
 QUERY GetItemTitles()
