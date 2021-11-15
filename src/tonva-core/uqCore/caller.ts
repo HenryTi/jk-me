@@ -58,7 +58,7 @@ export abstract class EntityCaller<T> extends Caller<T> {
 
     private async retry(schema: UqResponseSchema) {
         ++this.tries;
-        if (this.tries > 5) throw new Error('can not get right uq response schema, 5 tries');
+        if (this.tries > 5) throw new Error(`${schema.entity.name} can not get right uq response schema, 5 tries`);
         this.rebuildSchema(schema);
         return await this.innerRequest();
     }

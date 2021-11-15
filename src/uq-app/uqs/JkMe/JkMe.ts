@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sat Nov 13 2021 19:38:53 GMT-0500 (北美东部标准时间) ===//
+//=== UqApp builder created on Mon Nov 15 2021 16:17:58 GMT-0500 (北美东部标准时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-core";
 
@@ -11,6 +11,7 @@ export enum Item {
 	orderDeliver = 1010,
 	orderAmount = 1011,
 	orderProfit = 1012,
+	orderFee = 1013,
 	orderReturn = 1020,
 	orderReceive = 1030,
 	orderReceiveReturn = 1040,
@@ -578,6 +579,7 @@ export interface OrderMain {
 	currency: number;
 	sumAmount: number;
 	stamp: number;
+	$create?: any;
 }
 
 export interface ItemTitle {
@@ -644,6 +646,7 @@ export interface DeliverMain {
 	warehouse: number;
 	cutOffMain: number;
 	trayNumber: number;
+	$create?: any;
 }
 
 export interface Role {
