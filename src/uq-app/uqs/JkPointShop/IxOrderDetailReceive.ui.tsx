@@ -1,32 +1,44 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Res, setRes, TFunc, uqStringify } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { UI, FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-core";
-import { QueueBizOp } from "./JkMe";
+import { UI, FieldItem, FieldItemNum, FieldItemString, FieldItemId } from "tonva-core";
+import { IxOrderDetailReceive } from "./JkPointShop";
 
 /*--fields--*/
 const fields = {
-	id: {
-		"name": "id",
+	ix: {
+		"name": "ix",
 		"type": "id",
 		"isKey": false,
-		"label": "Id"
+		"label": "Ix"
 	} as FieldItemId,
-	bizOp: {
-		"name": "bizOp",
+	xi: {
+		"name": "xi",
 		"type": "id",
-		"isKey": true,
-		"label": "BizOp"
+		"isKey": false,
+		"label": "Xi"
 	} as FieldItemId,
+	receiveAmount: {
+		"name": "receiveAmount",
+		"type": "number",
+		"isKey": false,
+		"widget": "number",
+		"label": "ReceiveAmount"
+	} as FieldItemNum,
+	createDate: {
+		"name": "createDate",
+		"isKey": false,
+		"label": "CreateDate"
+	} as undefined,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.bizOp, 
+	fields.xi, fields.receiveAmount, fields.createDate, 
 ];
 
 export const ui: UI = {
-	label: "QueueBizOp",
+	label: "IxOrderDetailReceive",
 	fieldArr,
 	fields,
 };
@@ -44,6 +56,6 @@ export const t:TFunc = (str:string|JSX.Element): string|JSX.Element => {
 	return res[str as string] ?? str;
 }
 
-export function render(item: QueueBizOp):JSX.Element {
+export function render(item: IxOrderDetailReceive):JSX.Element {
 	return <>{uqStringify(item)}</>;
 };

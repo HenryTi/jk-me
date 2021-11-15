@@ -1,8 +1,5 @@
-import { makeObservable, observable, runInAction } from "mobx";
-import { CApp, CUqBase } from "uq-app";
-import { EnumAccount, ReturnGetObjectAccountHistoryRet, ReturnGetUserObjectAccountRet } from "uq-app/uqs/JkMe";
+import { CUqBase } from "uq-app";
 import { VHome } from "./VHome";
-import { VObjectAccountHistory } from "../account/VObjectAccountHistory";
 import { CAccount } from "account";
 
 export interface AccountController {

@@ -73,6 +73,9 @@ export class VSupervise extends VPage<CSupervise> {
                 </div>
                 */
             })}
+            <VIndex action={this.controller.showAccounts}
+                caption="账户余额列表"
+                iconColor="text-primary" />
             <div className="mb-3" />
             {
                 queryList.map((v, index) => {
@@ -111,7 +114,7 @@ export class VSupervise extends VPage<CSupervise> {
         return <div>
             {
                 this.controller.cApp.ops.map((v, index) => {
-                    let {role, op} = v;
+                    let {op} = v;
                     return <div key={index} className="py-2">
                         {this.opRenders[op]()}
                     </div>;

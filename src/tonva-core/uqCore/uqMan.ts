@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { UqApi, UqData, UnitxApi } from '../net';
 import { Tuid, TuidDiv, TuidImport, TuidInner, TuidBox, TuidsCache } from './tuid';
 import { Action } from './action';

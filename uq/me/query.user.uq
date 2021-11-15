@@ -8,7 +8,7 @@ RETURNS ret (
     INTO ret SELECT a.id, a.object, a.post, a.item
         FROM ObjectPostItem as a
             JOIN UserObject as b ON a.object=b.xi
-        WHERE b.ix=$user;
+        WHERE b.ix=$user AND b.on=1;
 };
 
 QUERY GetObjectPostItem(
@@ -39,7 +39,7 @@ RETURNS ret (
 ) {
     TABLE tblObjects(object ID KEY);
     IF object IS NULL {
-        INTO tblObjects SELECT a.xi as object FROM UserObject as a WHERE a.ix=$user;
+        INTO tblObjects SELECT a.xi as object FROM UserObject as a WHERE a.ix=$user AND a.on=1;
     }
     ELSE {
         INTO tblObjects SELECT object;
@@ -75,7 +75,7 @@ RETURNS ret (
         ) as value
         FROM UserObject as b 
             JOIN ObjectPostItem as a ON a.object=b.xi
-        WHERE b.ix=$user;
+        WHERE b.ix=$user AND b.on=1;
 };
 
 QUERY GetObjectItemPeriodSum ver 0.1 

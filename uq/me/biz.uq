@@ -3,24 +3,24 @@
 CONST maxActionRows = 10;
 
 -- BizMain ready, 加入这个队列
-ID QueueBizMain MINUTEID (
+ID # QueueBizMain MINUTEID (
     id,
     KEY bizMain ID,                     -- bizMain
 );
 
-ID QueueBizOp MINUTEID (
+ID # QueueBizOp MINUTEID (
     id,
     KEY bizOp ID,                       -- detail of deliver, receive, return
 );
 
-IDX DxBizMain (
+IDX # DxBizMain (
     id,
     ready INT DEFAULT 0,                -- ready状态
     sys (create, update),
 );
 
 -- biz是核心
-IDX DxBiz (
+IDX # DxBiz (
     id,
     main ID,
     sys (create, update),
@@ -28,7 +28,7 @@ IDX DxBiz (
 );
 
 -- BizOp是针对Biz的业务操作
-IDX DxBizOp (
+IDX # DxBizOp (
     id,                                 -- bizOp id
     type ENUM EnumBizOpType,
     biz ID,                             -- 指向biz
@@ -40,7 +40,7 @@ IDX DxBizOp (
 );
 
 -- 标记BizMainBound是否已经处理,bound = 1表示已经处理，是操作结果,不是输入；
-IX IxBizOpBound (
+IX # IxBizOpBound (
     ix,                         -- bizOp id
     xi BizMainBound,
     bound TINYINT DEFAULT 0,    -- 1: bound
@@ -50,17 +50,18 @@ IX IxBizOpBound (
 -- 1. bizMain跟岗位和个人以及“科目item”的绑定关系，表示该bizMain将使用该item为该岗位的该个人计算绩效
 -- 2. 从订单绑定管理发送过来。
 -- 3. 一直保留
-ID BizMainBound (
+ID #BizMainBound (
     id,
     KEY bizMain ID,
     KEY post ENUM Post,
     KEY item ENUM Item,
     KEY to ID,
+    ratio DEC(6,2),
     sys (create),
 );
 
 -- 处理的是 biz main sheet
-ACT ExecQueueBizMain () {
+ACT # ExecQueueBizMain () {
     VAR queueId ID, bizMain ID;
     SET queueId=a.id, bizMain=a.bizMain
         FROM QueueBizMain as a
@@ -85,7 +86,7 @@ ACT ExecQueueBizMain () {
     SCHEDULE ExecQueueBizMain;
 };
 
-ACT ExecQueueBizOp ver 0.3 () {
+ACT #ExecQueueBizOp ver 0.3 () {
     LOG CONCAT_WS(' ', 'start') SUBJECT 'ExecQueueBizOp';
     VAR rowCount INT = 0;
     FOR (VAR queueId ID, bizOp ID
@@ -107,7 +108,7 @@ ACT ExecQueueBizOp ver 0.3 () {
     }
 };
 
-PROC ProcBizOp(
+PROC #ProcBizOp(
     bizOp ID,
 ) {
     -- 判断是不是Biz的凭单已经ready
@@ -133,9 +134,11 @@ PROC ProcBizOp(
     -- biz bound post history
     LOG CONCAT_WS(' ', 'bizOpType', bizOpType, 'biz', biz, 'bizOp', bizOp) SUBJECT 'ProcBizOp';
     FOR (VAR booking ID, itemHistoryId ID, post ENUM Post, stamp INT, value DEC(18,4)
-        , postItem ENUM Item, ratio DEC(6,2), to ID, bizMainBoundId ID
+        , postItem ENUM Item, ratio DEC(6,2)
+        , to ID, bizMainBoundId ID, boundRatio DEC(6,2)
         OF SELECT a.id as booking, c.id as itemHistoryId, a.post, b.stamp
-            , c.value, a.postItem, a.ratio, e.to, e.id as bizMainBoundId
+            , c.value, a.postItem, a.ratio
+            , e.to, e.id as bizMainBoundId, e.ratio as boundRatio
             FROM OPIBooking as a
                 JOIN DxBizOp as b ON a.bizOpType=b.type
                 JOIN ItemHistory as c ON c.item=a.item AND c.bizOp=b.id
@@ -153,8 +156,9 @@ PROC ProcBizOp(
         VAR opiHistoryId ID;
         SET opiHistoryId=ID(OPIHistory new STAMP stamp);
         WITH OPIHistory as a ID=opiHistoryId
-            SET a.opi=objectPostItemId, a.itemHistory=itemHistoryId -- , a.bizOp=bizOp
-            , a.value=value * IFNULL(ratio, 100) / 100, a.booking=booking;
+            SET a.opi=objectPostItemId, a.itemHistory=itemHistoryId
+            , a.value=value * IFNULL(IFNULL(boundRatio, ratio), 100) / 100
+            , a.booking=booking;
         FOR (VAR user ID
             OF SELECT b.ix as user
                 FROM ObjectPostItem as a JOIN UserObject as b ON a.object=b.xi
@@ -169,7 +173,7 @@ PROC ProcBizOp(
 -- 这个是需要根据不同的业务，调整代码的。目前无法直接用表达式实现
 -- 如果要记orderProfit和orderAmount，必须有orderDeliverDone操作。
 -- 如果先收到orderReceiveDone，先记receive账。
-PROC ProcWriteItemHistory ver 0.1 (
+PROC #ProcWriteItemHistory ver 0.1 (
     bizOp ID,
 ) {
     VAR biz ID, bizOpType ENUM EnumBizOpType, value DEC(18,4);
@@ -178,15 +182,16 @@ PROC ProcWriteItemHistory ver 0.1 (
         FROM DxBizOp as a 
         WHERE a.id=bizOp;
     IF bizOpType=EnumBizOpType.orderDeliverDone {
-        SET price=a.price -- , stamp=IFNULL(b.stamp, UNIX_TIMESTAMP(b.[$create]))
-            FROM OrderDetail as a -- JOIN OrderMain as b ON a.main=b.id
+        SET price=a.price
+            FROM OrderDetail as a
             WHERE a.id=biz;
         SET cost=a.costPrice FROM DxOrderDetail as a WHERE a.id=biz;
         -- 可能是积分兑换单引发的deliver-done，这时候，就没有cost和price，所以不写帐
-        IF price IS NOT NULL {
+        IF price IS NOT NULL AND price > 0 {
             PROC ProcItemHistory(bizOp, Item.orderAmount, price*value);
             IF cost IS NOT NULL {
                 PROC ProcItemHistory(bizOp, Item.orderProfit, (price-cost)*value);
+                PROC ProcItemHistory(bizOp, Item.orderFee, (price-cost)*value);
             }
             ELSE {
                 LOG CONCAT_WS(' ', bizOp, bizOpType, price, cost, value) SUBJECT 'Failed BizOp ItemHistory Cost IS NULL';
@@ -197,29 +202,31 @@ PROC ProcWriteItemHistory ver 0.1 (
         }
     }
     ELSEIF bizOpType=EnumBizOpType.orderReceiveDone {
-        /*
-        SET price=a.price, stamp=IFNULL(b.stamp, UNIX_TIMESTAMP(b.[$create]))
-            FROM OrderDetail as a JOIN OrderMain as b ON a.main=b.id
+        PROC ProcItemHistory(bizOp, Item.orderReceive, value);
+        SET price=a.price
+            FROM OrderDetail as a
             WHERE a.id=biz;
         SET cost=a.costPrice FROM DxOrderDetail as a WHERE a.id=biz;
-        VAR profit DEC(18,4);
-        IF price<=0.001 {
-            SET profit = 0;
+        -- 可能是积分兑换单引发的deliver-done，这时候，就没有cost和price，所以不写帐
+        IF price IS NOT NULL AND price > 0 {
+            IF cost IS NOT NULL {
+                PROC ProcItemHistory(bizOp, Item.orderFee, 
+                    CASE WHEN price<0.01 THEN 0 ELSE (price-cost)/price*value END);
+            }
+            ELSE {
+                LOG CONCAT_WS(' ', bizOp, bizOpType, price, cost, value) SUBJECT 'Failed BizOp ItemHistory Cost IS NULL';
+            }
         }
         ELSE {
-            SET profit = (price - cost)/price * value;
+            LOG CONCAT_WS(' ', bizOp, bizOpType, price, cost, value) SUBJECT 'Failed BizOp ItemHistory Price IS NULL';
         }
-        */
-        -- PROC ProcItemHistory(bizOp, Item.orderProfit, profit);
-        -- PROC ProcItemHistory(bizOp, Item.orderAmount, value);
-        PROC ProcItemHistory(bizOp, Item.orderReceive, value);
     }
     ELSEIF bizOpType=EnumBizOpType.orderReturn {
 
     }
 };
 
-PROC ProcItemHistory(
+PROC #ProcItemHistory(
 --    biz ID,
     bizOp ID,
     item ENUM Item,

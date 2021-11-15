@@ -1,5 +1,5 @@
 -- 定期计算，每小时计算一次。把新的业务添加到日业务表
-ACT CalcDaySum ()
+ACT CalcDaySum ver 0.1 ()
 {
     TRANSACTION OFF;                     -- 去掉每一个ACT开始的Start Transaction和结尾的Commit
     VAR timeZone TINYINT = unittimezone();
@@ -91,6 +91,20 @@ ACT CalcMonthSum ver 0.3 (
     }
 };
 
+/*
+PROC ResetCalcAccount(
+    date DATE
+) {
+    VAR timeZone TINYINT = unittimezone();
+    VAR minuteId ID;
+    SET minuteId=minuteIdFromDate(date, timeZone) - 1;
+    TRANSACTION OFF;
+    TRANSACTION Start;
+    DELETE 
+    SETTING 'accountOpiHistoryId' BIGINT = minuteId;
+    TRANSACTION Commit;
+};
+*/
 // calc account from OpiHistory
 ACT CalcAccount ver 0.1 ()
 {

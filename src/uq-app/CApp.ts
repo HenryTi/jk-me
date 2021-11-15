@@ -6,7 +6,7 @@ import { res } from "./res";
 import { VMain } from "./VMain";
 import { CTester } from "./test-uqui";
 import { setUI } from "./uqs";
-import { Item, Post, EnumRole, EnumRoleOp, ObjectPostItem, EnumAccount } from "./uqs/JkMe";
+import { Item, Post, EnumRole, EnumRoleOp, EnumAccount } from "./uqs/JkMe";
 import { CSupervise } from "supervise";
 import { CPortal, CObjectPortal, CUnitPortal } from "portal";
 import { makeObservable, observable } from "mobx";
@@ -64,21 +64,25 @@ export class CApp extends CUqApp {
 		// TUID [$User] ID (member) SET poke=1;
 	}
 
-	renderApp(loginedOnly: boolean = true):JSX.Element {
-		const onLogined = async (isUserLogin?:boolean) => {
-			await start(CApp, appConfig, isUserLogin);
-		}
-		let onNotLogined: () => Promise<void>;
-		if (loginedOnly === false) onNotLogined = onLogined;
-		nav.appStart();
-		return nav.renderNavView(onLogined, onNotLogined);
-	}
-
 	private timer:any;
 	protected onDispose() {
 		clearInterval(this.timer);
 		this.timer = undefined;
 	}
+	
+	async initStart() {
+		await nav.appStart();
+	}
+
+	render(loginedOnly: boolean = true):JSX.Element {
+		const onLogined = async (isUserLogin?:boolean) => {
+			await start(CApp, appConfig, isUserLogin);
+		}
+		let onNotLogined: () => Promise<void>;
+		if (loginedOnly === false) onNotLogined = onLogined;
+		return nav.renderNavView(onLogined, onNotLogined);
+	}
+
 
 	private async loadBaseData() {
 		let {JkMe} = this.uqs;

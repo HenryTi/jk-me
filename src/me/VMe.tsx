@@ -60,7 +60,7 @@ export class VMe extends VPage<CMe> {
     private renderAdmin = observer(():JSX.Element => {
         let {isAdmin} = this.controller;
         if (isAdmin === false) return null;
-        let {admins, user} = this.controller;
+        let {admins} = this.controller;
         return <LMR className="py-2 cursor-pointer w-100"
                 onClick={this.controller.adminSetting}
                 left={<FA name="cog" className="text-info mt-1 me-3" />}

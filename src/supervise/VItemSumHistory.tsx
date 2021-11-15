@@ -7,7 +7,7 @@ export class VItemSumHistory extends VPage<CSupervise> {
     header() {
         let {cApp, item} = this.controller;
         let {itemTitles} = cApp;
-		let {title, vice} = itemTitles[item];
+		let {title} = itemTitles[item];
         return title;
     }
 

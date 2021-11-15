@@ -1,15 +1,16 @@
 -- 业务科目
 ENUM Item (
-    orderDeliver                = 1010,             -- 订单发货，value是数量
-    orderAmount                 = 1011,             -- 订单金额，value是应收金额
-    orderProfit                 = 1012,             -- 订单毛利，value是毛利润
-    orderReturn                 = 1020,             -- 订单退货
-    orderReceive                = 1030,             -- 订单收款
-    orderReceiveReturn          = 1040,             -- 订单退款
+    orderDeliver                = 1010,     -- 订单发货，value是数量
+    orderAmount                 = 1011,     -- 订单金额，value是应收金额
+    orderProfit                 = 1012,     -- 订单毛利，value是毛利润
+    orderFee                    = 1013,     -- 订单提成，根据发券提供比例提成。每个deliver-done和receive-done单独算
+    orderReturn                 = 1020,     -- 订单退货
+    orderReceive                = 1030,     -- 订单收款
+    orderReceiveReturn          = 1040,     -- 订单退款
 
-    profitFee                   = 1110,             -- 订单毛利提成
-    couponFee                   = 1111,             -- 发券毛利提成
-    amountFee                   = 1120,             -- 订单销售额提成
+    profitFee                   = 1110,     -- 订单毛利提成
+    couponFee                   = 1111,     -- 发券毛利提成
+    amountFee                   = 1120,     -- 订单销售额提成
     
     customerPoint               = 2010,             -- 客户普通积分
 
@@ -107,8 +108,8 @@ ID OPIBooking ver 0.5 CONST (
 VALUES
 -- EnumOrderAction.orderDeliverDone
 (EnumBizOpType.orderDeliverDone, Post.staffSales, Item.orderAmount, Item.orderAmount, null, TEXTID('销售额')),
-(EnumBizOpType.orderDeliverDone, Post.staffSales, Item.profitFee, Item.orderProfit, 4, TEXTID('发货后毛利提成')),
-(EnumBizOpType.orderDeliverDone, Post.staffSales, Item.couponFee, Item.orderProfit, 1, TEXTID('发货后发券提成')),
+(EnumBizOpType.orderDeliverDone, Post.staffSales, Item.profitFee, Item.orderFee, 4, TEXTID('发货后毛利提成')),
+(EnumBizOpType.orderDeliverDone, Post.staffSales, Item.couponFee, Item.orderFee, 1, TEXTID('发货后发券提成')),
 (EnumBizOpType.orderDeliverDone, Post.managerIT, Item.amountFee, Item.orderAmount, 0.1, TEXTID('销售额提成')),
 
 -- EnumOrderAction.receiveDone

@@ -3,7 +3,6 @@ import _ from 'lodash';
 import {Page} from '../components';
 import { resOptions } from '../res/res';
 import { Navigo, RouteFunc, Hooks, NamedRoute } from 'tonva-core';
-import { NavPage } from './NavPage';
 
 import 'font-awesome/css/font-awesome.min.css';
 import '../css/va-form.css';
@@ -13,7 +12,7 @@ import { ReloadPage, ConfirmReloadPage } from '../components/reloadPage';
 import { PageWebNav } from '../components/page';
 import { createLogin, Login, showForget, showRegister } from '../components/login';
 //import { env, FetchError, LocalData, User } from 'tonva-core';
-import { SystemNotifyPage } from './fetchErrorView';
+import { SystemNotifyPage } from './FetchErrorView';
 
 import {User, Guest} from 'tonva-core';
 import {netToken} from 'tonva-core';
@@ -22,6 +21,8 @@ import {LocalData, env} from 'tonva-core';
 import {guestApi, logoutApis, setCenterUrl, setCenterToken, host, resUrlFromHost, messageHub} from 'tonva-core';
 import { userApi } from 'tonva-core';
 import { NavView } from './NavView';
+
+export type NavPage = (params:any) => Promise<void>;
 
 export interface NavSettings {
     oem?: string;
@@ -73,10 +74,10 @@ export class Nav {
         return g.guest;
     }
 
-//    set(navView:NavView) {
+    set(navView:NavView) {
         //this.logo = logo;
-//        this.navView = navView;
-//	}
+        this.navView = navView;
+	}
 	/*
     registerReceiveHandler(handler: (message:any)=>Promise<void>):number {
         //if (this.ws === undefined) return;
@@ -254,10 +255,10 @@ export class Nav {
 		}
 	}
 
-    private appStarted:boolean = false;
+    //private appStarted:boolean = false;
     async appStart() {
-        if (this.appStarted === true) return;
-        this.appStarted = true;
+        //if (this.appStarted === true) return;
+        //this.appStarted = true;
         await this.init();
         await this.start();
     }
