@@ -12,7 +12,7 @@ ACCEPT [deliver-done] {
 	}
     SCHEDULE ExecQueueBizOp DELAY 1;
 }
-ACCEPT [pickup-done] {
+ACCEPT [pickup-performance] {
     -- 处理sheet: 1.设置sheet的状态；2.把sheet排入QueueBizMain队列；3.DxBiz在下面写入
     VAR mainId ID = id;
     WITH DxBizMain ID = mainId set ready = 1;
@@ -39,7 +39,7 @@ ACCEPT [pickup-done] {
     VAR bizMainBoundId ID;
     SET bizMainBoundId = ID(
         BizMainBound new
-        KEY BizMain = mainId, post = Post.staffPicker, item = ITEM.pickup, to = operatorId
+        KEY BizMain = mainId, post = Post.staff, item = ITEM.pickupPoint, to = operatorId
     );
 
     -- 事先在postbound中设置好绩效计算方法，即绩效结果和value的关系

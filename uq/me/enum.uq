@@ -13,7 +13,7 @@ ENUM Item (
     
     customerPoint               = 2010,             -- 客户普通积分
 
-    pickup                      = 3010,             -- 拣货数量，value是数量
+    pickupPoint                 = 3010,             -- 拣货积分
 );
 
 -- 业务岗位
@@ -27,8 +27,6 @@ ENUM Post (
     distributor                 = 7500,
     distributorSales            = 7501,
     customer                    = 8010,
-
-    staffPicker                 = 1200,
 );
 
 ENUM EnumBizOpType (
@@ -63,7 +61,7 @@ VALUES
 (Item.amountFee, '销售额提成', null, '元', 2),
 (Item.couponFee, '发券提成', null, '元', 2),
 (Item.customerPoint, '客户积分', null, '点', 2),
-(Item.pickup, '拣货瓶数', null, '个', 0)
+(Item.pickupPoint, '拣货积分', null, '点', 4),
 ;
 
 ID PostTitle ver 0.2 CONST (
@@ -80,7 +78,6 @@ VALUES
 (Post.agent, '轻代理', null),
 (Post.agentSales, '轻代理销售员', null),
 (Post.customer, '顾客', null),
-(Post.staffPicker, '拣货员', null)
 ;
 
 ID AccountTitle ver 0.1 CONST (
