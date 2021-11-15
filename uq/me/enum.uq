@@ -93,12 +93,12 @@ VALUES
 (EnumAccount.commission, '业绩提成', null, '元', 2),
 ;
 
--- OPIBooking
+-- OPIBooking, 是设置某个岗位（post）能够看到某个科目（postItem）值，该值和另外一个科目（item）的比例关系（radio）以及在何时（bizOpType）计算该值
 ID OPIBooking ver 0.5 CONST (
     id small,
     bizOpType ENUM EnumBizOpType,
     post ENUM Post,
-    postItem ENUM Item,                 -- item to OPIHistory
+    postItem ENUM Item,                 -- item to OPIHistory, 要计算的科目
     item ENUM Item,                     -- item to ItemHistory, 为了在计算opihistory时去使用ItemHistory中的值
     ratio DEC(6,2) DEFAULT 100,         -- 百分比，从itemHistory的value，折算到 OPIHistory, 未来有可能是分段公式
     memo INT,                           -- 文本id
