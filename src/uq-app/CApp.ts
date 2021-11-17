@@ -9,7 +9,7 @@ import { setUI } from "./uqs";
 import { Item, Post, EnumRole, EnumRoleOp, EnumAccount } from "./uqs/JkMe";
 import { CSupervise } from "supervise";
 import { CPortal, CObjectPortal, CUnitPortal } from "portal";
-import { makeObservable, observable } from "mobx";
+import { makeObservable, observable, runInAction } from "mobx";
 import { nav, start } from "tonva-react";
 import { appConfig } from "./appConfig";
 
@@ -127,7 +127,9 @@ export class CApp extends CUqApp {
 			this.cHome.load(),
 			this.cUnitPortal?.load(),
 		]);
-		this.refreshTime = d;
+		runInAction(() => {
+			this.refreshTime = d;
+		});
 	}
 
 	refreshTime: number = Date.now() / 1000;
