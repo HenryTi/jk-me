@@ -39,8 +39,9 @@ ENUM EnumBizOpType (
 );
 
 ENUM OrderReady (
-    sheet                       = 0x0001,   -- 订单到达
-    cost                        = 0x0002,   -- 成本到达，两个都到达后进行后续计算，否则等待；
+    sheet                       = 0x0001,
+    -- cost                        = 0x0002,
+    margin                      = 0x0004,
 );
 
 ID ItemTitle ver 0.1 CONST (
@@ -114,8 +115,8 @@ VALUES
 (EnumBizOpType.orderDeliverDone, Post.managerIT, Item.amountFee, Item.orderAmount, 0.1, TEXTID('销售额提成')),
 
 -- EnumOrderAction.receiveDone
-(EnumBizOpType.orderReceiveDone, Post.staffSales, Item.profitFee, Item.orderProfit, 4, TEXTID('收款后毛利提成')),
-(EnumBizOpType.orderReceiveDone, Post.staffSales, Item.couponFee, Item.orderProfit, 1, TEXTID('收款后发券提成')),
+(EnumBizOpType.orderReceiveDone, Post.staffSales, Item.profitFee, Item.orderFee, 4, TEXTID('收款后毛利提成')),
+(EnumBizOpType.orderReceiveDone, Post.staffSales, Item.couponFee, Item.orderFee, 1, TEXTID('收款后发券提成')),
 
 -- 
 (EnumBizOpType.pickupDone, Post.staff, Item.pickupPoint, Item.pickupPoint, 100, TEXTID('拣货计件积分')),

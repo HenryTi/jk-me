@@ -19,6 +19,7 @@ ACT BusTestBoundStaffSales ver 0.8 (
     BUS JkOrderBus.[order-bound-staff-sales] STAMP unix_timestamp();
 };
 
+/*
 ACT BusTestOrderSaleCost ver 0.8 (
     order ID,
     ARR detail (
@@ -34,6 +35,7 @@ ACT BusTestOrderSaleCost ver 0.8 (
     }
     BUS JkOrderBus.[order-sale-cost] LOCAL;
 };
+*/
 
 PROC ProcBusTest(
     orderMain ID
@@ -60,7 +62,7 @@ PROC ProcBusTest(
     BUS JkOrderBus.[order-bound-staff-sales] INTO to ADD id=999;
 
     -- BUS JkOrderBus.[deliver-done] LOCAL;
-    BUS JkOrderBus.[order-sale-cost] LOCAL;
+    -- BUS JkOrderBus.[order-sale-cost] LOCAL;
     BUS JkOrderBus.[order-bound-staff-sales] LOCAL;
 };
 
