@@ -1,5 +1,4 @@
 import { observable } from 'mobx';
-import { userApi } from 'tonva-core';
 import {
     ItemSchema, StringSchema, ImageSchema, UiTextItem, UiImageItem, nav, Page,
     Edit, UiSchema, VPage, Prop, FA, IconText, PropGrid
@@ -35,7 +34,7 @@ export class VEditMe extends VPage<CMe>{
 
     private onItemChanged = async (itemSchema: ItemSchema, newValue: any, preValue: any) => {
         let { name } = itemSchema;
-        await userApi.userSetProp(name, newValue);
+        await this.controller.web.userApi.userSetProp(name, newValue);
         this.data[name] = newValue;
         nav.user.name = newValue;
         nav.saveLocalUser();

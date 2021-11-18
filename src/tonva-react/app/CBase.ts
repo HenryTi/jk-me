@@ -1,12 +1,12 @@
 import _ from 'lodash';
 import { Web } from 'tonva-core';
 import { Nav } from 'tonva-react';
-import { Controller, WebNav } from "../vm";
+import { ControllerWithWeb, WebNav } from "../vm";
 import { CAppBase, IConstructor } from "./CAppBase";
 
-export abstract class CBase<A extends CAppBase<U>, U> extends Controller {
+export abstract class CBase<A extends CAppBase<U>, U> extends ControllerWithWeb {
     constructor(cApp: A) {
-        super();
+        super(cApp.web);
         this.cApp = cApp;
 		if (cApp) {
 			let {uqs, web, nav} = cApp;
@@ -27,6 +27,8 @@ export abstract class CBase<A extends CAppBase<U>, U> extends Controller {
 	async getUqRoles(uqName:string):Promise<string[]> {
 		return this.cApp?.getUqRoles(uqName);
 	}
+
+	protected async internalStart(param?:any, ...params:any[]):Promise<void> {}
 
 	internalT(str:string):any {
 		let r = super.internalT(str);

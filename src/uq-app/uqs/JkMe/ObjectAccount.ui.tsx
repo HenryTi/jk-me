@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Res, setRes, TFunc, uqStringify } from "tonva-react";
+import { FieldItem, FieldItemNumber, FieldItemString, FieldItemId, FieldItemInt, UI } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { UI, FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-core";
+import { Res, uqStringify, setRes, TFunc } from "tonva-core";
 import { ObjectAccount } from "./JkMe";
 
 /*--fields--*/
@@ -29,7 +29,7 @@ const fields = {
 		"isKey": false,
 		"widget": "number",
 		"label": "Balance"
-	} as FieldItemNum,
+	} as FieldItemNumber,
 };
 /*==fields==*/
 

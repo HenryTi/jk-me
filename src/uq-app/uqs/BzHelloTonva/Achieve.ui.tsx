@@ -1,6 +1,7 @@
-import { Res } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { UI, FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-core";
+import { FieldItemNumber, FieldItemString, FieldItemInt, FieldItemId, FieldItem, UI } from 'tonva-react';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { Res, uqStringify, setRes, TFunc } from "tonva-core";
 import { Achieve } from "./BzHelloTonva";
 
 /*--fields--*/
@@ -17,14 +18,14 @@ const fields = {
 		"isKey": false,
 		"widget": "number",
 		"label": "SaleAmount"
-	} as FieldItemNum,
+	} as FieldItemNumber,
 	deliver: {
 		"name": "deliver",
 		"type": "number",
 		"isKey": false,
 		"widget": "number",
 		"label": "Deliver"
-	} as FieldItemNum,
+	} as FieldItemNumber,
 };
 /*==fields==*/
 

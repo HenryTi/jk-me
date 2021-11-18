@@ -1,5 +1,6 @@
 /* eslint-disable */
-import { UqApi, UqData, UnitxApi } from '../net';
+//import { UqApi, UqData, UnitxApi } from '../net';
+import { UqApi, UqData, UnitxApi } from 'tonva-core';
 import { Tuid, TuidDiv, TuidImport, TuidInner, TuidBox, TuidsCache } from './tuid';
 import { Action } from './action';
 import { Sheet } from './sheet';
@@ -10,7 +11,6 @@ import { Map } from './map';
 import { Pending } from './pending';
 import { CreateBoxId, BoxId } from './tuid';
 import { LocalMap, LocalCache, env, capitalCase } from '../tool';
-import { UQsMan } from './uqsMan';
 import { ReactBoxId } from './tuid/reactBoxId';
 import { UqEnum } from './enum';
 import { Entity } from './entity';
@@ -18,8 +18,6 @@ import { UqConfig } from '../appConfig';
 import { ID, IX, IDX } from './ID';
 //import { nav } from '../components';
 import { IDCache } from './IDCache';
-import React from 'react';
-import { observer } from 'mobx-react';
 import { Web } from '../web';
 
 export type FieldType = 'id' | 'tinyint' | 'smallint' | 'int' | 'bigint' | 'dec' | 'float' | 'double' | 'char' | 'text'
@@ -300,7 +298,7 @@ export class UqMan {
 	private readonly enums: {[name:string]: UqEnum} = {};
 	private readonly actions: {[name:string]: Action} = {};
     private readonly queries: {[name:string]: Query} = {};
-	private readonly ids: {[name:string]: ID} = {};
+	protected readonly ids: {[name:string]: ID} = {};
 	private readonly idxs: {[name:string]: IDX} = {};
 	private readonly ixs: {[name:string]: IX} = {};
 
@@ -312,7 +310,7 @@ export class UqMan {
     private readonly tuidsCache: TuidsCache;
     private readonly localEntities: LocalCache;
     private readonly tvs:{[entity:string]:(values:any)=>JSX.Element};
-	private idCache: IDCache;
+	protected idCache: IDCache;
 	proxy: any;
     readonly localMap: LocalMap;
     readonly localModifyMax: LocalCache;
@@ -351,10 +349,10 @@ export class UqMan {
         if (this.name === '$$$/$unitx') {
             // 这里假定，点击home link之后，已经设置unit了
             // 调用 UnitxApi会自动搜索绑定 unitx service
-            this.uqApi = new UnitxApi(env.unit);
+            this.uqApi = new UnitxApi(this.web, env.unit);
         }
         else {
-            this.uqApi = new UqApi(baseUrl, uqOwner, uqName, true);
+            this.uqApi = new UqApi(this.web, baseUrl, uqOwner, uqName, true);
         }
         this.tuidsCache = new TuidsCache(this);
     }
@@ -365,13 +363,6 @@ export class UqMan {
 
     private createBoxIdFromTVs:CreateBoxId = (tuid:Tuid, id:number):BoxId =>{
         let {name} = tuid;
-        /*
-        let tuidUR = this.tuidURs[name];
-        if (tuidUR === undefined) {
-            let {ui, res} = this.getUI(tuid);
-            this.tuidURs[name] = tuidUR = new TuidWithUIRes(tuid, ui, res);
-        }
-        */
         return new ReactBoxId(id, tuid, this.tvs[name]);
 	}
 	
@@ -1013,7 +1004,7 @@ export class UqMan {
 		return ret;
 	}
 
-	protected IDDetailGet = async (param: ParamIDDetailGet): Promise<any> => {
+	IDDetailGet = async (param: ParamIDDetailGet): Promise<any> => {
 		return await this.apiIDDetailGet(param, EnumResultType.data);
 	}
 
@@ -1194,41 +1185,6 @@ export class UqMan {
 	}
 	protected $IDTree = async (param:ParamIDTree): Promise<string> => {
 		return await this.apiIDTree(param, EnumResultType.sql);
-	}
-
-	protected IDRender = (id: number, render?:(value:any) => JSX.Element): JSX.Element => {
-		return React.createElement(observer(() => {
-			let ret = this.idCache.getValue(id);
-			if (ret === undefined) {
-				return React.createElement('span', {props:{className: 'text-muted'},  children: ['id='+id]});
-			}
-			let {$type} = ret as any;
-			if (!$type) return this.renderIDUnknownType(id);
-			let IDType = this.ids[$type];
-			if (!IDType) return this.renderIDUnknownType(id);
-			return (render ?? IDType.render)(ret);
-		}));
-	}
-
-	protected IDV = <T extends object>(id: number): T => {
-		let ret = this.idCache.getValue(id);
-		return ret as T;
-	}
-
-	private renderIDUnknownType(id: number) {
-		return React.createElement('span', {props:{className: 'text-muted'},  children: [`id=${id} type undefined`]});
-	}
-
-	IDLocalTv(ids: number[]): Promise<any[]> {
-		return this.IDTv(ids.map(v => -v));
-	}
-
-	protected IDLocalV = <T extends object>(id: number): T => {
-		return this.IDV(-id);
-	}
-
-	protected IDLocalRender = (id: number, render?:(value:any) => JSX.Element): JSX.Element => {
-		return this.IDRender(-id, render);
 	}
 }
 

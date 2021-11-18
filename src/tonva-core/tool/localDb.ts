@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 class _LocalStorage {
     getItem(key:string) {
         return localStorage.getItem(key)
@@ -138,12 +136,12 @@ export class LocalArr extends Local {
         __ls.setItem(this.name, this.index.join('\n'));
     }
     protected keyForGet(key:number):string {
-        let i = _.indexOf(this.index, key);
+        let i = this.index.indexOf(key);
         if (i < 0) return undefined;
         return `${this.name}.${key}`;
     }
     protected keyForSet(key:number):string {
-        let i = _.indexOf(this.index, key);
+        let i = this.index.indexOf(key);
         if (i<0) {
             this.index.unshift(key);
             if (this.index.length > maxArrSize) this.index.pop();
@@ -156,7 +154,7 @@ export class LocalArr extends Local {
         return `${this.name}.${key}`;
     }
     protected keyForRemove(key:number):string {
-        let i = _.indexOf(this.index, key);
+        let i = this.index.indexOf(key);
         if (i<0) return;
         this.index.splice(i, 1);
         this.saveIndex();

@@ -3,6 +3,7 @@ import { Image, VPage, nav, IconText, PropGrid, LMR, FA, Prop } from 'tonva-reac
 import { CMe } from './CMe';
 import { appConfig } from '../uq-app/appConfig';
 import { VAbout } from './VAbout';
+import { renderUserText } from './renderUser';
 
 export class VMe extends VPage<CMe> {
 	header() {return this.t('me')}
@@ -60,7 +61,7 @@ export class VMe extends VPage<CMe> {
     private renderAdmin = observer(():JSX.Element => {
         let {isAdmin} = this.controller;
         if (isAdmin === false) return null;
-        let {admins} = this.controller;
+        let {admins, web} = this.controller;
         return <LMR className="py-2 cursor-pointer w-100"
                 onClick={this.controller.adminSetting}
                 left={<FA name="cog" className="text-info mt-1 me-3" />}
@@ -71,7 +72,7 @@ export class VMe extends VPage<CMe> {
                 <small className="d-inline">管理员</small>
                 <span className="d-inline ms-3 text-danger">[我]</span>
                 {admins.map(v => {
-                    return <span className="d-inline ms-3">{this.renderUserText(v.id)}</span>
+                    return <span className="d-inline ms-3">{renderUserText(web, v.id)}</span>
                 })}
             </div>
         </LMR>;

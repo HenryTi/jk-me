@@ -1,4 +1,3 @@
-//import _ from 'lodash';
 import { KeyValueRes, Res } from './res';
 
 export interface InputRes extends KeyValueRes {

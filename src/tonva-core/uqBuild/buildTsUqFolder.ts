@@ -1,9 +1,9 @@
 import fs from "fs";
 import { capitalCase } from "../tool";
-import { FieldItem } from "../ui";
+import { FieldItem } from "../../tonva-react/ui";
 import { Entity, ID, IDX, IX, UqMan } from "../uqCore";
 import { buildUQ } from "./buildUQ";
-import { buildFieldItem } from "./fieldItem";
+import { buildFieldItem } from "./buildFieldItem";
 import { buildTsHeader, overrideTsFile, saveTsFileIfNotExists } from "./tools";
 
 export function buildTsUqFolder(uq: UqMan, uqsFolder:string, uqAlias:string) {
@@ -32,9 +32,9 @@ function saveTuidAndIDTsIndexAndRender(uqFolder:string, uq: UqMan, uqAlias:strin
 
 		let tsUI = `/* eslint-disable */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Res, setRes, TFunc } from 'tonva-react';
+import { FieldItem, FieldItemNumber, FieldItemString, FieldItemId, FieldItemInt, UI } from 'tonva-react';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FieldItem, FieldItemNum, FieldItemString, FieldItemId, UI, uqStringify } from "tonva-core";
+import { Res, uqStringify, setRes, TFunc } from "tonva-core";
 import { Tuid${cName} } from "./${uqAlias}";
 
 const resRaw: Res<any> = {
@@ -69,9 +69,9 @@ export function render(item: Tuid${cName}):JSX.Element {
 		sets += `\n	assign(uq, '${cName}', ${cName});`;
 
 		let tsUI = `// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Res, setRes, TFunc, uqStringify } from "tonva-react";
+import { FieldItem, FieldItemNumber, FieldItemString, FieldItemId, FieldItemInt, UI } from "tonva-react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { UI, FieldItem, FieldItemNum, FieldItemString, FieldItemId } from "tonva-core";
+import { Res, uqStringify, setRes, TFunc } from "tonva-core";
 import { ${cName} } from "./${uqAlias}";
 
 /*--fields--*/

@@ -1,4 +1,4 @@
-import { env } from ".";
+import { env } from "./env";
 
 const options:Intl.DateTimeFormatOptions = { 
 	weekday: 'long', 

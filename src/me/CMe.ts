@@ -1,9 +1,10 @@
 import { makeObservable, observable } from "mobx";
-import { QueryPager, User } from "tonva-core";
+import { User } from "tonva-core";
 import { CUqBase } from "uq-app";
 import { VMe } from "./VMe";
 import { VEditMe } from "./VEditMe";
 import { VAdminSetting } from "./VAdminSetting";
+import { QueryPager } from "tonva-react";
 
 export class CMe extends CUqBase {
 	unitOwner: User;

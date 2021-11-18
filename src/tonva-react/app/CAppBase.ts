@@ -1,12 +1,11 @@
-import { centerApi, logoutApis, AppConfig as AppConfigCore, Web } from "tonva-core";
+import { /*centerApi, logoutApis, */AppConfig as AppConfigCore, Web } from "tonva-core";
 import { User, UqsConfig as UqsConfigCore } from 'tonva-core';
 import { RouteFunc, Hooks, Navigo, NamedRoute } from "tonva-core";
+import { t, setGlobalRes } from 'tonva-core';
 import { nav, Nav } from '../nav';
-import { t, setGlobalRes } from '../res';
-import { Controller } from '../vm';
+import { ControllerWithWeb } from '../vm';
 import { UQsLoader, UQsMan, TVs } from "tonva-core";
 import { VErrorsPage, VStartError } from "./vMain";
-import { WebReact } from "tonva-react";
 
 export interface IConstructor<T> {
     new (...args: any[]): T;
@@ -59,7 +58,7 @@ export interface Elements {
 	[id:string]: (element: HTMLElement)=>void,
 }
 
-export abstract class CAppBase<U> extends Controller {
+export abstract class CAppBase<U> extends ControllerWithWeb {
 	private appConfig: AppConfig;
 	private uqsMan: UQsMan;
     protected _uqs: U;
@@ -68,10 +67,10 @@ export abstract class CAppBase<U> extends Controller {
 	timezone: number;
 	unitTimezone: number;
 
-    constructor(config?: AppConfig) {
-		super();
-		this.web = new WebReact();
-		this.nav = nav;
+    constructor(web: Web, config?: AppConfig) {
+		super(web);
+		this.web = web;
+		this.nav = new Nav(this.web); // nav;
 		this.appConfig = config || (nav.navSettings as AppConfig);
 		if (this.appConfig) {
 			let {app, uqs} = this.appConfig;
@@ -98,7 +97,7 @@ export abstract class CAppBase<U> extends Controller {
 		let {user} = nav;
 		if (user === this.uqsUser) return;
 		this.uqsUser = user;
-		logoutApis();
+		this.web.logoutApis();
 		let uqsLoader = new UQsLoader(this.web, this.appConfig);
 		let retErrors = await uqsLoader.build();
 		this.uqsMan = uqsLoader.uqsMan;
@@ -129,7 +128,7 @@ export abstract class CAppBase<U> extends Controller {
 	}
 
     async userFromId(userId:number):Promise<any> {
-        return await centerApi.userFromId(userId);
+        return await this.web.centerApi.userFromId(userId);
     }
 
 	protected on(routeFunc:RouteFunc, hooks?:Hooks):Navigo;

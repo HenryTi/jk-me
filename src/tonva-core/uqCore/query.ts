@@ -1,109 +1,19 @@
-import _ from 'lodash';
-import {observable, IObservableArray} from 'mobx';
-import { PageItems } from '../tool';
-import {Field, ArrFields} from './uqMan';
-import {Entity} from './entity';
+import { /*Field, */ArrFields } from './uqMan';
+import { Entity } from './entity';
 import { QueryQueryCaller, QueryPageCaller } from './caller';
 
 export type QueryPageApi = (name:string, pageStart:any, pageSize:number, params:any) => Promise<string>;
 
-export class QueryPager<T extends any> extends PageItems<T> {
-	private query: Query;
-	private $page: any;
-	protected idFieldName: any;
-    constructor(query: Query, pageSize?: number, firstSize?: number, itemObservable?:boolean) {
-        super(itemObservable);
-        this.query = query;
-        if (pageSize !== undefined) this.pageSize = pageSize;
-		if (firstSize !== undefined) this.firstSize = firstSize;
-	}
-
-	setReverse() {
-		this.appendPosition = 'head';
-	}
-
-    protected async onLoad() {
-		if (this.$page) return;
-        let {schema} = this.query;
-        if (schema === undefined) {
-			await this.query.loadSchema();
-			schema = this.query.schema;
-		}
-		if (schema === undefined) return;
-		let $page = this.$page = (schema.returns as any[]).find(v => v.name === '$page');
-		if ($page === undefined) return;
-		this.sortOrder = $page.order;
-		let fields = $page.fields;
-		if (fields !== undefined) {
-			let field = fields[0];
-			if (field) this.idFieldName = field.name;
-		}
-    }
-
-    protected async loadResults(param:any, pageStart:number, pageSize:number, $$user:number = undefined):Promise<{[name:string]:any[]}> {
-		let ret = await this.query.page(param, pageStart, pageSize, $$user);
-		return ret;
-	}
-	protected getPageId(item:T) {
-		if (item === undefined) return;
-		if (typeof item === 'number') return item;
-		let start = (item as any)[this.idFieldName];
-		if (start === null) return;
-		if (start === undefined) return;
-		if (typeof start === 'object') {
-			let id = start.id;
-			if (id !== undefined) return id;
-		}
-		return start;
-	}
-	async refreshItems(item:T) {
-		let index = this._items.indexOf(item);
-		if (index < 0) return;
-		let startIndex:number;
-		if (this.appendPosition === 'tail') {
-			startIndex = index - 1;
-		}
-		else {
-			startIndex = index + 1;
-		}
-		let pageStart = this.getPageId(this._items[startIndex]);
-		let pageSize = 1;
-        let ret = await this.load(
-			this.param, 
-			pageStart,
-			pageSize);
-		let len = ret.length;
-		if (len === 0) {
-			this._items.splice(index, 1);
-			return;
-		}
-		for (let i=0; i<len; i++) {
-			let newItem = ret[i];
-			if (!newItem) continue;
-			let newId = newItem[this.idFieldName];
-			if (newId === undefined || newId === null) continue;
-			if (typeof newId === 'object') newId = newId.id;
-			let oldItem = this._items.find(v => {
-				let oldId = (v as any)[this.idFieldName];
-				if (oldId === undefined || oldId === null) return false;
-				if (typeof oldId === 'object') oldId = oldId.id;
-				return oldId = newId;
-			});
-			if (oldItem) {
-				_.merge(oldItem, newItem);
-			}
-		}
-	}
-}
-
 export class UqQuery<P, R> extends Entity {
     get typeName(): string { return 'query';}
+    /*
     private pageStart: any;
     private pageSize:number;
     private params:any;
     private more: boolean;
     private startField: Field;
-    list:IObservableArray; 
+    */
+    //list:IObservableArray; 
     returns: ArrFields[];
 	isPaged: boolean;
 	
@@ -113,15 +23,17 @@ export class UqQuery<P, R> extends Entity {
         this.returns = returns;
         this.isPaged = returns && (returns as any[]).find(v => v.name === '$page') !== undefined;
     }
-
+    /*
     resetPage(size:number, params:any) {
         this.pageStart = undefined;
         this.pageSize = size;
         this.params = params;
         this.more = false;
-        this.list = undefined;
+        //this.list = undefined;
     }
-    get hasMore() {return this.more;}
+    */
+    //get hasMore() {return this.more;}
+    /*
     async loadPage():Promise<void> {
         if (this.pageSize === undefined) {
             throw new Error('call resetPage(size:number, params:any) first');
@@ -152,7 +64,7 @@ export class UqQuery<P, R> extends Entity {
             this.list.push(...page);
         }
     }
-
+    */
     protected pageCaller(params: any, $$user:number = undefined, showWaiting: boolean = true): QueryPageCaller {
         return new QueryPageCaller(this, params, $$user, showWaiting);
     }

@@ -1,8 +1,17 @@
 import { env } from '../tool';
 
-const centerHost = process.env['REACT_APP_CENTER_HOST'];
+/*
+.env
+#REACT_APP_CENTER_HOST=101.200.46.56
+#REACT_APP_CENTER_HOST=47.92.87.6
+REACT_APP_CENTER_HOST=https://tv.jkchemical.com
+REACT_APP_RES_HOST=https://tv.jkchemical.com
+REACT_APP_UNIT=24
+*/
+
+const centerHost = 'https://tv.jkchemical.com'; // process.env['REACT_APP_CENTER_HOST'];
 const centerDebugHost = 'localhost:3000'; //'192.168.86.64';
-const resHost = process.env['REACT_APP_RES_HOST'] || centerHost;
+const resHost = 'https://tv.jkchemical.com' || centerHost;
 const resDebugHost = 'localhost:3015'; //'192.168.86.63';
 const uqDebugHost = 'localhost:3015'; //'192.168.86.63';
 const uqDebugBuilderHost = 'localhost:3009';
@@ -12,23 +21,23 @@ interface HostValue {
 }
 const hosts:{[name:string]:HostValue} = {
     centerhost: {
-        value: process.env['REACT_APP_CENTER_DEBUG_HOST'] || centerDebugHost, 
+        value: /*process.env['REACT_APP_CENTER_DEBUG_HOST']*/ undefined || centerDebugHost, 
 		local: false,
     },
     reshost: {
-        value: process.env['REACT_APP_RES_DEBUG_HOST'] || resDebugHost,
+        value: /*process.env['REACT_APP_RES_DEBUG_HOST']*/ undefined || resDebugHost,
 		local: false,
     },
     uqhost: {
-        value: process.env['REACT_APP_UQ_DEBUG_HOST'] || uqDebugHost, 
+        value: /*process.env['REACT_APP_UQ_DEBUG_HOST']*/ undefined || uqDebugHost, 
 		local: false,
     },
     unitxhost: {
-        value: process.env['REACT_APP_UQ_DEBUG_HOST'] || uqDebugHost, 
+        value: /*process.env['REACT_APP_UQ_DEBUG_HOST']*/ undefined || uqDebugHost, 
 		local: false,
     },
     "uq-build": {
-        value: process.env['REACT_APP_UQ_DEBUG_BUILDER_HOST'] || uqDebugBuilderHost, 
+        value: /*process.env['REACT_APP_UQ_DEBUG_BUILDER_HOST']*/ undefined || uqDebugBuilderHost, 
 		local: false,
     }
 }
@@ -75,7 +84,7 @@ const fetchOptions = {
     },
 };
 
-class Host {
+export class Host {
     testing: boolean;
     url: string;
     ws: string;
@@ -184,7 +193,7 @@ class Host {
     }
 }
 
-export const host:Host = new Host();
+//export const host:Host = new Host();
 
 // 因为测试的都是局域网服务器，甚至本机服务器，所以一秒足够了
 // 网上找了上面的fetch timeout代码。

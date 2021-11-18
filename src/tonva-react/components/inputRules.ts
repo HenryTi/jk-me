@@ -1,6 +1,5 @@
 import _ from 'lodash';
-import { resLang } from '../res';
-import { inputRes, InputRes } from '../res/inputRes';
+import { resLang, inputRes, InputRes } from 'tonva-core';
 
 export abstract class Rule {
     abstract check(defy:string[], value:any):void;

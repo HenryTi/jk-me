@@ -9,6 +9,7 @@ import { MessageHub } from "./messageHub";
 import { HttpChannelNavUI } from "./httpChannelUI";
 import { WsBridge, WSChannel } from "./wsChannel";
 import { FetchError } from "./fetchError";
+import { Host, resUrlFromHost } from './host';
 //import { UQsMan, UQsManApp, TVs } from "../uq";
 //import { AppConfig, UqConfig } from "../app";
 
@@ -49,10 +50,10 @@ export abstract class Web {
         throw new Error('Method not implemented.');
     }
     endWait() {
-        throw new Error('Method not implemented.');
+        //throw new Error('Method not implemented.');
     }
     startWait() {
-        throw new Error('Method not implemented.');
+        //throw new Error('Method not implemented.');
     }
     centerHost:string;
     centerToken:string|undefined = undefined;
@@ -74,6 +75,7 @@ export abstract class Web {
     readonly guestApi: GuestApi;
     readonly messageHub: MessageHub;
     readonly wsBridge: WsBridge;
+    readonly host:Host;
 
     language: string;
     culture: string;
@@ -96,6 +98,7 @@ export abstract class Web {
         this.guestApi = new GuestApi(this, 'tv/guest/', undefined);
         this.messageHub = new MessageHub(this);
         this.wsBridge = new WsBridge(this);
+        this.host = new Host();
     }
     
     logoutApis() {
@@ -121,7 +124,7 @@ export abstract class Web {
 
     getCenterChannelUI():HttpChannel {
         if (this.centerChannelUI !== undefined) return this.centerChannelUI;
-        this.centerChannelUI = new CenterHttpChannel(this, this.centerHost, this.centerToken, new HttpChannelNavUI(this));
+        return this.centerChannelUI = new CenterHttpChannel(this, this.centerHost, this.centerToken, new HttpChannelNavUI(this));
     }
     
     getCenterChannel():HttpChannel {
@@ -137,5 +140,9 @@ export abstract class Web {
     clearNetToken() {
         this.setCenterToken(0, undefined);
         WSChannel.setCenterToken(undefined);
+    }
+
+    resUrlFromHost(host:string): string {
+        return resUrlFromHost(host);
     }
 }

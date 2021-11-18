@@ -1,7 +1,7 @@
 //import {nav} from '../components';
 import { UqTokenApi } from './uqApi';
 import { setSubAppWindow } from './wsChannel';
-import { host } from './host';
+//import { host } from './host';
 import { env, uid } from '../tool';
 import { Web } from './Web';
 
@@ -132,7 +132,7 @@ export class AppBridge {
             throw new Error('error app api return');
             //return;
         }
-        let realUrl = host.getUrlOrTest(db, url, urlTest);
+        let realUrl = this.web.host.getUrlOrTest(db, url, urlTest);
         console.log('onAppApiReturn(message:any): url=' + url + ', real=' + realUrl);
         //action.url = realUrl;
         //action.token = token;
@@ -153,7 +153,7 @@ export class AppBridge {
             let uqToken = await this.web.uqTokenApi.uq({unit,  uqOwner, uqName});
             if (uqToken.token === undefined) uqToken.token = this.web.centerToken;
             let {db, url, urlTest} = uqToken;
-            let realUrl = host.getUrlOrTest(db, url, urlTest);
+            let realUrl = this.web.host.getUrlOrTest(db, url, urlTest);
             console.log('realUrl: %s', realUrl);
             uqToken.url = realUrl;
             this.uqTokens[uq] = uqToken;

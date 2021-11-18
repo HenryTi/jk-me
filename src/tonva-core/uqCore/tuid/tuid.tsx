@@ -6,8 +6,8 @@ import { UqMan, ArrFields, Field, SchemaFrom } from '../uqMan';
 import { EntityCaller } from '../caller';
 import { BoxId } from './boxId';
 import { IdCache, IdDivCache } from './idCache';
-import { Render } from '../../ui';
-import { uqStringify } from './reactBoxId';
+import { Render } from '../../../tonva-react/ui';
+import { uqStringify } from '../uqStringify';
 
 export interface TuidSaveResult {
     id: number;
@@ -23,7 +23,6 @@ export abstract class UqTuid<M> extends Entity {
     protected noCache: boolean;
     readonly typeName:string = 'tuid';
     protected idName: string;
-    //cached: boolean;
     unique: string[];
 	render: Render<M>;
 

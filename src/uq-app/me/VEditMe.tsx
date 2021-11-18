@@ -3,7 +3,7 @@ import {
     ItemSchema, StringSchema, ImageSchema, UiTextItem, UiImageItem, nav, Page,
     Edit, UiSchema, VPage, Prop, FA, IconText, PropGrid
 } from 'tonva-react';
-import { userApi } from 'tonva-core';
+import { Web } from 'tonva-core';
 import { CMe } from './CMe';
 
 export class VEditMe extends VPage<CMe>{
@@ -35,7 +35,7 @@ export class VEditMe extends VPage<CMe>{
 
     private onItemChanged = async (itemSchema: ItemSchema, newValue: any, preValue: any) => {
         let { name } = itemSchema;
-        await userApi.userSetProp(name, newValue);
+        await this.controller.web.userApi.userSetProp(name, newValue);
         this.data[name] = newValue;
         nav.user.name = newValue;
         nav.saveLocalUser();

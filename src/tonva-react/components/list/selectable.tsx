@@ -1,9 +1,10 @@
 import * as React from 'react';
 import {observable, IObservableArray, isObservableArray, observe, makeObservable} from 'mobx';
 import classNames from 'classnames';
-import { uid, PageItems } from 'tonva-core';
+import { uid } from 'tonva-core';
 import {ListBase} from './base';
 import { List } from './index';
+import { IPageItems } from '../../tool';
 import { observer } from 'mobx-react';
 
 export interface SelectableItem {
@@ -34,7 +35,7 @@ export class Selectable extends ListBase {
             itemsArray = items as any;
         }
         else {
-            itemsArray = (items as PageItems<any>).items;
+            itemsArray = (items as IPageItems<any>).items;
         }
         if (isObservableArray(items) === true) {
             observe(itemsArray as IObservableArray<any>, (change) => {                
@@ -70,7 +71,7 @@ export class Selectable extends ListBase {
             itemsArray = items as any;
         }
         else {
-            itemsArray = (items as PageItems<any>).items;
+            itemsArray = (items as IPageItems<any>).items;
         }
 
 		if (isItemSelected) {

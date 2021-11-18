@@ -3,21 +3,23 @@ import classNames from 'classnames';
 import { nav } from '../nav';
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { User, userApi } from 'tonva-core';
+import { User, Web } from 'tonva-core';
 
 export type UserLoader = (userId:number)=>Promise<any>;
 
 export class UserCache<T> {
-	private loader: UserLoader;
+	private readonly web:Web;
+	private readonly loader: UserLoader;
 	private onLoaded: (user:User) => void;
 	private map = observable(new Map<number, T|number>());
 
-	constructor(loader: UserLoader) {
-		if (loader === undefined) loader = (userId:number)=>userApi.user(userId);
+	constructor(web:Web, loader: UserLoader) {
+		this.web = web;
+		if (loader === undefined) loader = (userId:number)=> this.web.userApi.user(userId);
 		this.loader = loader;
 	}
 
-	use(id:number|any, onLoaded?:(user:User)=>void) {		
+	use(id:number|any, onLoaded?:(user:User)=>void) {
 		if (!id) return;
 		if (typeof id === 'object') id = id.id;
 		if (!id) return;
@@ -57,9 +59,16 @@ export class UserCache<T> {
 	}
 }
 
-const userCache = new UserCache(undefined);
+let staticUserCache: UserCache<any>;
+function getUserCache(web: Web) {
+	if (staticUserCache === undefined) {
+		staticUserCache = new UserCache(web, undefined);
+	}
+	return staticUserCache;
+}
 
 export interface UserIconProps {
+	web: Web;
     id: number;
     className?: string;
     style?: React.CSSProperties;
@@ -69,6 +78,7 @@ export interface UserIconProps {
 
 export const UserIcon = observer((props: UserIconProps):JSX.Element => {
     let {className, style, id, altImage, noneImage} = props;
+	let userCache = getUserCache(props.web);
     let user = userCache.getValue(id);
     switch (typeof user) {
 	case 'undefined':
@@ -95,6 +105,7 @@ export const UserIcon = observer((props: UserIconProps):JSX.Element => {
 });
 
 export interface UserViewProps {
+	web: Web;
 	id?: number;
 	user?: number|User;
 	render: (user:User) => JSX.Element;
@@ -102,8 +113,9 @@ export interface UserViewProps {
 }
 
 export const UserView = observer((props: UserViewProps):JSX.Element => {
-	let {id:idProp, user, render, onLoaded} = props;
+	let {web, id:idProp, user, render, onLoaded} = props;
 	if (user === null) return <>null</>;
+	let userCache = getUserCache(web);
 	switch (typeof user) {
 		case 'undefined': 
 			user = userCache.getValue(idProp);
@@ -111,16 +123,16 @@ export const UserView = observer((props: UserViewProps):JSX.Element => {
 		case 'object': 
 			let {/*obj, */id} = user as any;
 			//if (typeof obj !== 'object') {
-				useUser(id, onLoaded);
+				useUser(web, id, onLoaded);
 				user = userCache.getValue(id);
 			//}
 			break;
 		case 'number':
-			useUser(user as number, onLoaded);
+			useUser(web, user as number, onLoaded);
 			user = userCache.getValue(user as number);
 			break;
 		case 'string':
-			useUser(Number(user), onLoaded);
+			useUser(web, Number(user), onLoaded);
 			user = userCache.getValue(Number(user));
 			break;
 		default:
@@ -135,10 +147,11 @@ export const UserView = observer((props: UserViewProps):JSX.Element => {
     return render(user);
 });
 
-export function useUser(id: number|object, onLoaded?: (user:User)=>void) {
+export function useUser(web: Web, id: number|object, onLoaded?: (user:User)=>void) {
 	if (!id) return;
 	if (typeof(id) === 'object') {
 		id = (id as any).id;
 	}
+	let userCache = getUserCache(web);
 	userCache.use(id, onLoaded);
 }

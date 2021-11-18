@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Page, Image, UserView } from '../components';
-import { env, User } from 'tonva-core';
+import { Page } from '../components';
+import { env } from 'tonva-core';
 import { Controller } from './controller';
 import { VPage } from './vpage';
 
@@ -18,7 +18,7 @@ export abstract class View<C extends Controller> {
 	protected get isDev() {return  env.isDevelopment}
 	get isWebNav(): boolean {return this.controller.isWebNav}
 	navigate(url:string) {this.controller.navigate(url)}
-	protected isMe(id:any) {return this.controller.isMe(id)}
+	//protected isMe(id:any) {return this.controller.isMe(id)}
     abstract render(param?:any): JSX.Element;
 
     protected renderVm(vm: new (controller: C)=>View<C>, param?:any) {
@@ -36,7 +36,7 @@ export abstract class View<C extends Controller> {
 	protected go(showPage:()=>void, url:string, absolute?:boolean) {
 		this.controller.go(showPage, url, absolute);
 	}
-
+    /*
     async vCall<C extends Controller>(vp: new (controller: C)=>VPage<C>, param?:any):Promise<any> {
         return await this.controller.vCall(vp, param);
     }
@@ -69,7 +69,7 @@ export abstract class View<C extends Controller> {
 		if (!user) return;
 		return this.renderUser(user.id, imageClassName, textClassName);
 	}
-
+    */
     protected openPage(view: React.StatelessComponent<any>, param?:any, onClosePage?:(ret:any)=>void) {
         let type = typeof param;
         if (type === 'object' || type === 'undefined') {
