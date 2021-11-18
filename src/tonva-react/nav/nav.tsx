@@ -1,8 +1,6 @@
 import {makeObservable, observable} from 'mobx';
-import _ from 'lodash';
+import { Navigo, RouteFunc, Hooks, NamedRoute, Web, resOptions } from 'tonva-core';
 import {Page} from '../components';
-import { resOptions } from '../res/res';
-import { Navigo, RouteFunc, Hooks, NamedRoute } from 'tonva-core';
 
 import 'font-awesome/css/font-awesome.min.css';
 import '../css/va-form.css';
@@ -14,12 +12,12 @@ import { createLogin, Login, showForget, showRegister } from '../components/logi
 //import { env, FetchError, LocalData, User } from 'tonva-core';
 import { SystemNotifyPage } from './FetchErrorView';
 
-import {User, Guest} from 'tonva-core';
-import {netToken} from 'tonva-core';
-import {FetchError} from 'tonva-core';
-import {LocalData, env} from 'tonva-core';
-import {guestApi, logoutApis, setCenterUrl, setCenterToken, host, resUrlFromHost, messageHub} from 'tonva-core';
-import { userApi } from 'tonva-core';
+import { User, Guest } from 'tonva-core';
+//import { netToken } from 'tonva-core';
+import { FetchError } from 'tonva-core';
+import { LocalData, env } from 'tonva-core';
+//import {guestApi, logoutApis, setCenterUrl, setCenterToken, host, resUrlFromHost, messageHub} from 'tonva-core';
+//import { userApi } from 'tonva-core';
 import { NavView } from './NavView';
 
 export type NavPage = (params:any) => Promise<void>;
@@ -34,6 +32,7 @@ export interface NavSettings {
 let logMark: number;
 const logs:string[] = [];
 export class Nav {
+    private web: Web;
     private navView:NavView;
 	private wsHost: string;
     private local: LocalData = new LocalData();
@@ -45,10 +44,11 @@ export class Nav {
     culture: string;
     resUrl: string;
 
-    constructor() {
+    constructor(web: Web) {
 		makeObservable(this, {
 			user: observable,
 		});
+        this.web = web;
         let {lang, district} = resOptions;
         this.language = lang;
         this.culture = district;
@@ -92,7 +92,7 @@ export class Nav {
 	*/
     async onReceive(msg:any) {
         //if (this.ws === undefined) return;
-        await messageHub.dispatch(msg);
+        await this.web.messageHub.dispatch(msg);
     }
 
 	private async loadUnitJson() {
@@ -144,7 +144,7 @@ export class Nav {
             unitName = await this.getPredefinedUnitName();
             if (unitName === undefined) return;
         }
-        let unitId = await guestApi.unitFromName(unitName);
+        let unitId = await this.web.guestApi.unitFromName(unitName);
         if (unitId !== undefined) {
             this.local.unit.set({id: unitId, name: unitName});
         }
@@ -216,7 +216,7 @@ export class Nav {
 		if (this.forceDevelopment === true) {
 			env.isDevelopment = true;
 		}
-		await host.start(this.testing);
+		await this.web.host.start(this.testing);
 		/*
 		let hash = document.location.hash;
 		if (hash !== undefined && hash.length > 0) {
@@ -225,15 +225,15 @@ export class Nav {
 			this.hashParam = hash.substring(1, pos);
 		}
 		*/
-		let {url, ws, resHost} = host;
+		let {url, ws, resHost} = this.web.host;
 		this.centerHost = url;
-		this.resUrl = resUrlFromHost( resHost);
+		this.resUrl = this.web.resUrlFromHost(resHost);
 		this.wsHost = ws;
-		setCenterUrl(url);
+		this.web.setCenterUrl(url);
 
 		let guest:Guest = this.local.guest.get();
 		if (guest === undefined) {
-			guest = await guestApi.guest();
+			guest = await this.web.guestApi.guest();
 		}
 		if (!guest) {
 			debugger;
@@ -282,7 +282,7 @@ export class Nav {
 					let ret = await userPassword();
 					if (ret) {
 						let {user:userName, password} = ret;
-						let logindUser = await userApi.login({
+						let logindUser = await this.web.userApi.login({
 							user: userName,
 							pwd: password,
 							guest: this.guest,
@@ -396,7 +396,7 @@ export class Nav {
 
 	private internalOnNavRoutes(navPageRoutes: {[url:string]: NavPage}) {
 		if (!navPageRoutes) return;
-		this.navPageRoutes = _.merge(this.navPageRoutes, navPageRoutes);
+		this.navPageRoutes = Object.assign(this.navPageRoutes, navPageRoutes);
 		let navOns: { [route: string]: (params: any, queryStr: any) => void } = {};
 		for (let route in navPageRoutes) {
 			let navPage = navPageRoutes[route];
@@ -448,7 +448,7 @@ export class Nav {
 
     setGuest(guest: Guest) {
         this.local.guest.set(guest);
-        netToken.set(0, guest.token);
+        this.web.setNetToken(0, guest.token);
     }
 
     saveLocalUser() {
@@ -465,16 +465,16 @@ export class Nav {
 	}
 
     async loadMe() {
-        let me = await userApi.me();
+        let me = await this.web.userApi.me();
         this.user.icon = me.icon;
         this.user.nick = me.nick;
     }
 
 	private async internalLogined(user: User, callback: (user:User)=>Promise<void>, isUserLogin:boolean) {
-        logoutApis();
+        this.web.logoutApis();
         this.user = user;
         this.saveLocalUser();
-		netToken.set(user.id, user.token);
+		this.web.setNetToken(user.id, user.token);
 		this.clear();
 
 		await this.onChangeLogin?.(this.user);
@@ -543,14 +543,14 @@ export class Nav {
     }
 
 	private createLogin = createLogin;
-	setCreateLogin(createLogin: ()=>Promise<Login>) {
+	setCreateLogin(createLogin: (web:Web)=>Promise<Login>) {
 		this.createLogin = createLogin;
 	}
 
 	private login: Login;
 	private async getLogin():Promise<Login> {
 		if (this.login) return this.login;
-		return this.login = await this.createLogin();
+		return this.login = await this.createLogin(this.web);
 	}
 	async showLogin(callback?: (user:User)=>Promise<void>, withBack?:boolean) {
 		let login = await this.getLogin();
@@ -563,19 +563,19 @@ export class Nav {
 	}
 	
 	async showRegister() {
-		showRegister();
+		showRegister(this.web);
 	}
 
 	async showForget() {
-		showForget();
+		showForget(this.web);
 	}
 
     async logout(callback?:()=>Promise<void>) { //notShowLogin?:boolean) {
 		this.local.logoutClear();
         this.user = undefined; //{} as User;
-        logoutApis();
+        this.web.logoutApis();
         let guest = this.local.guest.get();
-        setCenterToken(0, guest && guest.token);
+        this.web.setCenterToken(0, guest && guest.token);
 		this.clear();
         if (callback === undefined)
             await this.start();

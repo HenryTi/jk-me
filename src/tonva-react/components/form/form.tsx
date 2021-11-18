@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {observable, IReactionDisposer, autorun} from 'mobx';
 import classNames from 'classnames';
+import { InputRes, inputRes, resLang } from 'tonva-core';
 import { Schema, ItemSchema, ArrSchema, UiSchema, TempletType } from '../schema';
 import { factory } from './widgets';
 import 'font-awesome/css/font-awesome.min.css';
 import { ContextContainer, FormContext, Context } from './context';
-import { InputRes, inputRes, resLang } from '../../res';
 
 export type FormButtonClick = (name:string, context: Context) => Promise<any>;
 export type InputEnter = (name:string, context: Context) => Promise<any>;

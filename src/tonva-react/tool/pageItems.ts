@@ -1,8 +1,9 @@
 import _ from 'lodash';
 import {observable, IObservableArray, computed, makeObservable, runInAction} from 'mobx';
+import { IPageItems } from './IPageItems';
 //import { Tonva } from '../Tonva';
 
-export abstract class PageItems<T> {
+export abstract class PageItems<T> implements IPageItems<T> {
 	//protected tonva: Tonva;
     loading: boolean = false;
     beforeLoad: boolean = true;

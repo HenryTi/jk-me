@@ -1,19 +1,8 @@
-import { TFunc } from "../res";
 import { Entity } from "./entity";
-import { Render, UI } from '../ui';
 import { Uq } from "./uqMan";
 
-export interface IDXEntity<M> {
-	readonly ui: UI;
-	readonly render: Render<M>;
-	readonly t: TFunc;
-}
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export class UqID<M extends {id:number}> extends Entity implements IDXEntity<M> {
-	readonly ui: UI;
-	readonly render: Render<M>;
-	readonly t: TFunc;
+export class UqID<M extends {id:number}> extends Entity {
 	get typeName() {return 'id'}
 	create: boolean;
 	update: boolean;
@@ -39,10 +28,7 @@ export class ID extends UqID<any> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export class UqIDX<M> extends Entity implements IDXEntity<M> {
-	readonly ui: UI;
-	readonly render: Render<M>;
-	readonly t: TFunc;
+export class UqIDX<M> extends Entity {
 	get typeName() {return 'idx'}
 }
 
@@ -50,10 +36,7 @@ export class IDX extends UqIDX<any> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export class UqIX<M> extends Entity implements IDXEntity<M> {
-	readonly ui: UI;
-	readonly render: Render<M>;
-	readonly t: TFunc;
+export class UqIX<M> extends Entity {
 	get typeName() {return 'ix'}
 }
 

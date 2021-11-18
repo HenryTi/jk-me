@@ -2,7 +2,7 @@ import {HttpChannel, UqHttpChannel} from './httpChannel';
 import {HttpChannelNavUI} from './httpChannelUI';
 //import {getUqToken, logoutUqTokens, buildAppUq} from './appBridge';
 import {ApiBase} from './apiBase';
-import { host } from './host';
+//import { host } from './host';
 import { LocalMap, env, decodeUserToken } from '../tool';
 import { Web, PromiseValue } from './Web';
 
@@ -160,16 +160,21 @@ export class UnitxApi extends UqApi {
         let centerAppApi = new CenterAppApi(this.web, 'tv/', undefined);
         let ret = await centerAppApi.unitxUq(this.unitId);
         let {token, db, url, urlTest} = ret;
-        let realUrl = host.getUrlOrTest(db, url, urlTest);
+        let realUrl = this.web.host.getUrlOrTest(db, url, urlTest);
         this.token = token;
         return new UqHttpChannel(this.web, realUrl, token, channelUI);
     }
 }
 export abstract class CenterApiBase extends ApiBase {
     protected async getHttpChannel(): Promise<HttpChannel> {
-        return (this.showWaiting === true || this.showWaiting === undefined)?
-            this.web.getCenterChannelUI():
-            this.web.getCenterChannel();
+        let ret: HttpChannel;
+        if (this.showWaiting === true || this.showWaiting === undefined) {
+            ret = this.web.getCenterChannelUI();
+        }
+        else {
+            ret = this.web.getCenterChannel();
+        }
+        return ret;
     }
 }
 
@@ -201,7 +206,7 @@ export class UqTokenApi extends CenterApiBase {
                 }
             }
             let uqParams:any = Object.assign({}, params);
-            uqParams.testing = host.testing;
+            uqParams.testing = this.web.host.testing;
             let ret = await this.get('uq-token', uqParams);
             if (ret === undefined) {
                 let {unit, uqOwner, uqName} = params;

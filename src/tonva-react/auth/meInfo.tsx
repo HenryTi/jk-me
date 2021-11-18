@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { makeObservable, observable } from 'mobx';
 import { Page, ItemSchema, UiSchema, StringSchema, UiTextItem, Edit, ImageSchema, nav, UiImageItem } from '../components';
-import { userApi } from 'tonva-core';
 
 export class EditMeInfo extends React.Component {
     private schema:ItemSchema[] = [
@@ -29,12 +28,15 @@ export class EditMeInfo extends React.Component {
     }
 
     private onItemChanged = async (itemSchema:ItemSchema, newValue:any, preValue:any) => {
-        let {name} = itemSchema;        
-        await userApi.userSetProp(name, newValue);
+        //let {name} = itemSchema;        
+        //await userApi.userSetProp(name, newValue);
+        throw new Error('await userApi.userSetProp(name, newValue);');
+        /*
         this.data[name] = newValue;
         let user:any = nav.user;
         user[name] = newValue;
         nav.saveLocalUser();
+        */
     }
 
     render() {

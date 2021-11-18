@@ -1,7 +1,6 @@
 //import {bridgeCenterApi, isBridged} from './appBridge';
 import {FetchError} from './fetchError';
 import {HttpChannelUI} from './httpChannelUI';
-// import {nav} from '../../tonva-react/components/nav';
 import { Caller } from './caller';
 import { env } from '../tool';
 import { Web } from './Web';

@@ -1,16 +1,16 @@
 import * as React from 'react';
 import classNames from 'classnames';
 import {observer} from 'mobx-react';
+import { resLang } from 'tonva-core';
+import { ListRes, listRes } from 'tonva-core';
 import _ from 'lodash';
-import {PageItems} from 'tonva-core';
 import {ListBase} from './base';
 import {Clickable} from './clickable';
 import {Static} from './static';
 import {Selectable} from './selectable';
 import '../../css/va-list.css';
 import { IObservableArray } from 'mobx';
-import { resLang } from '../../res/res';
-import { ListRes, listRes } from '../../res';
+import { IPageItems } from '../../tool';
 
 type StaticRow = string|JSX.Element|(()=>string|JSX.Element);
 interface ItemProps {
@@ -23,7 +23,7 @@ interface ItemProps {
 
 export interface ListProps {
     className?: string|string[];
-    items: any[] | IObservableArray<any> | PageItems<any>;
+    items: any[] | IObservableArray<any> | IPageItems<any>;
     item: ItemProps;
 	isItemSelected?: (item:any) => boolean;
     compare?: (item:any, selectItem:any) => boolean;

@@ -1,10 +1,9 @@
 import { env } from '../tool';
-import { UqData } from '../net';
 import { UqMan } from './uqMan';
 import { TuidImport, TuidInner } from './tuid';
 //import { nav } from '../components';
 import { UqConfig } from '../appConfig';
-import { Web } from '../web';
+import { Web, UqData } from '../web';
 
 export interface TVs {
     [uqName:string]: {
@@ -14,10 +13,10 @@ export interface TVs {
 
 export class UQsMan {
 	private web:Web;
-	private uqMans: UqMan[] = [];
     private collection: {[uqLower: string]: UqMan};
     private readonly tvs: TVs;
 	proxy: any;
+	uqMans: UqMan[] = [];
 
     constructor(web:Web, tvs:TVs) {
 		this.web = web;

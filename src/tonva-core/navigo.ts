@@ -427,7 +427,8 @@ export class Navigo {
 		if (typeof document === 'undefined') return;
 			this._findLinks().forEach(link => {
 			if (!link.hasListenerAttached) {
-				link.addEventListener('click', (e: React.MouseEvent<HTMLElement>) => {
+				link.addEventListener('click', (e: any) => {
+					// e: React.MouseEvent<HTMLElement>
 					if((e.ctrlKey || e.metaKey) && e.currentTarget.tagName.toLowerCase() === 'a'){ return false; }
 					var location = this.getLinkPath(link);
 		

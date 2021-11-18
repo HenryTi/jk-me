@@ -1,6 +1,7 @@
+import { Web } from 'tonva-core';
 import { AppConfig, CAppBase } from './CAppBase';
 
-export async function start(CApp: new (config: AppConfig) => CAppBase<any>, appConfig: AppConfig, isUserLogin?:boolean) {
+export async function start(CApp: new (web: Web, config: AppConfig) => CAppBase<any>, web:Web, appConfig: AppConfig, isUserLogin?:boolean) {
 	if (appConfig) {
 		let {htmlTitle} = appConfig;
 		if (htmlTitle) {
@@ -16,6 +17,6 @@ export async function start(CApp: new (config: AppConfig) => CAppBase<any>, appC
 		}
 	}
 
-	let cApp = new CApp(appConfig);
+	let cApp = new CApp(web, appConfig);
     await cApp.start(isUserLogin);
 }

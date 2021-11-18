@@ -13,8 +13,8 @@ export * from './propGrid';
 export * from './simple';
 export * from './media';
 export * from './searchBox';
-export * from './userIcon';
 export * from './ax';
 export * from './autoHideTips';
 export * from './login';
 export * from './input';
+

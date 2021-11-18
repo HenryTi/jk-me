@@ -1,5 +1,5 @@
 import { capitalCase } from "../tool";
-import { FieldItem, FieldUIType } from "../ui";
+import { FieldItem, FieldUIType } from "../../tonva-react/ui";
 
 export function buildFieldItem(field:any, isKey:boolean):FieldItem {
 	let $FieldItemType: string, fieldItemType: string, widget:FieldUIType;

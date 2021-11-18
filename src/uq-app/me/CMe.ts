@@ -1,5 +1,6 @@
 import { makeObservable, observable } from "mobx";
-import { User, QueryPager } from "tonva-core";
+import { User } from "tonva-core";
+import { QueryPager } from 'tonva-react';
 import { CUqBase } from "uq-app";
 import { VMe } from "./VMe";
 import { VEditMe } from "./VEditMe";

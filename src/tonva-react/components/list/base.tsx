@@ -1,6 +1,6 @@
 import { IObservableArray, computed, makeObservable } from 'mobx';
-import { PageItems } from 'tonva-core';
-import {List} from './index';
+import { IPageItems } from '../../tool/IPageItems';
+import { List } from './index';
 
 export abstract class ListBase {
     protected list: List;
@@ -21,13 +21,13 @@ export abstract class ListBase {
         if (Array.isArray(items) === true)
             return items as IObservableArray<any>;
         else
-            return (items as PageItems<any>).items;
+            return (items as IPageItems<any>).items;
     }
     get loading():boolean {
         let items = this.list.props.items;
         if (items === null) return false;
         if (items === undefined) return true;
-        let pageItems = items as PageItems<any>;
+        let pageItems = items as IPageItems<any>;
         if (pageItems.items === undefined) return false;
         return pageItems.loading;
     }

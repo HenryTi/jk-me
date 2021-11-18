@@ -1,7 +1,7 @@
 import { AppConfig as AppConfigCore, UqConfig } from '../appConfig';
 import { UQsMan, TVs } from "./uqsMan";
 import { LocalMap, LocalCache, env } from '../tool';
-import { UqData, UqAppData, CenterAppApi } from '../net';
+import { UqData, UqAppData, CenterAppApi } from '../web';
 import { Web } from '../web';
 
 export class UQsLoader {
@@ -85,7 +85,7 @@ export class UQsLoader {
 	}
 
     private async loadUqAppData(appOwner:string, appName:string): Promise<UqAppData> {
-        let centerAppApi = new CenterAppApi('tv/', undefined);
+        let centerAppApi = new CenterAppApi(this.web, 'tv/', undefined);
         let ret = await centerAppApi.appUqs(appOwner, appName);
         return ret;
     }
@@ -98,7 +98,7 @@ export class UQsLoader {
                 return {owner, ownerAlias, name, version, alias};
             }
         );
-        let centerAppApi = new CenterAppApi('tv/', undefined);
+        let centerAppApi = new CenterAppApi(this.web, 'tv/', undefined);
         let ret:UqData[] = await centerAppApi.uqs(uqs);
         if (ret.length < uqs.length) {
             let err = `下列UQ：\n${uqs.map(v => `${v.owner}/${v.name}`).join('\n')}之一不存在`;

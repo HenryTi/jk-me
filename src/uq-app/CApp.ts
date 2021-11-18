@@ -12,6 +12,7 @@ import { CPortal, CObjectPortal, CUnitPortal } from "portal";
 import { makeObservable, observable, runInAction } from "mobx";
 import { nav, start } from "tonva-react";
 import { appConfig } from "./appConfig";
+import { Web } from "tonva-core";
 
 const gaps = [10, 3,3,3,3,3,5,5,5,5,5,5,5,5,10,10,10,10,15,15,15,30,30,60];
 
@@ -24,8 +25,8 @@ export interface Title {
 
 
 export class CApp extends CUqApp {
-	constructor() {
-		super(appConfig);
+	constructor(web: Web) {
+		super(web, appConfig);
 	}
 
 	cHome: CHome;
@@ -76,7 +77,7 @@ export class CApp extends CUqApp {
 
 	render(loginedOnly: boolean = true):JSX.Element {
 		const onLogined = async (isUserLogin?:boolean) => {
-			await start(CApp, appConfig, isUserLogin);
+			await start(CApp, this.web, appConfig, isUserLogin);
 		}
 		let onNotLogined: () => Promise<void>;
 		if (loginedOnly === false) onNotLogined = onLogined;

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { Image } from '.';
+import { Image } from './image';
 
 export interface MediaProps {
     icon: string;

@@ -14,7 +14,7 @@ import { ReturnGetObjectsRet
 import { Item } from "uq-app/uqs/JkMe/JkMe";
 import { VSupervise } from "./VSupervise";
 import { VItemSumHistory } from "./VItemSumHistory";
-import { PageItems } from "tonva-core";
+//import { PageItems } from "tonva-core";
 import { VItemHistory } from "./VItemHistory";
 import { VItemDayHistory } from "./VItemDayHistory";
 import { VCustomerSumByMonth, VProductSumByMonth } from "./VSumByMonth";
@@ -22,6 +22,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { CObjects } from "./objects/CObjects";
 import { initCObjects } from "./objects";
 import { VAccounts } from "./VAccounts";
+import { PageItems } from "tonva-react";
 
 export class CSupervise extends CUqBase {
 	item: Item;

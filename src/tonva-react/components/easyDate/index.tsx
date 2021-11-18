@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { setRes } from '../../res';
+import { setRes } from 'tonva-core';
 
 export interface EasyDateProps {
     date: Date | number;

@@ -1,5 +1,3 @@
-// import _ from 'lodash';
-
 export interface KeyValueRes {
     [key:string]: any;
 }

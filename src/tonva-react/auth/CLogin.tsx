@@ -1,19 +1,19 @@
 import { User } from 'tonva-core';
 import { nav, Login } from '../components';
-import { Controller, VPage } from "../vm";
+import { ControllerWithWeb, VPage } from "../vm";
 import { VLogout } from './VLogout';
 import { VLogin } from './VLogin';
-import { CenterAppApi, userApi } from 'tonva-core';
+import { CenterAppApi } from 'tonva-core';
 import { VChangePassword } from './VChangePassword';
 import { VUserQuit } from './VUserQuit';
 
-export class CLogin extends Controller implements Login {
+export class CLogin extends ControllerWithWeb implements Login {
 	protected async internalStart() {
 	}
 
 	async showLogin(callback?: (user:User)=>Promise<void>, withBack?:boolean):Promise<void> {
 		let onLogin = async (un:string, pwd:string):Promise<boolean> => {
-			let user = await userApi.login({
+			let user = await this.web.userApi.login({
 				user: un,
 				pwd: pwd,
 				guest: nav.guest,
@@ -50,7 +50,7 @@ export class CLogin extends Controller implements Login {
 	async showChangePassword() {
 		let vPage = this.getVChangePassword();
 		this.openVPage(vPage, async (orgPassword:string, newPassword:string):Promise<boolean> => {
-			let centerAppApi = new CenterAppApi('tv/', undefined);
+			let centerAppApi = new CenterAppApi(this.web, 'tv/', undefined);
 			let ret = await centerAppApi.changePassword({orgPassword, newPassword});
 			return ret;
 		});

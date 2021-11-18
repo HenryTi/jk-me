@@ -1,6 +1,7 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { UiItem, ChangingHandler, ChangedHandler } from '../../schema';
+import { UiItem } from '../../schema';
+import { ChangingHandler, ChangedHandler } from '../../../ui';
 import { FieldProps } from '../field';
 import { Context } from '../context';
 import { ItemSchema } from '../../schema';

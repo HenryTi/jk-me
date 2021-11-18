@@ -1,12 +1,12 @@
-import { Controller, VPage } from "../../vm";
+import { Controller, ControllerWithWeb, VPage } from "../../vm";
 import { nav } from '../../components';
 import { VRegisterStart, VForgetStart } from './VStart';
-import { userApi, RegisterParameter } from 'tonva-core';
+import { RegisterParameter } from 'tonva-core';
 import { VVerify } from './VVerify';
 import { VRegisterPassword, VForgetPassword } from './VPassword';
 import { VForgetSuccess, VRegisterSuccess } from "./VSuccess";
 
-export abstract class CRegBase extends Controller {
+export abstract class CRegBase extends ControllerWithWeb {
     account: string;
     type:'mobile'|'email';
     password: string;
@@ -22,7 +22,7 @@ export abstract class CRegBase extends Controller {
         //this.account = account;
         this.openVPage(this.VVerify, async (verify: string) => {
 			this.verify = verify;
-			let ret = await userApi.checkVerify(this.account, verify);
+			let ret = await this.web.userApi.checkVerify(this.account, verify);
 			if (ret === 0) return ret;
 			this.toPassword();
 		});
@@ -39,7 +39,7 @@ export abstract class CRegBase extends Controller {
 	}
 
     login = async (account?:string) => {
-        let retUser = await userApi.login({user: account || this.account, pwd: this.password, guest: nav.guest});
+        let retUser = await this.web.userApi.login({user: account || this.account, pwd: this.password, guest: nav.guest});
         if (retUser === undefined) {
             alert('something wrong!');
             return;
@@ -50,10 +50,10 @@ export abstract class CRegBase extends Controller {
     }
 
     async checkAccount():Promise<string> {
-        let ret = await userApi.isExists(this.account);
+        let ret = await this.web.userApi.isExists(this.account);
         let error = this.accountError(ret);
         if (error !== undefined) return error;
-        ret = await userApi.sendVerify(this.account, this.type, nav.oem);
+        ret = await this.web.userApi.sendVerify(this.account, this.type, nav.oem);
         this.toVerify();
         return;
     }
@@ -91,7 +91,7 @@ export class CRegister extends CRegBase {
                 params.email = this.account;
                 break;
         }
-        let ret = await userApi.register(params);
+        let ret = await this.web.userApi.register(params);
         if (ret === 0) {
             nav.clear();
             this.toSuccess();
@@ -124,7 +124,7 @@ export class CForget extends CRegBase {
     }
     async onPasswordSubmit(pwd:string):Promise<string> {
 		this.password = pwd;
-		let ret = await userApi.resetPassword(this.account, this.password, this.verify, this.type);
+		let ret = await this.web.userApi.resetPassword(this.account, this.password, this.verify, this.type);
 		if (ret.length === 0) {
 			let err = 'something wrong in reseting password';
 			console.log(err);

@@ -4,6 +4,7 @@ import { FieldProps } from '../form/field';
 import { Widget } from '../form/widgets';
 import { IValuesView } from './IValuesView';
 import { FieldRule } from '../inputRules';
+import { ChangedHandler, ChangingHandler, PickId } from '../../ui';
 
 export type TypeWidget = new (context:Context, itemSchema:ItemSchema, fieldProps:FieldProps, children: React.ReactNode) => Widget;
 
@@ -14,8 +15,8 @@ export type UiType =  'form' | 'arr' | 'group' | 'button' | 'submit' | 'custom' 
 	| 'updown' | 'number' | 'color' | 'checkbox' | 'checkboxes' | 'radio' | 'range' 
 	| 'tagSingle' | 'tagMulti';
 
-export type ChangingHandler = (context:Context, value:any, prev:any) => boolean;
-export type ChangedHandler = (context:Context, value:any, prev:any) => Promise<void>;
+//export type ChangingHandler = (context:Context, value:any, prev:any) => boolean;
+//export type ChangedHandler = (context:Context, value:any, prev:any) => Promise<void>;
 
 export interface UiItem {
     widget?: UiType;
@@ -45,7 +46,7 @@ export interface UiImageItem extends UiItem {
     size: 'sm' | 'lg';
 }
 
-export type PickId = (context:Context, name:string, value:number) => Promise<any>;
+//export type PickId = (context:Context, name:string, value:number) => Promise<any>;
 export interface UiIdItem extends UiItem {
     widget: 'id';
     placeholder?: string | JSX.Element;
