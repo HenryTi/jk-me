@@ -62,7 +62,7 @@ export function resLang<T extends KeyValueRes>(res:Res<T>):T {
     return ret;
 }
 
-const resGlobal:any = {};
+export const resGlobal:any = {};
 export function setRes(target: any, res: any):(str:string)=>any {
 	if (res === undefined) return;
 	let {$lang, $district} = resOptions;
@@ -84,7 +84,10 @@ export function setRes(target: any, res: any):(str:string)=>any {
 export function setGlobalRes(res: any) {
 	setRes(resGlobal, res);
 }
+/*
 export function t(str:string):string|JSX.Element {
 	return resGlobal[str] || str;
 }
 export type TFunc = (str:string|JSX.Element) => string|JSX.Element;
+*/
+

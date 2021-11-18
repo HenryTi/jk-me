@@ -176,7 +176,7 @@ PROC #ProcWriteItemHistory ver 0.1 (
     bizOp ID,
 ) {
     VAR biz ID, bizOpType ENUM EnumBizOpType, value DEC(18,4);
-    VAR price DEC(18,4), cost DEC(18,4); -- , stamp INT;
+    VAR price DEC(18,4), margin DEC(18,4);
     SET biz=a.biz, bizOpType=a.type, value=a.value -- , stamp=stamp; 
         FROM DxBizOp as a 
         WHERE a.id=bizOp;
@@ -184,20 +184,20 @@ PROC #ProcWriteItemHistory ver 0.1 (
         SET price=a.price
             FROM OrderDetail as a
             WHERE a.id=biz;
-        SET cost=a.costPrice FROM DxOrderDetail as a WHERE a.id=biz;
-        -- 可能是积分兑换单引发的deliver-done，这时候，就没有cost和price，所以不写帐
+        SET margin=a.margin FROM DxOrderDetail as a WHERE a.id=biz;
+        -- 可能是积分兑换单引发的deliver-done，这时候，就没有margin和price，所以不写帐
         IF price IS NOT NULL AND price > 0 {
             PROC ProcItemHistory(bizOp, Item.orderAmount, price*value);
-            IF cost IS NOT NULL {
-                PROC ProcItemHistory(bizOp, Item.orderProfit, (price-cost)*value);
-                PROC ProcItemHistory(bizOp, Item.orderFee, (price-cost)*value);
+            IF margin IS NOT NULL {
+                PROC ProcItemHistory(bizOp, Item.orderProfit, (margin)*value);
+                PROC ProcItemHistory(bizOp, Item.orderFee, (margin)*value);
             }
             ELSE {
-                LOG CONCAT_WS(' ', bizOp, bizOpType, price, cost, value) SUBJECT 'Failed BizOp ItemHistory Cost IS NULL';
+                LOG CONCAT_WS(' ', bizOp, bizOpType, price, margin, value) SUBJECT 'Failed BizOp ItemHistory Margin IS NULL';
             }
         }
         ELSE {
-            LOG CONCAT_WS(' ', bizOp, bizOpType, price, cost, value) SUBJECT 'Failed BizOp ItemHistory Price IS NULL';
+            LOG CONCAT_WS(' ', bizOp, bizOpType, price, margin, value) SUBJECT 'Failed BizOp ItemHistory Price IS NULL';
         }
     }
     ELSEIF bizOpType=EnumBizOpType.orderReceiveDone {
@@ -205,19 +205,19 @@ PROC #ProcWriteItemHistory ver 0.1 (
         SET price=a.price
             FROM OrderDetail as a
             WHERE a.id=biz;
-        SET cost=a.costPrice FROM DxOrderDetail as a WHERE a.id=biz;
-        -- 可能是积分兑换单引发的deliver-done，这时候，就没有cost和price，所以不写帐
+        SET margin=a.margin FROM DxOrderDetail as a WHERE a.id=biz;
+        -- 可能是积分兑换单引发的deliver-done，这时候，就没有margin和price，所以不写帐
         IF price IS NOT NULL AND price > 0 {
-            IF cost IS NOT NULL {
+            IF margin IS NOT NULL {
                 PROC ProcItemHistory(bizOp, Item.orderFee, 
-                    CASE WHEN price<0.01 THEN 0 ELSE (price-cost)/price*value END);
+                    CASE WHEN price<0.01 THEN 0 ELSE (margin)/price*value END);
             }
             ELSE {
-                LOG CONCAT_WS(' ', bizOp, bizOpType, price, cost, value) SUBJECT 'Failed BizOp ItemHistory Cost IS NULL';
+                LOG CONCAT_WS(' ', bizOp, bizOpType, price, margin, value) SUBJECT 'Failed BizOp ItemHistory Cost IS NULL';
             }
         }
         ELSE {
-            LOG CONCAT_WS(' ', bizOp, bizOpType, price, cost, value) SUBJECT 'Failed BizOp ItemHistory Price IS NULL';
+            LOG CONCAT_WS(' ', bizOp, bizOpType, price, margin, value) SUBJECT 'Failed BizOp ItemHistory Price IS NULL';
         }
     }
     ELSEIF bizOpType=EnumBizOpType.orderReturn {
@@ -241,6 +241,6 @@ PROC #ProcItemHistory(
             KEY bizOp=bizOp, item=item
             STAMP stamp
         );
-        WITH ItemHistory as a ID = itemHistoryId SET a.value=value; -- , a.bizOp=bizOp;
+        WITH ItemHistory as a ID = itemHistoryId SET a.value=value;
     }
 };

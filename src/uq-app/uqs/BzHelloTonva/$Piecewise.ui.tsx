@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { UI, FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from 'tonva-react';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Res, uqStringify, setRes, TFunc } from "tonva-core";
+import { Res, uqStringify, setRes } from "tonva-core";
 import { $Piecewise } from "./BzHelloTonva";
 
 /*--fields--*/

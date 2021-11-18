@@ -57,7 +57,7 @@ import { IDXValue, Uq`;
 	ts += '\n}\n';
 	ts += `
 export function assign(uq: any, to:string, from:any): void {
-	let hasEntity = uq.$.hasEntity(to);
+	let hasEntity = uq.$_uqMan.hasEntity(to);
 	if (hasEntity === false) {
 		return;
 	}
@@ -65,7 +65,9 @@ export function assign(uq: any, to:string, from:any): void {
 }
 `;
 	
-	tsImport += ' } from "tonva-core";';
+	tsImport += ` } from "tonva-core";
+	import { Render } from "tonva-react";`;
+
 	return tsImport + ts;
 }
 
@@ -158,7 +160,7 @@ function buildReturns(entity:Entity, returns:ArrFields[]):string {
 }
 
 function buildTuid(tuid: Tuid) {
-	let ts = `\t${entityName(tuid.sName)}: UqTuid<Tuid${capitalCase(tuid.sName)}>;`;
+	let ts = `\t${entityName(tuid.sName)}: UqTuid<Tuid${capitalCase(tuid.sName)}>&{tv:(id:number, render?:Render<any>)=>JSX.Element};`;
 	return ts;
 }
 

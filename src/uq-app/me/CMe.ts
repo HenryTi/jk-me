@@ -43,7 +43,7 @@ export class CMe extends CUqBase {
 	}
 
 	load = async () => {
-		//this.roles = await this.getUqRoles(this.uq.$.name);
+		//this.roles = await this.getUqRoles(this.uq.$_uqMan.name);
 	}
 
 	backend = async () => {
@@ -53,7 +53,7 @@ export class CMe extends CUqBase {
 
 	private myRolesChanged = (roles:string[]) => {
 		//this.roles = roles;
-		//this.user.roles[this.uq.$.name] = roles;
+		//this.user.roles[this.uq.$_uqMan.name] = roles;
 		//nav.saveLocalUser();
 	}
 }

@@ -1,5 +1,5 @@
 import { AppConfig as AppConfigCore, UqConfig } from '../appConfig';
-import { UQsMan, TVs } from "./uqsMan";
+import { UQsMan } from "./uqsMan";
 import { LocalMap, LocalCache, env } from '../tool';
 import { UqData, UqAppData, CenterAppApi } from '../web';
 import { Web } from '../web';
@@ -49,7 +49,7 @@ export class UQsLoader {
 		let {app, uqs:uqConfigs, version} = this.appConfig;
 
 		let {name, dev} = app;
-        let uqsManApp = new UQsManApp(this.web, `${dev.name}/${name}`, undefined);
+        let uqsManApp = new UQsManApp(this.web, `${dev.name}/${name}`);
 		this.uqsMan = uqsManApp;
         let {appOwner, appName, localData} = uqsManApp;
         let uqAppData:UqAppData = localData.get();
@@ -79,7 +79,7 @@ export class UQsLoader {
 	// 返回 errors, 每个uq一行
 	async loadUqs(/*uqConfigs: UqConfig[], version:string, tvs:TVs*/):Promise<string[]> {
         let {uqs:uqConfigs, version} = this.appConfig;
-		this.uqsMan = new UQsMan(this.web, undefined);
+		this.uqsMan = new UQsMan(this.web);
 		let uqs = await this.loadUqData(uqConfigs);
 		return await this.uqsMan.buildUqs(uqs, version, uqConfigs, this.isBuildingUQ);
 	}
@@ -121,8 +121,8 @@ class UQsManApp extends UQsMan {
     readonly localData: LocalCache;
     id: number;
 
-	constructor(web:Web, tonvaAppName:string, tvs:TVs) {
-		super(web, tvs);
+	constructor(web:Web, tonvaAppName:string/*, tvs:TVs*/) {
+		super(web/*, tvs*/);
         let parts = tonvaAppName.split('/');
         if (parts.length !== 2) {
             throw new Error('tonvaApp name must be / separated, owner/app');

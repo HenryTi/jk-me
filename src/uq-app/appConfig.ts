@@ -43,7 +43,7 @@ export const appConfig: AppConfig = {
 		},
 	],
 	noUnit: true,
-    tvs: {},
+    //tvs: {},
 	oem: undefined,
 	htmlTitle: '我',
 };

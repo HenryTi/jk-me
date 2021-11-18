@@ -9,9 +9,9 @@ import { Book } from './book';
 import { History } from './history';
 import { Map } from './map';
 import { Pending } from './pending';
-import { CreateBoxId, BoxId } from './tuid';
+//import { CreateBoxId, BoxId } from './tuid';
 import { LocalMap, LocalCache, env, capitalCase } from '../tool';
-import { ReactBoxId } from './tuid/reactBoxId';
+//import { ReactBoxId } from './tuid/reactBoxId';
 import { UqEnum } from './enum';
 import { Entity } from './entity';
 import { UqConfig } from '../appConfig';
@@ -285,20 +285,22 @@ export interface Uq {
 	$IDTree<T>(param:ParamIDTree): Promise<string>;
 
 	IDTv(ids: number[]): Promise<any[]>;
+	/*
 	IDRender(id: number, render?:(value:any) => JSX.Element): JSX.Element;
 	IDV<T>(id: number): T;
 
 	IDLocalTv(ids: number[]): Promise<any[]>;
 	IDLocalRender(id: number, render?:(value:any) => JSX.Element): JSX.Element;
 	IDLocalV<T>(id: number): T;
+	*/
 }
 
 export class UqMan {
-	private readonly entities: {[name:string]: Entity} = {};
+	readonly entities: {[name:string]: Entity} = {};
 	private readonly enums: {[name:string]: UqEnum} = {};
 	private readonly actions: {[name:string]: Action} = {};
     private readonly queries: {[name:string]: Query} = {};
-	protected readonly ids: {[name:string]: ID} = {};
+	readonly ids: {[name:string]: ID} = {};
 	private readonly idxs: {[name:string]: IDX} = {};
 	private readonly ixs: {[name:string]: IX} = {};
 
@@ -310,12 +312,12 @@ export class UqMan {
     private readonly tuidsCache: TuidsCache;
     private readonly localEntities: LocalCache;
     private readonly tvs:{[entity:string]:(values:any)=>JSX.Element};
-	protected idCache: IDCache;
+	idCache: IDCache;
 	proxy: any;
     readonly localMap: LocalMap;
     readonly localModifyMax: LocalCache;
     readonly tuids: {[name:string]: Tuid} = {};
-    readonly createBoxId: CreateBoxId;
+    //readonly createBoxId: CreateBoxId;
     readonly newVersion: boolean;
     readonly uqOwner: string;
     readonly uqName: string;
@@ -327,13 +329,15 @@ export class UqMan {
     uqVersion: number;
 	config: UqConfig;
 
-    constructor(web: Web, uqData: UqData, createBoxId:CreateBoxId, tvs:{[entity:string]:(values:any)=>JSX.Element}) {
+    constructor(web: Web, uqData: UqData/*, createBoxId:CreateBoxId, tvs:{[entity:string]:(values:any)=>JSX.Element}*/) {
 		this.web = web;
-        this.createBoxId = createBoxId;
+        //this.createBoxId = createBoxId;
+		/*
         if (createBoxId === undefined) {
             this.createBoxId = this.createBoxIdFromTVs;
             this.tvs = tvs || {};
         }
+		*/
         let {id, uqOwner, uqName, /*access, */newVersion} = uqData;
         this.newVersion = newVersion;
         this.uqOwner = uqOwner;
@@ -361,10 +365,12 @@ export class UqMan {
 	getIDX(name:string):IDX {return this.idxs[name.toLowerCase()];};
 	getIX(name:string):IX {return this.ixs[name.toLowerCase()];};
 
+	/*
     private createBoxIdFromTVs:CreateBoxId = (tuid:Tuid, id:number):BoxId =>{
         let {name} = tuid;
         return new ReactBoxId(id, tuid, this.tvs[name]);
 	}
+	*/
 	
 	private roles:string[];
 	async getRoles():Promise<string[]> {
@@ -729,7 +735,7 @@ export class UqMan {
 			}
 		});
 		this.proxy = ret;
-		this.idCache = new IDCache(this.proxy);
+		this.idCache = new IDCache(this);
 		return ret;
 	}
 
@@ -947,7 +953,7 @@ export class UqMan {
 		return ret;
 	}
 
-	protected IDTv = async (ids: number[]): Promise<any[]> => {
+	IDTv = async (ids: number[]): Promise<any[]> => {
 		let ret = await this.apiIDTv(ids, EnumResultType.data);
 		let retValues: any[] = [];
 		for (let row of ret) {

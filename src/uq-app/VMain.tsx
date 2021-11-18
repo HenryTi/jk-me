@@ -1,6 +1,5 @@
 //=== UqApp builder created on Tue Jan 05 2021 18:41:24 GMT-0500 (GMT-05:00) ===//
-import { VPage, TabProp, TabCaptionComponent, TabsProps, PageWebNav } from 'tonva-react';
-import { t } from 'tonva-core';
+import { VPage, TabProp, TabCaptionComponent, TabsProps, PageWebNav, t } from 'tonva-react';
 import { CApp } from './CApp';
 
 const color = (selected: boolean) => selected === true ? 'text-primary' : 'text-muted';

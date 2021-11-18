@@ -36,7 +36,8 @@ ENUM EnumBizOpType (
 
 ENUM OrderReady (
     sheet                       = 0x0001,
-    cost                        = 0x0002,
+    -- cost                        = 0x0002,
+    margin                      = 0x0004,
 );
 
 ID ItemTitle ver 0.1 CONST (

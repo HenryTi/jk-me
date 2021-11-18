@@ -71,6 +71,16 @@ ACCEPT [return] {
 	}
     SCHEDULE ExecQueueBizOp DELAY 1;
 }
+ACCEPT [order-sale-margin] {
+    LOG CONCAT_WS(' ', order) SUBJECT 'JkOrderBus ACCEPT order-sale-margin';
+    FOR detail {
+        LOG CONCAT_WS(' ', [order-detail], [margin]) SUBJECT 'ACCEPT JkOrderBus.order-sale-margin';
+        WITH DxOrderDetail ID=[order-detail] SET margin=[value];
+    }
+    PROC ProcSetOrderReady(order, OrderReady.margin);
+    PROC ProcQueueBizMain(order);
+}
+/*
 ACCEPT [order-sale-cost] {
     LOG CONCAT_WS(' ', order) SUBJECT 'JkOrderBus ACCEPT order-sale-cost';
     FOR detail {
@@ -80,6 +90,7 @@ ACCEPT [order-sale-cost] {
     PROC ProcSetOrderReady(order, OrderReady.cost);
     PROC ProcQueueBizMain(order);
 }
+*/
 ACCEPT [order-bound-staff-sales] {
     LOG CONCAT_WS(' ', order) SUBJECT 'JkOrderBus ACCEPT order-bound-staff-sales';
     VAR bizMainBoundId ID;
@@ -199,7 +210,7 @@ PROC ProcSetOrderReady(
     }
     SET ready = ready | orderReady;
     WITH DxOrderMain ID=order SET orderReady=ready;
-    IF ready = (OrderReady.sheet | OrderReady.cost) {
+    IF ready = (OrderReady.sheet | OrderReady.margin) {
         WITH DxBizMain ID=order SET ready=1;
         FOR (VAR orderDetail ID 
             OF SELECT id as orderDetail FROM OrderDetail WHERE main=order)
