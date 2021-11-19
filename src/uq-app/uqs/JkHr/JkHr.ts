@@ -1,6 +1,7 @@
 //=== UqApp builder created on Mon Nov 15 2021 16:17:58 GMT-0500 (北美东部标准时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqMap } from "tonva-core";
+import { Render } from "tonva-react";
 
 
 //===============================
@@ -148,7 +149,7 @@ export interface UqExt extends Uq {
 
 	$user: UqTuid<Tuid$user>;
 	$sheet: UqTuid<Tuid$sheet>;
-	Employee: UqTuid<TuidEmployee>;
+	Employee: UqTuid<TuidEmployee>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
 	Role: UqTuid<TuidRole>;
 	Company: UqTuid<TuidCompany>;
 	DeleteWebuseEmployee: UqAction<ParamDeleteWebuseEmployee, ResultDeleteWebuseEmployee>;
@@ -165,7 +166,7 @@ export interface UqExt extends Uq {
 }
 
 export function assign(uq: any, to:string, from:any): void {
-	let hasEntity = uq.$.hasEntity(to);
+	let hasEntity = uq.$_uqMan.hasEntity(to);
 	if (hasEntity === false) {
 		return;
 	}

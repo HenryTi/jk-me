@@ -1,5 +1,3 @@
-import { action, makeObservable, observable } from 'mobx';
-import _ from 'lodash';
 import { LocalArr } from '../../tool';
 import { BoxId } from './boxId';
 import { TuidInner, TuidDiv } from './tuid';
@@ -8,17 +6,14 @@ const maxCacheSize = 10000;
 
 export class IdCache {
     private queue: number[] = [];                   // 每次使用，都排到队头
-	cache = new Map();    // 已经缓冲的
+	private readonly cache:Map<number, any>;    // 已经缓冲的
 
     protected localArr:LocalArr;
     protected waitingIds: number[] = [];          // 等待loading的
     protected tuidInner: TuidInner;
 
     constructor(tuidLocal: TuidInner) {
-        makeObservable(this, {
-            cache: observable.shallow,
-            cacheSet: action,
-        });
+        this.cache =  tuidLocal.uq.tonva.createObservableMap();
         this.tuidInner = tuidLocal;
         this.initLocalArr();
     }
@@ -151,7 +146,7 @@ export class IdCache {
         this.tuidInner.cacheTuidFieldValues(tuidValue);
     }
 
-    async assureObj(id:number):Promise<void> {
+    async assureObj(id:number):Promise<object|number> {
         let val = this.cache.get(id);
         if (val !== undefined) return val;
         /*
@@ -193,7 +188,8 @@ export class IdCache {
 			let p = row.indexOf('\t');
 			if (p < 0) p = row.length;
 			let id = Number(row.substr(0, p));
-			_.remove(netIds, v => v === id);
+            let pos = netIds.findIndex(v => v === id);
+            if (pos >= 0) netIds.splice(pos, 1);
 			ret.push(row);
 			this.localArr.setItem(id, row);
 		}

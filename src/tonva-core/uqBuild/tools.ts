@@ -1,19 +1,19 @@
 import fs from 'fs';
 import { capitalCase } from "../tool";
 import { UqMan } from "../uqCore";
-import { BuildContext } from './context';
+import { UqBuildContext } from './UqBuildContext';
 
 export const red = '\x1b[41m%s\x1b[0m';
 export let lastBuildTime:number = 0;
 //export const uqTsSrcPath = 'src/UqApp';
 
-export function saveSrcTsFileIfNotExists(context:BuildContext, fileName:string, suffix:string, content:string) {
+export function saveSrcTsFileIfNotExists(context:UqBuildContext, fileName:string, suffix:string, content:string) {
 	let tsFilePath = `${context.uqTsSrcPath}/${fileName}.${suffix}`;
 	saveTsFileIfNotExists(tsFilePath, content);
 	//if (fs.existsSync(tsFile) === true) return;
 	//saveTsFile(fileName, content, suffix);
 }
-export function saveTsFile(context:BuildContext, fileName:string, content:string, suffix:string = 'ts') {
+export function saveTsFile(context:UqBuildContext, fileName:string, content:string, suffix:string = 'ts') {
 	let {uqTsSrcPath} = context;
 	let srcFile = `${uqTsSrcPath}/${fileName}.${suffix}.txt`;
 	let tsFile = `${uqTsSrcPath}/${fileName}.${suffix}`;
@@ -49,10 +49,6 @@ function createTsFile(path:string, fileName:string, content:string, suffix:strin
 	console.log(red, `${tsFile} is built`);
 }
 */
-export function buildTsHeader() {
-	return `//=== UqApp builder created on ${new Date()} ===//`;
-}
-
 export function entityName(s:string):string {
 	return capitalCase(s);
 }

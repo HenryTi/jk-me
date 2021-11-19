@@ -1,11 +1,12 @@
-import { /*centerApi, logoutApis, */AppConfig as AppConfigCore, Web } from "tonva-core";
-import { User, UqsConfig as UqsConfigCore } from 'tonva-core';
+import { /*centerApi, logoutApis, */AppConfig as AppConfigCore, Tonva, Web } from "tonva-core";
+import { User, UqsConfig as UqsConfigCore  } from 'tonva-core';
 import { RouteFunc, Hooks, Navigo, NamedRoute } from "tonva-core";
-import { t, setGlobalRes } from 'tonva-core';
+import { setGlobalRes } from 'tonva-core';
 import { nav, Nav } from '../nav';
 import { ControllerWithWeb } from '../vm';
-import { UQsLoader, UQsMan, TVs } from "tonva-core";
+import { UQsLoader, UQsMan } from "tonva-core";
 import { VErrorsPage, VStartError } from "./vMain";
+import { createUQsProxy, t } from "tonva-react";
 
 export interface IConstructor<T> {
     new (...args: any[]): T;
@@ -45,7 +46,7 @@ export interface AppConfig extends AppConfigCore /*UqsConfig*/ {
 	*/
     //appName: string;        // 格式: owner/appName
     version: string;        // 版本变化，缓存的uqs才会重载
-    tvs?: TVs;
+    //tvs?: TVs;
     //uqNameMap?: {[uqName:string]: string};      // uqName='owner/uq' 映射到内存简单名字：uq, 可以注明映射，也可以自动。有可能重
     loginTop?: JSX.Element;
     oem?: string;               // 用户注册发送验证码的oem厂家，默认同花
@@ -67,10 +68,10 @@ export abstract class CAppBase<U> extends ControllerWithWeb {
 	timezone: number;
 	unitTimezone: number;
 
-    constructor(web: Web, config?: AppConfig) {
-		super(web);
-		this.web = web;
-		this.nav = new Nav(this.web); // nav;
+    constructor(tonva: Tonva, config?: AppConfig) {
+		super(tonva);
+		this.web = tonva.web;
+		this.nav = new Nav(tonva); // nav;
 		this.appConfig = config || (nav.navSettings as AppConfig);
 		if (this.appConfig) {
 			let {app, uqs} = this.appConfig;
@@ -98,10 +99,10 @@ export abstract class CAppBase<U> extends ControllerWithWeb {
 		if (user === this.uqsUser) return;
 		this.uqsUser = user;
 		this.web.logoutApis();
-		let uqsLoader = new UQsLoader(this.web, this.appConfig);
+		let uqsLoader = new UQsLoader(this.tonva, this.appConfig);
 		let retErrors = await uqsLoader.build();
 		this.uqsMan = uqsLoader.uqsMan;
-		this._uqs = this.uqsMan.proxy;
+		this._uqs = createUQsProxy(uqsLoader.uqsMan) as any; //  this.uqsMan.proxy;
 		this.afterBuiltUQs(this._uqs);
 		return retErrors;
 	}

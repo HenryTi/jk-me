@@ -1,13 +1,9 @@
-import { observer } from 'mobx-react';
-import _ from 'lodash';
 import { LocalArr } from '../../tool';
 import { Entity } from '../entity';
 import { UqMan, ArrFields, Field, SchemaFrom } from '../uqMan';
 import { EntityCaller } from '../caller';
 import { BoxId } from './boxId';
 import { IdCache, IdDivCache } from './idCache';
-import { Render } from '../../../tonva-react/ui';
-import { uqStringify } from '../uqStringify';
 
 export interface TuidSaveResult {
     id: number;
@@ -24,7 +20,7 @@ export abstract class UqTuid<M> extends Entity {
     readonly typeName:string = 'tuid';
     protected idName: string;
     unique: string[];
-	render: Render<M>;
+	//render: Render<M>;
 
     public setSchema(schema:any) {
         super.setSchema(schema);
@@ -38,7 +34,7 @@ export abstract class UqTuid<M> extends Entity {
 
     getIdFromObj(obj:any):number {return obj[this.idName]}
     stopCache():void {this.noCache = true}
-    abstract tv(id:number, render?:Render<M>):JSX.Element;
+    //abstract tv(id:number, render?:Render<M>):JSX.Element;
     abstract getObj(id:number):M;
     abstract useId(id:number):void;
     abstract boxId(id:number):BoxId;
@@ -125,31 +121,6 @@ export class TuidInner extends Tuid {
         return {id};
     }
 
-	tv(id:number, render?:Render<any>):JSX.Element {
-        const TuidView = observer(() => {
-			let obj = this.valueFromId(id);
-			if (obj === undefined) {
-				this.useId(id);
-				return <>{this.sName}:{id}</>;
-			}
-            let r: Render<any>;
-            if (render) {
-                r = render;
-            }
-            else if (this.render) {
-                r = this.render;
-            }
-            else {
-                console.log('render', render, 'this.render', this.render);
-                r = (item:any) => {
-                    return <>{this.sName}:{uqStringify(item)}</>;
-                };
-            }
-			return r(obj);
-		});
-		return <><TuidView /></>;
-	}
-
     useId(id:number, defer?:boolean) {
         if (this.noCache === true) return;
         if (!id) return;
@@ -159,9 +130,10 @@ export class TuidInner extends Tuid {
         if (!id) return;
         if (typeof id === 'object') return id;
         this.useId(id);
-        let {createBoxId} = this.uq;
-        if (!createBoxId) return {id: id} as BoxId;
-        return createBoxId(this, id);
+        //let {createBoxId} = this.uq;
+        //if (!createBoxId) 
+        return {id: id} as BoxId;
+        //return createBoxId(this, id);
     }
     valueFromId(id:number) {return this.idCache.getValue(id)}
 	resetCache(id:number|BoxId):void {
@@ -415,7 +387,7 @@ class SaveArrCaller extends TuidCaller<{arr:string, owner:number, id:number, pro
     }
     buildParams():any {
         let {id, props} = this.params;
-        let params = _.clone(props);
+        let params = Object.assign({}, props);
         params['$id'] = id;
         return params;
     }
@@ -457,9 +429,11 @@ export class TuidImport extends Tuid {
     isImport = true;
 
     getObj(id:number): any {return this.tuidLocal?.getObj(id)}
+    /*
 	tv(id:number, render?:Render<any>):JSX.Element {
 		return this.tuidLocal?.tv(id, render);
 	}
+    */
 
     useId(id:number) {this.tuidLocal?.useId(id);}
     boxId(id:number):BoxId {

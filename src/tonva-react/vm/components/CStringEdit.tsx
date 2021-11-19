@@ -1,5 +1,4 @@
 import React from 'react';
-import _ from 'lodash';
 import { FA, Page } from '../../components';
 import { Controller } from "../controller";
 import { makeObservable, observable } from 'mobx';
@@ -34,7 +33,7 @@ export class CStringEdit extends Controller {
 	protected async internalStart() {}
 	render(value:string, props?:CStringEditProps) {
 		this.value = value;
-		if (props) _.merge(this.props, props);
+		if (props) Object.assign(this.props, props);
 		return React.createElement(observer(()=><>{this.renderValue()}{this.renderPencil()}</>))
 	}
 

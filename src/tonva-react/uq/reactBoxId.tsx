@@ -1,7 +1,5 @@
-import { BoxId } from './boxId';
-import { Tuid } from './tuid';
-import { uqStringify } from '../uqStringify';
 import { observer } from 'mobx-react';
+import { Tuid, BoxId, uqStringify } from 'tonva-core';
 
 const TuidContent = (tuidName:string, values:any, x?:any) => {
     return <>{tuidName}: {uqStringify(values)}</>;
@@ -51,7 +49,7 @@ export class ReactBoxId implements BoxId {
                 ui = (ui as any).content;
             }
             if (ui !== undefined) {
-                let ret = ui(val/*, this.tuidUR.res*/);
+                let ret = ui(val);
                 if (ret !== undefined) return ret;
                 return <span className="text-danger">{boxName} {this.id}</span>;
             }

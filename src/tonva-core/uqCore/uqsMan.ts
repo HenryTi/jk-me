@@ -2,26 +2,31 @@ import { env } from '../tool';
 import { UqMan } from './uqMan';
 import { TuidImport, TuidInner } from './tuid';
 //import { nav } from '../components';
-import { UqConfig } from '../appConfig';
+import { UqConfig } from '../AppConfig';
 import { Web, UqData } from '../web';
+import { Tonva } from '../Tonva';
 
+/*
 export interface TVs {
     [uqName:string]: {
         [tuidName: string]: (values: any) => JSX.Element;
     }
 }
+*/
 
 export class UQsMan {
-	private web:Web;
+	private readonly tonva: Tonva;
+	private readonly web:Web;
     private collection: {[uqLower: string]: UqMan};
-    private readonly tvs: TVs;
+    //private readonly tvs: TVs;
 	proxy: any;
 	uqMans: UqMan[] = [];
 
-    constructor(web:Web, tvs:TVs) {
-		this.web = web;
-        this.tvs = tvs || {};
-		this.buildTVs();
+    constructor(tonva: Tonva/*, tvs:TVs*/) {
+		this.tonva = tonva;
+		this.web = tonva.web;
+        //this.tvs = tvs || {};
+		//this.buildTVs();
 		this.uqMans = [];
         this.collection = {};
     }
@@ -68,6 +73,7 @@ export class UQsMan {
 		return roles;
 	}
 
+	/*
     private buildTVs() {
 		if (!this.tvs) return;
         for (let i in this.tvs) {
@@ -85,6 +91,7 @@ export class UQsMan {
             }
         }
     }
+	*/
 
     async init(uqsData:UqData[]):Promise<void> {
         let promiseInits: PromiseLike<void>[] = [];
@@ -99,7 +106,7 @@ export class UQsMan {
 				uq = uqFull;
 			}
 			else {
-				uq  = new UqMan(this.web, uqData, undefined, this.tvs[uqFullName] || this.tvs[uqName]);
+				uq  = new UqMan(this.tonva, uqData/*, undefined, this.tvs[uqFullName] || this.tvs[uqName]*/);
 				this.collection[uqFullName] = uq;
 				promiseInits.push(uq.init());
 			}

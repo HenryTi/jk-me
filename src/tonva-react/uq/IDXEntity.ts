@@ -1,5 +1,4 @@
-import { TFunc } from "tonva-core";
-import { Render, UI } from '../ui';
+import { Render, UI, TFunc } from '../ui';
 
 export interface IDXEntity<M> {
 	readonly ui: UI;

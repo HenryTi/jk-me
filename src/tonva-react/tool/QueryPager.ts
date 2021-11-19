@@ -1,5 +1,5 @@
 import { Query } from "tonva-core";
-import { PageItems } from "./pageItems";
+import { PageItems } from "./PageItems";
 
 export class QueryPager<T extends any> extends PageItems<T> {
 	private query: Query;

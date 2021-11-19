@@ -1,6 +1,7 @@
 //=== UqApp builder created on Mon Nov 15 2021 16:17:58 GMT-0500 (北美东部标准时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqMap, UqHistory } from "tonva-core";
+import { Render } from "tonva-react";
 
 
 //===============================
@@ -446,7 +447,7 @@ export interface UqExt extends Uq {
 	Language: UqTuid<TuidLanguage>;
 	Brand: UqTuid<TuidBrand>;
 	Stuff: UqTuid<TuidStuff>;
-	ProductX: UqTuid<TuidProductX>;
+	ProductX: UqTuid<TuidProductX>&{tv:Render<any>};
 	ProductCategory: UqTuid<TuidProductCategory>;
 	Lot: UqTuid<TuidLot>;
 	PackSalesLevel: UqTuid<TuidPackSalesLevel>;
@@ -496,7 +497,7 @@ export interface UqExt extends Uq {
 }
 
 export function assign(uq: any, to:string, from:any): void {
-	let hasEntity = uq.$.hasEntity(to);
+	let hasEntity = uq.$_uqMan.hasEntity(to);
 	if (hasEntity === false) {
 		return;
 	}

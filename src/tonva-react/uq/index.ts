@@ -1,1 +1,1 @@
-export * from './UQ';
+export * from './createUQsProxy';

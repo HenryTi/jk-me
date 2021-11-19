@@ -1,16 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { initNav, nav, NavView, start, WebReact } from 'tonva-react';
+import { initNav, nav, NavView, start, TonvaReact } from 'tonva-react';
 import { CApp } from './CApp';
 import { appConfig } from './appConfig';
 // import { App } from './App';
 
 export async function startApp() {
-    let web = new WebReact();
-    initNav(web);
+    let tonva = new TonvaReact();
+    initNav(tonva);
 	nav.setSettings(appConfig);
 	const onLogined = async (isUserLogin?:boolean) => {
-		await start(CApp, web, appConfig, isUserLogin);
+		await start(CApp, tonva, appConfig, isUserLogin);
 	}
     const notLogined: ()=>Promise<void> = undefined;
     const userPassword: () => Promise<{user:string; password:string}> = undefined;

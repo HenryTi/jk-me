@@ -1,4 +1,3 @@
-import React from 'react';
 import { nav } from '../components';
 import { VPage } from '../vm';
 import { CLogin } from './CLogin';

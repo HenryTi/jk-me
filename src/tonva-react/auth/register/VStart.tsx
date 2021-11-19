@@ -1,4 +1,3 @@
-import React from 'react';
 import { VPage } from "../../vm";
 import { tonvaTop, getSender } from '../tools';
 import {nav, Schema, UiSchema, UiTextItem, UiButton, Form, Context, StringSchema, Ax} from '../../components';

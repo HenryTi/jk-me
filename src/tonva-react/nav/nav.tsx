@@ -1,5 +1,5 @@
 import {makeObservable, observable} from 'mobx';
-import { Navigo, RouteFunc, Hooks, NamedRoute, Web, resOptions } from 'tonva-core';
+import { Navigo, RouteFunc, Hooks, NamedRoute, Web, resOptions, Tonva } from 'tonva-core';
 import {Page} from '../components';
 
 import 'font-awesome/css/font-awesome.min.css';
@@ -32,7 +32,8 @@ export interface NavSettings {
 let logMark: number;
 const logs:string[] = [];
 export class Nav {
-    private web: Web;
+    private readonly tonva:Tonva;
+    private readonly web: Web;
     private navView:NavView;
 	private wsHost: string;
     private local: LocalData = new LocalData();
@@ -44,11 +45,11 @@ export class Nav {
     culture: string;
     resUrl: string;
 
-    constructor(web: Web) {
+    constructor(tonva:Tonva) {
 		makeObservable(this, {
 			user: observable,
 		});
-        this.web = web;
+        this.web = tonva.web;
         let {lang, district} = resOptions;
         this.language = lang;
         this.culture = district;
@@ -543,14 +544,14 @@ export class Nav {
     }
 
 	private createLogin = createLogin;
-	setCreateLogin(createLogin: (web:Web)=>Promise<Login>) {
+	setCreateLogin(createLogin: (tonva:Tonva)=>Promise<Login>) {
 		this.createLogin = createLogin;
 	}
 
 	private login: Login;
 	private async getLogin():Promise<Login> {
 		if (this.login) return this.login;
-		return this.login = await this.createLogin(this.web);
+		return this.login = await this.createLogin(this.tonva);
 	}
 	async showLogin(callback?: (user:User)=>Promise<void>, withBack?:boolean) {
 		let login = await this.getLogin();
@@ -563,11 +564,11 @@ export class Nav {
 	}
 	
 	async showRegister() {
-		showRegister(this.web);
+		showRegister(this.tonva);
 	}
 
 	async showForget() {
-		showForget(this.web);
+		showForget(this.tonva);
 	}
 
     async logout(callback?:()=>Promise<void>) { //notShowLogin?:boolean) {

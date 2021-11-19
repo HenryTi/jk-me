@@ -1,4 +1,3 @@
-import React from 'react';
 import { VPage } from "../../vm";
 import { CRegBase } from "./CRegister";
 import {Schema, UiSchema, UiTextItem, UiButton, Form, Context, NumSchema} from '../../components';

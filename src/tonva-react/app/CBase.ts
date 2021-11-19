@@ -6,7 +6,7 @@ import { CAppBase, IConstructor } from "./CAppBase";
 
 export abstract class CBase<A extends CAppBase<U>, U> extends ControllerWithWeb {
     constructor(cApp: A) {
-        super(cApp.web);
+        super(cApp.tonva);
         this.cApp = cApp;
 		if (cApp) {
 			let {uqs, web, nav} = cApp;
