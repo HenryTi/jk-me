@@ -1,8 +1,8 @@
 import { observable } from "mobx";
 import { Web } from "tonva-core";
-import { nav } from './nav';
+import { nav } from '../nav';
 
-export class WebReact extends Web {
+export class WebUI extends Web {
     async navInit(): Promise<void> {
         await nav.init();
     }

@@ -53,9 +53,11 @@ export class Uq {
         */
     }
 
+	/*
     IDTv(ids: number[]): Promise<any[]> {
         return this.$_uqMan.IDTv(ids);
     }
+	*/
 	
 	protected IDRender = (id: number, render?:(value:any) => JSX.Element): JSX.Element => {
 		return React.createElement(observer(() => {
@@ -79,11 +81,11 @@ export class Uq {
 	private renderIDUnknownType(id: number) {
 		return React.createElement('span', {props:{className: 'text-muted'},  children: [`id=${id} type undefined`]});
 	}
-
+	/*
 	IDLocalTv(ids: number[]): Promise<any[]> {
 		return this.IDTv(ids.map(v => -v));
 	}
-
+	*/
 	protected IDLocalV = <T extends object>(id: number): T => {
 		return this.IDV(-id);
 	}

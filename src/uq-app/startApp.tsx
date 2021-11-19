@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { initNav, nav, NavView, start, WebReact } from 'tonva-react';
+import { initNav, nav, NavView, start, WebUI } from 'tonva-react';
 import { CApp } from './CApp';
 import { appConfig } from './appConfig';
 // import { App } from './App';
 
 export async function startApp() {
-    let web = new WebReact();
+    let web = new WebUI();
     initNav(web);
 	nav.setSettings(appConfig);
 	const onLogined = async (isUserLogin?:boolean) => {

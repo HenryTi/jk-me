@@ -1,12 +1,14 @@
 import fs from 'fs';
 import path from 'path';
-//import { nav } from "../../components";
+import { UqBuildContext } from 'tonva-core';
 import { UqMan } from "../uqCore";
-import { UQsBuildingLoader } from '../uqCore'
-import { buildTsHeader, getNameFromUq, overrideTsFile } from './tools';
-import { buildTsUqFolder } from './buildTsUqFolder';
+import { getNameFromUq, overrideTsFile } from './tools';
+import { TsUqFolder } from './TsUqFolder';
 
-export async function buildUqsFolder(uqsLoader: UQsBuildingLoader, uqsFolder:string/*, appConfig: AppConfig*/) {
+export async function buildUqsFolder(buildContext: UqBuildContext) {
+	let {uqsLoader, uqTsSrcPath, tsTemplate} = buildContext;
+	//uqsLoader, uqTsSrcPath + '/uqs'
+	let uqsFolder = uqTsSrcPath + '/uqs';
 	//let uqErrors = await uqsStart(appConfig);
 	//let uqsMan = UQsMan.value;
 	//let uqMans = uqsMan.getUqMans();
@@ -33,7 +35,7 @@ export async function buildUqsFolder(uqsLoader: UQsBuildingLoader, uqsFolder:str
 
 	let tsUqsIndexHeader = '';
 	let tsUqsIndexContent;
-	let uqsIndexFile = `${uqsFolder}/index.ts`;
+	let uqsIndexFile = `${uqTsSrcPath}/uqs/index.ts`;
 	if (fs.existsSync(uqsIndexFile) === true) {
 		let indexText = fs.readFileSync(uqsIndexFile, 'utf8');
 		let p1 = indexText.indexOf('///###import AppUQs###///');
@@ -49,13 +51,15 @@ export async function buildUqsFolder(uqsLoader: UQsBuildingLoader, uqsFolder:str
 	else {
 		tsUqsIndexContent = `\n\nexport interface UQs {`;
 	}
-	tsUqsIndexHeader += buildTsHeader();
+	tsUqsIndexHeader += tsTemplate.tsHeader;
 	let tsUqsIndexReExport = '\n';
 	let tsUqsUI = `\n\nexport function setUI(uqs:UQs) {`;
 	for (let uq of uqMans) {
 		let {devName:o1, uqName:n1} = getNameFromUq(uq);
 		let uqAlias = o1 + n1;
-		buildTsUqFolder(uq, uqsFolder, uqAlias);
+		let tsUqFolder = new TsUqFolder(buildContext, uq, uqsFolder, uqAlias);
+		// buildTsUqFolder(uq, uqsFolder, uqAlias);
+		tsUqFolder.build();
 
 		tsUqsIndexHeader += `\nimport * as ${uqAlias} from './${uqAlias}';`;
 		tsUqsIndexContent += `\n\t${uqAlias}: ${uqAlias}.UqExt;`; 
@@ -84,16 +88,6 @@ export async function buildUqsFolder(uqsLoader: UQsBuildingLoader, uqsFolder:str
 	overrideTsFile(uqsIndexFile, 
 		tsUqsIndexHeader + tsUqsIndexContent + '\n}' + tsUqsIndexReExport + tsUqsUI + '\n}\n');
 }
-
-/*
-// 返回每个uq构建时的错误
-async function uqsStart(uqsConfig: AppConfig):Promise<string[]> {
-	nav.forceDevelopment = true;
-	await nav.init();
-	let retErrors = await UQsMan.buildUQs(uqsConfig);
-	return retErrors;
-}
-*/
 
 async function loadUqEntities(uq:UqMan):Promise<void> {
 	await uq.loadAllSchemas();
