@@ -74,8 +74,8 @@ ACCEPT [return] {
 ACCEPT [order-sale-margin] {
     LOG CONCAT_WS(' ', order) SUBJECT 'JkOrderBus ACCEPT order-sale-margin';
     FOR detail {
-        LOG CONCAT_WS(' ', [order-detail], [margin]) SUBJECT 'ACCEPT JkOrderBus.order-sale-margin';
-        WITH DxOrderDetail ID=[order-detail] SET margin=[value];
+        LOG CONCAT_WS(' ', [orderdetail], [value]) SUBJECT 'ACCEPT JkOrderBus.order-sale-margin';
+        WITH DxOrderDetail ID=[orderdetail] SET margin=[value];
     }
     PROC ProcSetOrderReady(order, OrderReady.margin);
     PROC ProcQueueBizMain(order);
