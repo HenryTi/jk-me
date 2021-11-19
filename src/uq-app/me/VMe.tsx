@@ -1,4 +1,3 @@
-import React from 'react';
 import { observer } from 'mobx-react';
 import { Image, VPage, nav, IconText, PropGrid, LMR, FA, Prop } from 'tonva-react';
 import { CMe } from './CMe';

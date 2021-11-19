@@ -1,18 +1,18 @@
-import { AppConfig as AppConfigCore, UqConfig } from '../appConfig';
+import { AppConfig as AppConfigCore, UqConfig } from '../AppConfig';
 import { UQsMan } from "./uqsMan";
 import { LocalMap, LocalCache, env } from '../tool';
 import { UqData, UqAppData, CenterAppApi } from '../web';
-import { Web } from '../web';
+import { Tonva } from '../Tonva';
 
 export class UQsLoader {
-	readonly web: Web;
+	readonly tonva: Tonva;
     protected readonly appConfig: AppConfigCore;
 	protected isBuildingUQ: boolean = false;
 	uqsMan: UQsMan;         // value
 
-    constructor(web:Web, appConfig: AppConfigCore) {
+    constructor(tonva: Tonva, appConfig: AppConfigCore) {
         this.appConfig = appConfig;
-		this.web = web;
+		this.tonva = tonva;
     }
 
 	async build() {
@@ -49,7 +49,7 @@ export class UQsLoader {
 		let {app, uqs:uqConfigs, version} = this.appConfig;
 
 		let {name, dev} = app;
-        let uqsManApp = new UQsManApp(this.web, `${dev.name}/${name}`);
+        let uqsManApp = new UQsManApp(this.tonva, `${dev.name}/${name}`);
 		this.uqsMan = uqsManApp;
         let {appOwner, appName, localData} = uqsManApp;
         let uqAppData:UqAppData = localData.get();
@@ -79,13 +79,13 @@ export class UQsLoader {
 	// 返回 errors, 每个uq一行
 	async loadUqs(/*uqConfigs: UqConfig[], version:string, tvs:TVs*/):Promise<string[]> {
         let {uqs:uqConfigs, version} = this.appConfig;
-		this.uqsMan = new UQsMan(this.web);
+		this.uqsMan = new UQsMan(this.tonva);
 		let uqs = await this.loadUqData(uqConfigs);
 		return await this.uqsMan.buildUqs(uqs, version, uqConfigs, this.isBuildingUQ);
 	}
 
     private async loadUqAppData(appOwner:string, appName:string): Promise<UqAppData> {
-        let centerAppApi = new CenterAppApi(this.web, 'tv/', undefined);
+        let centerAppApi = new CenterAppApi(this.tonva.web, 'tv/', undefined);
         let ret = await centerAppApi.appUqs(appOwner, appName);
         return ret;
     }
@@ -98,7 +98,7 @@ export class UQsLoader {
                 return {owner, ownerAlias, name, version, alias};
             }
         );
-        let centerAppApi = new CenterAppApi(this.web, 'tv/', undefined);
+        let centerAppApi = new CenterAppApi(this.tonva.web, 'tv/', undefined);
         let ret:UqData[] = await centerAppApi.uqs(uqs);
         if (ret.length < uqs.length) {
             let err = `下列UQ：\n${uqs.map(v => `${v.owner}/${v.name}`).join('\n')}之一不存在`;
@@ -121,8 +121,8 @@ class UQsManApp extends UQsMan {
     readonly localData: LocalCache;
     id: number;
 
-	constructor(web:Web, tonvaAppName:string/*, tvs:TVs*/) {
-		super(web/*, tvs*/);
+	constructor(tonva: Tonva, tonvaAppName:string/*, tvs:TVs*/) {
+		super(tonva/*, tvs*/);
         let parts = tonvaAppName.split('/');
         if (parts.length !== 2) {
             throw new Error('tonvaApp name must be / separated, owner/app');
@@ -139,7 +139,7 @@ export class UQsBuildingLoader extends UQsLoader {
 		//nav.forceDevelopment = true;
 		env.isDevelopment = true;
 		//await nav.init();
-		await this.web.navInit();
+		await this.tonva.web.navInit();
 		this.isBuildingUQ = true;
 		let {uqs} = this.appConfig;
 		let retErrors:string[];

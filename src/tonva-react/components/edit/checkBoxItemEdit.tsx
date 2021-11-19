@@ -1,4 +1,3 @@
-import React from 'react';
 import { UiCheckItem } from '../schema';
 import { ItemEdit } from './itemEdit';
 

@@ -1,4 +1,4 @@
-import { User, Web } from 'tonva-core';
+import { Tonva, User } from 'tonva-core';
 
 export interface Login {
 	showLogin(callback?: (user:User)=>Promise<void>, withBack?:boolean):void;
@@ -9,19 +9,19 @@ export interface Login {
 	showUserQuit():void;
 }
 
-export async function createLogin(web: Web):Promise<Login> {
+export async function createLogin(tonva: Tonva):Promise<Login> {
 	let importCLogin = await import('../auth/CLogin');
-	return new importCLogin.CLogin(web);
+	return new importCLogin.CLogin(tonva);
 }
 
-export async function showRegister(web: Web):Promise<void> {
+export async function showRegister(tonva: Tonva):Promise<void> {
 	let importCRegister = await import('../auth/register/CRegister');
-	let c = new importCRegister.CRegister(web);
+	let c = new importCRegister.CRegister(tonva);
 	c.start();
 }
 
-export async function showForget(web: Web):Promise<void> {
+export async function showForget(tonva: Tonva):Promise<void> {
 	let importCRegister = await import('../auth/register/CRegister');
-	let c = new importCRegister.CForget(web);
+	let c = new importCRegister.CForget(tonva);
 	c.start();
 }

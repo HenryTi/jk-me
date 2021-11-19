@@ -210,7 +210,7 @@ PROC ProcSetOrderReady(
     }
     SET ready = ready | orderReady;
     WITH DxOrderMain ID=order SET orderReady=ready;
-    IF ready = (OrderReady.sheet | OrderReady.margin) {
+    IF ready & (OrderReady.sheet | OrderReady.margin)  = (OrderReady.sheet | OrderReady.margin) {
         WITH DxBizMain ID=order SET ready=1;
         FOR (VAR orderDetail ID 
             OF SELECT id as orderDetail FROM OrderDetail WHERE main=order)

@@ -13,7 +13,7 @@ export class IdCache {
     protected tuidInner: TuidInner;
 
     constructor(tuidLocal: TuidInner) {
-        this.cache =  tuidLocal.uq.web.createObservableMap();
+        this.cache =  tuidLocal.uq.tonva.createObservableMap();
         this.tuidInner = tuidLocal;
         this.initLocalArr();
     }

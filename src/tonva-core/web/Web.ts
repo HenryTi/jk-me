@@ -26,7 +26,6 @@ export abstract class Web {
     // ===== nav搬移内容结束
 
 	abstract navInit(): Promise<void>
-    abstract createObservableMap<K, V>(): Map<K, V>;
 
 	reload() {
 		throw new Error('Method not implemented.');

@@ -1,6 +1,7 @@
 /* eslint-disable */
 //import { UqApi, UqData, UnitxApi } from '../net';
-import { UqApi, UqData, UnitxApi } from 'tonva-core';
+import { UqApi, UqData, UnitxApi } from '../web';
+import { Tonva } from '../Tonva';
 import { Tuid, TuidDiv, TuidImport, TuidInner, TuidBox, TuidsCache } from './tuid';
 import { Action } from './action';
 import { Sheet } from './sheet';
@@ -14,7 +15,7 @@ import { LocalMap, LocalCache, env, capitalCase } from '../tool';
 //import { ReactBoxId } from './tuid/reactBoxId';
 import { UqEnum } from './enum';
 import { Entity } from './entity';
-import { UqConfig } from '../appConfig';
+import { UqConfig } from '../AppConfig';
 import { ID, IX, IDX } from './ID';
 //import { nav } from '../components';
 import { IDCache } from './IDCache';
@@ -311,7 +312,7 @@ export class UqMan {
 	private readonly pendings: {[name:string]: Pending} = {};
     private readonly tuidsCache: TuidsCache;
     private readonly localEntities: LocalCache;
-    private readonly tvs:{[entity:string]:(values:any)=>JSX.Element};
+    //private readonly tvs:{[entity:string]:(values:any)=>JSX.Element};
 	idCache: IDCache;
 	proxy: any;
     readonly localMap: LocalMap;
@@ -324,13 +325,15 @@ export class UqMan {
     readonly name: string;
     readonly uqApi: UqApi;
 	readonly id: number;
+	readonly tonva: Tonva;
 	readonly web: Web;
 
     uqVersion: number;
 	config: UqConfig;
 
-    constructor(web: Web, uqData: UqData/*, createBoxId:CreateBoxId, tvs:{[entity:string]:(values:any)=>JSX.Element}*/) {
-		this.web = web;
+    constructor(tonva: Tonva, uqData: UqData/*, createBoxId:CreateBoxId, tvs:{[entity:string]:(values:any)=>JSX.Element}*/) {
+		this.tonva = tonva;
+		this.web = tonva.web;
         //this.createBoxId = createBoxId;
 		/*
         if (createBoxId === undefined) {

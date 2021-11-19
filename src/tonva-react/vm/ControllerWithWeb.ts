@@ -1,12 +1,14 @@
-import { Web } from "tonva-core";
+import { Tonva, Web } from "tonva-core";
 import { VPage } from "./vpage";
 import { Controller } from "./controller";
 
 export abstract class ControllerWithWeb extends Controller {
+    readonly tonva: Tonva;
     readonly web: Web;
-    constructor(web: Web) {
+    constructor(tonva: Tonva) {
         super();
-        this.web = web;
+        this.tonva = tonva;
+        this.web = tonva.web;
     }
 
     private receiveHandlerId:number;

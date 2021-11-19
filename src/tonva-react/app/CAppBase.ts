@@ -1,4 +1,4 @@
-import { /*centerApi, logoutApis, */AppConfig as AppConfigCore, Web } from "tonva-core";
+import { /*centerApi, logoutApis, */AppConfig as AppConfigCore, Tonva, Web } from "tonva-core";
 import { User, UqsConfig as UqsConfigCore  } from 'tonva-core';
 import { RouteFunc, Hooks, Navigo, NamedRoute } from "tonva-core";
 import { setGlobalRes } from 'tonva-core';
@@ -68,10 +68,10 @@ export abstract class CAppBase<U> extends ControllerWithWeb {
 	timezone: number;
 	unitTimezone: number;
 
-    constructor(web: Web, config?: AppConfig) {
-		super(web);
-		this.web = web;
-		this.nav = new Nav(this.web); // nav;
+    constructor(tonva: Tonva, config?: AppConfig) {
+		super(tonva);
+		this.web = tonva.web;
+		this.nav = new Nav(tonva); // nav;
 		this.appConfig = config || (nav.navSettings as AppConfig);
 		if (this.appConfig) {
 			let {app, uqs} = this.appConfig;
@@ -99,7 +99,7 @@ export abstract class CAppBase<U> extends ControllerWithWeb {
 		if (user === this.uqsUser) return;
 		this.uqsUser = user;
 		this.web.logoutApis();
-		let uqsLoader = new UQsLoader(this.web, this.appConfig);
+		let uqsLoader = new UQsLoader(this.tonva, this.appConfig);
 		let retErrors = await uqsLoader.build();
 		this.uqsMan = uqsLoader.uqsMan;
 		this._uqs = createUQsProxy(uqsLoader.uqsMan) as any; //  this.uqsMan.proxy;

@@ -11,7 +11,7 @@ export class IDCache {
 
 	constructor(uqMan: UqMan) {
 		this.uqMan = uqMan;
-		this.cache = uqMan.web.createObservableMap<number, object|number>();
+		this.cache = uqMan.tonva.createObservableMap<number, object|number>();
 	}
 
 	getValue(id:number): object {

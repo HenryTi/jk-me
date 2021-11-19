@@ -2,8 +2,9 @@ import { env } from '../tool';
 import { UqMan } from './uqMan';
 import { TuidImport, TuidInner } from './tuid';
 //import { nav } from '../components';
-import { UqConfig } from '../appConfig';
+import { UqConfig } from '../AppConfig';
 import { Web, UqData } from '../web';
+import { Tonva } from '../Tonva';
 
 /*
 export interface TVs {
@@ -14,14 +15,16 @@ export interface TVs {
 */
 
 export class UQsMan {
-	private web:Web;
+	private readonly tonva: Tonva;
+	private readonly web:Web;
     private collection: {[uqLower: string]: UqMan};
     //private readonly tvs: TVs;
 	proxy: any;
 	uqMans: UqMan[] = [];
 
-    constructor(web:Web/*, tvs:TVs*/) {
-		this.web = web;
+    constructor(tonva: Tonva/*, tvs:TVs*/) {
+		this.tonva = tonva;
+		this.web = tonva.web;
         //this.tvs = tvs || {};
 		//this.buildTVs();
 		this.uqMans = [];
@@ -103,7 +106,7 @@ export class UQsMan {
 				uq = uqFull;
 			}
 			else {
-				uq  = new UqMan(this.web, uqData/*, undefined, this.tvs[uqFullName] || this.tvs[uqName]*/);
+				uq  = new UqMan(this.tonva, uqData/*, undefined, this.tvs[uqFullName] || this.tvs[uqName]*/);
 				this.collection[uqFullName] = uq;
 				promiseInits.push(uq.init());
 			}
