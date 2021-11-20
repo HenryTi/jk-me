@@ -1,8 +1,8 @@
 import _ from 'lodash';
-import { User, env, resOptions } from 'tonva-core';
+import { env, resOptions, PageHeaderProps, PageWebNav, Tonva, Nav } from 'tonva-core';
 import { t } from '../ui';
-import { Page, PageHeaderProps, PageWebNav } from '../components';
-import { nav } from '../nav';
+import { Page } from '../components';
+//import { nav } from '../nav';
 import { VPage } from './vpage';
 import { View } from './view';
 // import { messageHub } from 'tonva-core';
@@ -21,22 +21,25 @@ export interface WebNav<C extends Controller> {
 	VNavRawHeader?: new (controller: C) => View<C>;
 	VNavFooter?: new (controller: C) => View<C>;
 	VNavRawFooter?: new (controller: C) => View<C>;
-	renderPageHeader?: (props: PageHeaderProps) => JSX.Element;
+	renderPageHeader?: (props: PageHeaderProps<JSX.Element>) => JSX.Element;
 }
 
 export abstract class Controller {
+    protected readonly tonva: Tonva;
+    protected nav: Nav;
 	protected res: any = {};
 	t = (str: string): string|JSX.Element => this.internalT(str) || str;
     icon: string|JSX.Element;
     label:string|JSX.Element;
 	readonly isDev:boolean = env.isDevelopment;
-	pageWebNav: PageWebNav;
-    get user():User {return nav.user}
-    get isLogined():boolean {
-        let {user} = nav;
-        if (!user) return false;
-        return user.id > 0;
+	pageWebNav: PageWebNav<JSX.Element>;
+
+    constructor(tonva: Tonva) {
+        this.tonva = tonva;
+        this.nav = tonva.nav;
     }
+
+    getTonva() {return this.tonva;}
 
 	protected beforeInit() {}
 	protected afterInit() {}
@@ -44,7 +47,7 @@ export abstract class Controller {
     internalInit(...param: any[]) {
 		this.beforeInit();
         this.init(...param);
-		this.pageWebNav = this.getPageWebNav();        
+		this.pageWebNav = this.getPageWebNav();
 		this.afterInit();
     }
 
@@ -55,17 +58,8 @@ export abstract class Controller {
 		return this.res?.[str] ?? t(str);
 	}
 
-	get webNav(): WebNav<any> {return undefined;}
+    getPageWebNav(): PageWebNav {return undefined;}
 
-	getWebNav(): WebNav<any> {return this.webNav;}
-
-	getPageWebNav(): PageWebNav {return undefined;}
-
-	get isWebNav(): boolean {return nav.isWebNav}
-	navigate(url:string) {
-		nav.navigate(url);
-	}
-	
 	setRes(res: any) {
 		if (res === undefined) return;
 		let {$lang, $district} = resOptions;
@@ -127,42 +121,42 @@ export abstract class Controller {
 			}
 		}
 
-        nav.push(page, disposer);
+        this.nav.push(page, disposer);
         //this.disposer = undefined;
     }
 
     replacePage(page:JSX.Element, onClosePage?: ()=>void) {
-        nav.replace(page, onClosePage);
+        this.nav.replace(page, onClosePage);
         //this.disposer = undefined;
     }
 
     backPage() {
-        nav.back();
+        this.nav.back(false);
     }
 
     closePage(level?:number) {
-        nav.pop(level);
+        this.nav.pop(level);
     }
 
     ceasePage(level?:number) {
-        nav.ceaseTop(level);
+        this.nav.ceaseTop(level);
 	}
 	
 	go(showPage:()=>void, url:string, absolute?:boolean) {
-		nav.go(showPage, url, absolute);
+		this.go(showPage, url, absolute);
 	}
 
     removeCeased() {
-        nav.removeCeased();
+        this.nav.removeCeased();
     }
 
     regConfirmClose(confirmClose: ()=>Promise<boolean>) {
-        nav.regConfirmClose(confirmClose);
+        this.nav.regConfirmClose(confirmClose);
 	}
 
 	private topPageKey:any;
 	protected startAction() {
-		this.topPageKey = nav.topKey();
+		this.topPageKey = this.nav.topKey();
     }
     get TopKey() {
         return this.topPageKey;
@@ -171,7 +165,7 @@ export abstract class Controller {
         this.topPageKey = key;
     }
 	public popToTopPage() {
-		nav.popTo(this.topPageKey);
+		this.nav.popTo(this.topPageKey);
 	}
 
     async confirm(options: ConfirmOptions): Promise<'ok'|'yes'|'no'|undefined> {
@@ -201,7 +195,7 @@ export abstract class Controller {
                     </div>
                 </div>
             </Page>);
-            nav.regConfirmClose(async ():Promise<boolean> => {
+            this.nav.regConfirmClose(async ():Promise<boolean> => {
                 resolve(undefined);
                 return true;
             });

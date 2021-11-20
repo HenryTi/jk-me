@@ -1,15 +1,16 @@
 import { observer } from 'mobx-react';
-import { Image, VPage, nav, IconText, PropGrid, LMR, FA, Prop } from 'tonva-react';
+import { Image, VPage, IconText, PropGrid, LMR, FA, Prop } from 'tonva-react';
 import { CMe } from './CMe';
 import { appConfig } from '../uq-app/appConfig';
 import { VAbout } from './VAbout';
 import { renderUserText } from './renderUser';
+import { tonva } from 'tonva-core';
 
 export class VMe extends VPage<CMe> {
 	header() {return this.t('me')}
 
 	content() {
-        const { user } = nav;
+        const { user } = tonva;
         let aboutRows: Prop[] = [
             '',
             {
@@ -29,7 +30,7 @@ export class VMe extends VPage<CMe> {
             rows.push(
                 {
                     type: 'component',
-                    component: <button className="btn btn-success w-100 my-2" onClick={() => nav.logout()}>
+                    component: <button className="btn btn-success w-100 my-2" onClick={() => tonva.logout()}>
                         <FA name="sign-out" size="lg" /> {this.t('pleaseLogin')}
                     </button>
                 },
@@ -79,7 +80,7 @@ export class VMe extends VPage<CMe> {
     });
 
 	private meInfo = observer(() => {
-        let { user } = nav;
+        let { user } = tonva;
         if (user === undefined) return null;
         let { id, name, nick, icon } = user;
         return <LMR className="py-2 cursor-pointer w-100"

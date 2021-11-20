@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { UiRadio } from '../schema';
-import { nav } from '../../nav';
+//import { nav } from '../../nav';
 import { Page } from '../page/page';
 import { observer } from 'mobx-react';
 import { ItemEdit } from './itemEdit';
+import { tonva } from 'tonva-core';
 
 export class RadioItemEdit extends ItemEdit {
     get uiItem(): UiRadio {return this._uiItem as UiRadio}
@@ -17,7 +18,7 @@ export class RadioItemEdit extends ItemEdit {
     protected async internalStart():Promise<any> {
         return new Promise<any>((resolve, reject) => {
             let element = React.createElement(this.page, {resolve:resolve, reject:reject});
-            nav.push(element,reject);
+            tonva.nav.push(element,reject);
         });
     }
 

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { nav } from '../nav';
+import { tonva } from 'tonva-core';
+//import { nav } from '../nav';
 
 export interface ImageProps {
     src: string;
@@ -16,7 +17,7 @@ export function Image(props: ImageProps) {
     if (src) {
 		if (src.indexOf('.') !== 0) {
 			if (src.startsWith(':') === true) {
-				src = nav.resUrl + src.substr(1);
+				src = tonva.resUrl + src.substr(1);
 			}
 			return <img src={src} className={className} alt="img"
 				style={style}

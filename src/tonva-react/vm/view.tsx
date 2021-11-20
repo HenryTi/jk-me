@@ -1,23 +1,28 @@
 import * as React from 'react';
 import { Page } from '../components';
-import { env } from 'tonva-core';
+import { env, Nav, Tonva } from 'tonva-core';
 import { Controller } from './controller';
 import { VPage } from './vpage';
 
 export abstract class View<C extends Controller> {
-    protected controller: C;
+    protected readonly tonva: Tonva;
+    protected readonly controller: C;
+    protected readonly nav: Nav;
     protected readonly res: any;
 	protected readonly x: any;
 	protected readonly t: (str:string)=>any;
 
     constructor(controller: C) {
+        let tonva = controller.getTonva();
+        this.tonva = tonva;
         this.controller = controller;
+        this.nav = tonva.nav;
 		this.t = controller.t;
     }
 
 	protected get isDev() {return  env.isDevelopment}
-	get isWebNav(): boolean {return this.controller.isWebNav}
-	navigate(url:string) {this.controller.navigate(url)}
+	get isWebNav(): boolean {return this.nav.isWebNav}
+	navigate(url:string) {this.tonva.navigate(url)}
 	//protected isMe(id:any) {return this.controller.isMe(id)}
     abstract render(param?:any): JSX.Element;
 

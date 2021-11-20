@@ -1,5 +1,5 @@
 import { Controller, ControllerWithWeb, VPage } from "../../vm";
-import { nav } from '../../components';
+//import { nav } from '../../components';
 import { VRegisterStart, VForgetStart } from './VStart';
 import { RegisterParameter } from 'tonva-core';
 import { VVerify } from './VVerify';
@@ -39,21 +39,21 @@ export abstract class CRegBase extends ControllerWithWeb {
 	}
 
     login = async (account?:string) => {
-        let retUser = await this.web.userApi.login({user: account || this.account, pwd: this.password, guest: nav.guest});
+        let retUser = await this.web.userApi.login({user: account || this.account, pwd: this.password, guest: this.tonva.guest});
         if (retUser === undefined) {
             alert('something wrong!');
             return;
         }
-		await nav.userLogined(retUser);
+		await this.tonva.userLogined(retUser);
 		//await nav.start();
-		if (this.isWebNav) nav.navigate('/');
+		if (this.isWebNav) this.tonva.navigate('/');
     }
 
     async checkAccount():Promise<string> {
         let ret = await this.web.userApi.isExists(this.account);
         let error = this.accountError(ret);
         if (error !== undefined) return error;
-        ret = await this.web.userApi.sendVerify(this.account, this.type, nav.oem);
+        ret = await this.web.userApi.sendVerify(this.account, this.type, this.tonva.oem);
         this.toVerify();
         return;
     }
@@ -93,7 +93,7 @@ export class CRegister extends CRegBase {
         }
         let ret = await this.web.userApi.register(params);
         if (ret === 0) {
-            nav.clear();
+            this.tonva.clear();
             this.toSuccess();
             return;
         }
@@ -130,7 +130,7 @@ export class CForget extends CRegBase {
 			console.log(err);
 			throw err;
 		}
-        nav.clear();
+        this.tonva.clear();
         this.toSuccess();
         return;
     }

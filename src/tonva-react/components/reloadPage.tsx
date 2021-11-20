@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { nav } from '../nav';
+import { tonva } from 'tonva-core';
+// import { nav } from '../nav';
 import { Page } from './page/page';
 
 interface Props {
@@ -32,7 +33,7 @@ export class ReloadPage extends React.Component<Props, State> {
     }
     private reload = () => {
         clearInterval(this.timerHandler);
-        nav.reload();
+        tonva.reload();
     }
     render() {
 		let {seconds} = this.state;

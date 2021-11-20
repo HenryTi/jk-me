@@ -1,13 +1,12 @@
-import { Tonva, Web } from "tonva-core";
+import { Tonva, User, Web } from "tonva-core";
 import { VPage } from "./vpage";
 import { Controller } from "./controller";
+import { WebNav } from "tonva-react";
 
 export abstract class ControllerWithWeb extends Controller {
-    readonly tonva: Tonva;
     readonly web: Web;
     constructor(tonva: Tonva) {
-        super();
-        this.tonva = tonva;
+        super(tonva);
         this.web = tonva.web;
     }
 
@@ -28,6 +27,22 @@ export abstract class ControllerWithWeb extends Controller {
         return;
     }
 
+    get user():User {return this.tonva.user}
+    get isLogined():boolean {
+        let {user} = this.tonva;
+        if (!user) return false;
+        return user.id > 0;
+    }
+
+	get webNav(): WebNav<any> {return undefined;}
+
+	getWebNav(): WebNav<any> {return this.webNav;}
+
+	get isWebNav(): boolean {return this.nav.isWebNav}
+	navigate(url:string) {
+		this.navigate(url);
+	}
+	
 	isMe(id:any):boolean {
 		if (id === null) return false;
 		let {user} = this;

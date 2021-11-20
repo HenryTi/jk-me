@@ -25,7 +25,7 @@ export abstract class Web {
 
     // ===== nav搬移内容结束
 
-	abstract navInit(): Promise<void>
+	// abstract navInit(): Promise<void>
 
 	reload() {
 		throw new Error('Method not implemented.');

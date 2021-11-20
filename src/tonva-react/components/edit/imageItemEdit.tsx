@@ -3,9 +3,10 @@ import { observer } from 'mobx-react';
 import { makeObservable, observable } from 'mobx';
 import { ItemSchema, UiImageItem, UiItem } from '../schema';
 import { ImageUploader } from '../resUploader';
-import { nav } from '../../nav';
+//import { nav } from '../../nav';
 import { ItemEdit } from './itemEdit';
 import { Edit } from './edit';
+import { tonva } from 'tonva-core';
 
 export class ImageItemEdit extends ItemEdit {
     get uiItem(): UiImageItem {return this._uiItem as UiImageItem}
@@ -21,7 +22,7 @@ export class ImageItemEdit extends ItemEdit {
     protected async internalStart():Promise<any> {
         this.resId = this.value;
         return new Promise<any>((resolve, reject) => {
-            nav.push(React.createElement(this.page, {resolve:resolve, reject:reject}), ()=>reject());
+            tonva.nav.push(React.createElement(this.page, {resolve:resolve, reject:reject}), ()=>reject());
         });
     }
 

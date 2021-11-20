@@ -1,5 +1,5 @@
 import { VPage } from "../../vm";
-import {nav, Page, Schema, UiSchema, UiPasswordItem, UiButton, Form, Context, StringSchema} from '../../components';
+import { Page, Schema, UiSchema, UiPasswordItem, UiButton, Form, Context, StringSchema } from '../../components';
 import { CForget, CRegBase, CRegister } from './CRegister';
 
 export abstract class VPassword<T extends CRegBase> extends VPage<T> {
@@ -27,7 +27,7 @@ export abstract class VPassword<T extends CRegBase> extends VPage<T> {
         else {
 			error = await this.controller.onPasswordSubmit(pwd);
             if (error !== undefined) {
-                nav.push(<Page header="注册不成功"><div className="p-5 text-danger">{error}</div></Page>);
+                this.nav.push(<Page header="注册不成功"><div className="p-5 text-danger">{error}</div></Page>);
             }
         }
         return error;

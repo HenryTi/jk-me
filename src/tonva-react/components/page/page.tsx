@@ -1,9 +1,10 @@
 import * as React from 'react';
-import {observer} from 'mobx-react';
-import {PageHeaderProps, renderPageHeader} from './pageHeader';
+import { observer } from 'mobx-react';
+import { renderPageHeader} from './pageHeader';
 import { TabsProps, TabsView } from './tabs';
-import { ScrollProps, ScrollView, PageWebNav, WebNavScrollView } from './scrollView';
-import { nav } from '../../nav';
+import { ScrollProps, ScrollView, WebNavScrollView } from './scrollView';
+import { PageHeaderProps, PageWebNav, tonva } from 'tonva-core';
+//import { nav } from '../../nav';
 
 export interface IVPage {
 	content():JSX.Element;
@@ -21,7 +22,7 @@ export interface PageProps extends ScrollProps {
 	className?: string;
 	afterBack?: () => void;
 	tabsProps?: TabsProps;
-	webNav?: PageWebNav;
+	webNav?: PageWebNav<JSX.Element>;
 }
 
 @observer
@@ -40,7 +41,7 @@ export class Page extends React.Component<PageProps> {
 		if (header === false) return;
 		//const {webNav} = this.props;
 		let inWebNav = false;
-		let pageHeaderProps:PageHeaderProps = {
+		let pageHeaderProps:PageHeaderProps<JSX.Element> = {
 			back,
 			center: header as any,
 			right,
@@ -94,7 +95,7 @@ export class Page extends React.Component<PageProps> {
 		const {onScroll, onScrollTop, onScrollBottom, children, className, webNav} = this.props;
 		let pageWebNav:PageWebNav;
 		if (!webNav) {
-			pageWebNav = nav.pageWebNav;
+			pageWebNav = tonva.nav.pageWebNav;
 		}
 		else {
 			pageWebNav = webNav;

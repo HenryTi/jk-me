@@ -1,19 +1,10 @@
 import * as React from 'react';
-import {nav} from '../../nav';
+import { PageHeaderProps, tonva } from 'tonva-core';
+//import {nav} from '../../nav';
 
-export interface PageHeaderProps {
-    back?: 'back' | 'close' | 'none';
-    center: string | JSX.Element;
-    right?: JSX.Element;
-    logout?: boolean | (()=>Promise<void>);
-    className?: string;
-	afterBack?: () => void;
-	ex?: JSX.Element;
-}
-
-export function renderPageHeader(props: PageHeaderProps, inWebNav?: boolean) {
+export function renderPageHeader(props: PageHeaderProps<JSX.Element>, inWebNav?: boolean) {
     let onBack = async () => {
-        await nav.back(); // 这个才会显示confirm box，在dataForm里面，如果输入了数据的话
+        await tonva.nav.back(false); // 这个才会显示confirm box，在dataForm里面，如果输入了数据的话
 		let {afterBack} = props;
 		if (afterBack) afterBack();
     }
@@ -23,12 +14,12 @@ export function renderPageHeader(props: PageHeaderProps, inWebNav?: boolean) {
 			if (typeof logout === 'function') {
 				await logout(); 
 			}
-			await nav.logout(undefined);
+			await tonva.logout(undefined);
 		}
-		nav.showLogout(logout);
+		tonva.showLogout(logout);
     }
 
-	let b = nav.level > 1 || window.self !== window.top;
+	let b = tonva.nav.level > 1 || window.self !== window.top;
 	let {back, right, center, logout, className, ex} = props;
 	if (inWebNav === true &&  !back && !right && !center) return;
 	let vBack:any, debugLogout:any;
@@ -36,7 +27,7 @@ export function renderPageHeader(props: PageHeaderProps, inWebNav?: boolean) {
 		if ((typeof logout === 'boolean' && logout === true)
 			|| typeof logout === 'function')
 		{
-			let {user} = nav;
+			let {user} = tonva;
 			if (user !== undefined) {
 				let {nick, name} = user;
 				debugLogout = <div className="d-flex align-items-center">
@@ -60,10 +51,10 @@ export function renderPageHeader(props: PageHeaderProps, inWebNav?: boolean) {
 				break;
 			default:
 			case 'back':
-				vBack = <nav onClick={onBack}>{nav.backIcon}</nav>;
+				vBack = <nav onClick={onBack}>{tonva.nav.backIcon}</nav>;
 				break;
 			case 'close':
-				vBack = <nav onClick={onBack}>{nav.closeIcon}</nav>;
+				vBack = <nav onClick={onBack}>{tonva.nav.closeIcon}</nav>;
 				break;
 		}
 	}
@@ -91,7 +82,7 @@ export function renderPageHeader(props: PageHeaderProps, inWebNav?: boolean) {
 	</>;
 }
 
-export class PageHeader extends React.Component<PageHeaderProps> {
+export class PageHeader extends React.Component<PageHeaderProps<JSX.Element>> {
 	render() {return renderPageHeader(this.props)}
 	/*
     private back = async () => {

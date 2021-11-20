@@ -3,6 +3,7 @@ import { FA, Page } from '../../components';
 import { Controller } from "../controller";
 import { makeObservable, observable } from 'mobx';
 import { observer } from 'mobx-react';
+import { tonva } from 'tonva-core';
 
 export interface CStringEditProps {
 	label?: string;
@@ -21,7 +22,7 @@ export class CStringEdit extends Controller {
 	error: string = null;
 
 	constructor() {
-		super();
+		super(tonva);
 		makeObservable(this, {
 			value: observable,
 			newValue: observable,

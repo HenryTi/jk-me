@@ -1,5 +1,6 @@
 import React from 'react';
-import { PageHeaderProps } from './pageHeader';
+import { PageWebNav } from 'tonva-core';
+//import { PageHeaderProps } from './pageHeader';
 
 const scrollAfter = 20; // 20ms之后，scroll执行
 export class Scroller {
@@ -108,15 +109,8 @@ export class ScrollView extends ScrollViewBase<ScrollViewProps> {
     }
 }
 
-export interface PageWebNav {
-	navHeader?: JSX.Element; 
-	navRawHeader?: JSX.Element; 
-	navFooter?: JSX.Element; 
-	navRawFooter?: JSX.Element; 
-	renderPageHeader?: (props:PageHeaderProps)=>JSX.Element;
-}
 interface WebNavScrollViewProps extends ScrollViewProps {
-	webNav: PageWebNav;
+	webNav: PageWebNav<JSX.Element>;
 }
 
 export class WebNavScrollView extends ScrollViewBase<WebNavScrollViewProps> {

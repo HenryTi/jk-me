@@ -1,25 +1,25 @@
 import _ from 'lodash';
 import { Web } from 'tonva-core';
-import { Nav } from 'tonva-react';
+//import { Nav } from 'tonva-react';
 import { ControllerWithWeb, WebNav } from "../vm";
 import { CAppBase, IConstructor } from "./CAppBase";
 
 export abstract class CBase<A extends CAppBase<U>, U> extends ControllerWithWeb {
     constructor(cApp: A) {
-        super(cApp.tonva);
+        super(cApp.getTonva());
         this.cApp = cApp;
 		if (cApp) {
-			let {uqs, web, nav} = cApp;
+			let {uqs, web} = cApp;
 			this.uqs = uqs;
 			this.web = web;
-			this.nav = nav;
+			//this.nav = nav;
 		}
 	}
 
     readonly cApp: A;
     readonly uqs: U;
 	readonly web: Web;
-	readonly nav: Nav;
+	//readonly nav: Nav;
     //get uqs(): U {return this._uqs}
 	//get cApp(): A {return this._cApp}
 	get timezone():number {return this.cApp.timezone;}
