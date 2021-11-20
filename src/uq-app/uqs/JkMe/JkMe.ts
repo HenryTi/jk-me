@@ -1,6 +1,7 @@
-//=== UqApp builder created on Mon Nov 15 2021 16:17:58 GMT-0500 (北美东部标准时间) ===//
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID, UqIDX, UqIX } from "tonva-core";
+//=== UqApp builder created on Fri Nov 19 2021 14:42:41 GMT-0500 (北美东部标准时间) ===//
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID } from "tonva-core";
+		import { Render } from "tonva-react";
 
 
 //===============================
@@ -35,7 +36,7 @@ export enum Post {
 
 export enum OrderReady {
 	sheet = 1,
-	cost = 2
+	margin = 4
 }
 
 export enum EnumRole {
@@ -98,22 +99,6 @@ export interface ParamBusTestBoundStaffSales {
 export interface ResultBusTestBoundStaffSales {
 }
 
-export interface ParamBusTestOrderSaleCost {
-	order: number;
-	detail: {
-		orderDetail: number;
-		cost: number;
-	}[];
-
-}
-export interface ResultBusTestOrderSaleCost {
-}
-
-export interface ParamCalcMonthSum {
-}
-export interface ResultCalcMonthSum {
-}
-
 export interface ParamDoneDeliver {
 	customer: number;
 	contact: number;
@@ -136,11 +121,6 @@ export interface Result$setMyTimezone {
 export interface Param_BuildLostSalesStaffOrderAmount {
 }
 export interface Result_BuildLostSalesStaffOrderAmount {
-}
-
-export interface ParamCalcAccount {
-}
-export interface ResultCalcAccount {
 }
 
 export interface Param$poked {
@@ -546,278 +526,25 @@ export interface ResultGetAccounts {
 	ret: ReturnGetAccountsRet[];
 }
 
-export interface Object {
-	id?: number;
-	type: any;
-	to: number;
-}
-
-export interface ItemHistory {
-	id?: number;
-	bizOp: number;
-	item: any;
-	value: number;
-	memo: number;
-}
-
-export interface OrderDetail {
-	id?: number;
-	main?: number;
-	item: number;
-	product: number;
-	quantity: number;
-	amount: number;
-	price: number;
-}
-
-export interface OrderMain {
-	id?: number;
-	no?: string;
-	webUser: number;
-	customerAccount: number;
-	seller: number;
-	currency: number;
-	sumAmount: number;
-	stamp: number;
-	$create?: any;
-}
-
-export interface ItemTitle {
-	id?: number;
-	title: string;
-	vice: string;
-	unit: string;
-	fixed: number;
-}
-
-export interface PostTitle {
-	id?: number;
-	title: string;
-	vice: string;
-}
-
-export interface ObjectUser {
-	id?: number;
-	user: number;
-}
-
-export interface ObjectStaff {
-	id?: number;
-	staff: number;
-}
-
-export interface ObjectPost {
-	id?: number;
-	post: any;
-}
-
-export interface ObjectCustomer {
-	id?: number;
-	customer: number;
-}
-
 export interface Group {
 	id?: number;
 	name: string;
 }
 
-export interface ObjectDistributor {
-	id?: number;
-	distributor: number;
-}
-
-export interface ObjectAgent {
-	id?: number;
-	agent: number;
-}
-
-export interface DeliverDetail {
-	id?: number;
-	main?: number;
-	orderDetail: number;
-	quantity: number;
-}
-
-export interface DeliverMain {
-	id?: number;
-	no?: string;
-	customer: number;
-	contact: number;
-	warehouse: number;
-	cutOffMain: number;
-	trayNumber: number;
-	$create?: any;
-}
-
-export interface Role {
-	id?: number;
-	name: string;
-	discription: string;
-}
-
-export interface OPIHistory {
-	id?: number;
-	opi: number;
-	itemHistory: number;
-	value: number;
-	booking: number;
-}
-
-export interface ObjectAccount {
-	id?: number;
-	object: number;
-	account: any;
-	balance: number;
-}
-
-export interface OPIBooking {
-	id?: number;
-	bizOpType: any;
-	post: any;
-	postItem: any;
-	item: any;
-	ratio: number;
-	memo: number;
-}
-
-export interface AccountTitle {
-	id?: number;
-	title: string;
-	vice: string;
-	unit: string;
-	fixed: number;
-}
-
-export interface DxOrderDetail {
-	id: number;
-	deliverDone?: number;
-	receiveDone?: number;
-	return?: number;
-	costPrice?: number;
-	$act?: number;
-}
-
-export interface DxOrderMain {
-	id: number;
-	orderReady?: any;
-	$act?: number;
-}
-
-export interface ActParamDxOrderDetail {
-	id: number|IDXValue;
-	deliverDone?: number|IDXValue;
-	receiveDone?: number|IDXValue;
-	return?: number|IDXValue;
-	costPrice?: number|IDXValue;
-	$act?: number;
-}
-
-export interface ActParamDxOrderMain {
-	id: number|IDXValue;
-	orderReady?: any|IDXValue;
-	$act?: number;
-}
-
-export interface UserObject {
-	ix: number;
-	xi: number;
-	on: number;
-}
-
-export interface GroupObject {
-	ix: number;
-	xi: number;
-}
-
-export interface UserSuperviseItem {
-	ix: number;
-	xi: number;
-}
-
-export interface MonthSumProduct {
-	ixx: number;
-	ix: number;
-	xi: number;
-	value: number;
-}
-
-export interface MonthSumCustomer {
-	ixx: number;
-	ix: number;
-	xi: number;
-	value: number;
-}
-
-export interface UserRole {
-	ix: number;
-	xi: number;
-}
-
-export interface RoleOps {
-	ix: number;
-	xi: number;
-}
-
-export interface ObjectAccountHistory {
-	ix: number;
-	xi: number;
-	value: number;
-	opi: number;
-}
-
-export interface DaySumItem {
-	ix: number;
-	xi: any;
-	value: number;
-}
-
 export interface ParamActs {
-	object?: Object[];
-	itemHistory?: ItemHistory[];
-	orderDetail?: OrderDetail[];
-	orderMain?: OrderMain[];
-	itemTitle?: ItemTitle[];
-	postTitle?: PostTitle[];
-	objectUser?: ObjectUser[];
-	objectStaff?: ObjectStaff[];
-	objectPost?: ObjectPost[];
-	objectCustomer?: ObjectCustomer[];
 	group?: Group[];
-	objectDistributor?: ObjectDistributor[];
-	objectAgent?: ObjectAgent[];
-	deliverDetail?: DeliverDetail[];
-	deliverMain?: DeliverMain[];
-	role?: Role[];
-	oPIHistory?: OPIHistory[];
-	objectAccount?: ObjectAccount[];
-	oPIBooking?: OPIBooking[];
-	accountTitle?: AccountTitle[];
-	dxOrderDetail?: ActParamDxOrderDetail[];
-	dxOrderMain?: ActParamDxOrderMain[];
-	userObject?: UserObject[];
-	groupObject?: GroupObject[];
-	userSuperviseItem?: UserSuperviseItem[];
-	monthSumProduct?: MonthSumProduct[];
-	monthSumCustomer?: MonthSumCustomer[];
-	userRole?: UserRole[];
-	roleOps?: RoleOps[];
-	objectAccountHistory?: ObjectAccountHistory[];
-	daySumItem?: DaySumItem[];
 }
 
-
+	
 export interface UqExt extends Uq {
-	Acts(param:ParamActs): Promise<any>;
-
-	$sheet: UqTuid<Tuid$sheet>;
-	$user: UqTuid<Tuid$user>;
+		Acts(param:ParamActs): Promise<any>;
+	
+	$sheet: UqTuid<Tuid$sheet>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	$user: UqTuid<Tuid$user>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
 	BusTestBoundStaffSales: UqAction<ParamBusTestBoundStaffSales, ResultBusTestBoundStaffSales>;
-	BusTestOrderSaleCost: UqAction<ParamBusTestOrderSaleCost, ResultBusTestOrderSaleCost>;
-	CalcMonthSum: UqAction<ParamCalcMonthSum, ResultCalcMonthSum>;
 	DoneDeliver: UqAction<ParamDoneDeliver, ResultDoneDeliver>;
 	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
 	_BuildLostSalesStaffOrderAmount: UqAction<Param_BuildLostSalesStaffOrderAmount, Result_BuildLostSalesStaffOrderAmount>;
-	CalcAccount: UqAction<ParamCalcAccount, ResultCalcAccount>;
 	$poked: UqQuery<Param$poked, Result$poked>;
 	GetPostTitles: UqQuery<ParamGetPostTitles, ResultGetPostTitles>;
 	GetItemTitles: UqQuery<ParamGetItemTitles, ResultGetItemTitles>;
@@ -849,43 +576,14 @@ export interface UqExt extends Uq {
 	GetAccountTitles: UqQuery<ParamGetAccountTitles, ResultGetAccountTitles>;
 	GetObjectAccountHistory: UqQuery<ParamGetObjectAccountHistory, ResultGetObjectAccountHistory>;
 	GetAccounts: UqQuery<ParamGetAccounts, ResultGetAccounts>;
-	Object: UqID<any>;
-	ItemHistory: UqID<any>;
-	OrderDetail: UqID<any>;
-	OrderMain: UqID<any>;
-	ItemTitle: UqID<any>;
-	PostTitle: UqID<any>;
-	ObjectUser: UqID<any>;
-	ObjectStaff: UqID<any>;
-	ObjectPost: UqID<any>;
-	ObjectCustomer: UqID<any>;
 	Group: UqID<any>;
-	ObjectDistributor: UqID<any>;
-	ObjectAgent: UqID<any>;
-	DeliverDetail: UqID<any>;
-	DeliverMain: UqID<any>;
-	Role: UqID<any>;
-	OPIHistory: UqID<any>;
-	ObjectAccount: UqID<any>;
-	OPIBooking: UqID<any>;
-	AccountTitle: UqID<any>;
-	DxOrderDetail: UqIDX<any>;
-	DxOrderMain: UqIDX<any>;
-	UserObject: UqIX<any>;
-	GroupObject: UqIX<any>;
-	UserSuperviseItem: UqIX<any>;
-	MonthSumProduct: UqIX<any>;
-	MonthSumCustomer: UqIX<any>;
-	UserRole: UqIX<any>;
-	RoleOps: UqIX<any>;
-	ObjectAccountHistory: UqIX<any>;
-	DaySumItem: UqIX<any>;
 }
 
-export function assign(uq: any, to:string, from:any): void {
-	let hasEntity = uq.$_uqMan.hasEntity(to);
-	if (hasEntity === false) {
-		return;
+	export function assign(uq: any, to:string, from:any): void {
+		let hasEntity = uq.$_uqMan.hasEntity(to);
+		if (hasEntity === false) {
+			return;
+		}
+		Object.assign((uq as any)[to], from);
 	}
-	Object.assign((uq as any)[to], from);
-}
+	

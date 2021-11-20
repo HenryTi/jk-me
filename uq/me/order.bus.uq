@@ -16,6 +16,10 @@ ACCEPT order {
 				, a.quantity=quantity
                 , a.price=price
 				, a.amount=amount;
+        WITH DxBiz ID=id SET main=mainId;
+        IF EXISTS(SELECT a.id FROM DxOrderDetail as a WHERE a.id=id AND a.margin IS NOT NULL) {
+            WITH DxBiz ID=id SET ready=1;
+        }
 	}
 
     -- 所有的订单绑定到ManagerIT
@@ -31,7 +35,7 @@ ACCEPT order {
         KEY bizMain=mainId, post=POST.managerIT, item=ITEM.amountFee, to=objManagerId
     );
 
-    PROC ProcSetOrderReady(mainId, OrderReady.sheet);
+    -- PROC ProcSetOrderReady(mainId, OrderReady.sheet);
     PROC ProcQueueBizMain(mainId);
 }
 /*
@@ -76,8 +80,11 @@ ACCEPT [order-sale-margin] {
     FOR detail {
         LOG CONCAT_WS(' ', [orderdetail], [value]) SUBJECT 'ACCEPT JkOrderBus.order-sale-margin';
         WITH DxOrderDetail ID=[orderdetail] SET margin=[value];
+        IF EXISTS(SELECT a.id FROM OrderDetail as a WHERE a.id=[orderdetail]) {
+            WITH DxBiz ID=orderDetail SET ready=1;
+        }
     }
-    PROC ProcSetOrderReady(order, OrderReady.margin);
+    -- PROC ProcSetOrderReady(order, OrderReady.margin);
     PROC ProcQueueBizMain(order);
 }
 /*
@@ -87,7 +94,7 @@ ACCEPT [order-sale-cost] {
         LOG CONCAT_WS(' ', [order-detail], [cost]) SUBJECT 'ACCEPT JkOrderBus.order-sale-cost';
         WITH DxOrderDetail ID=[order-detail] SET costPrice=[cost];
     }
-    PROC ProcSetOrderReady(order, OrderReady.cost);
+    -- PROC ProcSetOrderReady(order, OrderReady.cost);
     PROC ProcQueueBizMain(order);
 }
 */
@@ -191,14 +198,15 @@ PROC ProcQueueBizMain(
     bizMain ID,
 ) {
     
-    IF EXISTS(SELECT id FROM DxBizMain WHERE ready=1 AND id=bizMain)
-        AND NOT EXISTS(SELECT a.id FROM QueueBizMain as a WHERE a.bizMain=bizMain)
+    IF  -- EXISTS(SELECT id FROM DxBizMain WHERE ready=1 AND id=bizMain) AND 
+        NOT EXISTS(SELECT a.id FROM QueueBizMain as a WHERE a.bizMain=bizMain)
     {
         VAR queueId ID = ID(QueueBizMain new KEY bizMain=bizMain);
         SCHEDULE ExecQueueBizMain DELAY 1;
     }
 };
 
+/*
 PROC ProcSetOrderReady(
     order ID,
     orderReady ENUM OrderReady,
@@ -219,3 +227,4 @@ PROC ProcSetOrderReady(
         }
     }
 };
+*/

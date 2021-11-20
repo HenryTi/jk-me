@@ -8,39 +8,39 @@ ENUM EnumObjectType (
     post                = 6,
 );
 
-ID Object (
+ID #Object (
     id,
     type ENUM EnumObjectType DEFAULT 0,
     to ID,
 );
 
-ID ObjectUser (
+ID #ObjectUser (
     id,             -- Object
     KEY user ID,
 );
 
-ID ObjectCustomer (
+ID #ObjectCustomer (
     id,             -- Object
     KEY customer ID,
 );
 
-ID ObjectStaff (
+ID #ObjectStaff (
     id,
     KEY staff ID,
 );
 
-ID ObjectAgent (
+ID #ObjectAgent (
     id,             -- Object
     KEY agent ID,
 );
 
-ID ObjectDistributor (
+ID #ObjectDistributor (
     id,             -- Object
     KEY distributor ID,
 );
 
 -- 特定职位，由此对应的提成
-ID ObjectPost (
+ID #ObjectPost (
     id,
     KEY post ENUM Post,
 );
@@ -53,7 +53,7 @@ ID #ObjectPostItem (
 );
 
 -- MINUTEID 分钟序ID
-ID ItemHistory ver 0.1 MINUTEID (
+ID #ItemHistory ver 0.1 MINUTEID (
     -- 26位表达从2021开始的分钟，后面跟16位的序列号。如果重了，就顺序往后加。
     id,                         -- 分钟序id
     KEY bizOp ID,               -- 业务操作id。包含biz
@@ -64,7 +64,7 @@ ID ItemHistory ver 0.1 MINUTEID (
 );
 
 -- OPI = object post item
-ID OPIHistory MINUTEID (
+ID #OPIHistory MINUTEID (
     id,
     opi ID ObjectPostItem,
     itemHistory ID,
@@ -77,7 +77,7 @@ ENUM EnumAccount (
     commission              = 10,
 );
 
-IX #AccountBooking ver 0.1 CONST (
+IX AccountBooking ver 0.1 CONST (
     ix ENUM Item,
     xi ENUM EnumAccount,
     radio DEC(6,2) DEFAULT 100,           -- 百分数
@@ -88,7 +88,7 @@ VALUES
 (Item.amountFee, EnumAccount.commission),
 ;
 
-ID ObjectAccount (
+ID #ObjectAccount (
     id,
     KEY object ID,
     KEY account ENUM EnumAccount,   -- 比如提成-commission

@@ -142,7 +142,7 @@ export class TsUqFolder {
 			this.replaceTsFileFields(path, fields);
 			let tsImportFieldItemsBegin = 'import { FieldItem, ';
 			let tsImportFieldItemsEnd = ` } from "tonva-${this.buildContext.uiPlatform}";`;
-			let tsImportFieldItems = 'FieldItemInt, FieldItemNum, FieldItemString, FieldItemId';
+			let tsImportFieldItems = 'FieldItemInt, FieldItemNumber, FieldItemString, FieldItemId';
 			this.replaceTsFileString(path, 
 				{
 					begin: tsImportFieldItemsBegin, 

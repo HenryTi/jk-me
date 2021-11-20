@@ -18,7 +18,7 @@ ENUM EnumRoleOp (
 	test				= 1,
 );
 
-ID Role CONST (
+ID #Role CONST (
 	id small,
 	name CHAR(50),
 	discription CHAR(200),

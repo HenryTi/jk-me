@@ -1,6 +1,7 @@
-//=== UqApp builder created on Mon Nov 15 2021 16:17:58 GMT-0500 (北美东部标准时间) ===//
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { IDXValue, Uq, UqTuid, UqAction, UqSheet, UqBook, UqQuery, UqMap, UqHistory, UqPending, UqID, UqIDX, UqIX } from "tonva-core";
+//=== UqApp builder created on Fri Nov 19 2021 14:42:41 GMT-0500 (北美东部标准时间) ===//
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	import { IDXValue, Uq, UqTuid, UqAction, UqSheet, UqBook, UqQuery, UqMap, UqHistory, UqPending, UqID, UqIDX, UqIX } from "tonva-core";
+		import { Render } from "tonva-react";
 
 
 //===============================
@@ -758,21 +759,21 @@ export interface ParamActs {
 	ixOrderDetailReceive?: IxOrderDetailReceive[];
 }
 
-
+	
 export interface UqExt extends Uq {
-	Acts(param:ParamActs): Promise<any>;
-
-	$user: UqTuid<Tuid$user>;
-	ProductX: UqTuid<TuidProductX>;
-	$sheet: UqTuid<Tuid$sheet>;
-	Customer: UqTuid<TuidCustomer>;
-	WebUser: UqTuid<TuidWebUser>;
-	Contact: UqTuid<TuidContact>;
-	Currency: UqTuid<TuidCurrency>;
-	BuyerAccount: UqTuid<TuidBuyerAccount>;
-	Genre: UqTuid<TuidGenre>;
-	PointProductLib: UqTuid<TuidPointProductLib>;
-	Brand: UqTuid<TuidBrand>;
+		Acts(param:ParamActs): Promise<any>;
+	
+	$user: UqTuid<Tuid$user>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	ProductX: UqTuid<TuidProductX>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	$sheet: UqTuid<Tuid$sheet>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	Customer: UqTuid<TuidCustomer>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	WebUser: UqTuid<TuidWebUser>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	Contact: UqTuid<TuidContact>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	Currency: UqTuid<TuidCurrency>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	BuyerAccount: UqTuid<TuidBuyerAccount>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	Genre: UqTuid<TuidGenre>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	PointProductLib: UqTuid<TuidPointProductLib>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	Brand: UqTuid<TuidBrand>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
 	IsCanUseOrder: UqAction<ParamIsCanUseOrder, ResultIsCanUseOrder>;
 	AddPlatformOrderPoint: UqAction<ParamAddPlatformOrderPoint, ResultAddPlatformOrderPoint>;
 	GetLastPlatFormOrder: UqAction<ParamGetLastPlatFormOrder, ResultGetLastPlatFormOrder>;
@@ -839,10 +840,11 @@ export interface UqExt extends Uq {
 	IxOrderDetailReceive: UqIX<any>;
 }
 
-export function assign(uq: any, to:string, from:any): void {
-	let hasEntity = uq.$_uqMan.hasEntity(to);
-	if (hasEntity === false) {
-		return;
+	export function assign(uq: any, to:string, from:any): void {
+		let hasEntity = uq.$_uqMan.hasEntity(to);
+		if (hasEntity === false) {
+			return;
+		}
+		Object.assign((uq as any)[to], from);
 	}
-	Object.assign((uq as any)[to], from);
-}
+	

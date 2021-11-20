@@ -1,4 +1,4 @@
-ID OrderMain ver 0.5 GLOBAL (
+ID #OrderMain ver 0.5 GLOBAL (
 	id,
 	KEY no,
     webUser ID,                         -- 下单user注册账号
@@ -10,7 +10,7 @@ ID OrderMain ver 0.5 GLOBAL (
     sys (create),
 );
 
-ID OrderDetail ver 0.5 GLOBAL (
+ID #OrderDetail ver 0.5 GLOBAL (
 	id,
 	main ID OrderMain,
 	item ID,
@@ -20,11 +20,13 @@ ID OrderDetail ver 0.5 GLOBAL (
 	price DEC(18,4),                            -- 实际成交价
 );
 
+/*
 IDX DxOrderMain (
     id,
-    orderReady ENUM OrderReady DEFAULT 0,
+    -- orderReady ENUM OrderReady DEFAULT 0,
     sys (create, update),
 );
+*/
 
 IDX DxOrderDetail (
     id,

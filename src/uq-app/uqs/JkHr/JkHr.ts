@@ -1,7 +1,7 @@
-//=== UqApp builder created on Mon Nov 15 2021 16:17:58 GMT-0500 (北美东部标准时间) ===//
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqMap } from "tonva-core";
-import { Render } from "tonva-react";
+//=== UqApp builder created on Fri Nov 19 2021 14:42:41 GMT-0500 (北美东部标准时间) ===//
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqMap } from "tonva-core";
+		import { Render } from "tonva-react";
 
 
 //===============================
@@ -143,15 +143,15 @@ export interface Result$getMyTimezone {
 export interface ParamActs {
 }
 
-
+	
 export interface UqExt extends Uq {
-	Acts(param:ParamActs): Promise<any>;
-
-	$user: UqTuid<Tuid$user>;
-	$sheet: UqTuid<Tuid$sheet>;
+		Acts(param:ParamActs): Promise<any>;
+	
+	$user: UqTuid<Tuid$user>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	$sheet: UqTuid<Tuid$sheet>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
 	Employee: UqTuid<TuidEmployee>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
-	Role: UqTuid<TuidRole>;
-	Company: UqTuid<TuidCompany>;
+	Role: UqTuid<TuidRole>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	Company: UqTuid<TuidCompany>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
 	DeleteWebuseEmployee: UqAction<ParamDeleteWebuseEmployee, ResultDeleteWebuseEmployee>;
 	AddWebuseEmployee: UqAction<ParamAddWebuseEmployee, ResultAddWebuseEmployee>;
 	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
@@ -165,10 +165,11 @@ export interface UqExt extends Uq {
 	EmployeeRelation: UqMap;
 }
 
-export function assign(uq: any, to:string, from:any): void {
-	let hasEntity = uq.$_uqMan.hasEntity(to);
-	if (hasEntity === false) {
-		return;
+	export function assign(uq: any, to:string, from:any): void {
+		let hasEntity = uq.$_uqMan.hasEntity(to);
+		if (hasEntity === false) {
+			return;
+		}
+		Object.assign((uq as any)[to], from);
 	}
-	Object.assign((uq as any)[to], from);
-}
+	

@@ -13,22 +13,25 @@ ID # QueueBizOp MINUTEID (
     KEY bizOp ID,                       -- detail of deliver, receive, return
 );
 
-IDX # DxBizMain (
+/*
+IDX DxBizMain (
     id,
     ready INT DEFAULT 0,                -- ready状态
     sys (create, update),
 );
+*/
 
 -- biz是核心
-IDX # DxBiz (
+IDX DxBiz (
     id,
     main ID,
+    ready TINYINT DEFAULT 0,
     sys (create, update),
     INDEX main_id(main),
 );
 
 -- BizOp是针对Biz的业务操作
-IDX # DxBizOp (
+IDX DxBizOp (
     id,                                 -- bizOp id
     type ENUM EnumBizOpType,
     biz ID,                             -- 指向biz
@@ -39,7 +42,7 @@ IDX # DxBizOp (
     INDEX biz_id(biz),
 );
 
-IX # IxBizOpBound (
+IX IxBizOpBound (
     ix,                         -- bizOp id
     xi BizMainBound,
     bound TINYINT DEFAULT 0,    -- 1: bound
@@ -75,7 +78,7 @@ ACT # ExecQueueBizMain () {
         OF SELECT c.id as bizOp
             FROM DxBiz as b
                 JOIN DxBizOp as c ON c.biz=b.id
-            WHERE b.main=bizMain)
+            WHERE b.main=bizMain AND b.ready=1)
     {
         TRANSACTION Start;
         PROC ProcBizOp(bizOp);
@@ -111,11 +114,12 @@ PROC #ProcBizOp(
     bizOp ID,
 ) {
     -- 判断是不是Biz的凭单已经ready
-    IF NOT Exists(SELECT c.id
+    IF NOT Exists(SELECT b.id
         FROM DxBizOp as a 
             JOIN DxBiz as b ON b.id=a.biz
-            JOIN DxBizMain as c ON c.id=b.main
-        WHERE a.id=bizOp AND c.ready=1)
+            -- JOIN DxBizMain as c ON c.id=b.main
+        WHERE a.id=bizOp AND b.ready=1
+    )
     {
         RETURN;
     };
@@ -188,13 +192,8 @@ PROC #ProcWriteItemHistory ver 0.1 (
         -- 可能是积分兑换单引发的deliver-done，这时候，就没有margin和price，所以不写帐
         IF price IS NOT NULL AND price > 0 {
             PROC ProcItemHistory(bizOp, Item.orderAmount, price*value);
-            IF margin IS NOT NULL {
-                PROC ProcItemHistory(bizOp, Item.orderProfit, (margin)*value);
-                PROC ProcItemHistory(bizOp, Item.orderFee, (margin)*value);
-            }
-            ELSE {
-                LOG CONCAT_WS(' ', bizOp, bizOpType, price, margin, value) SUBJECT 'Failed BizOp ItemHistory Margin IS NULL';
-            }
+            PROC ProcItemHistory(bizOp, Item.orderProfit, (margin)*value);
+            PROC ProcItemHistory(bizOp, Item.orderFee, (margin)*value);
         }
         ELSE {
             LOG CONCAT_WS(' ', bizOp, bizOpType, price, margin, value) SUBJECT 'Failed BizOp ItemHistory Price IS NULL';
@@ -208,13 +207,8 @@ PROC #ProcWriteItemHistory ver 0.1 (
         SET margin=a.margin FROM DxOrderDetail as a WHERE a.id=biz;
         -- 可能是积分兑换单引发的deliver-done，这时候，就没有margin和price，所以不写帐
         IF price IS NOT NULL AND price > 0 {
-            IF margin IS NOT NULL {
-                PROC ProcItemHistory(bizOp, Item.orderFee, 
-                    CASE WHEN price<0.01 THEN 0 ELSE (margin)/price*value END);
-            }
-            ELSE {
-                LOG CONCAT_WS(' ', bizOp, bizOpType, price, margin, value) SUBJECT 'Failed BizOp ItemHistory Cost IS NULL';
-            }
+            PROC ProcItemHistory(bizOp, Item.orderFee, 
+                CASE WHEN price<0.01 THEN 0 ELSE (margin)/price*value END);
         }
         ELSE {
             LOG CONCAT_WS(' ', bizOp, bizOpType, price, margin, value) SUBJECT 'Failed BizOp ItemHistory Price IS NULL';

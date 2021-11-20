@@ -12,7 +12,7 @@ import { CPortal, CObjectPortal, CUnitPortal } from "portal";
 import { makeObservable, observable, runInAction } from "mobx";
 import { nav, start } from "tonva-react";
 import { appConfig } from "./appConfig";
-import { Tonva, Web } from "tonva-core";
+import { Tonva } from "tonva-core";
 
 const gaps = [10, 3,3,3,3,3,5,5,5,5,5,5,5,5,10,10,10,10,15,15,15,30,30,60];
 

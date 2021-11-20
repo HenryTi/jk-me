@@ -66,7 +66,7 @@ PROC ProcBusTest(
     BUS JkOrderBus.[order-bound-staff-sales] LOCAL;
 };
 
-ID DeliverMain GLOBAL(
+ID #DeliverMain GLOBAL(
     id,
     KEY no,
     customer ID,
@@ -77,7 +77,7 @@ ID DeliverMain GLOBAL(
 	sys(create),
 );
 
-ID DeliverDetail GLOBAL(
+ID #DeliverDetail GLOBAL(
     id,                     -- 
     main ID DeliverMain,    -- DeliverMain id	
 	orderDetail ID,			-- OrderDetail ID
