@@ -6,6 +6,7 @@ export let nav: Nav; // = new Nav();
 export function initNav(tonva: Tonva) {
     nav = new Nav(tonva);
 }
+
 /*
 export class TonvaView extends NavView {
 

@@ -1,5 +1,4 @@
 import React from 'react';
-import _ from 'lodash';
 import { FA, Page } from './components';
 import { Controller } from "./vm/controller";
 import { makeObservable, observable } from 'mobx';

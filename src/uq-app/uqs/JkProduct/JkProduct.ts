@@ -1,7 +1,7 @@
-//=== UqApp builder created on Mon Nov 15 2021 16:17:58 GMT-0500 (北美东部标准时间) ===//
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqMap, UqHistory } from "tonva-core";
-import { Render } from "tonva-react";
+//=== UqApp builder created on Fri Nov 19 2021 14:42:41 GMT-0500 (北美东部标准时间) ===//
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqMap, UqHistory, UqIX } from "tonva-core";
+		import { Render } from "tonva-react";
 
 
 //===============================
@@ -431,26 +431,32 @@ export interface ResultProductSearchHistory {
 	$page: ReturnProductSearchHistory$page[];
 }
 
-export interface ParamActs {
+export interface ProductCategoryResearchDomain {
+	ix: number;
+	xi: number;
 }
 
+export interface ParamActs {
+	productCategoryResearchDomain?: ProductCategoryResearchDomain[];
+}
 
+	
 export interface UqExt extends Uq {
-	Acts(param:ParamActs): Promise<any>;
-
-	$user: UqTuid<Tuid$user>;
-	$sheet: UqTuid<Tuid$sheet>;
-	Chemical: UqTuid<TuidChemical>;
-	SalesRegion: UqTuid<TuidSalesRegion>;
-	Currency: UqTuid<TuidCurrency>;
-	PackType: UqTuid<TuidPackType>;
-	Language: UqTuid<TuidLanguage>;
-	Brand: UqTuid<TuidBrand>;
-	Stuff: UqTuid<TuidStuff>;
-	ProductX: UqTuid<TuidProductX>&{tv:Render<any>};
-	ProductCategory: UqTuid<TuidProductCategory>;
-	Lot: UqTuid<TuidLot>;
-	PackSalesLevel: UqTuid<TuidPackSalesLevel>;
+		Acts(param:ParamActs): Promise<any>;
+	
+	$user: UqTuid<Tuid$user>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	$sheet: UqTuid<Tuid$sheet>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	Chemical: UqTuid<TuidChemical>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	SalesRegion: UqTuid<TuidSalesRegion>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	Currency: UqTuid<TuidCurrency>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	PackType: UqTuid<TuidPackType>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	Language: UqTuid<TuidLanguage>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	Brand: UqTuid<TuidBrand>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	Stuff: UqTuid<TuidStuff>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	ProductX: UqTuid<TuidProductX>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	ProductCategory: UqTuid<TuidProductCategory>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	Lot: UqTuid<TuidLot>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	PackSalesLevel: UqTuid<TuidPackSalesLevel>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
 	CountProductCategoryInclusion: UqAction<ParamCountProductCategoryInclusion, ResultCountProductCategoryInclusion>;
 	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
 	GetRootCategory: UqQuery<ParamGetRootCategory, ResultGetRootCategory>;
@@ -494,12 +500,14 @@ export interface UqExt extends Uq {
 	ProductStandardSample: UqMap;
 	ProductUserManualFile: UqMap;
 	ProductSearchHistory: UqHistory<ParamProductSearchHistory, ResultProductSearchHistory>;
+	ProductCategoryResearchDomain: UqIX<any>;
 }
 
-export function assign(uq: any, to:string, from:any): void {
-	let hasEntity = uq.$_uqMan.hasEntity(to);
-	if (hasEntity === false) {
-		return;
+	export function assign(uq: any, to:string, from:any): void {
+		let hasEntity = uq.$_uqMan.hasEntity(to);
+		if (hasEntity === false) {
+			return;
+		}
+		Object.assign((uq as any)[to], from);
 	}
-	Object.assign((uq as any)[to], from);
-}
+	

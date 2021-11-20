@@ -10,8 +10,9 @@ import * as ProductX from './ProductX.ui';
 import * as ProductCategory from './ProductCategory.ui';
 import * as Lot from './Lot.ui';
 import * as PackSalesLevel from './PackSalesLevel.ui';
-	
-export function setUI(uq: Uq) {
+import * as ProductCategoryResearchDomain from './ProductCategoryResearchDomain.ui';
+		
+	export function setUI(uq: Uq) {
 	assign(uq, 'Chemical', Chemical);
 	assign(uq, 'SalesRegion', SalesRegion);
 	assign(uq, 'Currency', Currency);
@@ -23,5 +24,7 @@ export function setUI(uq: Uq) {
 	assign(uq, 'ProductCategory', ProductCategory);
 	assign(uq, 'Lot', Lot);
 	assign(uq, 'PackSalesLevel', PackSalesLevel);
-}
-export * from './JkProduct';
+	assign(uq, 'ProductCategoryResearchDomain', ProductCategoryResearchDomain);
+	}
+	export * from './JkProduct';
+	

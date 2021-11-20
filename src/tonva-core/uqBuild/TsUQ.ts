@@ -168,12 +168,12 @@ export class TsUQ {
 		return ts;
 	}
 
-	private buildTuid(tuid: Tuid) {
+	private buildTuid = (tuid: Tuid) => {
 		let ts = `\t${entityName(tuid.sName)}: UqTuid<Tuid${capitalCase(tuid.sName)}>&{tv:(id:number, render?:Render<any>)=>${this.buildContext.element}};`;
 		return ts;
 	}
 
-	private buildTuidInterface(tuid: Tuid) {
+	private buildTuidInterface = (tuid: Tuid) => {
 		let ts = `export interface Tuid${capitalCase(tuid.sName)} {`;
 		ts += `\n\tid?: number;`;
 		ts += this.buildFields(tuid.fields);
@@ -181,12 +181,12 @@ export class TsUQ {
 		return ts;
 	}
 
-	private buildAction(action: Action) {
+	private buildAction = (action: Action) => {
 		let ts = `\t${entityName(action.sName)}: UqAction<Param${capitalCase(action.sName)}, Result${capitalCase(action.sName)}>;`;
 		return ts;
 	}
 
-	private buildActionInterface(action: Action) {
+	private buildActionInterface = (action: Action) => {
 		let ts = `export interface Param${capitalCase(action.sName)} {`;
 		ts += this.buildFields(action.fields);
 		ts += this.buildArrs(action.arrFields);
@@ -195,7 +195,7 @@ export class TsUQ {
 		return ts;
 	}
 
-	private buildEnumInterface(enm: UqEnum) {
+	private buildEnumInterface = (enm: UqEnum) => {
 		let {schema} = enm;
 		if (!schema) return;
 		let {values} = schema;
@@ -220,13 +220,13 @@ export class TsUQ {
 		return ts += '\n}'
 	}
 
-	private buildQuery(query: Query) {
+	private buildQuery = (query: Query) => {
 		let {sName} = query;
 		let ts = `\t${entityName(sName)}: UqQuery<Param${capitalCase(sName)}, Result${capitalCase(sName)}>;`;
 		return ts;
 	}
 
-	private buildQueryInterface(query: Query) {
+	private buildQueryInterface = (query: Query) => {
 		let ts = `export interface Param${capitalCase(query.sName)} {`;
 		ts += this.buildFields(query.fields);
 		ts += '\n}\n';
@@ -234,7 +234,7 @@ export class TsUQ {
 		return ts;
 	}
 
-	private buildSheet(sheet: Sheet) {
+	private buildSheet = (sheet: Sheet) => {
 		let {sName, verify} = sheet;
 		let cName = capitalCase(sName);
 		let v = verify? `Verify${cName}` : 'any';
@@ -242,7 +242,7 @@ export class TsUQ {
 		return ts;
 	}
 
-	private buildSheetInterface(sheet: Sheet) {
+	private buildSheetInterface = (sheet: Sheet) => {
 		let {sName, fields, arrFields, verify} = sheet;
 		let ts = `export interface Sheet${capitalCase(sName)} {`;
 		ts += this.buildFields(fields);
@@ -263,13 +263,13 @@ export class TsUQ {
 		return ts;
 	}
 
-	private buildBook(book: Book):string {
+	private buildBook = (book: Book):string => {
 		let {sName} = book;
 		let ts = `\t${entityName(sName)}: UqBook<Param${capitalCase(sName)}, Result${capitalCase(sName)}>;`;
 		return ts;
 	}
 
-	private buildBookInterface(book: Book):string {
+	private buildBookInterface = (book: Book):string => {
 		let {sName, fields, returns} = book;
 		let ts = `export interface Param${capitalCase(sName)} {`;
 		ts += this.buildFields(fields);
@@ -278,13 +278,13 @@ export class TsUQ {
 		return ts;
 	}
 
-	private buildMap(map: Map):string {
+	private buildMap = (map: Map):string => {
 		let {sName} = map;
 		let ts = `\t${entityName(sName)}: UqMap;`;
 		return ts;
 	}
 
-	private buildMapInterface(map: Map):string {
+	private buildMapInterface = (map: Map):string => {
 		/*
 		let {sName, fields, returns} = map;
 		let ts = `export interface Param${capitalCaseString(sName)} {`;
@@ -296,13 +296,13 @@ export class TsUQ {
 		return '';
 	}
 
-	private buildHistory(history: History):string {
+	private buildHistory = (history: History):string => {
 		let {sName} = history;
 		let ts = `\t${entityName(sName)}: UqHistory<Param${capitalCase(sName)}, Result${capitalCase(sName)}>;`;
 		return ts;
 	}
 
-	private buildHistoryInterface(history: History):string {
+	private buildHistoryInterface = (history: History):string => {
 		let {sName, fields, returns} = history;
 		let ts = `export interface Param${capitalCase(sName)} {`;
 		ts += this.buildFields(fields);
@@ -311,13 +311,13 @@ export class TsUQ {
 		return ts;
 	}
 
-	private buildPending(pending: Pending):string {
+	private buildPending = (pending: Pending):string => {
 		let {sName} = pending;
 		let ts = `\t${entityName(sName)}: UqPending<any, any>;`;
 		return ts;
 	}
 
-	private buildPendingInterface(pending: Pending):string {
+	private buildPendingInterface = (pending: Pending):string => {
 		/*
 		let {sName, fields, returns} = pending;
 		let ts = `export interface Param${capitalCaseString(sName)} {`;
@@ -329,25 +329,25 @@ export class TsUQ {
 		return '';
 	}
 
-	private buildID(id: ID):string {
+	private buildID = (id: ID):string => {
 		let {sName} = id;
 		let ts = `\t${entityName(sName)}: UqID<any>;`;
 		return ts;
 	}
 
-	private buildIDX(idx: IDX):string {
+	private buildIDX = (idx: IDX):string => {
 		let {sName} = idx;
 		let ts = `\t${entityName(sName)}: UqIDX<any>;`;
 		return ts;
 	}
 
-	private buildIX(ix: IX):string {
+	private buildIX = (ix: IX):string => {
 		let {sName} = ix;
 		let ts = `\t${entityName(sName)}: UqIX<any>;`;
 		return ts;
 	}
 
-	private buildIDInterface(idEntity: ID):string {
+	private buildIDInterface = (idEntity: ID):string => {
 		let {sName, fields, schema} = idEntity;
 		let {keys:schemaKeys} = schema;
 		let keys:Field[] = [], others:Field[] = [];
@@ -365,7 +365,7 @@ export class TsUQ {
 		return ts;
 	}
 
-	private buildIDXInterface(idx: IDX):string {
+	private buildIDXInterface = (idx: IDX):string => {
 		let {sName, fields, schema} = idx;
 		let {exFields} = schema;
 		let ts = `export interface ${capitalCase(sName)} {`;
@@ -400,7 +400,7 @@ export class TsUQ {
 		return ts;
 	}
 
-	private buildIDXActParamInterface(idx: IDX):string {
+	private buildIDXActParamInterface = (idx: IDX):string => {
 		let {sName, fields, schema} = idx;
 		let {exFields} = schema;
 		let ts = `export interface ActParam${capitalCase(sName)} {`;
@@ -435,7 +435,7 @@ export class TsUQ {
 		return ts;
 	}
 
-	private buildIXInterface(ix: IX):string {
+	private buildIXInterface = (ix: IX):string => {
 		let {sName, fields} = ix;
 		let ts = `export interface ${capitalCase(sName)} {`;
 		ts += this.buildFields(fields);

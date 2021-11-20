@@ -24,7 +24,7 @@ export function buildFieldItem(field:any, isKey:boolean):any/*FieldItem*/ {
 		case 'dec':
 		case 'float':
 		case 'double':
-			$FieldItemType = 'FieldItemNum';
+			$FieldItemType = 'FieldItemNumber';
 			fieldItemType = 'number';
 			widget = 'number';
 			break;
