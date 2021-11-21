@@ -15,12 +15,11 @@ ACCEPT [deliver-done] {
 ACCEPT [pickup-performance] {
     -- 处理sheet: 1.设置sheet的状态；2.把sheet排入QueueBizMain队列；3.DxBiz在下面写入
     VAR mainId ID = id;
-    WITH DxBizMain ID = mainId set ready = 1;
 
     -- 处理针对sheet的操作：1.设置操作相关的数据；2.将操作排入QueueBizOp队列；
     FOR detail {
         -- 这也是处理sheet
-        WITH DxBiz ID = id set main = mainId;
+        WITH DxBiz ID = id set main = mainId, ready = 1;
 
         WITH DxBizOp as a ID = id
             SET a.type = EnumBizOpType.pickupDone, a.biz = id, a.value = value, a.stamp = $stamp;
