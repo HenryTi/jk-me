@@ -1,5 +1,5 @@
 import { User } from 'tonva-core';
-import { nav, Login } from '../components';
+import { Login } from '../components';
 import { ControllerWithWeb, VPage } from "../vm";
 import { VLogout } from './VLogout';
 import { VLogin } from './VLogin';
@@ -16,12 +16,12 @@ export class CLogin extends ControllerWithWeb implements Login {
 			let user = await this.web.userApi.login({
 				user: un,
 				pwd: pwd,
-				guest: nav.guest,
+				guest: this.tonva.guest,
 			});
 	
 			if (user === undefined) return false;
 			console.log("onLoginSubmit: user=%s pwd:%s", user.name, user.token);
-			await nav.userLogined(user, callback);
+			await this.tonva.userLogined(user, callback);
 			return true;
 		}
 		this.openVPage(VLogin, {onLogin, withBack});
@@ -29,7 +29,7 @@ export class CLogin extends ControllerWithWeb implements Login {
 
     async showLogout(callback?: ()=>Promise<void>) {
 		this.openVPage(VLogout, () => {
-			nav.logout(callback);
+			this.tonva.logout(callback);
 		});
 	}
 	/*

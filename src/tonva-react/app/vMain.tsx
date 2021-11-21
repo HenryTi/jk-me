@@ -1,5 +1,5 @@
 //import * as React from 'react';
-import { Page, nav, LMR } from "../components";
+import { Page, LMR } from "../components";
 import { VPage } from '../vm';
 //import { appInFrame } from '../net';
 import { CAppBase } from "./CAppBase";
@@ -46,7 +46,7 @@ export class VUnsupportedUnit extends VPage<CAppBase<any>> {
 
     private page = () => {
 		let {predefinedUnit, uqsLoadErrors} = this.params;
-        let {user} = nav;
+        let {user} = this.tonva;
 		let userName:string = user? user.name : '[未登录]';
 		//let {appOwner, appName} = UQsMan.value;
         return <Page header="APP无法运行" logout={true}>
@@ -132,7 +132,7 @@ export class VErrorsPage extends VPage<CAppBase<any>> {
         return <Page header="ERROR">
             <div className="m-3">
 				<div className="p-3 d-flex justify-content-center align-items-center">
-					<button className="btn btn-danger" onClick={nav.resetAll}>重启网页</button>
+					<button className="btn btn-danger" onClick={this.tonva.resetAll}>重启网页</button>
 				</div>
 
                 <div>Load Uqs 发生错误：</div>

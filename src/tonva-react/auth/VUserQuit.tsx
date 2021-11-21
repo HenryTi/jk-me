@@ -1,6 +1,5 @@
 import { CLogin } from "./CLogin";
 import { VPage } from "../vm";
-import { nav } from "../components";
 import { CenterAppApi } from "tonva-core";
 
 const waitingTime = '一小时';
@@ -90,6 +89,6 @@ class VQuitDone extends VUserQuitBase {
     protected get button1Caption(): string {return '退出';}
     protected get button2Caption(): string {return null;}
     protected onClickButton1() {
-        nav.logout();
+        this.tonva.logout();
     }
 }

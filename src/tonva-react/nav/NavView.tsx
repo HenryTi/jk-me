@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { env, FetchError } from 'tonva-core';
+import { env, FetchError, PageWebNav } from 'tonva-core';
 import { Loading } from '../components';
 import FetchErrorView from './FetchErrorView';
 import { FA } from '../components';
@@ -31,6 +31,7 @@ export class NavView extends React.Component<Props, NavViewState> {
     private stack: StackItem[];
     private waitCount: number = 0;
     private waitTimeHandler?: NodeJS.Timer;
+    isWebNav: boolean = false;
 
     constructor(props:Props) {
         super(props);
@@ -312,5 +313,20 @@ export class NavView extends React.Component<Props, NavViewState> {
 
     private refresh() {
         this.setState({stack: this.stack });
+    }
+
+    backIcon = <i className="fa fa-angle-left" />;
+	closeIcon = <i className="fa fa-close" />;
+
+    setIsWebNav(): void {
+		this.isWebNav = true;
+		this.backIcon = <i className="fa fa-arrow-left" />;
+		this.closeIcon = <i className="fa fa-close" />;
+    }
+
+    pageWebNav: PageWebNav<JSX.Element>;
+
+    renderNavView(onLogined:any, onNotLogined?:any): JSX.Element {
+        throw new Error('renderNavView');
     }
 }

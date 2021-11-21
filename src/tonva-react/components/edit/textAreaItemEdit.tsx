@@ -1,16 +1,17 @@
 import * as React from 'react';
 import { UiTextItem } from '../schema';
-import { nav } from '../../nav';
+//import { nav } from '../../nav';
 import { Page } from '../page/page';
 import { observer } from 'mobx-react';
 import { ItemEdit } from './itemEdit';
+import { tonva } from 'tonva-core';
 
 export class TextAreaItemEdit extends ItemEdit {
     get uiItem(): UiTextItem {return this._uiItem as UiTextItem}
     protected async internalStart():Promise<any> {
         return new Promise<any>((resolve, reject) => {
             let element = React.createElement(this.page, {resolve, reject});
-            nav.push(element,reject);
+            tonva.nav.push(element,reject);
         });
     }
 

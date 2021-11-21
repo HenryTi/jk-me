@@ -1,10 +1,8 @@
 import { env } from '../tool';
 import { UqMan } from './uqMan';
 import { TuidImport, TuidInner } from './tuid';
-//import { nav } from '../components';
-import { UqConfig } from '../AppConfig';
 import { Web, UqData } from '../web';
-import { Tonva } from '../Tonva';
+import { Tonva, UqConfig } from '../core';
 
 /*
 export interface TVs {

@@ -2,7 +2,7 @@ import { /*centerApi, logoutApis, */AppConfig as AppConfigCore, Tonva, Web } fro
 import { User, UqsConfig as UqsConfigCore  } from 'tonva-core';
 import { RouteFunc, Hooks, Navigo, NamedRoute } from "tonva-core";
 import { setGlobalRes } from 'tonva-core';
-import { nav, Nav } from '../nav';
+//import { nav, Nav } from '../nav';
 import { ControllerWithWeb } from '../vm';
 import { UQsLoader, UQsMan } from "tonva-core";
 import { VErrorsPage, VStartError } from "./vMain";
@@ -64,15 +64,15 @@ export abstract class CAppBase<U> extends ControllerWithWeb {
 	private uqsMan: UQsMan;
     protected _uqs: U;
 	readonly web: Web;
-	readonly nav: Nav;
+	//readonly nav: Nav;
 	timezone: number;
 	unitTimezone: number;
 
     constructor(tonva: Tonva, config?: AppConfig) {
 		super(tonva);
 		this.web = tonva.web;
-		this.nav = new Nav(tonva); // nav;
-		this.appConfig = config || (nav.navSettings as AppConfig);
+		//this.nav = new Nav(tonva); // nav;
+		this.appConfig = config || (tonva.navSettings as AppConfig);
 		if (this.appConfig) {
 			let {app, uqs} = this.appConfig;
 			if (app === undefined && uqs === undefined) {
@@ -95,7 +95,7 @@ export abstract class CAppBase<U> extends ControllerWithWeb {
 	private uqsUser: any = '';
 	protected async initUQs():Promise<any> {
 		if (!this.appConfig) return;
-		let {user} = nav;
+		let {user} = this.tonva;
 		if (user === this.uqsUser) return;
 		this.uqsUser = user;
 		this.web.logoutApis();
@@ -123,8 +123,8 @@ export abstract class CAppBase<U> extends ControllerWithWeb {
         }
     }
 	protected async afterStart():Promise<void> {
-		nav.resolveRoute();
-		nav.onChangeLogin = (user:User) => this.onChangeLogin(user);
+		this.tonva.resolveRoute();
+		this.tonva.onChangeLogin = (user:User) => this.onChangeLogin(user);
 		this.onChangeLogin(this.user);
 	}
 
@@ -137,15 +137,15 @@ export abstract class CAppBase<U> extends ControllerWithWeb {
 	protected on(regex:RegExp, routeFunc:RouteFunc, hooks?:Hooks):Navigo;
 	protected on(options: {[url:string]: RouteFunc|NamedRoute}):Navigo;
 	protected on(...args:any[]):Navigo {
-		return nav.on(args[0], args[1], args[2]);
+		return this.tonva.on(args[0], args[1], args[2]);
 	}
 
 	protected onNavRoutes() {return;}
 
 	async getUqRoles(uqName:string):Promise<string[]> {
-		let {user} = nav;
+		let {user} = this.tonva;
 		if (!user) return null;
-		let {roles:userRoles} = nav.user;
+		let {roles:userRoles} = user;
 		let uq = uqName.toLowerCase();
 		let roles:string[];
 		if (userRoles) {
@@ -155,7 +155,7 @@ export abstract class CAppBase<U> extends ControllerWithWeb {
 
 		roles = await this.uqsMan.getUqUserRoles(uq);
 		if (!roles) roles = null;
-		nav.setUqRoles(uq, roles);
+		this.tonva.setUqRoles(uq, roles);
 		return roles;
 	}
 

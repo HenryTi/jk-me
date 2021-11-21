@@ -1,4 +1,3 @@
-import { nav } from '../components';
 import { VPage } from '../vm';
 import { CLogin } from './CLogin';
 
@@ -11,7 +10,7 @@ export class VLogout extends VPage<CLogin> {
 	header() {return this.isWebNav === true? false : '安全退出';}
 	footer() {
 		return <div className="mt-5 text-center justify-content-center">
-			<button className="btn btn-outline-warning" onClick={nav.resetAll}>升级软件</button>
+			<button className="btn btn-outline-warning" onClick={this.tonva.resetAll}>升级软件</button>
 		</div>;
 	}
 	protected get back(): 'close' | 'back' | 'none' {return 'close'}

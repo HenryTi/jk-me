@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { UiTag } from '../schema';
-import { nav } from '../../nav';
+//import { nav } from '../../nav';
 import { Page } from '../page/page';
 import { observer } from 'mobx-react';
 import { ItemEdit } from './itemEdit';
+import { tonva } from 'tonva-core';
 
 abstract class TagItemEdit extends ItemEdit {
 	protected inputs: {[index:number]: HTMLInputElement} = {};
@@ -19,7 +20,7 @@ abstract class TagItemEdit extends ItemEdit {
     protected async internalStart():Promise<any> {
         return new Promise<any>((resolve, reject) => {
             let element = React.createElement(this.page, {resolve:resolve, reject:reject});
-            nav.push(element,reject);
+            tonva.nav.push(element,reject);
         });
 	}
 	

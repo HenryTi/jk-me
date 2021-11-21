@@ -1,7 +1,8 @@
-import {Form, Schema, UiSchema, UiTextItem, UiPasswordItem, Context, UiButton, StringSchema, Ax, nav} from '../components';
-import { tonvaTop, getSender } from './tools';
+import { Form, Schema, UiSchema, UiTextItem, UiPasswordItem, Context, UiButton, StringSchema, Ax } from '../components';
+import { defaultLoginTop, getSender } from './tools';
 import { CLogin } from './CLogin';
 import { VPage } from '../vm';
+import { tonva } from 'tonva-core';
 
 const schema: Schema = [
     {name: 'username', type: 'string', required: true, maxLength: 100} as StringSchema,
@@ -57,7 +58,7 @@ export class VLogin extends VPage<CLogin> {
         return <div className="d-flex p-5 flex-column justify-content-center align-items-center">
 			<div className="flex-fill" />
 			<div className="w-20c">
-				{tonvaTop()}
+				{this.tonva.loginTop(defaultLoginTop)}
 				<div className="h-2c" />
 				<Form schema={schema} uiSchema={this.uiSchema} 
 					onButtonClick={this.onSubmit} 
@@ -71,7 +72,7 @@ export class VLogin extends VPage<CLogin> {
 						注册账号
 					</Ax>
 				</div>
-				{nav.privacyEntry()}
+				{tonva.privacyEntry()}
 			</div>
 			<div className="flex-fill" />
 			<div className="flex-fill" />

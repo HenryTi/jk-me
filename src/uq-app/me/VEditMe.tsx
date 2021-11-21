@@ -1,9 +1,9 @@
 import { observable } from 'mobx';
 import {
-    ItemSchema, StringSchema, ImageSchema, UiTextItem, UiImageItem, nav, Page,
+    ItemSchema, StringSchema, ImageSchema, UiTextItem, UiImageItem, Page,
     Edit, UiSchema, VPage, Prop, FA, IconText, PropGrid
 } from 'tonva-react';
-import { Web } from 'tonva-core';
+import { tonva } from 'tonva-core';
 import { CMe } from './CMe';
 
 export class VEditMe extends VPage<CMe>{
@@ -26,7 +26,7 @@ export class VEditMe extends VPage<CMe>{
 
     constructor(props: any) {
         super(props);
-        let { nick, icon } = nav.user;
+        let { nick, icon } = tonva.user;
         this.data = {
             nick: nick,
             icon: icon,
@@ -37,20 +37,20 @@ export class VEditMe extends VPage<CMe>{
         let { name } = itemSchema;
         await this.controller.web.userApi.userSetProp(name, newValue);
         this.data[name] = newValue;
-        nav.user.name = newValue;
-        nav.saveLocalUser();
+        tonva.user.name = newValue;
+        tonva.saveLocalUser();
     }
 
 	private onExit = () => {
-        nav.showLogout();
+        tonva.showLogout();
     }
 
 	private changePassword = async () => {
-        await nav.changePassword();
+        await tonva.changePassword();
     }
 
     private userQuit = async () => {
-        await nav.userQuit();
+        await tonva.userQuit();
     }
 
     private page = () => {

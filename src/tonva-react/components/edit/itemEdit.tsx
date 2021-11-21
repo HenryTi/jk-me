@@ -1,9 +1,10 @@
 import { ItemSchema, UiItem, UiSelectBase } from '../schema';
-import { nav } from '../../nav';
+//import { nav } from '../../nav';
 import { makeObservable, observable } from 'mobx';
 import { Image } from '../image';
 import { Edit } from './edit';
 import { FieldRule } from '../inputRules';
+import { tonva } from 'tonva-core';
 
 export abstract class ItemEdit {
 	protected edit: Edit;
@@ -96,7 +97,7 @@ export abstract class ItemEdit {
 		return divValue;
 	}
 
-    protected async internalEnd():Promise<void> {nav.pop()}
+    protected async internalEnd():Promise<void> {tonva.nav.pop(1)}
 
     protected verifyValue() {
         if (this.uiItem === undefined) return;

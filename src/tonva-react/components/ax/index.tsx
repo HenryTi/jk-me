@@ -1,6 +1,7 @@
 import React from "react";
 import classNames from 'classnames';
-import { nav } from "../../nav";
+import { tonva } from "tonva-core";
+// import { nav } from "../../nav";
 
 export interface AxProps extends React.DetailedHTMLProps<React.AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement> {
 	//children: React.ReactNode;
@@ -17,7 +18,7 @@ export interface AxProps extends React.DetailedHTMLProps<React.AnchorHTMLAttribu
 // 如果是app方式，用click方式压栈页面
 export const Ax = (axProps: AxProps) => {
 	let {href, children, className, onClick} = axProps;
-	if (nav.isWebNav === true) {
+	if (tonva.nav.isWebNav === true) {
 		let {aClassName } = axProps;
 		if (!href) return <span className="text-danger">Error: href not defined in Ax</span>;
 		let onAxClick = (evt: React.MouseEvent<HTMLAnchorElement>) => {
@@ -27,7 +28,7 @@ export const Ax = (axProps: AxProps) => {
 				ret = onClick(evt) as unknown as boolean;
 			}
 			else {
-				nav.navigate(href);
+				tonva.navigate(href);
 				ret = false;
 			}
 			return ret;
@@ -38,8 +39,8 @@ export const Ax = (axProps: AxProps) => {
 		let {naClassName} = axProps;
 		if (!onClick) {
 			onClick = () => {
-				if (nav.openSysPage(href) === false) {
-					nav.navigate(href);
+				if (tonva.openSysPage(href) === false) {
+					tonva.navigate(href);
 			   };
 			   return false;
 		   }
@@ -52,14 +53,14 @@ export const Ax = (axProps: AxProps) => {
 // 会自动处理href，处理生产版跟测试版之间的不同
 export const A = (props: React.DetailedHTMLProps<React.AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement>) => {
 	let {children} = props;
-	if (nav.isWebNav === false) {
+	if (tonva.nav.isWebNav === false) {
 		return <a {...props}>{children}</a>;
 	}
 	let {href} = props;
 	//if (nav.testing === true) href += '#test';
 	let onClick = (evt: React.MouseEvent<HTMLAnchorElement>) => {
 		evt.preventDefault();
-		nav.navigate(href);
+		tonva.navigate(href);
 		return false;
 	}
 	return <a {...props} href={href} onClick={onClick}>{children}</a>;

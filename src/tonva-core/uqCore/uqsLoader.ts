@@ -1,8 +1,7 @@
-import { AppConfig as AppConfigCore, UqConfig } from '../AppConfig';
+import { Tonva, AppConfig as AppConfigCore, UqConfig } from '../core';
 import { UQsMan } from "./uqsMan";
 import { LocalMap, LocalCache, env } from '../tool';
 import { UqData, UqAppData, CenterAppApi } from '../web';
-import { Tonva } from '../Tonva';
 
 export class UQsLoader {
 	readonly tonva: Tonva;
@@ -139,7 +138,8 @@ export class UQsBuildingLoader extends UQsLoader {
 		//nav.forceDevelopment = true;
 		env.isDevelopment = true;
 		//await nav.init();
-		await this.tonva.web.navInit();
+		//await this.tonva.web.navInit();
+		await this.tonva.init();
 		this.isBuildingUQ = true;
 		let {uqs} = this.appConfig;
 		let retErrors:string[];

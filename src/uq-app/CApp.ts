@@ -10,7 +10,7 @@ import { Item, Post, EnumRole, EnumRoleOp, EnumAccount } from "./uqs/JkMe";
 import { CSupervise } from "supervise";
 import { CPortal, CObjectPortal, CUnitPortal } from "portal";
 import { makeObservable, observable, runInAction } from "mobx";
-import { nav, start } from "tonva-react";
+import { start } from "tonva-react";
 import { appConfig } from "./appConfig";
 import { Tonva } from "tonva-core";
 
@@ -72,7 +72,7 @@ export class CApp extends CUqApp {
 	}
 	
 	async initStart() {
-		await nav.appStart();
+		await this.tonva.appStart();
 	}
 
 	render(loginedOnly: boolean = true):JSX.Element {
@@ -81,7 +81,7 @@ export class CApp extends CUqApp {
 		}
 		let onNotLogined: () => Promise<void>;
 		if (loginedOnly === false) onNotLogined = onLogined;
-		return nav.renderNavView(onLogined, onNotLogined);
+		return this.tonva.nav.renderNavView(onLogined, onNotLogined);
 	}
 
 

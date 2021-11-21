@@ -1,6 +1,6 @@
 import { VPage } from "../../vm";
-import { tonvaTop, getSender } from '../tools';
-import {nav, Schema, UiSchema, UiTextItem, UiButton, Form, Context, StringSchema, Ax} from '../../components';
+import { defaultLoginTop, getSender } from '../tools';
+import { Schema, UiSchema, UiTextItem, UiButton, Form, Context, StringSchema, Ax } from '../../components';
 import { CForget, CRegBase, CRegister } from './CRegister';
 
 export abstract class VStart<T extends CRegBase> extends VPage<T> {
@@ -31,7 +31,7 @@ export abstract class VStart<T extends CRegBase> extends VPage<T> {
     content():JSX.Element {
         return <div className="w-max-20c my-5 py-5"
                 style={{marginLeft:'auto', marginRight:'auto'}}>
-			{tonvaTop()}
+			{this.tonva.loginTop(defaultLoginTop)}
 			<div className="h-3c" />
 			<Form schema={this.schema} uiSchema={this.uiSchema} 
 				onButtonClick={this.onSubmit}
@@ -40,7 +40,7 @@ export abstract class VStart<T extends CRegBase> extends VPage<T> {
 			<div className="text-center py-3">
 				<Ax href="/login" className="text-primary">已有账号，直接登录</Ax>
 			</div>
-			{nav.privacyEntry()}
+			{this.tonva.privacyEntry()}
 		</div>;
     }
 

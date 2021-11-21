@@ -1,8 +1,8 @@
-import * as React from 'react';
 import { VPage } from '../vm';
-import { Page, Form, ItemSchema, UiSchema, StringSchema, UiPasswordItem, Context, ButtonSchema, UiButton, nav } from '../components';
+import { Page, Form, ItemSchema, UiSchema, StringSchema, UiPasswordItem, Context, ButtonSchema, UiButton } from '../components';
 //import { CenterAppApi } from '../net';
 import { CLogin } from './CLogin';
+import { tonva } from 'tonva-core';
 
 export class VChangePassword extends VPage<CLogin> {
     private schema: ItemSchema[] = [
@@ -54,7 +54,7 @@ export class VChangePassword extends VPage<CLogin> {
             context.setError('orgPassword', '原密码错误');
             return;
         }
-        nav.replace(<Page header="修改密码" back="close">
+        tonva.nav.replace(<Page header="修改密码" back="close">
             <div className="m-3  text-success">
                 密码修改成功！
             </div>

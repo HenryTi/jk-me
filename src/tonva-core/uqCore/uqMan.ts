@@ -1,7 +1,7 @@
 /* eslint-disable */
 //import { UqApi, UqData, UnitxApi } from '../net';
 import { UqApi, UqData, UnitxApi } from '../web';
-import { Tonva } from '../Tonva';
+import { Tonva, UqConfig } from '../core';
 import { Tuid, TuidDiv, TuidImport, TuidInner, TuidBox, TuidsCache } from './tuid';
 import { Action } from './action';
 import { Sheet } from './sheet';
@@ -15,9 +15,7 @@ import { LocalMap, LocalCache, env, capitalCase } from '../tool';
 //import { ReactBoxId } from './tuid/reactBoxId';
 import { UqEnum } from './enum';
 import { Entity } from './entity';
-import { UqConfig } from '../AppConfig';
 import { ID, IX, IDX } from './ID';
-//import { nav } from '../components';
 import { IDCache } from './IDCache';
 import { Web } from '../web';
 
