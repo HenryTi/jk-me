@@ -73,7 +73,8 @@ export class VMe extends VPage<CMe> {
                 <small className="d-inline">管理员</small>
                 <span className="d-inline ms-3 text-danger">[我]</span>
                 {admins.map(v => {
-                    return <span className="d-inline ms-3">{renderUserText(web, v.id)}</span>
+                    let {id} = v;
+                    return <span key={id} className="d-inline ms-3">{renderUserText(web, id)}</span>
                 })}
             </div>
         </LMR>;

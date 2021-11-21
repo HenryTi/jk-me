@@ -1,4 +1,4 @@
-import { makeObservable, observable } from "mobx";
+import { makeObservable, observable, runInAction } from "mobx";
 import { User } from "tonva-core";
 import { CUqBase } from "uq-app";
 import { VMe } from "./VMe";
@@ -45,11 +45,13 @@ export class CMe extends CUqBase {
 	load = async () => {
 		let admins = await this.uqs.JkMe.getAdmins();
 		if (!admins) return;
-		let userId = this.user.id;
-		let p = admins.findIndex(v => v.id === userId);
-		if (p >= 0) admins.splice(p, 1);
-		this.admins = admins;
-		this.isAdmin = true;
+		runInAction(() => {
+			let userId = this.user.id;
+			let p = admins.findIndex(v => v.id === userId);
+			if (p >= 0) admins.splice(p, 1);
+			this.admins = admins;
+			this.isAdmin = true;				
+		});
 	}
 
 	backend = async () => {

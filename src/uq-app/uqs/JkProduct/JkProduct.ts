@@ -504,7 +504,7 @@ export interface UqExt extends Uq {
 }
 
 	export function assign(uq: any, to:string, from:any): void {
-		let hasEntity = uq.$_uqMan.hasEntity(to);
+		let hasEntity = uq.hasEntity(to);
 		if (hasEntity === false) {
 			return;
 		}
