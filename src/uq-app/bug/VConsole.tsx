@@ -1,4 +1,4 @@
-import { VPage } from "tonva-react";
+import { VPage } from "tonva-view";
 import { CBug } from "./CBug";
 
 export class VConsole extends VPage<CBug> {

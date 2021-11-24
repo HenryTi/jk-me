@@ -1,9 +1,7 @@
-import { User } from 'tonva-core';
-import { Login } from '../components';
+import { User, CenterAppApi, Login } from 'tonva-core';
 import { ControllerWithWeb, VPage } from "../vm";
 import { VLogout } from './VLogout';
 import { VLogin } from './VLogin';
-import { CenterAppApi } from 'tonva-core';
 import { VChangePassword } from './VChangePassword';
 import { VUserQuit } from './VUserQuit';
 

@@ -1,4 +1,4 @@
-import { VPage } from "tonva-react";
+import { VPage } from "tonva-view";
 import { appConfig } from "../uq-app/appConfig";
 import { CMe } from "./CMe";
 

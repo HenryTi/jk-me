@@ -1,5 +1,5 @@
 import { dateFromMinuteId } from 'tonva-core';
-import { EasyTime, FA, VPage } from "tonva-react";
+import { EasyTime, FA, VPage } from "tonva-view";
 import { CPortal } from "./CPortal";
 
 export class VBizOpDetail extends VPage<CPortal> {

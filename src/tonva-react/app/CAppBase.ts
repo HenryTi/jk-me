@@ -1,12 +1,12 @@
 import { /*centerApi, logoutApis, */AppConfig as AppConfigCore, Tonva, Web } from "tonva-core";
 import { User, UqsConfig as UqsConfigCore  } from 'tonva-core';
 import { RouteFunc, Hooks, Navigo, NamedRoute } from "tonva-core";
-import { setGlobalRes } from 'tonva-core';
-//import { nav, Nav } from '../nav';
-import { ControllerWithWeb } from '../vm';
 import { UQsLoader, UQsMan } from "tonva-core";
+import { setGlobalRes } from 'tonva-core';
+import { ControllerWithWeb } from '../vm';
 import { VErrorsPage, VStartError } from "./vMain";
-import { createUQsProxy, t } from "tonva-react";
+import { createUQsProxy } from "../uq";
+import { t } from "../ui";
 
 export interface IConstructor<T> {
     new (...args: any[]): T;
@@ -35,6 +35,7 @@ export interface UqsConfig {
 	uqs?: UqConfig[];
 }
 */
+
 export type UqsConfig = UqsConfigCore;
 export interface AppConfig extends AppConfigCore /*UqsConfig*/ {
 	/*

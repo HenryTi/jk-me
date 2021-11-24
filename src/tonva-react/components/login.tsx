@@ -1,13 +1,4 @@
-import { Tonva, User } from 'tonva-core';
-
-export interface Login {
-	showLogin(callback?: (user:User)=>Promise<void>, withBack?:boolean):void;
-	showLogout(callback?: ()=>Promise<void>):void
-	//showRegister():void
-	//showForget():void
-	showChangePassword():void;
-	showUserQuit():void;
-}
+import { Login, Tonva } from 'tonva-core';
 
 export async function createLogin(tonva: Tonva):Promise<Login> {
 	let importCLogin = await import('../auth/CLogin');

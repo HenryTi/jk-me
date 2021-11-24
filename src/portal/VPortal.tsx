@@ -1,8 +1,5 @@
-import React from "react";
-import { observer } from "mobx-react";
-import { EasyTime, FA, List, LMR } from "tonva-react";
+import { VElement, View, EasyTime, FA, List, LMR } from "tonva-view";
 import { CPortal } from "./CPortal";
-import { View } from "tonva-react";
 import { EnumPeriod, PostPeriodSum, ItemPeriodSum } from "./period";
 import { ReturnGetObjectItemPeriodSumRet } from "uq-app/uqs/JkMe";
 
@@ -12,8 +9,8 @@ const cnTabCur = ' border-2 border-bottom border-primary fw-bold bg-light ';
 const cnTab = ' border-bottom border-muted cursor-pointer text-muted ';
 
 export class VPeriodSum<T extends CPortal = CPortal> extends View<T> {
-    render(): JSX.Element {
-		return React.createElement(observer(() => {
+    render(): VElement {
+		return this.react(() => {
 			let periodList:[EnumPeriod, string, string][] = [
 				[EnumPeriod.day, '日', undefined],
 				[EnumPeriod.week, '周', undefined],
@@ -26,7 +23,6 @@ export class VPeriodSum<T extends CPortal = CPortal> extends View<T> {
 				let [ep] = p;
 				p[2] = cnPeriod + (ep === type? cnTabCur : cnTab);
 			}
-			let VRefreshTime = observer(() => <EasyTime date={this.controller.cApp.refreshTime}/>);
 			return <div className="">
 				<div className="row g-0">
 					{
@@ -48,11 +44,12 @@ export class VPeriodSum<T extends CPortal = CPortal> extends View<T> {
 					<div className="flex-fill"></div>
 					<div className="small text-muted cursor-pointer"
 						onClick={this.controller.cApp.refresh}>
-						<FA name="refresh" /> <VRefreshTime />
+						<FA name="refresh" /> 
+						{this.react(() => <EasyTime date={this.controller.cApp.refreshTime}/>)}
 					</div>
 				</div>
 			</div>;
-		}));
+		});
     }
 
 	private renderDate() {
@@ -60,9 +57,9 @@ export class VPeriodSum<T extends CPortal = CPortal> extends View<T> {
 		let {hasNext} = period;
 		let left = <div className="cursor-pointer p-3" onClick={prev}><FA name="angle-left" /></div>;
 		let right = <div className={' p-3 ' + (hasNext? ' cursor-pointer ':' text-light ')} onClick={next}><FA name="angle-right" /></div>
-		return <div className="d-flex">
+		return <div className="d-flex justify-content-center">
 			{left}
-			<div className="text-center flex-fill py-3">{period.render()}</div>
+			<div className="text-center px-1 py-3 w-min-10c">{period.render()}</div>
 			{right}
 		</div>;
 	}

@@ -1,7 +1,7 @@
 //=== UqApp builder created on Fri Nov 19 2021 14:42:41 GMT-0500 (北美东部标准时间) ===//
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	import { IDXValue, Uq, UqTuid, UqAction, UqSheet, UqBook, UqQuery, UqMap, UqHistory, UqPending, UqID, UqIDX, UqIX } from "tonva-core";
-		import { Render } from "tonva-react";
+		import { Render } from "tonva-view";
 
 
 //===============================
@@ -841,7 +841,7 @@ export interface UqExt extends Uq {
 }
 
 	export function assign(uq: any, to:string, from:any): void {
-		let hasEntity = uq.$_uqMan.hasEntity(to);
+		let hasEntity = uq.hasEntity(to);
 		if (hasEntity === false) {
 			return;
 		}

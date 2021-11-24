@@ -1,5 +1,5 @@
 import { User, Web } from "tonva-core";
-import { UserView } from "tonva-react";
+import { UserView } from "tonva-view";
 
 export const renderUserText = (web:Web, user:any):JSX.Element => {
     let renderUser = (user:User) => {

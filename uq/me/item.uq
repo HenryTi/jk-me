@@ -70,7 +70,7 @@ ID #OPIHistory MINUTEID (
     itemHistory ID,
     value DEC(18,4),
     booking ID OPIBooking,      -- 记账动作
-    INDEX opi_id(opi, id),
+    INDEX opi_id(opi, id) UNIQUE,
 );
 
 ENUM EnumAccount (

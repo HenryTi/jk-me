@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react';
-import { Image, VPage, IconText, PropGrid, LMR, FA, Prop } from 'tonva-react';
+import { Image, VPage, IconText, PropGrid, LMR, FA, Prop } from "tonva-view";
 import { CMe } from './CMe';
 import { appConfig } from '../uq-app/appConfig';
 import { VAbout } from './VAbout';
@@ -50,7 +50,7 @@ export class VMe extends VPage<CMe> {
             ];
 			rows.push({
                 type: 'component',
-                component: <this.renderAdmin />,
+                component: this.react(this.renderAdmin),
             });
             rows.push(...aboutRows, ...logOutRows);
         }
@@ -59,8 +59,8 @@ export class VMe extends VPage<CMe> {
         </>;
     }
 
-    private renderAdmin = observer(():JSX.Element => {
-        let {isAdmin} = this.controller;
+    private renderAdmin():JSX.Element {
+        let {isAdmin} = this.controller.data;
         if (isAdmin === false) return null;
         let {admins, web} = this.controller;
         return <LMR className="py-2 cursor-pointer w-100"
@@ -73,11 +73,12 @@ export class VMe extends VPage<CMe> {
                 <small className="d-inline">管理员</small>
                 <span className="d-inline ms-3 text-danger">[我]</span>
                 {admins.map(v => {
-                    return <span className="d-inline ms-3">{renderUserText(web, v.id)}</span>
+                    let {id} = v;
+                    return <span key={id} className="d-inline ms-3">{renderUserText(web, id)}</span>
                 })}
             </div>
         </LMR>;
-    });
+    };
 
 	private meInfo = observer(() => {
         let { user } = tonva;

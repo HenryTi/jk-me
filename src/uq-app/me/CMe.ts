@@ -1,6 +1,6 @@
 import { makeObservable, observable } from "mobx";
 import { User } from "tonva-core";
-import { QueryPager } from 'tonva-react';
+import { QueryPager } from "tonva-view";
 import { CUqBase } from "uq-app";
 import { VMe } from "./VMe";
 import { VEditMe } from "./VEditMe";
@@ -43,7 +43,7 @@ export class CMe extends CUqBase {
 	}
 
 	load = async () => {
-		//this.roles = await this.getUqRoles(this.uq.$_uqMan.name);
+		//this.roles = await this.getUqRoles(this.uq.name);
 	}
 
 	backend = async () => {
@@ -53,7 +53,7 @@ export class CMe extends CUqBase {
 
 	private myRolesChanged = (roles:string[]) => {
 		//this.roles = roles;
-		//this.user.roles[this.uq.$_uqMan.name] = roles;
+		//this.user.roles[this.uq.name] = roles;
 		//nav.saveLocalUser();
 	}
 }

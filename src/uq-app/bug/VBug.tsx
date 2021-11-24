@@ -1,4 +1,4 @@
-import { FA, LMR, VPage } from "tonva-react";
+import { FA, LMR, VPage } from "tonva-view";
 import { CBug, DebugItem } from "./CBug";
 
 export class VBug extends VPage<CBug> {

@@ -11,3 +11,4 @@ export * from './tool';
 export * from './ui';
 export * from './uq';
 export * from './TonvaReact';
+export type VElement = JSX.Element;

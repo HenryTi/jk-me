@@ -1,5 +1,5 @@
 import { build, UQsBuildingLoader } from 'tonva-core';
-import { TonvaReact, UqBuildContextUI } from 'tonva-react';
+import { TonvaReact, UqBuildContextUI } from "tonva-view";
 import { appConfig } from './appConfig';
 
 test('build UqApp', async () => {

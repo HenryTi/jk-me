@@ -1,10 +1,10 @@
-import _ from 'lodash';
 import { env, resOptions, PageHeaderProps, PageWebNav, Tonva, Nav } from 'tonva-core';
 import { t } from '../ui';
 import { Page } from '../components';
 //import { nav } from '../nav';
-import { VPage } from './vpage';
-import { View } from './view';
+import { VPage } from './VPage';
+import { View } from './View';
+import { AnnotationsMap, makeObservable, observable, runInAction } from 'mobx';
 // import { messageHub } from 'tonva-core';
 
 export interface ConfirmOptions {
@@ -39,6 +39,37 @@ export abstract class Controller {
         this.nav = tonva.nav;
     }
 
+    shallow<T extends object>(data: T) {
+        let ret = makeObservable(data, this.buildReactiveProps(data, observable.shallow));
+        return ret;
+    }
+
+    deep<T extends object>(data: T) {
+        let ret = makeObservable(data, this.buildReactiveProps(data, observable));
+        return ret;
+    }
+
+    private buildReactiveProps<T extends object>(data: T, ob: any): AnnotationsMap<T, never> {
+        let ret: AnnotationsMap<T, never> = {};
+        for (let i in data) {
+            let v = data[i];
+            switch (typeof v) {
+                default:
+                    ob = observable;
+                    break;
+                case 'object':
+                case 'function':
+                    break;
+            }
+            (ret as any)[i] = ob;
+        }
+        return ret;
+    }
+
+    runInAction<T>(fn: () => T): T {
+        return runInAction(fn);
+    }
+
     getTonva() {return this.tonva;}
 
 	protected beforeInit() {}
@@ -63,14 +94,14 @@ export abstract class Controller {
 	setRes(res: any) {
 		if (res === undefined) return;
 		let {$lang, $district} = resOptions;
-		_.merge(this.res, res);
+		Object.assign(this.res, res);
 		if ($lang !== undefined) {
 			let l = res[$lang];
 			if (l !== undefined) {
-				_.merge(this.res, l);
+				Object.assign(this.res, l);
 				let d = l[$district];
 				if (d !== undefined) {
-					_.merge(this.res, d);
+					Object.assign(this.res, d);
 				}
 			}
 		}		

@@ -1,4 +1,4 @@
-import { List, LMR, VPage } from "tonva-react";
+import { List, LMR, VPage } from "tonva-view";
 import { ReturnGetObjectItemPeriodHistoryRet } from "uq-app/uqs/JkMe";
 import { CPortal } from "./CPortal";
 

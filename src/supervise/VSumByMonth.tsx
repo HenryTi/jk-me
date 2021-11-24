@@ -1,7 +1,7 @@
 import { observer } from "mobx-react";
 import React from "react";
 import { CSupervise } from "supervise";
-import { FA, List, LMR, VPage } from "tonva-react";
+import { FA, List, LMR, VPage } from "tonva-view";
 import { ReturnGetProductSumByMonthRet } from "uq-app/uqs/JkMe";
 
 abstract class VSumByMonth extends VPage<CSupervise> {

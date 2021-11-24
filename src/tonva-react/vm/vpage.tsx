@@ -1,6 +1,6 @@
 import { Page, Scroller, TabsProps } from "../components";
-import { View } from "./view";
-import { Controller } from "./controller";
+import { View } from "./View";
+import { Controller } from "./Controller";
 
 export abstract class VPage<C extends Controller> extends View<C> {
 	protected retOnClosePage: any;

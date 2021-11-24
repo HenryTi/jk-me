@@ -1,10 +1,9 @@
-import { Hooks, NamedRoute, Nav, resOptions, RouteFunc, Web } from "tonva-core";
-import { User, Guest } from 'tonva-core';
-//import { netToken } from 'tonva-core';
-//import { FetchError } from 'tonva-core';
-import { LocalData, env } from 'tonva-core';
-//import { NavView } from './NavView';
-import { Navigo } from './Navigo';
+import { Navigo, Hooks, NamedRoute, RouteFunc } from "./Navigo";
+import { Nav, NavPage } from './Nav';
+import { Web } from '../web';
+import { resOptions } from '../res';
+import { LocalData, env, User, Guest } from '../tool';
+import { Login } from './Login';
 
 export interface NavSettings {
     oem?: string;
@@ -20,22 +19,6 @@ export let tonva: Tonva;
 
 export abstract class Tonva {
     readonly web: Web;
-    constructor() {
-        tonva = this;
-        this.web = this.createWeb();
-        let {lang, district} = resOptions;
-        this.language = lang;
-        this.culture = district;
-		this.testing = false;
-    }
-
-    abstract createWeb(): Web;
-    abstract createObservableMap<K, V>(): Map<K, V>;
-    abstract get nav(): Nav;
-
-//    private readonly tonva:Tonva;
-//    private readonly web: Web;
-//    private navView:NavView;
 	private wsHost: string;
     private local: LocalData = new LocalData();
 	private navigo: Navigo;
@@ -47,6 +30,36 @@ export abstract class Tonva {
     culture: string;
     resUrl: string;
 
+    constructor() {
+        tonva = this;
+        this.web = this.createWeb();
+        let {lang, district} = resOptions;
+        this.language = lang;
+        this.culture = district;
+		this.testing = false;
+    }
+
+    /*
+    protected abstract startWait(): void;
+    protected abstract endWait(): void;
+    */
+    //protected abstract showLogin(callback?: (user:User)=>Promise<void>, withBack?:boolean): Promise<void>;
+    protected abstract showRegister():Promise<void>;
+    protected abstract showForget():Promise<void>;
+
+    abstract createWeb(): Web;
+    abstract createObservableMap<K, V>(): Map<K, V>;
+    abstract get nav(): Nav;
+
+    abstract privacyEntry():void;
+    //abstract showLogout(callback?: ()=>Promise<void>): Promise<void>;
+    //abstract openSysPage(url: string):boolean;
+    //abstract changePassword(): Promise<void>;
+    //abstract userQuit(): Promise<void>;
+    abstract resetAll: () => void;
+    abstract showAppView(isUserLogin?: boolean):Promise<void>;
+    //abstract clear(): void;
+
     get guest(): number {
         let guest = this.local.guest;
         if (guest === undefined) return 0;
@@ -54,18 +67,6 @@ export abstract class Tonva {
         if (g === undefined) return 0;
         return g.guest;
     }
-	/*
-    registerReceiveHandler(handler: (message:any)=>Promise<void>):number {
-        //if (this.ws === undefined) return;
-        return messageHub.onReceiveAny(handler);
-    }
-
-    unregisterReceiveHandler(handlerId:number) {
-        //if (this.ws === undefined) return;
-        if (handlerId === undefined) return;
-        messageHub.endReceive(handlerId);
-    }
-	*/
     async onReceive(msg:any) {
         //if (this.ws === undefined) return;
         await this.web.messageHub.dispatch(msg);
@@ -232,16 +233,16 @@ export abstract class Tonva {
 	}
 
     //private appStarted:boolean = false;
-    async appStart() {
+	private notLogined?: ()=>Promise<void>;
+	private userPassword?: ()=>Promise<{user:string; password:string;}>
+    async appStart(notLogined?: ()=>Promise<void>, userPassword?: ()=>Promise<{user:string; password:string;}>) {
         //if (this.appStarted === true) return;
         //this.appStarted = true;
+		this.notLogined = notLogined;
+		this.userPassword = userPassword;
         await this.init();
         await this.start();
     }
-
-    protected abstract startWait(): void;
-    protected abstract endWait(): void;
-    protected abstract showLogin(callback?: (user:User)=>Promise<void>, withBack?:boolean): Promise<void>;
 
     async start() {
         try {
@@ -252,16 +253,15 @@ export abstract class Tonva {
                 document.onselectstart = function() {return false;}
                 document.oncontextmenu = function() {return false;}
             }
-			this.clear();
-			this.startWait();
+			this.nav.clear();
+			this.nav.startWait();
             
             let user: User = this.local.user.get();
             if (user === undefined) {
-                throw new Error('to be implemented');
-                /*
-                let {userPassword} = this.navView.props;
-				if (userPassword) {
-					let ret = await userPassword();
+                //throw new Error('user logout to be implemented');
+                //let {userPassword} = this.navView.props;
+				if (this.userPassword) {
+					let ret = await this.userPassword();
 					if (ret) {
 						let {user:userName, password} = ret;
 						let logindUser = await this.web.userApi.login({
@@ -273,9 +273,9 @@ export abstract class Tonva {
 					}
 				}
 				if (user === undefined) {
-					let {notLogined} = this.navView.props;
-					if (notLogined !== undefined) {
-						await notLogined();
+					//let {notLogined} = this.navView.props;
+					if (this.notLogined !== undefined) {
+						await this.notLogined();
 					}
 					else {
 						await this.showLogin(undefined);
@@ -283,7 +283,6 @@ export abstract class Tonva {
 					}
 					return;
 				}
-                */
             }
 
             await this.logined(user);
@@ -293,7 +292,7 @@ export abstract class Tonva {
 			debugger;
         }
         finally {
-            this.endWait();
+            this.nav.endWait();
         }
 	}
 
@@ -339,8 +338,6 @@ export abstract class Tonva {
 		}
 	}
 
-    abstract showAppView(isUserLogin?: boolean):Promise<void>;
-
     setGuest(guest: Guest) {
         this.local.guest.set(guest);
         this.web.setNetToken(0, guest.token);
@@ -370,7 +367,7 @@ export abstract class Tonva {
         this.user = user;
         this.saveLocalUser();
 		this.web.setNetToken(user.id, user.token);
-		this.clear();
+		this.nav.clear();
 
 		await this.onChangeLogin?.(this.user);
         if (callback !== undefined) {
@@ -406,7 +403,7 @@ export abstract class Tonva {
         this.web.logoutApis();
         let guest = this.local.guest.get();
         this.web.setCenterToken(0, guest && guest.token);
-		this.clear();
+		this.nav.clear();
         if (callback === undefined)
             await this.start();
         else
@@ -414,7 +411,6 @@ export abstract class Tonva {
 		this.onChangeLogin?.(undefined);
 	}
 
-    abstract clear(): void;
 
     get logs() {return logs};
     log(msg:string) {
@@ -456,10 +452,115 @@ export abstract class Tonva {
 		}
     }
 
-    abstract privacyEntry():void;
-    abstract showLogout(callback?: ()=>Promise<void>): Promise<void>;
-    abstract openSysPage(url: string):boolean;
-    abstract changePassword(): Promise<void>;
-    abstract userQuit(): Promise<void>;
-    abstract resetAll: () => void;
+	openSysPage(url: string):boolean {
+		let navPage: NavPage = this.sysRoutes[url];
+		if (navPage === undefined) {
+			//alert(url + ' is not defined in sysRoutes');
+			return false;
+		}
+		navPage(undefined);
+		return true;
+	}
+
+    private navLogin:NavPage = async (params:any) => {
+		this.showLogin(async (user: User) => window.history.back(), false);
+	}
+
+	private navLogout:NavPage = async (params:any) => {
+		this.showLogout(async () => window.history.back());
+	}
+
+	private navRegister:NavPage = async (params:any) => {
+		this.showRegister();
+	}
+
+	private navForget:NavPage = async (params:any) => {
+		this.showForget();
+	}
+
+
+	private navPageRoutes: {[url:string]: NavPage};
+	private routeFromNavPage(navPage: NavPage) {
+		return (params: any, queryStr: any) => {
+			if (navPage) {
+				if (this.nav.isWebNav) this.nav.clear();
+				navPage(params);
+			}
+		}
+	}
+	onNavRoute(navPage: NavPage) {
+		this.on(this.routeFromNavPage(navPage));
+	}
+	private doneSysRoutes:boolean = false;
+	private sysRoutes: { [route: string]: NavPage } = {
+		'/login': this.navLogin,
+		'/logout': this.navLogout,
+		'/register': this.navRegister,
+		'/forget': this.navForget,
+	}
+	/*
+	onSysNavRoutes() {
+		this.onNavRoutes(this.sysRoutes);
+	}
+	*/
+	onNavRoutes(navPageRoutes: {[url:string]: NavPage}) {
+		if (this.doneSysRoutes === false) {
+			this.doneSysRoutes = true;
+			this.internalOnNavRoutes(this.sysRoutes);
+		}
+		this.internalOnNavRoutes(navPageRoutes);
+	}
+
+	private internalOnNavRoutes(navPageRoutes: {[url:string]: NavPage}) {
+		if (!navPageRoutes) return;
+		this.navPageRoutes = Object.assign(this.navPageRoutes, navPageRoutes);
+		let navOns: { [route: string]: (params: any, queryStr: any) => void } = {};
+		for (let route in navPageRoutes) {
+			let navPage = navPageRoutes[route];
+			navOns[route] = this.routeFromNavPage(navPage);
+		}
+		this.on(navOns);
+	}
+
+	async checkVersion():Promise<string> {
+        let {href} = document.location;
+        href += (href.indexOf('?')>=0? '&':'?') + '_t_t_=' + new Date().getTime();
+        let ret = await fetch(href);
+        let r = await ret.text();
+        let parser = new DOMParser();
+        let htmlDoc = parser.parseFromString(r, 'text/html');
+        let elHtml = htmlDoc.getElementsByTagName('html');
+        let newVersion = elHtml[0].getAttribute('data-version');
+        return newVersion;
+    }
+
+	private createLogin: (tonva:Tonva)=>Promise<Login>;
+	setCreateLogin(createLogin: (tonva:Tonva)=>Promise<Login>) {
+		this.createLogin = createLogin;
+	}
+
+    async changePassword() {
+		let login = await this.getLogin();
+		login.showChangePassword();
+    }
+
+    async userQuit() {
+        let login = await this.getLogin();
+        login.showUserQuit();
+    }
+
+	private login: Login;
+	private async getLogin():Promise<Login> {
+		if (this.login) return this.login;
+		return this.login = await this.createLogin(this);
+	}
+	async showLogin(callback?: (user:User)=>Promise<void>, withBack?:boolean) {
+		let login = await this.getLogin();
+		login.showLogin(callback, withBack);
+    }
+
+    async showLogout(callback?: ()=>Promise<void>) {
+		let login = await this.getLogin();
+		login.showLogout(callback);
+	}
 }

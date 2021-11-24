@@ -1,34 +1,44 @@
-import { makeObservable, observable } from "mobx";
 import { User } from "tonva-core";
+import { QueryPager } from "tonva-view";
 import { CUqBase } from "uq-app";
 import { VMe } from "./VMe";
 import { VEditMe } from "./VEditMe";
 import { VAdminSetting } from "./VAdminSetting";
-import { QueryPager } from "tonva-react";
 
 export class CMe extends CUqBase {
 	unitOwner: User;
 	rootUnits: QueryPager<any>;
 	admins: {id:number;role:number}[] = null;
-	isAdmin: boolean = false;
-	map = new Map();
+	data: {
+		isAdmin: boolean;
+		map: Map<any, any>;
+	};
+	// isAdmin: boolean = false;
+	// map = new Map();
 	constructor(res:any) {
 		super(res);
+		/*
 		makeObservable(this, {
 			isAdmin: observable,
 			map: observable.shallow,
 		});
+		*/
+		this.data = this.shallow({
+			isAdmin: false,
+			map: new Map(),
+		});
 	}
 
 	mapAdd = () => {
-		let v = this.map.get(1);
+		let {map} = this.data;
+		let v = map.get(1);
 		if (!v) {
 			v = 1;
 		}
 		else {
 			v = {v};
 		}
-		this.map.set(1, v);
+		map.set(1, v);
 	}
 
     protected async internalStart() {
@@ -45,11 +55,13 @@ export class CMe extends CUqBase {
 	load = async () => {
 		let admins = await this.uqs.JkMe.getAdmins();
 		if (!admins) return;
-		let userId = this.user.id;
-		let p = admins.findIndex(v => v.id === userId);
-		if (p >= 0) admins.splice(p, 1);
-		this.admins = admins;
-		this.isAdmin = true;
+		this.runInAction(() => {
+			let userId = this.user.id;
+			let p = admins.findIndex(v => v.id === userId);
+			if (p >= 0) admins.splice(p, 1);
+			this.admins = admins;
+			this.data.isAdmin = true;				
+		});
 	}
 
 	backend = async () => {

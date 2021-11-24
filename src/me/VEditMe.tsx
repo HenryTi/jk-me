@@ -3,7 +3,7 @@ import { tonva } from 'tonva-core';
 import {
     ItemSchema, StringSchema, ImageSchema, UiTextItem, UiImageItem, Page,
     Edit, UiSchema, VPage, Prop, FA, IconText, PropGrid
-} from 'tonva-react';
+} from "tonva-view";
 import { CMe } from './CMe';
 
 export class VEditMe extends VPage<CMe>{

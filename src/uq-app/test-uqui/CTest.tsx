@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { CBase/*, Context*/ } from "tonva-react";
+import { CBase/*, Context*/ } from "tonva-view";
 /*
 import { CID, MidID, CIDX, MidIDX, MidTag, CIDTagList, CTagIDList
 	, SheetUI, MidIDTagList, CSheetNew, MidSheet } from "tonva-uqui";

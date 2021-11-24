@@ -21,7 +21,7 @@ export class Uq {
 				}
 				let ret = target[lk];
 				if (ret !== undefined) return ret;
-				let func = (this as any)[key];
+				let func = (this.$_uqMan as any)[key];
 				if (func !== undefined) return func;
 				let err = `entity ${this.$_uqMan.name}.${String(key)} not defined`;
 				console.error('UQ错误：' + err);

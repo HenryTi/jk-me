@@ -1,4 +1,4 @@
-import { UQsBuildingLoader } from "tonva-core";
+import { UQsBuildingLoader } from "../uqCore";
 import { TsTemplate } from "./TsTemplate";
 
 export abstract class UqBuildContext {

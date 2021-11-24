@@ -1,4 +1,4 @@
-import { LMR } from "tonva-react";
+import { LMR } from "tonva-view";
 import { cnAmount } from "tools";
 import { Item, Post } from "uq-app/uqs/JkMe";
 import { CPosts } from "./CPosts";

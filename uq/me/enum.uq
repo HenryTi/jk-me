@@ -21,6 +21,7 @@ ENUM Item (
 ENUM Post (
     staff                       = 1010,
     staffSales                  = 1100,
+    topSales                    = 1101,
     manager                     = 2010,
     managerIT                   = 2100,
     agent                       = 7010,
@@ -76,6 +77,7 @@ ID #PostTitle ver 0.2 CONST (
 VALUES
 (Post.staff, '职员', null),
 (Post.staffSales, '销售员', null),
+(Post.topSales, '销售高管', null),
 (Post.manager, '经理', null),
 (Post.managerIT, 'IT总监', null),
 (Post.agent, '轻代理', null),
@@ -112,11 +114,16 @@ VALUES
 (EnumBizOpType.orderDeliverDone, Post.staffSales, Item.orderAmount, Item.orderAmount, null, TEXTID('销售额')),
 (EnumBizOpType.orderDeliverDone, Post.staffSales, Item.profitFee, Item.orderFee, 4, TEXTID('发货后毛利提成')),
 (EnumBizOpType.orderDeliverDone, Post.staffSales, Item.couponFee, Item.orderFee, 1, TEXTID('发货后发券提成')),
+(EnumBizOpType.orderDeliverDone, Post.topSales, Item.profitFee, Item.orderFee, 1, TEXTID('发货后高管毛利提成')),
+(EnumBizOpType.orderDeliverDone, Post.topSales, Item.couponFee, Item.orderFee, 1, TEXTID('发货后高管发券提成')),
 (EnumBizOpType.orderDeliverDone, Post.managerIT, Item.amountFee, Item.orderAmount, 0.1, TEXTID('销售额提成')),
 
 -- EnumOrderAction.receiveDone
 (EnumBizOpType.orderReceiveDone, Post.staffSales, Item.profitFee, Item.orderFee, 4, TEXTID('收款后毛利提成')),
 (EnumBizOpType.orderReceiveDone, Post.staffSales, Item.couponFee, Item.orderFee, 1, TEXTID('收款后发券提成')),
+
+(EnumBizOpType.orderReceiveDone, Post.topSales, Item.profitFee, Item.orderFee, 1, TEXTID('收款后高管毛利提成')),
+(EnumBizOpType.orderReceiveDone, Post.topSales, Item.couponFee, Item.orderFee, 1, TEXTID('收款后高管发券提成')),
 
 -- 
 (EnumBizOpType.pickupDone, Post.staff, Item.pickupPoint, Item.pickupPoint, 100, TEXTID('拣货计件积分')),

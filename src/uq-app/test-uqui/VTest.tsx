@@ -1,4 +1,4 @@
-import { FA, LMR, VPage } from "tonva-react";
+import { FA, LMR, VPage } from "tonva-view";
 import { CTester, UIItem } from "./CTest";
 
 export class VTester extends VPage<CTester> {
