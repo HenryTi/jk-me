@@ -1,7 +1,6 @@
 import { Tonva, User, Web } from "tonva-core";
-import { VPage } from "./vpage";
-import { Controller } from "./controller";
-import { WebNav } from "tonva-react";
+import { VPage } from "./VPage";
+import { Controller, WebNav } from "./Controller";
 
 export abstract class ControllerWithWeb extends Controller {
     readonly web: Web;

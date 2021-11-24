@@ -1,6 +1,4 @@
-import _ from 'lodash';
 import { Web } from 'tonva-core';
-//import { Nav } from 'tonva-react';
 import { ControllerWithWeb, WebNav } from "../vm";
 import { CAppBase, IConstructor } from "./CAppBase";
 
@@ -51,8 +49,8 @@ export abstract class CBase<A extends CAppBase<U>, U> extends ControllerWithWeb 
 	getWebNav(): WebNav<any> {
 		let wn = this.cApp?.getWebNav();
 		if (wn === undefined) return;
-		let ret = _.clone(wn);
-		_.merge(ret, this.webNav);
+		let ret = Object.assign({}, wn);
+		Object.assign(ret, this.webNav);
 		return ret;
 	}
 }
@@ -80,13 +78,13 @@ export abstract class CSub<A extends CAppBase<U>, U, T extends CBase<A, U>> exte
 		for (let p = this.owner; p!==undefined; p = (p as any)?.owner) {
 			ownerWNs.push(p.webNav);
 		}
-		let ret = _.clone(wn);
+		let ret = Object.assign({}, wn);
 		for (;;) {
 			let own = ownerWNs.pop();
 			if (own === undefined) break;
-			_.merge(ret, own);
+			Object.assign(ret, own);
 		}
-		_.merge(ret, this.webNav);
+		Object.assign(ret, this.webNav);
 		return ret;
 	}
 }

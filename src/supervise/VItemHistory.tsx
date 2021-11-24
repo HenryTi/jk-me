@@ -1,5 +1,5 @@
 import { dateFromMinuteId } from 'tonva-core';
-import { List, LMR, VDate, VPage } from "tonva-react";
+import { List, LMR, VDate, VPage } from "tonva-view";
 import { CSupervise } from "supervise";
 import { ReturnGetItemHistory$page } from "uq-app/uqs/JkMe";
 

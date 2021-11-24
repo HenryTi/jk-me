@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { UqBuildContext } from 'tonva-core';
+import { UqBuildContext } from './UqBuildContext';
 import { UqMan } from "../uqCore";
 import { getNameFromUq, overrideTsFile } from './tools';
 import { TsUqFolder } from './TsUqFolder';

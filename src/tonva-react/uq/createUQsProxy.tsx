@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import { UQsMan, TuidInner, uqStringify, TuidImport } from "tonva-core";
-import { Render } from "tonva-react";
+import { Render } from "../ui";
 import { Uq } from "./Uq";
 
 export function createUQsProxy(uqsMan: UQsMan) {

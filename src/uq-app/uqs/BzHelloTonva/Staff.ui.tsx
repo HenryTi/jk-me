@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FieldItemString, FieldItemInt, FieldItemId, FieldItem, UI, TFunc } from 'tonva-react';
+import { FieldItemString, FieldItemInt, FieldItemId, FieldItem, UI, TFunc } from "tonva-view";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Res, uqStringify, setRes } from "tonva-core";
 import { Staff } from "./BzHelloTonva";

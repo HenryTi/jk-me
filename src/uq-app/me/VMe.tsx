@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react';
-import { Image, VPage, IconText, PropGrid, LMR, FA, Prop } from 'tonva-react';
+import { Image, VPage, IconText, PropGrid, LMR, FA, Prop } from "tonva-view";
 import { CMe } from './CMe';
 import { appConfig } from '../appConfig';
 import { VAbout } from './VAbout';

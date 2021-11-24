@@ -93,7 +93,7 @@ export class CRegister extends CRegBase {
         }
         let ret = await this.web.userApi.register(params);
         if (ret === 0) {
-            this.tonva.clear();
+            this.tonva.nav.clear();
             this.toSuccess();
             return;
         }
@@ -130,7 +130,7 @@ export class CForget extends CRegBase {
 			console.log(err);
 			throw err;
 		}
-        this.tonva.clear();
+        this.tonva.nav.clear();
         this.toSuccess();
         return;
     }

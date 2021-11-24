@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { NavView, start, TonvaReact } from 'tonva-react';
+import { NavView, start, TonvaReact } from "tonva-view";
 import { CApp } from './CApp';
 import { appConfig } from './appConfig';
 // import { App } from './App';

@@ -1,4 +1,4 @@
-import { FA, List, LMR, VPage } from "tonva-react";
+import { FA, List, LMR, VPage } from "tonva-view";
 import { EnumRoleOp
     , ReturnGetUserSuperviseItemRet } from "uq-app/uqs/JkMe";
 import { Item  } from "uq-app/uqs/JkMe/JkMe";

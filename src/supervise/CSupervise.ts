@@ -22,7 +22,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { CObjects } from "./objects/CObjects";
 import { initCObjects } from "./objects";
 import { VAccounts } from "./VAccounts";
-import { PageItems } from "tonva-react";
+import { PageItems } from "tonva-view";
 
 export class CSupervise extends CUqBase {
 	item: Item;

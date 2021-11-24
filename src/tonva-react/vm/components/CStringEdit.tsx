@@ -1,6 +1,6 @@
 import React from 'react';
 import { FA, Page } from '../../components';
-import { Controller } from "../controller";
+import { Controller } from "../Controller";
 import { makeObservable, observable } from 'mobx';
 import { observer } from 'mobx-react';
 import { tonva } from 'tonva-core';

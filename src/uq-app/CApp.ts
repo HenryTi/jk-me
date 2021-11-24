@@ -10,7 +10,7 @@ import { Item, Post, EnumRole, EnumRoleOp, EnumAccount } from "./uqs/JkMe";
 import { CSupervise } from "supervise";
 import { CPortal, CObjectPortal, CUnitPortal } from "portal";
 import { makeObservable, observable, runInAction } from "mobx";
-import { start } from "tonva-react";
+import { start } from "tonva-view";
 import { appConfig } from "./appConfig";
 import { Tonva } from "tonva-core";
 

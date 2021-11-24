@@ -1,7 +1,7 @@
 import { VPeriodSum } from "../VPortal";
 import { CUnitPortal } from "./CUnitPortal";
 import { Item } from "uq-app/uqs/JkMe";
-import { FA, LMR } from "tonva-react";
+import { FA, LMR } from "tonva-view";
 
 const nf = new Intl.NumberFormat('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
 

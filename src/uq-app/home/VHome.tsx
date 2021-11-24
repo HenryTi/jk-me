@@ -1,4 +1,4 @@
-import { FA, VPage } from "tonva-react";
+import { FA, VPage } from "tonva-view";
 import { CHome } from "./CHome";
 import logo from '../../logo.svg';
 import '../../App.css';

@@ -1,4 +1,4 @@
-import { makeObservable, observable, runInAction } from "mobx";
+import { isObservable } from "mobx";
 import { CApp, CUqBase } from "uq-app";
 import { Title } from "uq-app/CApp";
 import { EnumAccount, ReturnGetObjectAccountHistoryRet, ReturnGetUserObjectAccountRet } from "uq-app/uqs/JkMe";
@@ -6,15 +6,17 @@ import { VAccount } from "./VAccount";
 import { VObjectAccountHistory } from "./VObjectAccountHistory";
 
 export class CAccount extends CUqBase {
-	accounts: ReturnGetUserObjectAccountRet[] = null;
+	data: {
+		accounts: ReturnGetUserObjectAccountRet[];
+	};
 	account: ReturnGetUserObjectAccountRet;
 	accountHistory: ReturnGetObjectAccountHistoryRet[];
 	accountTitle:Title;
 
     constructor(cApp: CApp) {
 		super(cApp);
-		makeObservable(this, {
-			accounts: observable
+		this.data = this.shallow({
+			accounts: null,
 		});
 	}
 
@@ -24,8 +26,9 @@ export class CAccount extends CUqBase {
 
 	async load(object: number) {
 		let ret = await this.uqs.JkMe.GetUserObjectAccount.query({object});
-		runInAction(() => {
-			this.accounts = ret.ret;
+		this.runInAction(() => {
+			this.data.accounts = ret.ret;
+			console.log('isObservable(this.data.accounts[0])', isObservable(this.data.accounts[0]));
 		});
 	}
 

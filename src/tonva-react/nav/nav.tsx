@@ -1,5 +1,5 @@
 import {makeObservable, observable} from 'mobx';
-import { Navigo, RouteFunc, Hooks, NamedRoute, Web, resOptions, Tonva } from 'tonva-core';
+import { Navigo, RouteFunc, Hooks, NamedRoute, Web, resOptions, Tonva, Login } from 'tonva-core';
 import {Page} from '../components';
 
 import 'font-awesome/css/font-awesome.min.css';
@@ -8,7 +8,7 @@ import '../css/va.css';
 import '../css/animation.css';
 import { ReloadPage, ConfirmReloadPage } from '../components/reloadPage';
 //import { PageWebNav } from '../components/page';
-import { createLogin, Login, showForget, showRegister } from '../components/login';
+import { createLogin, showForget, showRegister } from '../components/login';
 //import { env, FetchError, LocalData, User } from 'tonva-core';
 import { SystemNotifyPage } from './FetchErrorView';
 

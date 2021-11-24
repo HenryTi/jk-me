@@ -1,4 +1,4 @@
-import { VPage } from "tonva-react";
+import { VPage } from "tonva-view";
 import { CMe } from "./CMe";
 
 export class VAccountant extends VPage<CMe> {

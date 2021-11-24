@@ -1,5 +1,5 @@
 import { CSupervise } from "supervise";
-import { List, LMR, VPage } from "tonva-react";
+import { List, LMR, VPage } from "tonva-view";
 import { ReturnGetItemSumMonthsRet } from "uq-app/uqs/JkMe";
 import { ViewItemDayHistory } from "./VItemDayHistory";
 

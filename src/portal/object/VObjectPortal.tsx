@@ -1,4 +1,4 @@
-import { VPage } from "tonva-react";
+import { VPage } from "tonva-view";
 import { CObjectPortal } from "./CObjectPortal";
 
 export class VObjectPortal extends VPage<CObjectPortal> {

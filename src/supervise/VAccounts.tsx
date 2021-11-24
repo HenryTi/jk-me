@@ -1,4 +1,4 @@
-import { List, LMR, VPage } from "tonva-react";
+import { List, LMR, VPage } from "tonva-view";
 import { EnumAccount, EnumObjectType, Post, ReturnGetAccountsRet } from "uq-app/uqs/JkMe";
 import { CSupervise } from "./CSupervise";
 
@@ -24,7 +24,7 @@ export class VAccounts extends VPage<CSupervise> {
                 default: return <>{objectType} {objectTo}</>;
                 case EnumObjectType.post:
                     let {postTitles} = cApp;
-                    return <>{postTitles[objectTo as Post].title}</>;
+                    return <>{postTitles[objectTo as Post]?.title}</>;
                 case EnumObjectType.staff:
                     return Employee.tv(objectTo, renderEmployee);
             }

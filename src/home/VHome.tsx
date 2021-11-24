@@ -1,4 +1,4 @@
-import { VPage } from "tonva-react";
+import { VPage } from "tonva-view";
 import { CHome } from "./CHome";
 import '../App.css';
 

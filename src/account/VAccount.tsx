@@ -1,12 +1,12 @@
 import { CAccount } from "./CAccount";
-import { View } from "tonva-react";
-import { observer } from "mobx-react";
+import { View } from 'tonva-view';
 import { EnumAccount, Post } from "uq-app/uqs/JkMe";
 
 export class VAccount extends View<CAccount> {
     render() {
-		let VAccounts = observer(() => {
-			let {accounts, cApp, onAccountClick} = this.controller;
+		return this.react(() => {
+			let {data, cApp, onAccountClick} = this.controller;
+			let {accounts} = data;
 			if (!accounts) return null;
 			let {accountTitles, postTitles} = cApp;
 			return <>{accounts.map((v, index) => {
@@ -26,6 +26,5 @@ export class VAccount extends View<CAccount> {
 				</div>
 			})}</>;
 		});
-        return <VAccounts />;
     }
 }

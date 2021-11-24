@@ -1,4 +1,4 @@
-import { VPage } from "tonva-react";
+import { VPage } from "tonva-view";
 import { CMe } from "./CMe";
 import { renderUserText } from "./renderUser";
 

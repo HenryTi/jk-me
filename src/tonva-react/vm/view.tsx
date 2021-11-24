@@ -1,8 +1,9 @@
 import * as React from 'react';
+import { observer } from 'mobx-react';
 import { Page } from '../components';
 import { env, Nav, Tonva } from 'tonva-core';
-import { Controller } from './controller';
-import { VPage } from './vpage';
+import { Controller } from './Controller';
+import { VPage } from './VPage';
 
 export abstract class View<C extends Controller> {
     protected readonly tonva: Tonva;
@@ -25,6 +26,11 @@ export abstract class View<C extends Controller> {
 	navigate(url:string) {this.tonva.navigate(url)}
 	//protected isMe(id:any) {return this.controller.isMe(id)}
     abstract render(param?:any): JSX.Element;
+
+    protected react(func: () => JSX.Element):JSX.Element {
+        let V = observer(func.bind(this));
+        return <V />;
+    }
 
     protected renderVm(vm: new (controller: C)=>View<C>, param?:any) {
         return (new vm(this.controller)).render(param);

@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import React from "react";
-import { List, VPage } from "tonva-react";
+import { List, VPage } from "tonva-view";
 import { CObjects } from "./CObjects";
 
 export abstract class VObjects<T extends CObjects> extends VPage<T> {

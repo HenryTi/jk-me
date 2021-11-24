@@ -1,5 +1,5 @@
 import { dateFromMinuteId } from 'tonva-core';
-import { List, LMR, VDate, VPage } from "tonva-react";
+import { List, LMR, VDate, VPage } from "tonva-view";
 import { ReturnGetObjectItemHistoryRet } from "uq-app/uqs/JkMe";
 import { CPortal } from "./CPortal";
 
