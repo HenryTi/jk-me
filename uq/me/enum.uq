@@ -100,23 +100,25 @@ VALUES
 -- OPIBooking, 是设置某个岗位（post）能够看到某个科目（postItem）值，该值和另外一个科目（item）的比例关系（radio）以及在何时（bizOpType）计算该值
 ID #OPIBooking ver 0.5 CONST (
     id small,
-    bizOpType ENUM EnumBizOpType,
-    post ENUM Post,
-    postItem ENUM Item,                 -- item to OPIHistory, 要计算的科目
-    item ENUM Item,                     -- item to ItemHistory, 为了在计算opihistory时去使用ItemHistory中的值
+    KEY bizOpType ENUM EnumBizOpType,
+    KEY post ENUM Post,
+    KEY postItem ENUM Item,                 -- item to OPIHistory, 要计算的科目
+    KEY item ENUM Item,                     -- item to ItemHistory, 为了在计算opihistory时去使用ItemHistory中的值
     ratio DEC(6,2) DEFAULT 100,         -- 百分比，从itemHistory的value，折算到 OPIHistory, 未来有可能是分段公式
     memo INT,                           -- 文本id
-    INDEX bizOpType_post(bizOpType, post),
 )
 + (bizOpType, post, postItem, item, ratio, memo)
 VALUES
 -- EnumOrderAction.orderDeliverDone
 (EnumBizOpType.orderDeliverDone, Post.staffSales, Item.orderAmount, Item.orderAmount, null, TEXTID('销售额')),
-(EnumBizOpType.orderDeliverDone, Post.staffSales, Item.profitFee, Item.orderFee, 4, TEXTID('发货后毛利提成')),
+(EnumBizOpType.orderDeliverDone, Post.staffSales, Item.profitFee, Item.orderFee, 6, TEXTID('发货后毛利提成')),
 (EnumBizOpType.orderDeliverDone, Post.staffSales, Item.couponFee, Item.orderFee, 1, TEXTID('发货后发券提成')),
 (EnumBizOpType.orderDeliverDone, Post.topSales, Item.profitFee, Item.orderFee, 1, TEXTID('发货后高管毛利提成')),
 (EnumBizOpType.orderDeliverDone, Post.topSales, Item.couponFee, Item.orderFee, 1, TEXTID('发货后高管发券提成')),
 (EnumBizOpType.orderDeliverDone, Post.managerIT, Item.amountFee, Item.orderAmount, 0.1, TEXTID('销售额提成')),
+-- (EnumBizOpType.orderDeliverDone, Post.topSales, Item.amountFee, Item.orderAmount, 0.1, TEXTID('销售额提成')),
+-- (EnumBizOpType.orderDeliverDone, Post.topSales, Item.amountFee, Item.orderFee, 0.1, TEXTID('销售额提成')),
+-- (EnumBizOpType.orderDeliverDone, Post.topSales, Item.profitFee, Item.orderReturn, 0.1, TEXTID('销售额提成')),
 
 -- EnumOrderAction.receiveDone
 (EnumBizOpType.orderReceiveDone, Post.staffSales, Item.profitFee, Item.orderFee, 4, TEXTID('收款后毛利提成')),

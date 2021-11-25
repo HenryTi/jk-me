@@ -50,6 +50,14 @@ IX IxBizOpBound (
     sys (create, update),
 );
 
+ID #BizopOfDuplicateOpiHistory MINUTEID (
+    id,
+    itemHistoryId ID,
+    bizOp ID,
+    booking ID,
+    bizMainBoundId ID,
+);
+
 -- 1. bizMain跟岗位和个人以及“科目item”的绑定关系，表示该bizMain将使用该item为该岗位的该个人计算绩效
 -- 2. 从订单绑定管理发送过来。
 -- 3. 一直保留
@@ -152,21 +160,30 @@ PROC #ProcBizOp(
             WHERE b.id=bizOp AND f.bound IS NULL)
     {
         -- LOG CONCAT_WS(' ', 'action', action, itemHistoryId, post, postItem, to) SUBJECT 'ProcBizOp Bound 1';
-        VAR objectPostItemId ID = ID(
+        VAR opi ID = ID(
             ObjectPostItem new
             KEY object=to, post=post, item=postItem
         );
-        LOG CONCAT_WS(' ', objectPostItemId, itemHistoryId, bizOpType, post, postItem, to) SUBJECT 'ProcBizOp Bound 2';
+        IF Exists(SELECT a.id FROM OPIHistory as a WHERE a.opi=opi AND a.itemHistory=itemHistoryId AND a.booking=booking) {
+            VAR bdoId ID = ID(BizopOfDuplicateOpiHistory new);
+            WITH BizopOfDuplicateOpiHistory as a ID=bdoId SET 
+                a.itemHistoryId = itemHistoryId,
+                a.bizOp = bizOp,
+                a.booking = booking,
+                a.bizMainBoundId = bizMainBoundId;
+            CONTINUE;
+        }
+        LOG CONCAT_WS(' ', opi, itemHistoryId, bizOpType, post, postItem, to) SUBJECT 'ProcBizOp Bound 2';
         VAR opiHistoryId ID;
         SET opiHistoryId=ID(OPIHistory new STAMP stamp);
         WITH OPIHistory as a ID=opiHistoryId
-            SET a.opi=objectPostItemId, a.itemHistory=itemHistoryId
+            SET a.opi=opi, a.itemHistory=itemHistoryId
             , a.value=value * IFNULL(IFNULL(boundRatio, ratio), 100) / 100
             , a.booking=booking;
         FOR (VAR user ID
             OF SELECT b.ix as user
                 FROM ObjectPostItem as a JOIN UserObject as b ON a.object=b.xi
-                WHERE a.id=objectPostItemId)
+                WHERE a.id=opi)
         {
             POKE user;
         }
