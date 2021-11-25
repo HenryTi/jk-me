@@ -42,7 +42,7 @@ IDX DxBizOp (
     INDEX biz_id(biz),
 );
 
--- 标记BizMainBound是否已经处理,bound = 1表示已经处理，是操作结果,不是输入；
+-- 标记bizOp/BizMainBound相关的绩效是否已经已经写入opiHistory,bound = 1表示已经处理，是操作结果,不是输入；
 IX IxBizOpBound (
     ix,                         -- bizOp id
     xi BizMainBound,
