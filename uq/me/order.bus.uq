@@ -38,18 +38,6 @@ ACCEPT order {
     -- PROC ProcSetOrderReady(mainId, OrderReady.sheet);
     PROC ProcQueueBizMain(mainId);
 }
-/*
-ACCEPT [deliver-done] {
-    LOG CONCAT_WS(' ', id) SUBJECT 'ACCEPT JkOrderBus.deliver-done';
-	FOR detail {
-		WITH DxOrderDetail ID=orderDetail SET deliverDone += value;
-        WITH DxBizOp as a ID=id 
-            SET a.action=EnumBizOpType.orderDeliverDone, a.biz=orderDetail, a.value=value, a.stamp=$stamp;
-        VAR queueId ID = ID(QueueBizOp new, id);
-	}
-    SCHEDULE ExecQueueBizOp DELAY 1;
-}
-*/
 ACCEPT [receive-done] {
     LOG CONCAT_WS(' ', id) SUBJECT 'ACCEPT JkOrderBus.receive-done';
 	FOR detail {

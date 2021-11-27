@@ -1,7 +1,8 @@
 UQ 百灵威系统工程部/me version='0.01.06' author='henry' {
-	SCHEDULE CalcMonthSum REPEAT -1 INTERVAL 60;	--无限重复
-	SCHEDULE CalcDaySum REPEAT -1 INTERVAL 5;	--无限重复
-	SCHEDULE CalcAccount REPEAT -1 INTERVAL 5;	--无限重复
+	SCHEDULE CalcSum REPEAT -1 INTERVAL 5;		--无限重复
+	-- SCHEDULE CalcMonthSum REPEAT -1 INTERVAL 60;	--无限重复
+	-- SCHEDULE CalcDaySum REPEAT -1 INTERVAL 5;	--无限重复
+	-- SCHEDULE CalcAccount REPEAT -1 INTERVAL 5;	--无限重复
 };
 /*
 ROLE creater, owner, admin				-- 设置账号，初始化，设立team，以及team成员

@@ -3,7 +3,7 @@ import { CUnitPortal } from "./CUnitPortal";
 import { Item } from "uq-app/uqs/JkMe";
 import { FA, LMR } from "tonva-view";
 
-const nf = new Intl.NumberFormat('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+const nf = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 export class VUnitPortal extends VPeriodSum<CUnitPortal> {
     header() { return '详情'; }
@@ -11,24 +11,25 @@ export class VUnitPortal extends VPeriodSum<CUnitPortal> {
         return <div>
             <div>{/*this.controller.pageTop*/}</div>
             <div>{this.controller.renderVPortal()}</div>
-        </div>;        
+        </div>;
     }
 
     protected renderItem = (row: any, index: number) => {
-        let {item, value} = row;
-        let {itemTitles} = this.controller.cApp;
-		let {title, unit} = itemTitles[item as Item];
+        let { item, value } = row;
+        let { itemTitles } = this.controller.cApp;
+        let { title, unit } = itemTitles[item as Item];
+        if (!title) return null;
         let left = <div>
             <FA className="text-info me-3" name="lightbulb-o" />
             {title}
         </div>;
         let right = <div>
             {
-                value<0?
-                <span className="text-danger">({nf.format(-value)})</span>
-                :
-                <>{nf.format(value??0)}</>
-            } 
+                value < 0 ?
+                    <span className="text-danger">({nf.format(-value)})</span>
+                    :
+                    <>{nf.format(value ?? 0)}</>
+            }
             <small className="text-muted ms-1">{unit}</small>
         </div>;
         return <LMR className="py-2 px-3 d-flex align-items-center"

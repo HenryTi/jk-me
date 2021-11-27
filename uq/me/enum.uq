@@ -53,7 +53,7 @@ VALUES
 (Item.orderDeliver, '发货', '已发货金额', '元', 2),
 (Item.orderAmount, '销售额', null, '元', 2),
 (Item.orderProfit, '毛利', null, '元', 2),
-(Item.orderFee, '订单提成', null, '元', 2),
+(Item.orderFee, null, '提成基数', '元', 2),         -- 如果title是null，就不需要展示给界面。属于内部核算科目
 (Item.orderReturn, '退货', null, '元', 2),
 (Item.orderReceive, '收款', null, '元', 2),
 (Item.orderReceiveReturn, '退款', null, '元', 2),

@@ -71,54 +71,68 @@ ID #BizMainBound (
 );
 
 -- 处理的是 biz main sheet
-ACT # ExecQueueBizMain () {
+PROC # ExecQueueBizMain () {
     VAR queueId ID, bizMain ID;
-    SET queueId=a.id, bizMain=a.bizMain
-        FROM QueueBizMain as a
-        ORDER BY a.id ASC
-        LIMIT 1;
-    IF queueId IS NULL {
-        LOG CONCAT_WS(' ', NULL) SUBJECT 'ExecQueueBizMain EXIT';
-        RETURN;
-    }
-    LOG CONCAT_WS(' ', bizMain, queueId) SUBJECT 'ExecQueueBizMain';
-    FOR (VAR bizOp ID
-        OF SELECT c.id as bizOp
-            FROM DxBiz as b
-                JOIN DxBizOp as c ON c.biz=b.id
-            WHERE b.main=bizMain AND b.ready=1)
-    {
-        TRANSACTION Start;
-        PROC ProcBizOp(bizOp);
-        TRANSACTION Commit;
-    }
-    WITH QueueBizMain ID=queueId DEL;
-    SCHEDULE ExecQueueBizMain;
-};
-
-ACT #ExecQueueBizOp ver 0.3 () {
-    LOG CONCAT_WS(' ', 'start') SUBJECT 'ExecQueueBizOp';
-    VAR rowCount INT = 0;
-    FOR (VAR queueId ID, bizOp ID
-        OF SELECT a.id as queueId, a.bizOp
-            FROM QueueBizOp as a
+    VAR rows INT;
+    SET rows=0;
+    WHILE 1=1 {
+        SET queueId = NULL;
+        SET queueId=a.id, bizMain=a.bizMain
+            FROM QueueBizMain as a
             ORDER BY a.id ASC
-            LIMIT maxActionRows)
-    {
-        LOG CONCAT_WS(' ', 'bizOp', bizOp) SUBJECT 'ExecQueueBizOp';
-        TRANSACTION Start;
-        PROC ProcBizOp(bizOp);
-        WITH QueueBizOp ID=queueId DEL;
-        TRANSACTION Commit;
-        SET rowCount = rowCount + 1;
-    }
-
-    IF rowCount>=maxActionRows {
-        SCHEDULE ExecQueueBizOp;
+            LIMIT 1;
+        IF queueId IS NULL {
+            LOG CONCAT_WS(' ', NULL) SUBJECT 'ExecQueueBizMain EXIT';
+            RETURN;
+        }
+        LOG CONCAT_WS(' ', bizMain, queueId) SUBJECT 'ExecQueueBizMain';
+        FOR (VAR bizOp ID
+            OF SELECT c.id as bizOp
+                FROM DxBiz as b
+                    JOIN DxBizOp as c ON c.biz=b.id
+                WHERE b.main=bizMain AND b.ready=1)
+        {
+            TRANSACTION Start;
+            PROC ProcBizOp(bizOp);
+            TRANSACTION Commit;
+        }
+        WITH QueueBizMain ID=queueId DEL;
+        SET rows = rows + 1;
+        IF rows>10 {
+            SLEEP 0.01;
+            SET rows = 0;
+        }
     }
 };
 
-PROC #ProcBizOp(
+PROC #ExecQueueBizOp ver 0.3 () {
+    LOG CONCAT_WS(' ', 'start') SUBJECT 'ExecQueueBizOp';
+    WHILE 1=1 {
+        VAR rowCount INT = 0;
+        FOR (VAR queueId ID, bizOp ID
+            OF SELECT a.id as queueId, a.bizOp
+                FROM QueueBizOp as a
+                ORDER BY a.id ASC
+                LIMIT maxActionRows)
+        {
+            LOG CONCAT_WS(' ', 'bizOp', bizOp) SUBJECT 'ExecQueueBizOp';
+            TRANSACTION Start;
+            PROC ProcBizOp(bizOp);
+            WITH QueueBizOp ID=queueId DEL;
+            TRANSACTION Commit;
+            SET rowCount = rowCount + 1;
+        }
+
+        IF rowCount<maxActionRows {
+            BREAK;
+        }
+        ELSE {
+            SLEEP 0.1;
+        }
+    }
+};
+
+PROC #ProcBizOp ver 0.1 (
     bizOp ID,
 ) {
     -- 判断是不是Biz的凭单已经ready
@@ -179,6 +193,8 @@ PROC #ProcBizOp(
             SET a.opi=opi, a.itemHistory=itemHistoryId
             , a.value=value * IFNULL(IFNULL(boundRatio, ratio), 100) / 100
             , a.booking=booking;
+                WITH SumQueueItemHistory ID=itemHistoryId;
+        WITH SumQueueOpiHistory ID=opiHistoryId;
         FOR (VAR user ID
             OF SELECT b.ix as user
                 FROM ObjectPostItem as a JOIN UserObject as b ON a.object=b.xi
@@ -236,12 +252,10 @@ PROC #ProcWriteItemHistory ver 0.1 (
     }
 };
 
-PROC #ProcItemHistory(
---    biz ID,
+PROC #ProcItemHistory ver 0.1 (
     bizOp ID,
     item ENUM Item,
     value DEC(18,4),
---    stamp INT,
 ) {
     VAR itemHistoryId ID, stamp INT;
     SET itemHistoryId = a.id FROM ItemHistory as a WHERE a.bizOp=bizOp AND a.item=item;
@@ -253,5 +267,6 @@ PROC #ProcItemHistory(
             STAMP stamp
         );
         WITH ItemHistory as a ID = itemHistoryId SET a.value=value;
+        WITH SumQueueItemHistory ID=itemHistoryId;
     }
 };
