@@ -1,9 +1,11 @@
 UQ 百灵威系统工程部/me version='0.01.06' author='henry' {
-	SCHEDULE CalcSum REPEAT -1 INTERVAL 5;		--无限重复
-	-- SCHEDULE CalcMonthSum REPEAT -1 INTERVAL 60;	--无限重复
-	-- SCHEDULE CalcDaySum REPEAT -1 INTERVAL 5;	--无限重复
-	-- SCHEDULE CalcAccount REPEAT -1 INTERVAL 5;	--无限重复
+	LOG '百灵威系统工程部/me' SUBJECT 'SCHEDULE ALL'
+	SCHEDULE CalcSum REPEAT -1 INTERVAL 1;		--无限重复
+	SCHEDULE ExecQueueBizMain REPEAT -1 INTERVAL 1;		--无限重复
+	SCHEDULE ExecQueueBizOp REPEAT -1 INTERVAL 1;		--无限重复
 };
+
+CONST Const_Sleep_Time = 0.01;
 /*
 ROLE creater, owner, admin				-- 设置账号，初始化，设立team，以及team成员
 	, manager

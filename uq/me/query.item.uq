@@ -203,8 +203,9 @@ PAGE (
     memo CHAR(100),             -- 文本ID
 ) {
     VAR timeZone TINYINT = timezone();
-    PAGE SELECT a.id, c.biz, a.bizOp, a.item, a.value, idtext(a.memo) as memo
+    PAGE SELECT a.id, c.biz, a.bizOp, a.item, a.value, idtext(bk.memo) as memo
         FROM ItemHistory as a
+            LEFT JOIN OPIBooking as bk ON a.booking=bk.id
             JOIN UserSuperviseItem as b ON a.item=b.xi
             JOIN DxBizOp as c ON c.id=a.bizOp
         WHERE b.ix=$user

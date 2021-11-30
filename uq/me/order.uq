@@ -1,9 +1,16 @@
+ENUM OrderType ( 
+	Customer 		= 01,
+	Distributor 	= 11,
+	Branch 			= 21,
+);
+
 ID #OrderMain ver 0.5 GLOBAL (
 	id,
 	KEY no,
     webUser ID,                         -- 下单user注册账号
 	customerAccount ID,                 -- customerAccount
 	seller ID,
+	type ENUM OrderType DEFAULT OrderType.Customer,
     currency ID,
 	sumAmount DEC(18,4),	            -- 订单总金额。各行金额
 	stamp INT,
