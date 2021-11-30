@@ -94,6 +94,8 @@ ID #ObjectAccount (
     KEY object ID,
     KEY account ENUM EnumAccount,   -- 比如提成-commission
     balance DEC(18,4) DEFAULT 0,
+    startBalance DEC(18,4) DEFAULT 0,
+    startStamp TIMESTAMP ,
 );
 
 IX ObjectAccountHistory (

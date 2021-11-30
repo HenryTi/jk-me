@@ -1,3 +1,131 @@
+ID #SumQueueOpiHistory MINUTEID (
+    id,
+);
+
+ID #SumQueueItemHistory MINUTEID (
+    id,
+);
+
+PROC RecalcSum(
+--    from DATE,
+--    to DATE,
+) {
+    WITH MonthSumProduct TRUNCATE;
+    WITH MonthSumCustomer TRUNCATE;
+    WITH DaySumItem TRUNCATE;
+    WITH ObjectAccount TRUNCATE;
+    WITH ObjectAccountHistory TRUNCATE;
+    WITH SumQueueOpiHistory TRUNCATE;
+    WITH SumQueueItemHistory TRUNCATE;
+
+    /-mysql
+    INSERT INTO tv_sumqueueopihistory (id)
+        SELECT id
+        FROM tv_opihistory WHERE 1=1;
+    INSERT INTO tv_sumqueueitemhistory (id)
+        SELECT id
+        FROM tv_itemhistory WHERE 1=1;
+    -/
+    /*
+    VAR id ID, p ID;
+    SET p = 0;
+    WHILE 1=1 {
+        SET id=null;
+        SET id=a.id FROM OpiHistory as a WHERE a.id>p ORDER BY a.id ASC LIMIT 1;
+        IF id IS NULL {
+            BREAK;
+        }
+        WITH SumQueueOpiHistory ID=id SET opiHistory=id;
+        SET p = id;
+    }
+    SET p = 0;
+    WHILE 1=1 {
+        SET id=null;
+        SET id=a.id FROM ItemHistory as a WHERE a.id>p ORDER BY a.id ASC LIMIT 1;
+        IF id IS NULL {
+            BREAK;
+        }
+        WITH SumQueueItemHistory ID=id SET itemHistory=id;
+        SET p = id;
+    }
+    */
+};
+
+-- 定期每10分钟计算一次。各种汇总
+PROC CalcSum ver 0.1 () {
+    TRANSACTION OFF;                     -- 去掉每一个ACT开始的Start Transaction和结尾的Commit
+    PROC ProcCalcHistorySum();
+    PROC ProcCalcAccountSum();
+};
+
+PROC ProcCalcHistorySum ver 0.1 ()
+{
+    LOG 'ProcCalcHistorySum' SUBJECT 'CalcSum';
+    VAR timeZone TINYINT = unittimezone(), tick INT, compileTick INT;
+    VAR value DEC(18,4), historyId ID, queueId ID, date DATE, item ENUM Item
+        , biz ID, bizOp ID;
+    SET tick=UNIX_TIMESTAMP();
+    WHILE 1=1 {
+        SET historyId=NULL;
+        SET historyId=a.id
+            , biz=b.biz
+            , bizOp=a.bizOp
+            , value=a.value
+            , item=a.item
+            , queueId=c.id
+            FROM ItemHistory as a
+                JOIN SumQueueItemHistory as c ON c.id=a.id
+                LEFT JOIN DxBizOp as b ON b.id=a.bizOp
+            ORDER BY c.id ASC
+            LIMIT 1;
+        IF historyId IS NULL {
+            BREAK;
+        }
+
+        SET date=MinuteIdDate(historyId, timeZone);
+        TRANSACTION Start;
+
+        IF biz IS NOT NULL {
+            WITH DaySumItem as a IX=item XI=date SET a.value=IFNULL(a.value,0) + IFNULL(value,0);
+            VAR product ID, customerAccount ID, m INT;
+            SET date=MinuteIdMonth(historyId, timeZone);
+            SET m=YEAR(date)*100+MONTH(date);
+            IF item=Item.orderAmount {
+                SET customerAccount=c.customerAccount
+                    , product=b.product
+                    FROM OrderDetail as b
+                        JOIN OrderMain as c ON b.main=c.id
+                    WHERE b.id=biz;
+
+                -- product
+                WITH MonthSumProduct as a IXX=item IX=m XI=product SET a.value=a.value + value;
+                -- customerAccount
+                WITH MonthSumCustomer as a IXX=item IX=m XI=customerAccount SET a.value=a.value + value;
+            }
+            ELSEIF item=Item.orderReturn {
+                SET customerAccount=c.customerAccount
+                    , product=b.product
+                    FROM OrderDetail as b
+                        JOIN OrderMain as c ON b.main=c.id
+                    WHERE b.id=biz;
+
+                -- product
+                WITH MonthSumProduct as a IXX=item IX=m XI=product SET a.value=a.value + value;
+                -- customerAccount
+                WITH MonthSumCustomer as a IXX=item IX=m XI=customerAccount SET a.value=a.value + value;
+            }
+        }
+
+        WITH SumQueueItemHistory ID=queueId DEL;
+        TRANSACTION Commit;
+        SLEEP 0.01;
+        SETTING 'compileTick' CHAR TO compileTick;
+        IF tick<IFNULL(compileTick, 0) {
+            BREAK;
+        }
+    }
+};
+
 -- 定期计算，每小时计算一次。把新的业务添加到日业务表
 ACT CalcDaySum ver 0.1 ()
 {
@@ -91,20 +219,59 @@ ACT CalcMonthSum ver 0.3 (
     }
 };
 
-/*
-PROC ResetCalcAccount(
-    date DATE
-) {
-    VAR timeZone TINYINT = unittimezone();
-    VAR minuteId ID;
-    SET minuteId=minuteIdFromDate(date, timeZone) - 1;
-    TRANSACTION OFF;
-    TRANSACTION Start;
-    DELETE 
-    SETTING 'accountOpiHistoryId' BIGINT = minuteId;
-    TRANSACTION Commit;
+PROC ProcCalcAccountSum ver 0.1 ()
+{
+    LOG 'ProcCalcAccountSum' SUBJECT 'CalcSum';
+    VAR timeZone TINYINT = unittimezone(), tick INT, compileTick INT;
+    VAR opiHistoryId ID;
+    VAR objectAccountId ID;
+    VAR dateHourId ID;
+    VAR accountValue DEC(18,4);
+    VAR value DEC(18,4), historyId ID, queueId ID, date DATE, object ID, item ENUM Item, opi ID;
+    SET tick=UNIX_TIMESTAMP();
+    WHILE 1=1 {
+        SET historyId=NULL;
+        SET historyId=a.id
+            , value=a.value
+            , object=b.object
+            , item=b.item
+            , opi=a.opi
+            , queueId=c.id
+            FROM OpiHistory as a
+                JOIN SumQueueOpiHistory as c ON c.id=a.id
+                LEFT JOIN ObjectPostItem as b ON b.id=a.opi
+            ORDER BY c.id ASC
+            LIMIT 1;
+        IF historyId IS NULL { BREAK; }
+
+        SET opiHistoryId=historyId;
+        SET dateHourId=(((historyId>>20) DIV (24*60)) * 24) + timeZone;
+        TRANSACTION Start;
+        IF object IS NOT NULL {
+            FOR (VAR account ENUM EnumAccount, radio DEC(6,2)
+                OF SELECT a.xi as account, a.radio
+                    FROM AccountBooking as a WHERE a.ix=item)
+            {
+                SET accountValue=(IFNULL(radio, 0)*value/100);
+                SET objectAccountId=ID(
+                    ObjectAccount new
+                    KEY object=object, account=account);
+                WITH ObjectAccount as a ID=objectAccountId 
+                    SET a.balance=IFNULL(a.balance, 0)+accountValue;
+                WITH ObjectAccountHistory as a IX=objectAccountId XI=dateHourId
+                    SET a.value=IFNULL(a.value,0)+accountValue, a.opi=opi;
+            }
+        }
+        WITH SumQueueOpiHistory ID=queueId DEL;
+        TRANSACTION Commit;
+        SLEEP 0.01;
+        SETTING 'compileTick' CHAR TO compileTick;
+        IF tick<IFNULL(compileTick, 0) {
+            BREAK;
+        }
+    }
 };
-*/
+
 // calc account from OpiHistory
 ACT CalcAccount ver 0.1 ()
 {
