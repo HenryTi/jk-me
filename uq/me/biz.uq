@@ -13,14 +13,6 @@ ID # QueueBizOp MINUTEID (
     KEY bizOp ID,                       -- detail of deliver, receive, return
 );
 
-/*
-IDX DxBizMain (
-    id,
-    ready INT DEFAULT 0,                -- ready状态
-    sys (create, update),
-);
-*/
-
 -- biz是核心
 IDX DxBiz ver 0.7 (
     id,
@@ -301,19 +293,30 @@ PROC #ProcWriteItemHistory ver 0.1 (
 ) {
     VAR biz ID, bizOpType ENUM EnumBizOpType, value DEC(18,4);
     VAR price DEC(18,4), margin DEC(18,4);
-    SET biz=a.biz, bizOpType=a.type, value=a.value -- , stamp=stamp; 
+    SET biz=a.biz, bizOpType=a.type, value=a.value
         FROM DxBizOp as a 
         WHERE a.id=bizOp;
     IF bizOpType=EnumBizOpType.orderDeliverDone {
+        VAR orderType ENUM OrderType;
+        SET orderType=a.type 
+            FROM OrderMain as a 
+                JOIN DxBiz as b ON b.main=a.id
+                JOIN DxBizOp as c ON c.biz=b.id
+            WHERE c.id=bizOp;
         SET price=a.price
             FROM OrderDetail as a
             WHERE a.id=biz;
         SET margin=a.margin FROM DxOrderDetail as a WHERE a.id=biz;
         -- 可能是积分兑换单引发的deliver-done，这时候，就没有margin和price，所以不写帐
         IF price IS NOT NULL AND price > 0 {
-            PROC ProcItemHistory(bizOp, Item.orderAmount, price*value);
-            PROC ProcItemHistory(bizOp, Item.orderProfit, (margin)*value);
-            PROC ProcItemHistory(bizOp, Item.orderFee, (margin)*value);
+            IF orderType=OrderType.Customer {
+                PROC ProcItemHistory(bizOp, Item.orderAmount, price*value);
+                PROC ProcItemHistory(bizOp, Item.orderProfit, (margin)*value);
+                PROC ProcItemHistory(bizOp, Item.orderFee, (margin)*value);
+            }
+            ELSEIF orderType=OrderType.Branch {
+                PROC ProcItemHistory(bizOp, Item.orderTransfer, price*value);
+            }
         }
         ELSE {
             LOG CONCAT_WS(' ', bizOp, bizOpType, price, margin, value) SUBJECT 'Failed BizOp ItemHistory Price IS NULL';
