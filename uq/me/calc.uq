@@ -58,6 +58,10 @@ PROC CalcSum ver 0.1 () {
     DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN
         GET DIAGNOSTICS CONDITION 1 _$error = MESSAGE_TEXT;
         ROLLBACK;
+        UPDATE `tv_$queue_act` SET `running`=0 
+            WHERE `entity`=(SELECT `id`
+            FROM `tv_$entity` 
+            WHERE 1=1 AND `name`='calcsum');
         CALL `$uq`.`log`(0,'me','Schedule CalcSum Error',_$error);
         RESIGNAL;
     END;

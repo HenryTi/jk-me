@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FieldItemNumber, FieldItemString, FieldItemInt, FieldItemId, FieldItem, UI, TFunc } from "tonva-view";
+import { FieldItemNumber, FieldItemString, FieldItemInt, FieldItemId, FieldItem, UI, TFunc } from "tonwa";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Res, uqStringify, setRes } from "tonva-core";
+import { Res, uqStringify, setRes } from "tonwa-core";
 import { OrderDetail } from "./BzHelloTonva";
 import { render as renderCustomer } from './Customer.ui';
 
@@ -57,7 +57,7 @@ const fields = {
 /*==fields==*/
 
 export const fieldArr: FieldItem[] = [
-	fields.parent, fields.row, fields.product, fields.price, fields.quantity, fields.amount, 
+	fields.parent, fields.row, fields.product, fields.price, fields.quantity, fields.amount,
 ];
 
 export const ui: UI = {
@@ -73,8 +73,8 @@ export const res: Res<any> = {
 	}
 };
 
-export function render(item: OrderDetail):JSX.Element {
-	let {product, price, quantity, amount} = item;
+export function render(item: OrderDetail): JSX.Element {
+	let { product, price, quantity, amount } = item;
 	return <div>
 		<div>{renderCustomer(product as any)}</div>
 		<div className="d-flex">

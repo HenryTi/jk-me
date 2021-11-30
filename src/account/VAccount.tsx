@@ -1,17 +1,17 @@
 import { CAccount } from "./CAccount";
-import { View } from 'tonva-view';
+import { View } from 'tonwa';
 import { EnumAccount, Post } from "uq-app/uqs/JkMe";
 
 export class VAccount extends View<CAccount> {
-    render() {
+	render() {
 		return this.react(() => {
-			let {data, cApp, onAccountClick} = this.controller;
-			let {accounts} = data;
+			let { data, cApp, onAccountClick } = this.controller;
+			let { accounts } = data;
 			if (!accounts) return null;
-			let {accountTitles, postTitles} = cApp;
+			let { accountTitles, postTitles } = cApp;
 			return <>{accounts.map((v, index) => {
-				let {post, account, balance} = v;
-				let {title, unit, fixed} = accountTitles[account as EnumAccount];
+				let { post, account, balance } = v;
+				let { title, unit, fixed } = accountTitles[account as EnumAccount];
 				let postTitle = postTitles[post as Post];
 				return <div key={index}
 					className="m-2 p-3 border border-info rounded rounded-3 bg-white text-center cursor-pointer"
@@ -26,5 +26,5 @@ export class VAccount extends View<CAccount> {
 				</div>
 			})}</>;
 		});
-    }
+	}
 }

@@ -70,6 +70,10 @@ PROC # ExecQueueBizMain ver 0.4 () {
     DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN
         GET DIAGNOSTICS CONDITION 1 _$error = MESSAGE_TEXT;
         ROLLBACK;
+        UPDATE `tv_$queue_act` SET `running`=0 
+            WHERE `entity`=(SELECT `id`
+            FROM `tv_$entity` 
+            WHERE 1=1 AND `name`='execqueuebizmain');
         CALL `$uq`.`log`(0,'me', concat('Schedule ExecQueueBizMain Error bizMain=', _bizmain_2),_$error);
         RESIGNAL;
     END;
@@ -135,6 +139,10 @@ PROC #ExecQueueBizOp ver 0.4 () {
     DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN
         GET DIAGNOSTICS CONDITION 1 _$error = MESSAGE_TEXT;
         ROLLBACK;
+        UPDATE `tv_$queue_act` SET `running`=0 
+            WHERE `entity`=(SELECT `id`
+            FROM `tv_$entity` 
+            WHERE 1=1 AND `name`='execqueuebizop');
         CALL `$uq`.`log`(0,'me','Schedule ExecQueueBizOp Error',_$error);
         RESIGNAL;
     END;

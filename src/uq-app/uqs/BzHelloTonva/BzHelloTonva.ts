@@ -1,6 +1,6 @@
 //=== UqApp builder created on Wed Mar 10 2021 16:02:54 GMT-0500 (GMT-05:00) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { IDXValue, Uq, UqTuid, UqQuery, UqID, UqIDX, UqIX } from "tonva-core";
+import { IDXValue, Uq, UqTuid, UqQuery, UqID, UqIDX, UqIX } from "tonwa-core";
 
 
 //===============================
@@ -94,16 +94,16 @@ export interface $PiecewiseDetail {
 export interface Achieve {
 	id: number;
 	saleAmount?: number;
-	deliver?: number|IDXValue;
+	deliver?: number | IDXValue;
 }
 
 export interface Hours {
 	id: number;
-	onsite?: number|IDXValue;
-	offsite?: number|IDXValue;
-	break?: number|IDXValue;
-	sick?: number|IDXValue;
-	over?: number|IDXValue;
+	onsite?: number | IDXValue;
+	offsite?: number | IDXValue;
+	break?: number | IDXValue;
+	sick?: number | IDXValue;
+	over?: number | IDXValue;
 	noTimeLog?: number;
 }
 
@@ -133,7 +133,7 @@ export interface ParamIDActs {
 
 
 export interface UqExt extends Uq {
-	IDActs(param:ParamIDActs): Promise<any>;
+	IDActs(param: ParamIDActs): Promise<any>;
 
 	$sheet: UqTuid<Tuid$sheet>;
 	$user: UqTuid<Tuid$user>;

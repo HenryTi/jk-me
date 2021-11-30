@@ -1,10 +1,10 @@
 //=== UqApp builder created on Tue Jan 05 2021 18:41:24 GMT-0500 (GMT-05:00) ===//
-import { PageWebNav } from 'tonva-core';
-import { VPage, TabProp, TabCaptionComponent, TabsProps, t } from "tonva-view";
+import { PageWebNav } from 'tonwa-core';
+import { VPage, TabProp, TabCaptionComponent, TabsProps, t } from "tonwa";
 import { CApp } from './CApp';
 
 const color = (selected: boolean) => selected === true ? 'text-primary' : 'text-muted';
-function caption(label:string|JSX.Element, icon:string) {
+function caption(label: string | JSX.Element, icon: string) {
 	return (selected: boolean) => TabCaptionComponent(label, icon, color(selected));
 }
 
@@ -12,15 +12,15 @@ export class VMain extends VPage<CApp> {
 	protected get tabsProps(): TabsProps {
 		let { cHome, cMe, cSupervise, ops } = this.controller;
 		let tabs: TabProp[] = [
-			{name: 'home', caption: caption(t('home'), 'home'), content: cHome.tab},
+			{ name: 'home', caption: caption(t('home'), 'home'), content: cHome.tab },
 		]
 		if (ops.length > 0) {
 			tabs.push(
-				{name: 'supervise', caption: caption(t('supervise'), 'bar-chart'), content: cSupervise.tab, load: cSupervise.load},
-			);	
+				{ name: 'supervise', caption: caption(t('supervise'), 'bar-chart'), content: cSupervise.tab, load: cSupervise.load },
+			);
 		}
 		tabs.push(
-			{name: 'me', caption: caption(t('me'), 'user-o'), content: cMe.tab, load: cMe.load},
+			{ name: 'me', caption: caption(t('me'), 'user-o'), content: cMe.tab, load: cMe.load },
 		);
 		/*
 		if (this.isDev === true) {
@@ -32,12 +32,12 @@ export class VMain extends VPage<CApp> {
 			});
 		}
 		*/
-		return {tabs};
+		return { tabs };
 	}
 
 	protected get webNav(): PageWebNav<JSX.Element> {
 		return {
-			navHeader: <div>webNav header</div>, 
+			navHeader: <div>webNav header</div>,
 			navFooter: <div>webNav footer</div>,
 		};
 	}

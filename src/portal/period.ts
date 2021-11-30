@@ -1,20 +1,20 @@
 import { action, computed, makeObservable, observable } from "mobx";
-import { env } from "tonva-core";
+import { env } from "tonwa-core";
 import { Item, Post, ReturnGetObjectItemPeriodSumRet } from "uq-app/uqs/JkMe";
 
-export enum EnumPeriod {day = 0, month = 1, week = 2, year = 3}
+export enum EnumPeriod { day = 0, month = 1, week = 2, year = 3 }
 
 export interface ItemPeriodSum extends ReturnGetObjectItemPeriodSumRet {
-	id: number;
-	object: number;
-	post: Post;
-	item: Item;
-	value: number;
+    id: number;
+    object: number;
+    post: Post;
+    item: Item;
+    value: number;
 }
 
 export interface PostPeriodSum {
     post: Post;
-    itemColl: {[item in keyof typeof Item]: ItemPeriodSum};
+    itemColl: { [item in keyof typeof Item]: ItemPeriodSum };
     itemList: ItemPeriodSum[];
 }
 
@@ -27,7 +27,7 @@ export abstract class Period {
         this.init();
         this.initObservable();
     }
-    private newDate():Date {
+    private newDate(): Date {
         let ret = new Date();
         ret.setHours(ret.getHours() - env.timeZone + this.timezone)
         ret.setHours(0, 0, 0, 0);
@@ -43,8 +43,8 @@ export abstract class Period {
         });
     }
     type: EnumPeriod;
-	from: Date;
-	to: Date;
+    from: Date;
+    to: Date;
     abstract init(): void;
     abstract prev(): void;
     abstract next(): void;
@@ -59,15 +59,15 @@ const weekday = '日一二三四五六';
 class DayPeriod extends Period {
     init(): void {
         this.type = EnumPeriod.day;
-        this.to.setDate(this.from.getDate()+1);
+        this.to.setDate(this.from.getDate() + 1);
     }
     prev(): void {
-        this.to = new Date(this.to.setDate(this.to.getDate()-1));
-        this.from = new Date(this.from.setDate(this.from.getDate()-1));
+        this.to = new Date(this.to.setDate(this.to.getDate() - 1));
+        this.from = new Date(this.from.setDate(this.from.getDate() - 1));
     }
     next(): void {
-        this.to = new Date(this.to.setDate(this.to.getDate()+1));
-        this.from = new Date(this.from.setDate(this.from.getDate()+1));
+        this.to = new Date(this.to.setDate(this.to.getDate() + 1));
+        this.from = new Date(this.from.setDate(this.from.getDate() + 1));
     }
     render(): string {
         let year = new Date().getFullYear();
@@ -75,7 +75,7 @@ class DayPeriod extends Period {
         let m = this.from.getMonth();
         let d = this.from.getDate();
         let dw = this.from.getDay();
-        return (y === year? '': `${y}年`) + `${m+1}月${d}日 星期${weekday[dw]}`;
+        return (y === year ? '' : `${y}年`) + `${m + 1}月${d}日 星期${weekday[dw]}`;
     }
 }
 
@@ -83,7 +83,7 @@ class WeekPeriod extends Period {
     init(): void {
         this.type = EnumPeriod.week;
         let day = this.to.getDay();
-        let diff = this.to.getDate() - day + (day === 0 ? -6:1); // adjust when day is sunday
+        let diff = this.to.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
         this.from = new Date(this.to.setDate(diff));
         this.to.setDate(this.to.getDate() + 7);
     }
@@ -102,8 +102,8 @@ class WeekPeriod extends Period {
         let df = this.from.getDate();
         let mt = this.to.getMonth();
         let dt = this.to.getDate();
-        return (yf === year? '': `${yf}年`) + `${mf+1}月${df}日 - `
-            + (mt === mf? '': `${mt}月`) + `${dt}日`;
+        return (yf === year ? '' : `${yf}年`) + `${mf + 1}月${df}日 - `
+            + (mt === mf ? '' : `${mt}月`) + `${dt}日`;
     }
 }
 
@@ -124,7 +124,7 @@ class MonthPeriod extends Period {
     render(): string {
         let year = new Date().getFullYear();
         let yf = this.from.getFullYear();
-        return `${year===yf? '': year+'年'}${this.from.getMonth()+1}月`;
+        return `${year === yf ? '' : year + '年'}${this.from.getMonth() + 1}月`;
     }
 }
 
@@ -142,10 +142,10 @@ class YearPeriod extends Period {
         this.from = new Date(this.from.setFullYear(this.from.getFullYear() + 1));
         this.to = new Date(this.to.setFullYear(this.to.getFullYear() + 1));
     }
-    render(): string {return `${this.from.getFullYear()}年`}
+    render(): string { return `${this.from.getFullYear()}年` }
 }
 
-export function createPeriod(periodType: EnumPeriod, timezone:number): Period {
+export function createPeriod(periodType: EnumPeriod, timezone: number): Period {
     let period: Period;
     switch (periodType) {
         case EnumPeriod.day: period = new DayPeriod(timezone); break;

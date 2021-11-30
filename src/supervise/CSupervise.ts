@@ -1,5 +1,6 @@
 import { CUqBase, UQs } from "uq-app";
-import { ReturnGetObjectsRet
+import {
+	ReturnGetObjectsRet
 	, ReturnGetGroupsRet
 	, ReturnGetDistributorsRet
 	, ReturnGetAgentsRet
@@ -22,7 +23,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { CObjects } from "./objects/CObjects";
 import { initCObjects } from "./objects";
 import { VAccounts } from "./VAccounts";
-import { PageItems } from "tonva-view";
+import { PageItems } from "tonwa";
 
 export class CSupervise extends CUqBase {
 	item: Item;
@@ -45,9 +46,9 @@ export class CSupervise extends CUqBase {
 
 	tab = () => this.renderView(VSupervise);
 
-	load = async() => {
+	load = async () => {
 		this.cObjectsArr = initCObjects(this);
-		let {JkMe} = this.uqs;
+		let { JkMe } = this.uqs;
 		let [superviseItems] = await Promise.all([
 			JkMe.GetUserSuperviseItem.query({}),
 		]);
@@ -61,13 +62,13 @@ export class CSupervise extends CUqBase {
 		date.setDate(date.getDate() + 1);
 		let [itemSumDays, itemSumMonths] = await Promise.all([
 			this.uqs.JkMe.GetItemSumDays.query({
-				item, 
-				date, 
+				item,
+				date,
 				days: 30,
 			}),
 			this.uqs.JkMe.GetItemSumMonths.query({
-				item, 
-				date, 
+				item,
+				date,
 				months: 12,
 			}),
 		]);
@@ -76,14 +77,14 @@ export class CSupervise extends CUqBase {
 		this.openVPage(VItemSumHistory);
 	}
 
-	async showItemDayHistory(item: Item, from:Date, to:Date) {
+	async showItemDayHistory(item: Item, from: Date, to: Date) {
 		if (item) this.item = item;
 		else item = this.item;
-		let days = Math.floor((to.getTime() - from.getTime())/ (1000*3600*24));
+		let days = Math.floor((to.getTime() - from.getTime()) / (1000 * 3600 * 24));
 		let [itemSumDays] = await Promise.all([
 			this.uqs.JkMe.GetItemSumDays.query({
-				item, 
-				date: to, 
+				item,
+				date: to,
 				days,
 			})
 		]);
@@ -91,11 +92,11 @@ export class CSupervise extends CUqBase {
 		this.openVPage(VItemDayHistory);
 	}
 
-	async showItemHistory(from:Date, to:Date) {
+	async showItemHistory(from: Date, to: Date) {
 		this.pageItemHistory = new PageItemHistory(this.uqs);
 		await this.pageItemHistory.first({
-			item:this.item, 
-			from, 
+			item: this.item,
+			from,
 			to,
 		});
 		this.openVPage(VItemHistory);
@@ -135,8 +136,8 @@ class PageItemHistory extends PageItems<ReturnGetItemHistory$page> {
 		this.uqs = uqs;
 	}
 	protected async loadResults(param: any, pageStart: any, pageSize: number): Promise<{
-        [name: string]: any[];
-    }> {
+		[name: string]: any[];
+	}> {
 		let ret = await this.uqs.JkMe.GetItemHistory.page(param, pageStart, pageSize);
 		return ret as any;
 	}
@@ -180,7 +181,7 @@ abstract class MonthSum<T> {
 		}
 	}
 
-	get hasNext():boolean {
+	get hasNext(): boolean {
 		let d = new Date();
 		d.setDate(0);
 		d.setHours(0, 0, 0, 0);
@@ -194,15 +195,15 @@ class MonthSumProduct extends MonthSum<ReturnGetProductSumByMonthRet> {
 	async load(): Promise<void> {
 		let m = this.month.getFullYear() * 100 + (this.month.getMonth() + 1);
 		let param = {
-			item: this.item, 
+			item: this.item,
 			month: m,
 			count: 200,
 		};
 		let ret = await this.controller.uqs.JkMe.GetProductSumByMonth.query(param);
 		let list = ret.ret;
 		let len = list.length;
-		for (let i=0; i<len; i++) {
-			(list[i] as any).$serial = i+1;
+		for (let i = 0; i < len; i++) {
+			(list[i] as any).$serial = i + 1;
 		}
 		runInAction(() => {
 			this.list = list;
@@ -214,15 +215,15 @@ class MonthSumCustomer extends MonthSum<ReturnGetCustomerSumByMonthRet> {
 	async load(): Promise<void> {
 		let m = this.month.getFullYear() * 100 + (this.month.getMonth() + 1);
 		let param = {
-			item: this.item, 
+			item: this.item,
 			month: m,
 			count: 200,
 		};
 		let ret = await this.controller.uqs.JkMe.GetCustomerSumByMonth.query(param);
 		let list = ret.ret;
 		let len = list.length;
-		for (let i=0; i<len; i++) {
-			(list[i] as any).$serial = i+1;
+		for (let i = 0; i < len; i++) {
+			(list[i] as any).$serial = i + 1;
 		}
 		runInAction(() => {
 			this.list = list;

@@ -1,24 +1,24 @@
 import { observer } from 'mobx-react';
-import { Image, VPage, IconText, PropGrid, LMR, FA, Prop } from "tonva-view";
+import { Image, VPage, IconText, PropGrid, LMR, FA, Prop } from "tonwa";
 import { CMe } from './CMe';
 import { appConfig } from '../appConfig';
 import { VAbout } from './VAbout';
-import { tonva } from 'tonva-core';
+import { tonva } from 'tonwa-core';
 
 export class VMe extends VPage<CMe> {
-	header() {return this.t('me')}
+    header() { return this.t('me') }
 
-	content() {
+    content() {
         const { user } = tonva;
         let aboutRows: Prop[] = [
             '',
             {
                 type: 'component',
                 component: <LMR className="w-100" onClick={this.about}
-					right={<FA className="align-self-center" name="angle-right" />}>
-                    <IconText iconClass="text-info mr-2" 
-						icon="smile-o" 
-						text={<>{this.t('aboutTheApp')} <small>版本 {appConfig.version}</small></>} />                    
+                    right={<FA className="align-self-center" name="angle-right" />}>
+                    <IconText iconClass="text-info mr-2"
+                        icon="smile-o"
+                        text={<>{this.t('aboutTheApp')} <small>版本 {appConfig.version}</small></>} />
                 </LMR>,
             },
         ];
@@ -49,9 +49,9 @@ export class VMe extends VPage<CMe> {
             rows.push(...aboutRows, ...logOutRows);
         }
         return <PropGrid rows={[...rows]} values={{}} />;
-	}
+    }
 
-	private meInfo = observer(() => {
+    private meInfo = observer(() => {
         let { user } = tonva;
         if (user === undefined) return null;
         let { id, name, nick, icon } = user;
@@ -66,9 +66,9 @@ export class VMe extends VPage<CMe> {
         </LMR>;
     });
 
-	private about = () => {
-		this.openVPage(VAbout);
-	}
+    private about = () => {
+        this.openVPage(VAbout);
+    }
 }
 
 function userSpan(name: string, nick: string): JSX.Element {

@@ -1,25 +1,25 @@
 import { CSupervise } from "supervise";
-import { List, LMR, View, VPage } from "tonva-view";
+import { List, LMR, View, VPage } from "tonwa";
 import { ReturnGetItemSumDaysRet } from "uq-app/uqs/JkMe";
 
 export class ViewItemDayHistory extends View<CSupervise> {
     render() {
-        return <List items={this.controller.itemSumDays} 
-            item={{render: this.renderDayItem, onClick: this.onClickDayItem}} />
+        return <List items={this.controller.itemSumDays}
+            item={{ render: this.renderDayItem, onClick: this.onClickDayItem }} />
     }
 
     private renderDayItem = (row: ReturnGetItemSumDaysRet, index: number) => {
-        let {cApp, item} = this.controller;
-        let {itemTitles} = cApp;
-        let {unit, fixed} = itemTitles[item];
-        let {date, value} = row;
-        return <LMR  className="px-3 py-2" 
-            left={<div>{new Date(date).toLocaleDateString()}</div>} 
-            right={<div>{(value??0).toFixed(fixed??2)} {unit}</div>} />
+        let { cApp, item } = this.controller;
+        let { itemTitles } = cApp;
+        let { unit, fixed } = itemTitles[item];
+        let { date, value } = row;
+        return <LMR className="px-3 py-2"
+            left={<div>{new Date(date).toLocaleDateString()}</div>}
+            right={<div>{(value ?? 0).toFixed(fixed ?? 2)} {unit}</div>} />
     }
 
     private onClickDayItem = async (row: ReturnGetItemSumDaysRet) => {
-        let {date} = row;
+        let { date } = row;
         let from = new Date(date);
         let to = new Date(from);
         to.setDate(to.getDate() + 1);
@@ -29,9 +29,9 @@ export class ViewItemDayHistory extends View<CSupervise> {
 
 export class VItemDayHistory extends VPage<CSupervise> {
     header() {
-        let {cApp, item} = this.controller;
-        let {itemTitles} = cApp;
-		let {title} = itemTitles[item];
+        let { cApp, item } = this.controller;
+        let { itemTitles } = cApp;
+        let { title } = itemTitles[item];
         return title;
     }
 
