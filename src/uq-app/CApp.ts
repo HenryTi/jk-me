@@ -12,7 +12,7 @@ import { CPortal, CObjectPortal, CUnitPortal } from "portal";
 import { makeObservable, observable, runInAction } from "mobx";
 import { start } from "tonwa";
 import { appConfig } from "./appConfig";
-import { Tonva } from "tonwa-core";
+import { Tonwa } from "tonwa-core";
 
 const gaps = [10, 3, 3, 3, 3, 3, 5, 5, 5, 5, 5, 5, 5, 5, 10, 10, 10, 10, 15, 15, 15, 30, 30, 60];
 
@@ -25,8 +25,8 @@ export interface Title {
 
 
 export class CApp extends CUqApp {
-	constructor(tonva: Tonva) {
-		super(tonva, appConfig);
+	constructor(tonwa: Tonwa) {
+		super(tonwa, appConfig);
 	}
 
 	cHome: CHome;
@@ -72,16 +72,16 @@ export class CApp extends CUqApp {
 	}
 
 	async initStart() {
-		await this.tonva.appStart();
+		await this.tonwa.appStart();
 	}
 
 	render(loginedOnly: boolean = true): JSX.Element {
 		const onLogined = async (isUserLogin?: boolean) => {
-			await start(CApp, this.tonva, appConfig, isUserLogin);
+			await start(CApp, this.tonwa, appConfig, isUserLogin);
 		}
 		let onNotLogined: () => Promise<void>;
 		if (loginedOnly === false) onNotLogined = onLogined;
-		return this.tonva.nav.renderNavView(onLogined, onNotLogined);
+		return this.tonwa.nav.renderNavView(onLogined, onNotLogined);
 	}
 
 

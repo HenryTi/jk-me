@@ -2,7 +2,7 @@
 import { CBase/*, Context*/ } from "tonwa";
 /*
 import { CID, MidID, CIDX, MidIDX, MidTag, CIDTagList, CTagIDList
-	, SheetUI, MidIDTagList, CSheetNew, MidSheet } from "tonva-uqui";
+	, SheetUI, MidIDTagList, CSheetNew, MidSheet } from "tonwa-uqui";
 */
 import { CApp, CUqBase, UQs } from "uq-app";
 //import { OrderDetail, OrderMaster } from "uq-app/uqs/BzHelloTonva";

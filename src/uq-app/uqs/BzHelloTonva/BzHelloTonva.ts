@@ -4,7 +4,7 @@ import { IDXValue, Uq, UqTuid, UqQuery, UqID, UqIDX, UqIX } from "tonwa-core";
 
 
 //===============================
-//======= UQ BizDev/hello-tonva ========
+//======= UQ BizDev/hello-tonwa ========
 //===============================
 
 export interface Tuid$sheet {

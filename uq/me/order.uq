@@ -2,6 +2,7 @@ ENUM OrderType (
 	Customer 		= 01,
 	Distributor 	= 11,
 	Branch 			= 21,
+	Factory			= 22,
 );
 
 ID #OrderMain ver 0.5 GLOBAL (
