@@ -1,9 +1,9 @@
 import { build, UQsBuildingLoader } from 'tonwa-core';
-import { TonvaReact, UqBuildContextUI } from "tonwa";
+import { TonwaReact, UqBuildContextUI } from "tonwa";
 import { appConfig } from './appConfig';
 
 test('build UqApp', async () => {
-	let tonwa = new TonvaReact();
+	let tonwa = new TonwaReact();
 	//initNav(tonwa);
 	let uqsLoader: UQsBuildingLoader = new UQsBuildingLoader(tonwa, appConfig);
 	await build(new UqBuildContextUI(uqsLoader, 'src/uq-app'));
