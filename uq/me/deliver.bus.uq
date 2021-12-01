@@ -8,9 +8,10 @@ ACCEPT [deliver-done] {
 		WITH DxOrderDetail ID=biz SET deliverDone += value;
         WITH DxBizOp as a ID=id 
             SET a.type=EnumBizOpType.orderDeliverDone, a.biz=biz, a.value=value, a.stamp=$stamp;
-        VAR queueId ID = ID(QueueBizOp new, id);
+        -- VAR queueId ID = ID(QueueBizOp new, id);
+        WITH QueueBizOp as a ID=id SET a.bizop=id;
 	}
-    SCHEDULE ExecQueueBizOp DELAY 1;
+    -- SCHEDULE ExecQueueBizOp DELAY 1;
 }
 ACCEPT [pickup-performance] {
     -- 处理sheet: 1.设置sheet的状态；2.把sheet排入QueueBizMain队列；3.DxBiz在下面写入

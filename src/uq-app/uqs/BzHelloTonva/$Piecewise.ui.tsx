@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { UI, FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonva-view";
+import { UI, FieldItem, FieldItemInt, FieldItemNum, FieldItemString, FieldItemId } from "tonwa";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Res, uqStringify, setRes } from "tonva-core";
+import { Res, uqStringify, setRes } from "tonwa-core";
 import { $Piecewise } from "./BzHelloTonva";
 
 /*--fields--*/
@@ -47,7 +47,7 @@ const fields = {
 /*==fields==*/
 
 export const fieldArr: FieldItem[] = [
-	fields.name, fields.mul, fields.div, fields.offset, fields.asc, 
+	fields.name, fields.mul, fields.div, fields.offset, fields.asc,
 ];
 
 export const ui: UI = {
@@ -63,6 +63,6 @@ export const res: Res<any> = {
 	}
 };
 
-export function render(item: $Piecewise):JSX.Element {
+export function render(item: $Piecewise): JSX.Element {
 	return <>{JSON.stringify(item)}</>;
 };

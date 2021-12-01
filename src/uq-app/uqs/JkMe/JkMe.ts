@@ -1,7 +1,7 @@
 //=== UqApp builder created on Fri Nov 19 2021 14:42:41 GMT-0500 (北美东部标准时间) ===//
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID } from "tonva-core";
-		import { Render } from "tonva-view";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID } from "tonwa-core";
+import { Render } from "tonwa";
 
 
 //===============================
@@ -535,12 +535,12 @@ export interface ParamActs {
 	group?: Group[];
 }
 
-	
+
 export interface UqExt extends Uq {
-		Acts(param:ParamActs): Promise<any>;
-	
-	$sheet: UqTuid<Tuid$sheet>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
-	$user: UqTuid<Tuid$user>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	Acts(param: ParamActs): Promise<any>;
+
+	$sheet: UqTuid<Tuid$sheet> & { tv: (id: number, render?: Render<any>) => JSX.Element };
+	$user: UqTuid<Tuid$user> & { tv: (id: number, render?: Render<any>) => JSX.Element };
 	BusTestBoundStaffSales: UqAction<ParamBusTestBoundStaffSales, ResultBusTestBoundStaffSales>;
 	DoneDeliver: UqAction<ParamDoneDeliver, ResultDoneDeliver>;
 	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
@@ -579,11 +579,10 @@ export interface UqExt extends Uq {
 	Group: UqID<any>;
 }
 
-	export function assign(uq: any, to:string, from:any): void {
-		let hasEntity = uq.hasEntity(to);
-		if (hasEntity === false) {
-			return;
-		}
-		Object.assign((uq as any)[to], from);
+export function assign(uq: any, to: string, from: any): void {
+	let hasEntity = uq.hasEntity(to);
+	if (hasEntity === false) {
+		return;
 	}
-	
+	Object.assign((uq as any)[to], from);
+}

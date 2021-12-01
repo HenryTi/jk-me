@@ -129,7 +129,6 @@ RETURNS ret (
     INTO ret SELECT a.id as minuteId, f.biz, d.bizOp, a.value, IDTEXT(e.memo) as memo
         FROM OPIHistory AS a
             JOIN ObjectPostItem as b ON a.opi=b.id
-            -- JOIN UserObject as c ON b.object=c.xi
             JOIN ItemHistory as d ON a.itemHistory=d.id
             LEFT JOIN OPIBooking as e ON a.booking=e.id
             JOIN DxBizOp as f ON f.id=d.bizOp

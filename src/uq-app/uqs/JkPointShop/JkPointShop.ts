@@ -1,7 +1,7 @@
 //=== UqApp builder created on Fri Nov 19 2021 14:42:41 GMT-0500 (北美东部标准时间) ===//
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	import { IDXValue, Uq, UqTuid, UqAction, UqSheet, UqBook, UqQuery, UqMap, UqHistory, UqPending, UqID, UqIDX, UqIX } from "tonva-core";
-		import { Render } from "tonva-view";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { IDXValue, Uq, UqTuid, UqAction, UqSheet, UqBook, UqQuery, UqMap, UqHistory, UqPending, UqID, UqIDX, UqIX } from "tonwa-core";
+import { Render } from "tonwa";
 
 
 //===============================
@@ -694,32 +694,32 @@ export interface DxExchangeMainState {
 }
 
 export interface ActParamDxOrderDetail {
-	id: number|IDXValue;
-	point?: number|IDXValue;
-	totalPoint?: number|IDXValue;
-	multiple?: number|IDXValue;
+	id: number | IDXValue;
+	point?: number | IDXValue;
+	totalPoint?: number | IDXValue;
+	multiple?: number | IDXValue;
 	$act?: number;
 }
 
 export interface ActParamDxReOrderDetail {
-	id: number|IDXValue;
-	point?: number|IDXValue;
-	totalPoint?: number|IDXValue;
+	id: number | IDXValue;
+	point?: number | IDXValue;
+	totalPoint?: number | IDXValue;
 	$act?: number;
 }
 
 export interface ActParamDxExchangeDetail {
-	id: number|IDXValue;
-	deliver?: number|IDXValue;
-	deliverDone?: number|IDXValue;
-	deliverTime?: any|IDXValue;
+	id: number | IDXValue;
+	deliver?: number | IDXValue;
+	deliverDone?: number | IDXValue;
+	deliverTime?: any | IDXValue;
 	$act?: number;
 }
 
 export interface ActParamDxExchangeMainState {
-	id: number|IDXValue;
-	state?: any|IDXValue;
-	createDate?: any|IDXValue;
+	id: number | IDXValue;
+	state?: any | IDXValue;
+	createDate?: any | IDXValue;
 	$act?: number;
 }
 
@@ -759,21 +759,21 @@ export interface ParamActs {
 	ixOrderDetailReceive?: IxOrderDetailReceive[];
 }
 
-	
+
 export interface UqExt extends Uq {
-		Acts(param:ParamActs): Promise<any>;
-	
-	$user: UqTuid<Tuid$user>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
-	ProductX: UqTuid<TuidProductX>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
-	$sheet: UqTuid<Tuid$sheet>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
-	Customer: UqTuid<TuidCustomer>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
-	WebUser: UqTuid<TuidWebUser>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
-	Contact: UqTuid<TuidContact>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
-	Currency: UqTuid<TuidCurrency>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
-	BuyerAccount: UqTuid<TuidBuyerAccount>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
-	Genre: UqTuid<TuidGenre>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
-	PointProductLib: UqTuid<TuidPointProductLib>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
-	Brand: UqTuid<TuidBrand>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	Acts(param: ParamActs): Promise<any>;
+
+	$user: UqTuid<Tuid$user> & { tv: (id: number, render?: Render<any>) => JSX.Element };
+	ProductX: UqTuid<TuidProductX> & { tv: (id: number, render?: Render<any>) => JSX.Element };
+	$sheet: UqTuid<Tuid$sheet> & { tv: (id: number, render?: Render<any>) => JSX.Element };
+	Customer: UqTuid<TuidCustomer> & { tv: (id: number, render?: Render<any>) => JSX.Element };
+	WebUser: UqTuid<TuidWebUser> & { tv: (id: number, render?: Render<any>) => JSX.Element };
+	Contact: UqTuid<TuidContact> & { tv: (id: number, render?: Render<any>) => JSX.Element };
+	Currency: UqTuid<TuidCurrency> & { tv: (id: number, render?: Render<any>) => JSX.Element };
+	BuyerAccount: UqTuid<TuidBuyerAccount> & { tv: (id: number, render?: Render<any>) => JSX.Element };
+	Genre: UqTuid<TuidGenre> & { tv: (id: number, render?: Render<any>) => JSX.Element };
+	PointProductLib: UqTuid<TuidPointProductLib> & { tv: (id: number, render?: Render<any>) => JSX.Element };
+	Brand: UqTuid<TuidBrand> & { tv: (id: number, render?: Render<any>) => JSX.Element };
 	IsCanUseOrder: UqAction<ParamIsCanUseOrder, ResultIsCanUseOrder>;
 	AddPlatformOrderPoint: UqAction<ParamAddPlatformOrderPoint, ResultAddPlatformOrderPoint>;
 	GetLastPlatFormOrder: UqAction<ParamGetLastPlatFormOrder, ResultGetLastPlatFormOrder>;
@@ -840,11 +840,10 @@ export interface UqExt extends Uq {
 	IxOrderDetailReceive: UqIX<any>;
 }
 
-	export function assign(uq: any, to:string, from:any): void {
-		let hasEntity = uq.hasEntity(to);
-		if (hasEntity === false) {
-			return;
-		}
-		Object.assign((uq as any)[to], from);
+export function assign(uq: any, to: string, from: any): void {
+	let hasEntity = uq.hasEntity(to);
+	if (hasEntity === false) {
+		return;
 	}
-	
+	Object.assign((uq as any)[to], from);
+}

@@ -1,5 +1,5 @@
-import { User } from "tonva-core";
-import { QueryPager } from "tonva-view";
+import { User } from "tonwa-core";
+import { QueryPager } from "tonwa";
 import { CUqBase } from "uq-app";
 import { VMe } from "./VMe";
 import { VEditMe } from "./VEditMe";
@@ -8,14 +8,14 @@ import { VAdminSetting } from "./VAdminSetting";
 export class CMe extends CUqBase {
 	unitOwner: User;
 	rootUnits: QueryPager<any>;
-	admins: {id:number;role:number}[] = null;
+	admins: { id: number; role: number }[] = null;
 	data: {
 		isAdmin: boolean;
 		map: Map<any, any>;
 	};
 	// isAdmin: boolean = false;
 	// map = new Map();
-	constructor(res:any) {
+	constructor(res: any) {
 		super(res);
 		/*
 		makeObservable(this, {
@@ -30,18 +30,18 @@ export class CMe extends CUqBase {
 	}
 
 	mapAdd = () => {
-		let {map} = this.data;
+		let { map } = this.data;
 		let v = map.get(1);
 		if (!v) {
 			v = 1;
 		}
 		else {
-			v = {v};
+			v = { v };
 		}
 		map.set(1, v);
 	}
 
-    protected async internalStart() {
+	protected async internalStart() {
 	}
 
 	tab = () => {
@@ -60,7 +60,7 @@ export class CMe extends CUqBase {
 			let p = admins.findIndex(v => v.id === userId);
 			if (p >= 0) admins.splice(p, 1);
 			this.admins = admins;
-			this.data.isAdmin = true;				
+			this.data.isAdmin = true;
 		});
 	}
 

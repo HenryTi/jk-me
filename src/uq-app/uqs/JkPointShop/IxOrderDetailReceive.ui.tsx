@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FieldItem, FieldItemNumber, FieldItemString, FieldItemId, FieldItemInt, UI, TFunc } from "tonva-view";
+import { FieldItem, FieldItemNumber, FieldItemString, FieldItemId, FieldItemInt, UI, TFunc } from "tonwa";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Res, uqStringify, setRes } from "tonva-core";
+import { Res, uqStringify, setRes } from "tonwa-core";
 import { IxOrderDetailReceive } from "./JkPointShop";
 
 /*--fields--*/
@@ -34,7 +34,7 @@ const fields = {
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.xi, fields.receiveAmount, fields.createDate, 
+	fields.xi, fields.receiveAmount, fields.createDate,
 ];
 
 export const ui: UI = {
@@ -52,10 +52,10 @@ const resRaw: Res<any> = {
 const res: any = {};
 setRes(res, resRaw);
 
-export const t:TFunc = (str:string|JSX.Element): string|JSX.Element => {
+export const t: TFunc = (str: string | JSX.Element): string | JSX.Element => {
 	return res[str as string] ?? str;
 }
 
-export function render(item: IxOrderDetailReceive):JSX.Element {
+export function render(item: IxOrderDetailReceive): JSX.Element {
 	return <>{uqStringify(item)}</>;
 };

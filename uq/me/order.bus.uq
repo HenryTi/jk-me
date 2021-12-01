@@ -47,9 +47,10 @@ ACCEPT [receive-done] {
 		WITH DxOrderDetail ID=orderDetail SET receiveDone+=value;
         WITH DxBizOp as a ID=id 
             SET a.type=EnumBizOpType.orderReceiveDone, a.biz=orderDetail, a.value=value, a.stamp=$stamp;
-        VAR queueId ID = ID(QueueBizOp new, id);
+        -- VAR queueId ID = ID(QueueBizOp new, id);
+        WITH QueueBizOp as a ID=id SET a.bizop=id;
 	}
-    SCHEDULE ExecQueueBizOp DELAY 1;
+    -- SCHEDULE ExecQueueBizOp DELAY 1;
 }
 ACCEPT [return] {
 	FOR detail {
@@ -59,9 +60,10 @@ ACCEPT [return] {
 		WITH DxOrderDetail ID=orderDetail SET return+=quantity;
         WITH DxBizOp as a ID=id 
             SET a.type=EnumBizOpType.orderReturn, a.biz=orderDetail, a.value=quantity, a.stamp=$stamp;
-        VAR queueId ID = ID(QueueBizOp new, id);
+        -- VAR queueId ID = ID(QueueBizOp new, id);
+        WITH QueueBizOp as a ID=id SET a.bizop=id;
 	}
-    SCHEDULE ExecQueueBizOp DELAY 1;
+    -- SCHEDULE ExecQueueBizOp DELAY 1;
 }
 ACCEPT [order-sale-margin] {
     LOG CONCAT_WS(' ', order) SUBJECT 'JkOrderBus ACCEPT order-sale-margin';
@@ -75,17 +77,6 @@ ACCEPT [order-sale-margin] {
     -- PROC ProcSetOrderReady(order, OrderReady.margin);
     PROC ProcQueueBizMain(order);
 }
-/*
-ACCEPT [order-sale-cost] {
-    LOG CONCAT_WS(' ', order) SUBJECT 'JkOrderBus ACCEPT order-sale-cost';
-    FOR detail {
-        LOG CONCAT_WS(' ', [order-detail], [cost]) SUBJECT 'ACCEPT JkOrderBus.order-sale-cost';
-        WITH DxOrderDetail ID=[order-detail] SET costPrice=[cost];
-    }
-    -- PROC ProcSetOrderReady(order, OrderReady.cost);
-    PROC ProcQueueBizMain(order);
-}
-*/
 ACCEPT [order-bound-staff-sales] {
     LOG CONCAT_WS(' ', order) SUBJECT 'JkOrderBus ACCEPT order-bound-staff-sales';
     VAR bizMainBoundId ID;
@@ -185,35 +176,12 @@ subject /- 恭喜你 -/
 PROC ProcQueueBizMain(
     bizMain ID,
 ) {
-    
-    IF  -- EXISTS(SELECT id FROM DxBizMain WHERE ready=1 AND id=bizMain) AND 
-        NOT EXISTS(SELECT a.id FROM QueueBizMain as a WHERE a.bizMain=bizMain)
+    WITH QueueBizMain as a ID=bizMain SET a.bizMain=bizMain;
+    /*
+    IF  NOT EXISTS(SELECT a.id FROM QueueBizMain as a WHERE a.bizMain=bizMain)
     {
         VAR queueId ID = ID(QueueBizMain new KEY bizMain=bizMain);
-        SCHEDULE ExecQueueBizMain DELAY 1;
+        -- SCHEDULE ExecQueueBizMain DELAY 1;
     }
+    */
 };
-
-/*
--- 订单ready后放入DxBizMain / DxBiz
-PROC ProcSetOrderReady(
-    order ID,
-    orderReady ENUM OrderReady,
-) {
-    VAR ready ENUM OrderReady;
-    SET ready=a.orderReady FROM DxOrderMain as a WHERE a.id=order;
-    IF ready IS NULL {
-        SET ready = 0;
-    }
-    SET ready = ready | orderReady;
-    WITH DxOrderMain ID=order SET orderReady=ready;
-    IF ready & (OrderReady.sheet | OrderReady.margin)  = (OrderReady.sheet | OrderReady.margin) {
-        WITH DxBizMain ID=order SET ready=1;
-        FOR (VAR orderDetail ID 
-            OF SELECT id as orderDetail FROM OrderDetail WHERE main=order)
-        {
-            WITH DxBiz ID=orderDetail SET main=order;
-        }
-    }
-};
-*/

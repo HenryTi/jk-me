@@ -1,4 +1,4 @@
-import { FA, LMR, VPage } from "tonva-view";
+import { FA, LMR, VPage } from "tonwa";
 import { CBug, DebugItem } from "./CBug";
 
 export class VBug extends VPage<CBug> {
@@ -9,7 +9,7 @@ export class VBug extends VPage<CBug> {
 		</div>
 	}
 	content() {
-        return <div>
+		return <div>
 			<div>
 				{this.controller.debugItems.map(this.renderItem)}
 			</div>
@@ -19,8 +19,8 @@ export class VBug extends VPage<CBug> {
 		</div>;
 	}
 
-	private renderItem = (item:DebugItem, index:number):JSX.Element => {
-		let {name, discription} = item;
+	private renderItem = (item: DebugItem, index: number): JSX.Element => {
+		let { name, discription } = item;
 		let right = <FA name="angle-right" />;
 		return <LMR key={index} className="px-3 py-2 cursor-pointer mt-1 bg-white"
 			onClick={() => this.controller.openDebugPage(item)}

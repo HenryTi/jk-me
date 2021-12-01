@@ -1,4 +1,4 @@
-import { VPage } from "tonva-view";
+import { VPage } from "tonwa";
 import { CBug } from "./CBug";
 
 export class VConsole extends VPage<CBug> {
@@ -11,33 +11,33 @@ export class VConsole extends VPage<CBug> {
 		return this.controller.currentItem.name;
 	}
 	content() {
-		let {currentItem} = this.controller;
-		let {name, discription} = currentItem;
+		let { currentItem } = this.controller;
+		let { name, discription } = currentItem;
 		return <div>
 			<div className="p-3">
-			<div><b>{name}</b></div>
-			<div>{discription}</div>
+				<div><b>{name}</b></div>
+				<div>{discription}</div>
 			</div>
 			<div ref={t => this.div = t} className="p-3 border-top border-primary bg-light" />
 			<div ref={t => this.divBottom = t} />
 		</div>;
 	}
 
-	private autoScrollEnd:boolean = false;
+	private autoScrollEnd: boolean = false;
 	private autoScroll = true;
-    private lastScrollTop = 0;
-    private timeHandler:any;
-    private startAutoScrollToBottom() {
+	private lastScrollTop = 0;
+	private timeHandler: any;
+	private startAutoScrollToBottom() {
 		if (this.autoScrollEnd === true) return;
 		this.autoScroll = true;
 		if (this.timeHandler !== undefined) return;
-        this.timeHandler = setInterval(() => {
+		this.timeHandler = setInterval(() => {
 			if (this.autoScroll === false) return;
-            this.divBottom?.scrollIntoView();
-        }, 100);
-    }
-    private endAutoScrollToBottom() {
-        setTimeout(() => {
+			this.divBottom?.scrollIntoView();
+		}, 100);
+	}
+	private endAutoScrollToBottom() {
+		setTimeout(() => {
 			this.autoScroll = false;
 			this.autoScrollEnd = true;
 			if (this.timeHandler === undefined) return;
@@ -48,23 +48,23 @@ export class VConsole extends VPage<CBug> {
 	private pauseAutoScrollToBottom() {
 		this.autoScroll = false;
 	}
-	protected onPageScroll(e:any) {
-        let el = e.target as HTMLBaseElement;
-        let {scrollTop, scrollHeight, offsetHeight} = el;
-        if (scrollTop <= this.lastScrollTop) {
-            this.pauseAutoScrollToBottom();
-        }
-        else if (scrollTop + offsetHeight > scrollHeight - 30) {
-            this.startAutoScrollToBottom();
-        }
+	protected onPageScroll(e: any) {
+		let el = e.target as HTMLBaseElement;
+		let { scrollTop, scrollHeight, offsetHeight } = el;
+		if (scrollTop <= this.lastScrollTop) {
+			this.pauseAutoScrollToBottom();
+		}
+		else if (scrollTop + offsetHeight > scrollHeight - 30) {
+			this.startAutoScrollToBottom();
+		}
 
-        this.lastScrollTop = scrollTop;
+		this.lastScrollTop = scrollTop;
 	}
 
-	log = (message?: any):void => {
+	log = (message?: any): void => {
 		const range = document.createRange();
 		range.selectNode(this.div);
-		let html:string;
+		let html: string;
 		if (!message) {
 			html = '<div>&nbsp;</div>';
 		}
@@ -99,11 +99,11 @@ export class VConsole extends VPage<CBug> {
 		return ret;
 	}
 
-	private indent(n:number) {
+	private indent(n: number) {
 		if (!n) return '';
 		let ret = '';
-		n = n*2;
-		for (let i=0; i<n; i++) ret += '&emsp;';
+		n = n * 2;
+		for (let i = 0; i < n; i++) ret += '&emsp;';
 		return ret;
 	}
 
@@ -115,17 +115,17 @@ export class VConsole extends VPage<CBug> {
 			return 'array[' + obj.length + ']';
 		}
 		switch (typeof obj) {
-		default: return obj.toString();
-		case 'undefined': return 'undefined';
-		case 'object':
-			if (obj.tuid === undefined) {
-				return 'obj';
-			}
-			return obj.id;
+			default: return obj.toString();
+			case 'undefined': return 'undefined';
+			case 'object':
+				if (obj.tuid === undefined) {
+					return 'obj';
+				}
+				return obj.id;
 		}
 	}
 
-	private objToLine(indent:number, obj:any) {
+	private objToLine(indent: number, obj: any) {
 		let first = true;
 		let ret = '<div>' + this.indent(indent) + '{ ';
 		for (let i in obj) {
@@ -141,17 +141,17 @@ export class VConsole extends VPage<CBug> {
 		return ret;
 	}
 
-	private indentVal(indent:number, val:any):string {
+	private indentVal(indent: number, val: any): string {
 		return '<div>' + this.indent(indent) + val + '</div>'
 	}
-	private arrToHtml(indent:number, arr:any[]) {
+	private arrToHtml(indent: number, arr: any[]) {
 		let ret = '<div>' + this.indent(indent) + '[</div>';
 		for (let item of arr) {
-			let t:string|number;
+			let t: string | number;
 			switch (typeof item) {
-				default: t = this.indentVal(indent+1, item); break;
-				case 'object': t = this.objToLine(indent+1, item); break;
-				case 'string': t = this.indentVal(indent+1, `'${item}'`); break;
+				default: t = this.indentVal(indent + 1, item); break;
+				case 'object': t = this.objToLine(indent + 1, item); break;
+				case 'string': t = this.indentVal(indent + 1, `'${item}'`); break;
 			}
 			ret += t;
 		}

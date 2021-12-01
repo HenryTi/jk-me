@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { CBase/*, Context*/ } from "tonva-view";
+import { CBase/*, Context*/ } from "tonwa";
 /*
 import { CID, MidID, CIDX, MidIDX, MidTag, CIDTagList, CTagIDList
 	, SheetUI, MidIDTagList, CSheetNew, MidSheet } from "tonva-uqui";
@@ -16,7 +16,7 @@ export interface UIItem {
 }
 
 export class CTester extends CUqBase {
-	readonly uiItems:UIItem[] = [
+	readonly uiItems: UIItem[] = [
 		/*
 		{
 			name: 'customer',

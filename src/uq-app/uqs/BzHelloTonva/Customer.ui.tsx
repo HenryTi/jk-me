@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FieldItemNumber, FieldItemString, FieldItemInt, FieldItemId, FieldItem, UI, TFunc } from "tonva-view";
+import { FieldItemNumber, FieldItemString, FieldItemInt, FieldItemId, FieldItem, UI, TFunc } from "tonwa";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Res, uqStringify, setRes } from "tonva-core";
+import { Res, uqStringify, setRes } from "tonwa-core";
 import { Customer } from "./BzHelloTonva";
 
 /*--fields--*/
@@ -37,7 +37,7 @@ const fields = {
 /*==fields==*/
 
 export const fieldArr: FieldItem[] = [
-	fields.no, fields.firstName, fields.lastName, 
+	fields.no, fields.firstName, fields.lastName,
 ];
 
 export const ui: UI = {
@@ -53,8 +53,8 @@ export const res: Res<any> = {
 	}
 };
 
-export function render(item: Customer):JSX.Element {
-	let {firstName, lastName, no} = item;
+export function render(item: Customer): JSX.Element {
+	let { firstName, lastName, no } = item;
 	return <span>
 		<small className="d-inline-block w-3c">{no}</small> <b>{firstName} {lastName}</b>
 	</span>;

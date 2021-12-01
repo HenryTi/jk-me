@@ -1,6 +1,6 @@
 //=== UqApp builder created on Tue Jan 12 2021 23:14:51 GMT-0500 (GMT-05:00) ===//
-import { AppConfig } from "tonva-view";
-import { DevConfig } from 'tonva-core';
+import { AppConfig } from "tonwa";
+import { DevConfig } from 'tonwa-core';
 
 /*
 const bz: DevConfig = {
@@ -43,7 +43,7 @@ export const appConfig: AppConfig = {
 		},
 	],
 	noUnit: true,
-    //tvs: {},
+	//tvs: {},
 	oem: undefined,
 	htmlTitle: '我',
 };

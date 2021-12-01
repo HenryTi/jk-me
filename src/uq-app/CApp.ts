@@ -10,17 +10,17 @@ import { Item, Post, EnumRole, EnumRoleOp, EnumAccount } from "./uqs/JkMe";
 import { CSupervise } from "supervise";
 import { CPortal, CObjectPortal, CUnitPortal } from "portal";
 import { makeObservable, observable, runInAction } from "mobx";
-import { start } from "tonva-view";
+import { start } from "tonwa";
 import { appConfig } from "./appConfig";
-import { Tonva } from "tonva-core";
+import { Tonva } from "tonwa-core";
 
-const gaps = [10, 3,3,3,3,3,5,5,5,5,5,5,5,5,10,10,10,10,15,15,15,30,30,60];
+const gaps = [10, 3, 3, 3, 3, 3, 5, 5, 5, 5, 5, 5, 5, 5, 10, 10, 10, 10, 15, 15, 15, 30, 30, 60];
 
 export interface Title {
-    title: string;
-    vice?: string;
-    unit?: string;
-    fixed?: number;
+	title: string;
+	vice?: string;
+	unit?: string;
+	fixed?: number;
 }
 
 
@@ -37,11 +37,11 @@ export class CApp extends CUqApp {
 	cPortal: CPortal;
 	cUnitPortal: CUnitPortal;
 
-	readonly itemTitles:{[item in Item]: Title} = {} as any;
-	readonly postTitles:{[post in Post]: Title} = {} as any;
-	readonly accountTitles:{[acount in EnumAccount]: Title} = {} as any;
-	ops: {role: EnumRole; op: EnumRoleOp}[];
-	
+	readonly itemTitles: { [item in Item]: Title } = {} as any;
+	readonly postTitles: { [post in Post]: Title } = {} as any;
+	readonly accountTitles: { [acount in EnumAccount]: Title } = {} as any;
+	ops: { role: EnumRole; op: EnumRoleOp }[];
+
 	protected async internalStart(isUserLogin: boolean) {
 		makeObservable(this, {
 			refreshTime: observable
@@ -65,18 +65,18 @@ export class CApp extends CUqApp {
 		// TUID [$User] ID (member) SET poke=1;
 	}
 
-	private timer:any;
+	private timer: any;
 	protected onDispose() {
 		clearInterval(this.timer);
 		this.timer = undefined;
 	}
-	
+
 	async initStart() {
 		await this.tonva.appStart();
 	}
 
-	render(loginedOnly: boolean = true):JSX.Element {
-		const onLogined = async (isUserLogin?:boolean) => {
+	render(loginedOnly: boolean = true): JSX.Element {
+		const onLogined = async (isUserLogin?: boolean) => {
 			await start(CApp, this.tonva, appConfig, isUserLogin);
 		}
 		let onNotLogined: () => Promise<void>;
@@ -86,7 +86,7 @@ export class CApp extends CUqApp {
 
 
 	private async loadBaseData() {
-		let {JkMe} = this.uqs;
+		let { JkMe } = this.uqs;
 		let [retItemTitles, retPostTitles, retAccountTitles, roleOps, myTimezone] = await Promise.all([
 			JkMe.GetItemTitles.query({}),
 			JkMe.GetPostTitles.query({}),
@@ -102,7 +102,7 @@ export class CApp extends CUqApp {
 		this.timezone = tz.timezone;
 		this.unitTimezone = tz.unitTimeZone;
 	}
-	
+
 	renderVPortal() {
 		return this.cPortal.renderVPortal();
 	}
@@ -141,7 +141,7 @@ export class CApp extends CUqApp {
 		try {
 			if (!this.user) return;
 			++this.tick;
-			if (this.tick<gaps[this.gapIndex]) return;
+			if (this.tick < gaps[this.gapIndex]) return;
 			this.tick = 0;
 			if (this.gapIndex < gaps.length - 1) ++this.gapIndex;
 			let ret = await this.uqs.JkMe.$poked.query(undefined, undefined, false);

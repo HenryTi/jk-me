@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FieldItemString, FieldItemInt, FieldItemId, FieldItem, UI, TFunc } from "tonva-view";
+import { FieldItemString, FieldItemInt, FieldItemId, FieldItem, UI, TFunc } from "tonwa";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Res, uqStringify, setRes } from "tonva-core";
+import { Res, uqStringify, setRes } from "tonwa-core";
 import { OrderMaster } from "./BzHelloTonva";
 
 /*--fields--*/
@@ -29,7 +29,7 @@ const fields = {
 /*==fields==*/
 
 export const fieldArr: FieldItem[] = [
-	fields.no, fields.customer, 
+	fields.no, fields.customer,
 ];
 
 export const ui: UI = {
@@ -45,6 +45,6 @@ export const res: Res<any> = {
 	}
 };
 
-export function render(item: OrderMaster):JSX.Element {
+export function render(item: OrderMaster): JSX.Element {
 	return <>{JSON.stringify(item)}</>;
 };

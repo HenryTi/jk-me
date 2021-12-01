@@ -29,6 +29,11 @@ ID #ObjectStaff (
     KEY staff ID,
 );
 
+ID #ObjectBranch (
+    id,             -- Object
+    KEY branch ID,  
+);
+
 ID #ObjectAgent (
     id,             -- Object
     KEY agent ID,
@@ -56,10 +61,11 @@ ID #ObjectPostItem (
 ID #ItemHistory ver 0.1 MINUTEID (
     -- 26位表达从2021开始的分钟，后面跟16位的序列号。如果重了，就顺序往后加。
     id,                         -- 分钟序id
-    KEY bizOp ID,               -- 业务操作id。包含biz
+    KEY bizOp ID,               -- 业务操作id。包含biz。也可以是itemHistory id。当前的值，从这里计算来
     KEY item ENUM Item,         -- 科目
     value DEC(18,4),            -- 数值
-    memo INT,                   -- 文本ID
+    -- memo INT,                   -- 文本ID
+    booking ID OPIBooking,      -- 记账动作
     INDEX item_id(item, id) UNIQUE,
 );
 
@@ -72,6 +78,11 @@ ID #OPIHistory MINUTEID (
     booking ID OPIBooking,      -- 记账动作
     INDEX opi_id(opi, id) UNIQUE,
     INDEX itemHistory(itemHistory),
+);
+
+IX OPIItemHistory (
+    ix ObjectPostItem,
+    xi ItemHistory,
 );
 
 ENUM EnumAccount (
