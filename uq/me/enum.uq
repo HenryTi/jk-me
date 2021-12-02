@@ -4,7 +4,8 @@ ENUM Item (
     orderAmount                 = 1011,     -- 订单金额，value是应收金额
     orderProfit                 = 1012,     -- 订单毛利，value是毛利润
     orderFee                    = 1013,     -- 订单提成，根据发券提供比例提成。每个deliver-done和receive-done单独算
-    orderTransfer               = 1014,     -- 内部调拨金额
+    orderSaleTransfer           = 1014,     -- 内部销售调拨金额
+    orderFactoryTransfer        = 1015,     -- 内部生产调拨金额
     orderReturn                 = 1020,     -- 订单退货
     orderReceive                = 1030,     -- 订单收款
     orderReceiveReturn          = 1040,     -- 订单退款
@@ -26,7 +27,8 @@ ENUM Post (
     topSales                    = 1101,
     manager                     = 2010,
     managerIT                   = 2100,
-    branch                      = 3000,
+    saleBranch                  = 3000,
+    factoryBranch               = 3001,
     agent                       = 7010,
     agentSales                  = 7100,
     distributor                 = 7500,
@@ -62,7 +64,8 @@ VALUES
 (Item.orderAmount, '销售额', null, '元', 2),
 (Item.orderProfit, '毛利', null, '元', 2),
 (Item.orderFee, null, '提成基数', '元', 2),                    -- 如果title是null，就不需要展示给界面。属于内部核算科目
-(Item.orderTransfer, '调拨', '分公司间调拨金额', '元', 2),     -- 内部调拨金额
+(Item.orderSaleTransfer, '销售调拨', '分公司间销售调拨金额', '元', 2),      -- 内部调拨金额
+(Item.orderFactoryTransfer, '销售调拨', '分公司间生产调拨金额', '元', 2),   -- 内部调拨金额
 (Item.orderReturn, '退货', null, '元', 2),
 (Item.orderReceive, '收款', null, '元', 2),
 (Item.orderReceiveReturn, '退款', null, '元', 2),
@@ -116,7 +119,8 @@ ID #OPIBooking ver 0.5 CONST (
 VALUES
 -- 原生item booking。Post.sys, item=postItem
 (EnumBizOpType.booking, Post.sys, Item.orderAmount, Item.orderAmount, null, TEXTID('订单金额')),
-(EnumBizOpType.booking, Post.sys, Item.orderTransfer, Item.orderTransfer, null, TEXTID('调拨金额')),
+(EnumBizOpType.booking, Post.sys, Item.orderSaleTransfer, Item.orderSaleTransfer, null, TEXTID('销售调拨金额')),
+(EnumBizOpType.booking, Post.sys, Item.orderFactoryTransfer, Item.orderFactoryTransfer, null, TEXTID('生产调拨金额')),
 (EnumBizOpType.booking, Post.sys, Item.orderProfit, Item.orderProfit, null, TEXTID('订单毛利')),
 (EnumBizOpType.booking, Post.sys, Item.orderReceive, Item.orderReceive, null, TEXTID('回款金额')),
 (EnumBizOpType.booking, Post.sys, Item.orderReturn, Item.orderReturn, null, TEXTID('退货金额')),
@@ -132,7 +136,8 @@ VALUES
 (EnumBizOpType.orderDeliverDone, Post.topSales, Item.profitFee, Item.orderFee, 1, TEXTID('发货后高管毛利提成')),
 (EnumBizOpType.orderDeliverDone, Post.topSales, Item.couponFee, Item.orderFee, 1, TEXTID('发货后高管发券提成')),
 (EnumBizOpType.orderDeliverDone, Post.managerIT, Item.amountFee, Item.orderAmount, 0.1, TEXTID('销售额提成')),
-(EnumBizOpType.orderDeliverDone, Post.branch, Item.orderTransfer, Item.orderTransfer, null, TEXTID('调拨金额')),
+(EnumBizOpType.orderDeliverDone, Post.factoryBranch, Item.orderFactoryTransfer, Item.orderFactoryTransfer, null, TEXTID('生产调拨金额')),
+(EnumBizOpType.orderDeliverDone, Post.saleBranch, Item.orderSaleTransfer, Item.orderSaleTransfer, null, TEXTID('销售调拨金额')),
 -- (EnumBizOpType.orderDeliverDone, Post.topSales, Item.amountFee, Item.orderAmount, 0.1, TEXTID('销售额提成')),
 -- (EnumBizOpType.orderDeliverDone, Post.topSales, Item.amountFee, Item.orderFee, 0.1, TEXTID('销售额提成')),
 -- (EnumBizOpType.orderDeliverDone, Post.topSales, Item.profitFee, Item.orderReturn, 0.1, TEXTID('销售额提成')),
