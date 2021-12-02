@@ -34,7 +34,7 @@ const fields = {
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.xi, fields.receiveAmount, fields.createDate,
+	fields.xi, fields.receiveAmount, fields.createDate, 
 ];
 
 export const ui: UI = {

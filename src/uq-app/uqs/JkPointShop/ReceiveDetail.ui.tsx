@@ -40,7 +40,7 @@ const fields = {
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.main, fields.orderDetail, fields.amount, fields.createDate,
+	fields.main, fields.orderDetail, fields.amount, fields.createDate, 
 ];
 
 export const ui: UI = {
