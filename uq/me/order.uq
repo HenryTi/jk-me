@@ -1,8 +1,8 @@
 ENUM OrderType ( 
-	Customer 		= 01,
-	Distributor 	= 11,
-	Branch 			= 21,
-	Factory			= 22,
+	Customer 			= 01,
+	Distributor 		= 11,
+	SaleBranch 			= 21,
+	FactoryBranch		= 22,
 );
 
 ID #OrderMain ver 0.5 GLOBAL (
@@ -38,9 +38,9 @@ IDX DxOrderMain (
 
 IDX DxOrderDetail (
     id,
-    deliverDone DEC(18,4) SUM,
-    receiveDone DEC(18,4) SUM,
-    return DEC(18,4) SUM,
+    deliverDone DEC(18,4),
+    receiveDone DEC(18,4),
+    return DEC(18,4),
     costPrice DEC(18,4),
 	margin DEC(18,4),
     sys (create, update),

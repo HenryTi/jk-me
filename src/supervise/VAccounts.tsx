@@ -18,7 +18,8 @@ export class VAccounts extends VPage<CSupervise> {
             <span>{balance.toFixed(fixed ?? 2)}</span>
             <small className="ms-1 text-muted">{unit}</small>
         </div>;
-        let { Employee } = uqs.JkHr;
+        let { JkHr } = uqs;
+        let { Employee } = JkHr;
         const renderObject = () => {
             switch (Number(objectType) as EnumObjectType) {
                 default: return <>{objectType} {objectTo}</>;
