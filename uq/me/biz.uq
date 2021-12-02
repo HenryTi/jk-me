@@ -34,6 +34,7 @@ IDX DxBizOp (
     INDEX biz_id(biz),
 );
 
+-- 标记bizOp/BizMainBound相关的绩效是否已经已经写入opiHistory,bound = 1表示已经处理，是操作结果,不是输入；
 IX IxBizOpBound (
     ix,                                 -- bizOp id
     xi BizMainBound,
@@ -50,7 +51,7 @@ ID #BizopOfDuplicateOpiHistory MINUTEID (
     bizMainBoundId ID,
 );
 
--- 1. 订单跟岗位和个人的绑定关系。
+-- 1. bizMain跟岗位和个人以及“科目item”的绑定关系，表示该bizMain将使用该item为该岗位的该个人计算绩效
 -- 2. 从订单绑定管理发送过来。
 -- 3. 一直保留
 ID #BizMainBound (

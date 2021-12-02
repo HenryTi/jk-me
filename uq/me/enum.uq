@@ -14,7 +14,9 @@ ENUM Item (
     couponFee                   = 1111,     -- 发券毛利提成
     amountFee                   = 1120,     -- 订单销售额提成
     
-    customerPoint               = 2010,     -- 客户普通积分
+    customerPoint               = 2010,             -- 客户普通积分
+
+    pickupPoint                 = 3010,             -- 拣货积分
 );
 
 -- 业务岗位
@@ -39,6 +41,8 @@ ENUM EnumBizOpType (
 	orderDeliverDone            = 101, 
 	orderReceiveDone            = 102,
 	orderReturn                 = 103,
+
+	pickupDone                  = 104,
 );
 
 ENUM OrderReady (
@@ -68,7 +72,8 @@ VALUES
 (Item.profitFee, '毛利提成', null, '元', 2),
 (Item.amountFee, '销售额提成', null, '元', 2),
 (Item.couponFee, '发券提成', null, '元', 2),
-(Item.customerPoint, '客户积分', null, '点', 2)
+(Item.customerPoint, '客户积分', null, '点', 2),
+(Item.pickupPoint, '拣货积分', null, '点', 4),
 ;
 
 ID #PostTitle ver 0.2 CONST (
@@ -85,7 +90,7 @@ VALUES
 (Post.managerIT, 'IT总监', null),
 (Post.agent, '轻代理', null),
 (Post.agentSales, '轻代理销售员', null),
-(Post.customer, '顾客', null)
+(Post.customer, '顾客', null),
 ;
 
 ID #AccountTitle ver 0.1 CONST (
@@ -100,13 +105,13 @@ VALUES
 (EnumAccount.commission, '业绩提成', null, '元', 2),
 ;
 
--- OPIBooking
+-- OPIBooking, 是设置某个岗位（post）能够看到某个科目（postItem）值，该值和另外一个科目（item）的比例关系（radio）以及在何时（bizOpType）计算该值
 ID #OPIBooking ver 0.5 CONST (
     id small,
     KEY bizOpType ENUM EnumBizOpType,
     KEY post ENUM Post,
-    KEY postItem ENUM Item,             -- item to OPIHistory
-    KEY item ENUM Item,                 -- item to ItemHistory
+    KEY postItem ENUM Item,                 -- item to OPIHistory, 要计算的科目
+    KEY item ENUM Item,                     -- item to ItemHistory, 为了在计算opihistory时去使用ItemHistory中的值
     ratio DEC(6,2) DEFAULT 100,         -- 百分比，从itemHistory的value，折算到 OPIHistory, 未来有可能是分段公式
     memo INT,                           -- 文本id
 )
@@ -140,8 +145,12 @@ VALUES
 -- EnumOrderAction.receiveDone
 (EnumBizOpType.orderReceiveDone, Post.staffSales, Item.profitFee, Item.orderFee, 4, TEXTID('收款后毛利提成')),
 (EnumBizOpType.orderReceiveDone, Post.staffSales, Item.couponFee, Item.orderFee, 1, TEXTID('收款后发券提成')),
+
 (EnumBizOpType.orderReceiveDone, Post.topSales, Item.profitFee, Item.orderFee, 1, TEXTID('收款后高管毛利提成')),
 (EnumBizOpType.orderReceiveDone, Post.topSales, Item.couponFee, Item.orderFee, 1, TEXTID('收款后高管发券提成')),
+
+-- 
+(EnumBizOpType.pickupDone, Post.staff, Item.pickupPoint, Item.pickupPoint, 100, TEXTID('拣货计件积分')),
 ;
 
 QUERY GetItemTitles()

@@ -42,6 +42,6 @@ IDX DxOrderDetail (
     receiveDone DEC(18,4),
     return DEC(18,4),
     costPrice DEC(18,4),
-	margin DEC(18,4),
+    margin DEC(18,4),
     sys (create, update),
 );
