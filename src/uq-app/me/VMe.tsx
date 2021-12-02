@@ -3,13 +3,13 @@ import { Image, VPage, IconText, PropGrid, LMR, FA, Prop } from "tonwa";
 import { CMe } from './CMe';
 import { appConfig } from '../appConfig';
 import { VAbout } from './VAbout';
-import { tonva } from 'tonwa-core';
+import { tonwa } from 'tonwa-core';
 
 export class VMe extends VPage<CMe> {
     header() { return this.t('me') }
 
     content() {
-        const { user } = tonva;
+        const { user } = tonwa;
         let aboutRows: Prop[] = [
             '',
             {
@@ -29,7 +29,7 @@ export class VMe extends VPage<CMe> {
             rows.push(
                 {
                     type: 'component',
-                    component: <button className="btn btn-success w-100 my-2" onClick={() => tonva.logout()}>
+                    component: <button className="btn btn-success w-100 my-2" onClick={() => tonwa.logout()}>
                         <FA name="sign-out" size="lg" /> {this.t('pleaseLogin')}
                     </button>
                 },
@@ -52,7 +52,7 @@ export class VMe extends VPage<CMe> {
     }
 
     private meInfo = observer(() => {
-        let { user } = tonva;
+        let { user } = tonwa;
         if (user === undefined) return null;
         let { id, name, nick, icon } = user;
         return <LMR className="py-2 cursor-pointer w-100"

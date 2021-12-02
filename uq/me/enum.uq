@@ -127,7 +127,7 @@ VALUES
 
 -- EnumOrderAction.orderDeliverDone
 (EnumBizOpType.orderDeliverDone, Post.staffSales, Item.orderAmount, Item.orderAmount, null, TEXTID('销售额')),
-(EnumBizOpType.orderDeliverDone, Post.staffSales, Item.profitFee, Item.orderFee, 6, TEXTID('发货后毛利提成')),
+(EnumBizOpType.orderDeliverDone, Post.staffSales, Item.profitFee, Item.orderFee, 4, TEXTID('发货后毛利提成')),
 (EnumBizOpType.orderDeliverDone, Post.staffSales, Item.couponFee, Item.orderFee, 1, TEXTID('发货后发券提成')),
 (EnumBizOpType.orderDeliverDone, Post.topSales, Item.profitFee, Item.orderFee, 1, TEXTID('发货后高管毛利提成')),
 (EnumBizOpType.orderDeliverDone, Post.topSales, Item.couponFee, Item.orderFee, 1, TEXTID('发货后高管发券提成')),

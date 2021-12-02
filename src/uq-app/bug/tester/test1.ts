@@ -3,12 +3,12 @@ import { DebugItem } from "../CBug";
 import { UQs } from "uq-app";
 import { Log } from "../Logger";
 
-//BzTest, BzHelloTonva, BzCustomerPayment, 
+//BzTest, BzHelloTonwa, BzCustomerPayment, 
 
-export const testItem1:DebugItem = {
-	name: 'HelloTonva.GetProductStock',
+export const testItem1: DebugItem = {
+	name: 'HelloTonwa.GetProductStock',
 	discription: '{product: 1}',
-	test: async ( log: Log, uqs: UQs):Promise<void> => {
+	test: async (log: Log, uqs: UQs): Promise<void> => {
 		/*
 		let a = await uqs.BzTest.ID({
 			IDX: uqs.BzTest.X1,
@@ -66,12 +66,12 @@ export const testItem1:DebugItem = {
 			log(ci);
 		}
 
-		//let u: BzHelloTonva.Return$pokedRet;
+		//let u: BzHelloTonwa.Return$pokedRet;
 		//u.poke = 1;
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		let f = BzCustomerPayment.EnumCustomerAction.confirm;
 
-		let ret = await uqs.BzHelloTonva.GetProductStock.query({product: 1});
+		let ret = await uqs.BzHelloTonwa.GetProductStock.query({product: 1});
 		log(ret);
 		*/
 		log('test1');

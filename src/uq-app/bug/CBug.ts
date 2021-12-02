@@ -7,7 +7,7 @@ import { VConsole } from "./VConsole";
 export interface DebugItem {
 	name: string;
 	discription?: string;
-	test: (log:Log, uqs: UQs) => Promise<void>;
+	test: (log: Log, uqs: UQs) => Promise<void>;
 }
 
 export class CBug extends CUqBase {
@@ -23,10 +23,10 @@ export class CBug extends CUqBase {
 
 	}
 
-	openDebugPage = async (item:DebugItem) => {
+	openDebugPage = async (item: DebugItem) => {
 		this.currentItem = item;
 		let console = await this.openVPage(VConsole);
-		let {test} = item;
+		let { test } = item;
 		let start = new Date();
 		console.log(`=== test start at ${start} ===`);
 		console.log();
@@ -43,7 +43,7 @@ export class CBug extends CUqBase {
 	}
 
 	test = async () => {
-		let uqName = 'BizDev/hello-tonva';
+		let uqName = 'BizDev/hello-tonwa';
 		let roles = await this.getUqRoles(uqName);
 		alert(roles);
 	}

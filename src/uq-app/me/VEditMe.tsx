@@ -3,7 +3,7 @@ import {
     ItemSchema, StringSchema, ImageSchema, UiTextItem, UiImageItem, Page,
     Edit, UiSchema, VPage, Prop, FA, IconText, PropGrid
 } from "tonwa";
-import { tonva } from 'tonwa-core';
+import { tonwa } from 'tonwa-core';
 import { CMe } from './CMe';
 
 export class VEditMe extends VPage<CMe>{
@@ -26,7 +26,7 @@ export class VEditMe extends VPage<CMe>{
 
     constructor(props: any) {
         super(props);
-        let { nick, icon } = tonva.user;
+        let { nick, icon } = tonwa.user;
         this.data = {
             nick: nick,
             icon: icon,
@@ -37,20 +37,20 @@ export class VEditMe extends VPage<CMe>{
         let { name } = itemSchema;
         await this.controller.web.userApi.userSetProp(name, newValue);
         this.data[name] = newValue;
-        tonva.user.name = newValue;
-        tonva.saveLocalUser();
+        tonwa.user.name = newValue;
+        tonwa.saveLocalUser();
     }
 
     private onExit = () => {
-        tonva.showLogout();
+        tonwa.showLogout();
     }
 
     private changePassword = async () => {
-        await tonva.changePassword();
+        await tonwa.changePassword();
     }
 
     private userQuit = async () => {
-        await tonva.userQuit();
+        await tonwa.userQuit();
     }
 
     private page = () => {

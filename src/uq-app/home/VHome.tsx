@@ -21,7 +21,7 @@ export class VHome extends VPage<CHome> {
 			<header className="App-header">
 				<img src={logo} className="App-logo" alt="logo" />
 				<p>
-					<span className="text-success">tonva</span> + <span className="text-primary">uq</span> = UI + DB
+					<span className="text-success">tonwa</span> + <span className="text-primary">uq</span> = UI + DB
 				</p>
 				<div className="mb-3 h6 text-warning">
 					编程

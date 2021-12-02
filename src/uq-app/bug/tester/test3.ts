@@ -2,9 +2,9 @@ import { UQs } from "uq-app";
 import { Log } from "../Logger";
 
 export const testItem3 = {
-	name: '第三测试', 
-	discription: 'third test', 
-	test: async (log: Log, uqs: UQs):Promise<void> => {
+	name: '第三测试',
+	discription: 'third test',
+	test: async (log: Log, uqs: UQs): Promise<void> => {
 		/*
 		let a = await uqs.BzTest.IDLog({
 			IDX: uqs.BzTest.IBook1,
@@ -41,7 +41,7 @@ export const testItem3 = {
 		});
 		log(e);
 
-		let ret = await uqs.BzHelloTonva.TestArr.submitReturns({rows: [
+		let ret = await uqs.BzHelloTonwa.TestArr.submitReturns({rows: [
 			{a: 1, b: 2}, 
 			{a: 3, b: 4}, 
 		]});

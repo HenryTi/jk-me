@@ -15,7 +15,7 @@ import {
 import { Item } from "uq-app/uqs/JkMe/JkMe";
 import { VSupervise } from "./VSupervise";
 import { VItemSumHistory } from "./VItemSumHistory";
-//import { PageItems } from "tonva-core";
+//import { PageItems } from "tonwa-core";
 import { VItemHistory } from "./VItemHistory";
 import { VItemDayHistory } from "./VItemDayHistory";
 import { VCustomerSumByMonth, VProductSumByMonth } from "./VSumByMonth";
