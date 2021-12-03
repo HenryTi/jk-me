@@ -21,7 +21,7 @@ const fields = {
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.createDate,
+	fields.createDate, 
 ];
 
 export const ui: UI = {

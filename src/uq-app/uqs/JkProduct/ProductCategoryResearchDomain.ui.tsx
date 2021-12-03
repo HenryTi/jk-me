@@ -6,10 +6,23 @@ import { ProductCategoryResearchDomain } from "./JkProduct";
 
 /*--fields--*/
 const fields = {
+	ix: {
+		"name": "ix",
+		"type": "id",
+		"isKey": false,
+		"label": "Ix"
+	} as FieldItemId,
+	xi: {
+		"name": "xi",
+		"type": "id",
+		"isKey": false,
+		"label": "Xi"
+	} as FieldItemId,
 };
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
+	fields.xi, 
 ];
 
 export const ui: UI = {

@@ -1,7 +1,7 @@
-//=== UqApp builder created on Fri Nov 19 2021 14:42:41 GMT-0500 (北美东部标准时间) ===//
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID } from "tonwa-core";
-import { Render } from "tonwa";
+//=== UqApp builder created on Thu Dec 02 2021 11:23:43 GMT-0500 (北美东部标准时间) ===//
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID } from "tonwa-core";
+		import { Render } from "tonwa-react";
 
 
 //===============================
@@ -13,6 +13,8 @@ export enum Item {
 	orderAmount = 1011,
 	orderProfit = 1012,
 	orderFee = 1013,
+	orderSaleTransfer = 1014,
+	orderFactoryTransfer = 1015,
 	orderReturn = 1020,
 	orderReceive = 1030,
 	orderReceiveReturn = 1040,
@@ -23,10 +25,14 @@ export enum Item {
 }
 
 export enum Post {
+	sys = 0,
 	staff = 1010,
 	staffSales = 1100,
+	topSales = 1101,
 	manager = 2010,
 	managerIT = 2100,
+	saleBranch = 3000,
+	factoryBranch = 3001,
 	agent = 7010,
 	agentSales = 7100,
 	distributor = 7500,
@@ -63,9 +69,17 @@ export enum EnumAccount {
 }
 
 export enum EnumBizOpType {
+	booking = 0,
 	orderDeliverDone = 101,
 	orderReceiveDone = 102,
 	orderReturn = 103
+}
+
+export enum OrderType {
+	Customer = 1,
+	Distributor = 11,
+	SaleBranch = 21,
+	FactoryBranch = 22
 }
 
 export interface Tuid$sheet {
@@ -116,11 +130,6 @@ export interface Param$setMyTimezone {
 	_timezone: number;
 }
 export interface Result$setMyTimezone {
-}
-
-export interface Param_BuildLostSalesStaffOrderAmount {
-}
-export interface Result_BuildLostSalesStaffOrderAmount {
 }
 
 export interface Param$poked {
@@ -535,16 +544,15 @@ export interface ParamActs {
 	group?: Group[];
 }
 
-
+	
 export interface UqExt extends Uq {
-	Acts(param: ParamActs): Promise<any>;
-
-	$sheet: UqTuid<Tuid$sheet> & { tv: (id: number, render?: Render<any>) => JSX.Element };
-	$user: UqTuid<Tuid$user> & { tv: (id: number, render?: Render<any>) => JSX.Element };
+		Acts(param:ParamActs): Promise<any>;
+	
+	$sheet: UqTuid<Tuid$sheet>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	$user: UqTuid<Tuid$user>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
 	BusTestBoundStaffSales: UqAction<ParamBusTestBoundStaffSales, ResultBusTestBoundStaffSales>;
 	DoneDeliver: UqAction<ParamDoneDeliver, ResultDoneDeliver>;
 	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
-	_BuildLostSalesStaffOrderAmount: UqAction<Param_BuildLostSalesStaffOrderAmount, Result_BuildLostSalesStaffOrderAmount>;
 	$poked: UqQuery<Param$poked, Result$poked>;
 	GetPostTitles: UqQuery<ParamGetPostTitles, ResultGetPostTitles>;
 	GetItemTitles: UqQuery<ParamGetItemTitles, ResultGetItemTitles>;
@@ -579,10 +587,11 @@ export interface UqExt extends Uq {
 	Group: UqID<any>;
 }
 
-export function assign(uq: any, to: string, from: any): void {
-	let hasEntity = uq.hasEntity(to);
-	if (hasEntity === false) {
-		return;
+	export function assign(uq: any, to:string, from:any): void {
+		let hasEntity = uq.hasEntity(to);
+		if (hasEntity === false) {
+			return;
+		}
+		Object.assign((uq as any)[to], from);
 	}
-	Object.assign((uq as any)[to], from);
-}
+	

@@ -49,7 +49,7 @@ const fields = {
 /*==fields==*/
 
 const fieldArr: FieldItem[] = [
-	fields.main, fields.item, fields.quantity, fields.point, fields.subAmount,
+	fields.main, fields.item, fields.quantity, fields.point, fields.subAmount, 
 ];
 
 export const ui: UI = {

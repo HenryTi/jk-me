@@ -5,6 +5,7 @@ ACCEPT order {
     LOG CONCAT_WS(' ', mainId) SUBJECT 'JkOrderBus ACCEPT order';
 	WITH OrderMain as a ID=mainId SET a.no=no
         , a.customerAccount=customerAccount
+        , a.type=type
         , a.seller=seller
         , a.stamp=$stamp;
 	FOR detail {
