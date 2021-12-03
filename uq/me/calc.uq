@@ -183,7 +183,8 @@ PROC ProcCalcAccountSum ver 0.4 ()
                     ObjectAccount new
                     KEY object=object, account=account);
                 WITH ObjectAccount as a ID=objectAccountId 
-                    SET a.balance=IFNULL(a.balance, 0)+accountValue;
+                    SET a.balance=IFNULL(a.balance, 0)+accountValue
+                    WHERE a.startStamp>=MinuteIdTime(historyId, timeZone);
                 WITH ObjectAccountHistory as a IX=objectAccountId XI=dateHourId
                     SET a.value=IFNULL(a.value,0)+accountValue, a.opi=opi;
             }

@@ -6,6 +6,7 @@ ENUM EnumObjectType (
     agent               = 4,
     distributor         = 5,
     post                = 6,
+    branch              = 7,
 );
 
 ID #Object (
@@ -106,7 +107,7 @@ ID #ObjectAccount (
     KEY account ENUM EnumAccount,   -- 比如提成-commission
     balance DEC(18,4) DEFAULT 0,
     startBalance DEC(18,4) DEFAULT 0,
-    startStamp TIMESTAMP ,
+    startStamp TIMESTAMP DEFAULT Current,
 );
 
 IX ObjectAccountHistory (

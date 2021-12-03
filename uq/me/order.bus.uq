@@ -23,18 +23,44 @@ ACCEPT order {
         }
 	}
 
-    -- 所有的订单绑定到ManagerIT
-    VAR objManagerId ID;
-    SET objManagerId=ID(ObjectPost, Post.managerIT);
-    IF objManagerId IS NULL {
-        SET objManagerId=ID(Object new);
-        WITH Object ID=objManagerId SET type=EnumObjectType.post;
-        WITH ObjectPost as a ID=objManagerId SET a.post=Post.managerIT;
+    IF type=OrderType.Customer {
+        -- 所有的给customer订单绑定到ManagerIT
+        VAR objManagerId ID;
+        SET objManagerId=ID(ObjectPost, Post.managerIT);
+        IF objManagerId IS NULL {
+            SET objManagerId=ID(Object new);
+            WITH Object ID=objManagerId SET type=EnumObjectType.post;
+            WITH ObjectPost as a ID=objManagerId SET a.post=Post.managerIT;
+        }
+        VAR bizMainBoundId ID = ID(
+            BizMainBound new 
+            KEY bizMain=mainId, post=POST.managerIT, item=ITEM.amountFee, to=objManagerId
+        );
     }
-    VAR bizMainBoundId ID = ID(
-        BizMainBound new 
-        KEY bizMain=mainId, post=POST.managerIT, item=ITEM.amountFee, to=objManagerId
-    );
+    ELSEIF type=OrderType.SaleBranch OR type=OrderType.FactoryBranch {
+        VAR objBranchId ID, post ENUM Post, item ENUM Item;
+        SET objBranchId=ID(ObjectBranch, customerAccount);
+        IF objBranchId IS NULL {
+            SET objBranchId=ID(Object new);
+            WITH Object ID=objBranchId SET type=EnumObjectType.branch;
+            WITH ObjectBranch as a ID=objBranchId SET a.branch=customerAccount;
+        }
+        IF type=OrderType.SaleBranch {
+            SET post=Post.saleBranch;
+            SET item=Item.orderSaleTransfer;
+        }
+        ELSE {
+            SET post=Post.factoryBranch;
+            SET item=Item.orderFactoryTransfer;
+        }
+        VAR bizMainBoundId ID = ID(
+            BizMainBound new 
+            KEY bizMain=mainId, post=post, item=item, to=objBranchId
+        );
+    }
+    ELSEIF type=OrderType.Distributor {
+        -- 暂时不处理 2021-12-2
+    }
 
     -- PROC ProcSetOrderReady(mainId, OrderReady.sheet);
     PROC ProcQueueBizMain(mainId);
