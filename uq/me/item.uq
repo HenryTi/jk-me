@@ -31,10 +31,10 @@ ID #ObjectStaff (
 );
 
 ID #ObjectBranch (
-    id,                             -- Object
-    KEY branch ID,                  -- 对应老系统customerid
-    seller ID,                      -- 对应老系统的seller
-    INDEX seller (seller) UNIQUE,
+    id,             -- Object
+    KEY branch ID,  
+    seller ID,
+    INDEX idx_seller(seller) UNIQUE
 );
 
 ID #ObjectAgent (
