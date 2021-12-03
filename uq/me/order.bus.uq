@@ -23,6 +23,8 @@ ACCEPT order {
         }
 	}
 
+    VAR objSellerId ID, sellerItem ENUM Item;
+    SET objSellerId = a.id from ObjectBranch a where a.seller = seller;
     IF type=OrderType.Customer {
         -- 所有的给customer订单绑定到ManagerIT
         VAR objManagerId ID;
@@ -36,31 +38,43 @@ ACCEPT order {
             BizMainBound new 
             KEY bizMain=mainId, post=POST.managerIT, item=ITEM.amountFee, to=objManagerId
         );
+
+        set sellerItem = ITEM.orderAmount;
     }
     ELSEIF type=OrderType.SaleBranch OR type=OrderType.FactoryBranch {
-        VAR objBranchId ID, post ENUM Post, item ENUM Item;
+        VAR objBranchId ID, post ENUM Post, Item ENUM Item;
         SET objBranchId=ID(ObjectBranch, customerAccount);
         IF objBranchId IS NULL {
             SET objBranchId=ID(Object new);
             WITH Object ID=objBranchId SET type=EnumObjectType.branch;
             WITH ObjectBranch as a ID=objBranchId SET a.branch=customerAccount;
         }
+
         IF type=OrderType.SaleBranch {
-            SET post=Post.saleBranch;
-            SET item=Item.orderSaleTransfer;
+            set post = Post.saleBranch;
+            set item = Item.orderSaleTransferIn;
+
+            set sellerItem = Item.orderSaleTransferOut;
         }
         ELSE {
             SET post=Post.factoryBranch;
-            SET item=Item.orderFactoryTransfer;
+            set item = Item.orderFactoryTransferIn;
+
+            set sellerItem = Item.orderFactoryTransferOut;
         }
         VAR bizMainBoundId ID = ID(
             BizMainBound new 
-            KEY bizMain=mainId, post=post, item=item, to=objBranchId
+            KEY bizMain=mainId, post=post, item=post, to=objBranchId
         );
     }
     ELSEIF type=OrderType.Distributor {
         -- 暂时不处理 2021-12-2
     }
+
+    VAR bizMainBoundId ID = ID(
+        BizMainBound new 
+        KEY bizMain=mainId, post=Post.seller, item=sellerItem, to=objSellerId
+    );
 
     -- PROC ProcSetOrderReady(mainId, OrderReady.sheet);
     PROC ProcQueueBizMain(mainId);
