@@ -324,10 +324,12 @@ PROC #ProcWriteItemHistory ver 0.1 (
                 PROC ProcItemHistory(bizOp, Item.orderFee, (margin)*value);
             }
             ELSEIF orderType=OrderType.SaleBranch {
-                PROC ProcItemHistory(bizOp, Item.orderSaleTransfer, price*value);
+                PROC ProcItemHistory(bizOp, Item.orderSaleTransferIn, price*value);
+                PROC ProcItemHistory(bizOp, Item.orderSaleTransferOut, price*value);
             }
             ELSEIF orderType=OrderType.FactoryBranch {
-                PROC ProcItemHistory(bizOp, Item.orderFactoryTransfer, price*value);
+                PROC ProcItemHistory(bizOp, Item.orderFactoryTransferIn, price*value);
+                PROC ProcItemHistory(bizOp, Item.orderFactoryTransferOut, price*value);
             }
         }
         ELSE {

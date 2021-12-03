@@ -1,3 +1,11 @@
+/*
+ 添加科目的步骤：
+ 1. Enum Item中添加科目名称及id,ItemTitle中添加该科目的title(需要手动改数据库）；
+ 2. ENUM Post中添加岗位名称及id,PostTitle中添加岗位的title(需要手动改数据库）；
+ 3. 在接收bus时，将岗位/客户绑定到object，绑定信息写入BizMainBound;
+ 4. 在接收bizop时，将科目值写入itemHistory;
+ 5. 配置opiBooking(现在需要手动在数据库中添加），以便在处理bizop时将计算结果写入opiHistory;
+*/
 -- 业务科目
 ENUM Item (
     orderDeliver                = 1010,     -- 订单发货，value是数量
@@ -31,7 +39,7 @@ ENUM Post (
     managerIT                   = 2100,
     saleBranch                  = 3000,
     factoryBranch               = 3001,
-    seller                      = 3002,
+    sellerBranch                = 3002,
     agent                       = 7010,
     agentSales                  = 7100,
     distributor                 = 7500,
@@ -67,8 +75,10 @@ VALUES
 (Item.orderAmount, '销售额', null, '元', 2),
 (Item.orderProfit, '毛利', null, '元', 2),
 (Item.orderFee, null, '提成基数', '元', 2),                    -- 如果title是null，就不需要展示给界面。属于内部核算科目
-(Item.orderSaleTransfer, '销售调拨', '分公司间销售调拨金额', '元', 2),      -- 内部调拨金额
-(Item.orderFactoryTransfer, '销售调拨', '分公司间生产调拨金额', '元', 2),   -- 内部调拨金额
+(Item.orderSaleTransferIn, '销售调入', '分公司间销售调入金额', '元', 2),      
+(Item.orderFactoryTransferIn, '生产调入', '分公司间生产调入金额', '元', 2),   
+(Item.orderSaleTransferOut, '销售调出', '分公司间销售调出金额', '元', 2),     
+(Item.orderFactoryTransferOut, '生产调出', '分公司间生产调出金额', '元', 2),  
 (Item.orderReturn, '退货', null, '元', 2),
 (Item.orderReceive, '收款', null, '元', 2),
 (Item.orderReceiveReturn, '退款', null, '元', 2),
@@ -94,6 +104,9 @@ VALUES
 (Post.agent, '轻代理', null),
 (Post.agentSales, '轻代理销售员', null),
 (Post.customer, '顾客', null),
+(Post.saleBranch, '销售分公司', null),
+(Post.factoryBranch, '生产分公司', null),
+(Post.sellerBranch, '销售主体', null),
 ;
 
 ID #AccountTitle ver 0.1 CONST (
@@ -122,8 +135,6 @@ ID #OPIBooking ver 0.5 CONST (
 VALUES
 -- 原生item booking。Post.sys, item=postItem
 (EnumBizOpType.booking, Post.sys, Item.orderAmount, Item.orderAmount, null, TEXTID('订单金额')),
-(EnumBizOpType.booking, Post.sys, Item.orderSaleTransfer, Item.orderSaleTransfer, null, TEXTID('销售调拨金额')),
-(EnumBizOpType.booking, Post.sys, Item.orderFactoryTransfer, Item.orderFactoryTransfer, null, TEXTID('生产调拨金额')),
 (EnumBizOpType.booking, Post.sys, Item.orderProfit, Item.orderProfit, null, TEXTID('订单毛利')),
 (EnumBizOpType.booking, Post.sys, Item.orderReceive, Item.orderReceive, null, TEXTID('回款金额')),
 (EnumBizOpType.booking, Post.sys, Item.orderReturn, Item.orderReturn, null, TEXTID('退货金额')),
@@ -139,8 +150,14 @@ VALUES
 (EnumBizOpType.orderDeliverDone, Post.topSales, Item.profitFee, Item.orderFee, 1, TEXTID('发货后高管毛利提成')),
 (EnumBizOpType.orderDeliverDone, Post.topSales, Item.couponFee, Item.orderFee, 1, TEXTID('发货后高管发券提成')),
 (EnumBizOpType.orderDeliverDone, Post.managerIT, Item.amountFee, Item.orderAmount, 0.1, TEXTID('销售额提成')),
-(EnumBizOpType.orderDeliverDone, Post.factoryBranch, Item.orderFactoryTransfer, Item.orderFactoryTransfer, null, TEXTID('生产调拨金额')),
-(EnumBizOpType.orderDeliverDone, Post.saleBranch, Item.orderSaleTransfer, Item.orderSaleTransfer, null, TEXTID('销售调拨金额')),
+
+(EnumBizOpType.orderDeliverDone, Post.sellerBranch, Item.orderAmount, Item.orderAmount, null, TEXTID('销售额')),
+(EnumBizOpType.orderDeliverDone, Post.sellerBranch, Item.orderSaleTransferOut, Item.orderSaleTransferOut, null, TEXTID('销售调出额')),
+(EnumBizOpType.orderDeliverDone, Post.sellerBranch, Item.orderFactoryTransferOut, Item.orderFactoryTransferOut, null, TEXTID('生产调出额')),
+
+(EnumBizOpType.orderDeliverDone, Post.saleBranch, Item.orderSaleTransferIn, Item.orderSaleTransferIn, null, TEXTID('销售调入额')),
+(EnumBizOpType.orderDeliverDone, Post.factoryBranch, Item.orderFactoryTransferIn, Item.orderFactoryTransferIn, null, TEXTID('生产调入额')),
+
 -- (EnumBizOpType.orderDeliverDone, Post.topSales, Item.amountFee, Item.orderAmount, 0.1, TEXTID('销售额提成')),
 -- (EnumBizOpType.orderDeliverDone, Post.topSales, Item.amountFee, Item.orderFee, 0.1, TEXTID('销售额提成')),
 -- (EnumBizOpType.orderDeliverDone, Post.topSales, Item.profitFee, Item.orderReturn, 0.1, TEXTID('销售额提成')),
