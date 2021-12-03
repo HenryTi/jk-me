@@ -6,6 +6,8 @@ ID #SumQueueItemHistory MINUTEID (
     id,
 );
 
+QUEUE QueueSumItemHistory;
+
 PROC RecalcSum(
 --    from DATE,
 --    to DATE,
@@ -143,7 +145,6 @@ PROC ProcCalcHistorySum ver 0.4 ()
     LOG 'ProcCalcHistorySum end' SUBJECT 'Schedule CalcSum';
 };
 
-
 PROC ProcCalcAccountSum ver 0.4 ()
 {
     LOG 'ProcCalcAccountSum start' SUBJECT 'Schedule CalcSum';
@@ -184,7 +185,7 @@ PROC ProcCalcAccountSum ver 0.4 ()
                     KEY object=object, account=account);
                 WITH ObjectAccount as a ID=objectAccountId 
                     SET a.balance=IFNULL(a.balance, 0)+accountValue
-                    WHERE a.startStamp>=MinuteIdTime(historyId, timeZone);
+                    WHERE a.startStamp<MinuteIdTime(historyId, timeZone);
                 WITH ObjectAccountHistory as a IX=objectAccountId XI=dateHourId
                     SET a.value=IFNULL(a.value,0)+accountValue, a.opi=opi;
             }

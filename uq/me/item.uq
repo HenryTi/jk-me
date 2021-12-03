@@ -31,8 +31,10 @@ ID #ObjectStaff (
 );
 
 ID #ObjectBranch (
-    id,             -- Object
-    KEY branch ID,  
+    id,                             -- Object
+    KEY branch ID,                  -- 对应老系统customerid
+    seller ID,                      -- 对应老系统的seller
+    INDEX seller (seller) UNIQUE,
 );
 
 ID #ObjectAgent (
@@ -65,7 +67,6 @@ ID #ItemHistory ver 0.1 MINUTEID (
     KEY bizOp ID,               -- 业务操作id。包含biz。也可以是itemHistory id。当前的值，从这里计算来
     KEY item ENUM Item,         -- 科目
     value DEC(18,4),            -- 数值
-    -- memo INT,                   -- 文本ID
     booking ID OPIBooking,      -- 记账动作
     INDEX item_id(item, id) UNIQUE,
 );

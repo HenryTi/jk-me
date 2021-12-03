@@ -24,7 +24,7 @@ ACCEPT order {
 	}
 
     VAR objSellerId ID, sellerItem ENUM Item;
-    SET objSellerId = a.id from ObjectBranch a where a.seller = seller;
+    SET objSellerId = a.id from ObjectBranch  a where a.seller = seller;
     IF type=OrderType.Customer {
         -- 所有的给customer订单绑定到ManagerIT
         VAR objManagerId ID;
