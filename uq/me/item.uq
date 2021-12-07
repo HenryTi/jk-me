@@ -82,9 +82,17 @@ ID #OPIHistory MINUTEID (
     INDEX itemHistory(itemHistory),
 );
 
-IX OPIItemHistory (
+IX OPIItemHistory ver 0.3 (
+    id,                     -- 这个id可以放到队列里面去处理
     ix ObjectPostItem,
     xi ItemHistory,
+);
+
+IDX CurrencyItemHistory ver 0.3 (
+    id,                         --  ItemHistory
+    currency ENUM EnumCurrency,
+    value DEC(18,4),            -- 订单原值
+    rate DEC(12,4),             -- 货币兑换率=currency/本位币，本位币当下默认为RMB
 );
 
 ENUM EnumAccount (

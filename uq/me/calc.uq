@@ -6,9 +6,50 @@ ID #SumQueueItemHistory MINUTEID (
     id,
 );
 
-QUEUE QueueSumItemHistory;
+QUEUE QueueSumItemHistory ver 0.4;
+QUEUE QueueSumOpiItemHistory;
+IDX QueueSumItemHistoryTest0 (
+    id,
+);
+IDX QueueSumItemHistoryTest1 (
+    id,
+);
+IDX QueueSumItemHistoryTest2 (
+    id,
+);
+IDX QueueSumItemHistoryTest3 (
+    id,
+);
 
-PROC RecalcSum(
+PROC AddQueue(id ID) {
+    QUEUE QueueSumItemHistory Add id;
+};
+
+PROC AddQueueAgain(id ID) {
+    QUEUE QueueSumItemHistory Again id;
+};
+
+PROC TestQueue ver 0.1 () {
+    LOG 'TestQueue start' SUBJECT 'Schedule TestQueue';
+    FOR (VAR p ID OF Queue QueueSumItemHistory) {
+        WITH QueueSumItemHistoryTest3 ID=p;
+        LOG concat('TestQueue ', p) SUBJECT 'Schedule TestQueue';
+        IF p MOD 3 = 1 {
+            WITH QueueSumItemHistoryTest1 ID=p;
+        }
+        IF p MOD 2 =0 {
+            WITH QueueSumItemHistoryTest0 ID=p;
+            -- BREAK;
+        }
+        IF p MOD 3 = 2 {
+            WITH QueueSumItemHistoryTest2 ID=p;
+            CONTINUE;
+        }
+    }
+    LOG 'TestQueue end' SUBJECT 'Schedule TestQueue';
+};
+
+PROC RecalcSum ver 0.1 (
 --    from DATE,
 --    to DATE,
 ) {
@@ -20,14 +61,16 @@ PROC RecalcSum(
     WITH SumQueueOpiHistory TRUNCATE;
     WITH SumQueueItemHistory TRUNCATE;
 
-    /-mysql
-    INSERT INTO tv_sumqueueopihistory (id)
+    INTO QueueSumItemHistory
         SELECT id
-        FROM tv_opihistory WHERE 1=1;
-    INSERT INTO tv_sumqueueitemhistory (id)
+        FROM itemhistory WHERE 1=1;
+    INTO sumqueueopihistory
         SELECT id
-        FROM tv_itemhistory WHERE 1=1;
-    -/
+        FROM opihistory WHERE 1=1;
+    INTO sumqueueitemhistory
+        SELECT id
+        FROM itemhistory WHERE 1=1;
+
     /*
     VAR id ID, p ID;
     SET p = 0;
@@ -73,6 +116,56 @@ PROC CalcSum ver 0.1 () {
     PROC ProcCalcAccountSum();
 };
 
+PROC SumItemHistory (
+    itemHistoryId ID
+) {
+    VAR timeZone TINYINT = unittimezone(), tick INT, compileTick INT;
+    VAR value DEC(18,4), date DATE, item ENUM Item
+        , biz ID, bizOp ID;
+    VAR product ID, customerAccount ID, m INT;
+
+    SET biz=b.biz
+        , bizOp=a.bizOp
+        , value=a.value
+        , item=a.item
+        FROM ItemHistory as a
+            LEFT JOIN DxBizOp as b ON b.id=a.bizOp
+        WHERE a.id=itemHistoryId;
+    IF biz IS NULL {
+        RETURN;
+    }
+
+    LOG concat('ProcCalcHistorySum: ', itemHistoryId) SUBJECT 'Schedule CalcSum';
+    SET date=MinuteIdDate(itemHistoryId, timeZone);
+    SET m=YEAR(date)*100+MONTH(date);
+
+    WITH DaySumItem as a IX=item XI=date SET a.value=IFNULL(a.value,0) + IFNULL(value,0);
+    IF item=Item.orderAmount {
+        SET customerAccount=c.customerAccount
+            , product=b.product
+            FROM OrderDetail as b
+                JOIN OrderMain as c ON b.main=c.id
+            WHERE b.id=biz;
+
+        -- product
+        WITH MonthSumProduct as a IXX=item IX=m XI=product SET a.value=a.value + value;
+        -- customerAccount
+        WITH MonthSumCustomer as a IXX=item IX=m XI=customerAccount SET a.value=a.value + value;
+    }
+    ELSEIF item=Item.orderReturn {
+        SET customerAccount=c.customerAccount
+            , product=b.product
+            FROM OrderDetail as b
+                JOIN OrderMain as c ON b.main=c.id
+            WHERE b.id=biz;
+
+        -- product
+        WITH MonthSumProduct as a IXX=item IX=m XI=product SET a.value=a.value + value;
+        -- customerAccount
+        WITH MonthSumCustomer as a IXX=item IX=m XI=customerAccount SET a.value=a.value + value;
+    }
+};
+
 PROC ProcCalcHistorySum ver 0.4 ()
 {
     LOG 'ProcCalcHistorySum start' SUBJECT 'Schedule CalcSum';
@@ -80,6 +173,11 @@ PROC ProcCalcHistorySum ver 0.4 ()
     VAR value DEC(18,4), historyId ID, queueId ID, date DATE, item ENUM Item
         , biz ID, bizOp ID;
     SET tick=UNIX_TIMESTAMP();
+
+    FOR (VAR p ID OF Queue QueueSumItemHistory) {
+        PROC SumItemHistory(p);
+    }
+
     WHILE 1=1 {
         SET historyId=NULL;
         SET historyId=a.id

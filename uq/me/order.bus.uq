@@ -1,4 +1,4 @@
-BUS JkOrderBus ver 0.5 from 百灵威系统工程部/[jk-order]
+BUS JkOrderBus ver 0.6 from 百灵威系统工程部/[jk-order]
 ACCEPT order {
 	VAR mainId ID;
 	SET mainId = id;
@@ -7,6 +7,7 @@ ACCEPT order {
         , a.customerAccount=customerAccount
         , a.type=type
         , a.seller=seller
+        , a.currency=currency
         , a.stamp=$stamp;
 	FOR detail {
         LOG CONCAT_WS(' ', id, quantity, item) SUBJECT 'JkOrderBus ACCEPT orderDetail';
