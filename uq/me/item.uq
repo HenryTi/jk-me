@@ -12,7 +12,7 @@ ENUM EnumObjectType (
 ID #Object (
     id,
     type ENUM EnumObjectType DEFAULT 0,
-    to ID,
+    to ID,  -- 这个是什么意思？好像是对应objectXXX中的id，是不是没有用？
 );
 
 ID #ObjectUser (
