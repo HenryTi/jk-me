@@ -201,6 +201,7 @@ PROC #ProcBizOp ver 0.1 (
     };
 
     VAR bizOpType ENUM EnumBizOpType, done TINYINT, biz ID, opi ID, changed TINYINT;
+    VAR ixOpiItemHistoryId ID;
     SET bizOpType=a.type, done=a.done, biz=a.biz
         FROM DxBizOp as a 
         WHERE a.id=bizOp;
@@ -245,10 +246,11 @@ PROC #ProcBizOp ver 0.1 (
             WITH ItemHistory as a ID=opiItemHistoryId
                 SET a.value=value * IFNULL(IFNULL(boundRatio, ratio), 100) / 100
                     , a.booking=booking;
-            WITH OPIItemHistory IX=opi XI=opiItemHistoryId;
-            WITH IxBizOpBound IX=bizOp XI=bizMainBoundId SET opiItemHistory = boundOpiItemHistory;
-            SET changed = 1;
+            WITH OPIItemHistory IX=opi XI=opiItemHistoryId ID TO ixOpiItemHistoryId;
             WITH IxBizOpBound IX=bizOp XI=bizMainBoundId SET opiItemHistory=1;
+            WITH SumQueueItemHistory ID=itemHistoryId;
+            QUEUE QueueSumOpiItemHistory ADD ixOpiItemHistoryId;
+            SET changed = 1;
         }
 
         IF opBound IS NULL OR opBound = 0 {
@@ -256,7 +258,6 @@ PROC #ProcBizOp ver 0.1 (
                 ObjectPostItem new
                 KEY object=to, post=post, item=postItem
             );
-            SET changed = 0;
             IF Exists(SELECT a.id FROM OPIHistory as a WHERE a.opi=opi AND a.itemHistory=itemHistoryId AND a.booking=booking) {
                 VAR bdoId ID = ID(BizopOfDuplicateOpiHistory new);
                 WITH BizopOfDuplicateOpiHistory as a ID=bdoId SET 
@@ -275,15 +276,14 @@ PROC #ProcBizOp ver 0.1 (
                 SET a.opi=opi, a.itemHistory=itemHistoryId
                 , a.value=value * IFNULL(IFNULL(boundRatio, ratio), 100) / 100
                 , a.booking=booking;
-            SET changed = 1;
             WITH IxBizOpBound IX=bizOp XI=bizMainBoundId SET bound=1;
             WITH SumQueueOpiHistory ID=opiHistoryId;
+            SET changed = 1;
         }
         
         IF changed=0 {
             CONTINUE;
         }
-        WITH SumQueueItemHistory ID=itemHistoryId;
         FOR (VAR user ID
             OF SELECT b.ix as user
                 FROM ObjectPostItem as a JOIN UserObject as b ON a.object=b.xi
@@ -301,35 +301,50 @@ PROC #ProcWriteItemHistory ver 0.1 (
     bizOp ID,
 ) {
     VAR biz ID, bizOpType ENUM EnumBizOpType, value DEC(18,4);
+    VAR itemHistoryId ID;
     VAR price DEC(18,4), margin DEC(18,4);
     SET biz=a.biz, bizOpType=a.type, value=a.value
         FROM DxBizOp as a 
         WHERE a.id=bizOp;
     IF bizOpType=EnumBizOpType.orderDeliverDone {
-        VAR orderType ENUM OrderType;
-        SET orderType=a.type 
+        VAR orderType ENUM OrderType, currency ENUM EnumCurrency
+            , baseCurrencyPrice DEC(18,4), baseCurrencyMargin DEC(18,4), rate DEC(18,4);
+        SET orderType=a.type, currency=a.currency, rate=d.rate
             FROM OrderMain as a 
                 JOIN DxBiz as b ON b.main=a.id
                 JOIN DxBizOp as c ON c.biz=b.id
+                LEFT JOIN DxCurrency as d ON d.id=a.currency
             WHERE c.id=bizOp;
         SET price=a.price
             FROM OrderDetail as a
             WHERE a.id=biz;
+        IF currency IS NULL {
+            SET baseCurrencyPrice=price;
+            SET baseCurrencyMargin=margin;
+        }
+        ELSE {
+            SET baseCurrencyPrice=price * rate;
+            SET baseCurrencyMargin=margin*rate;
+        }
+        
         SET margin=a.margin FROM DxOrderDetail as a WHERE a.id=biz;
         -- 可能是积分兑换单引发的deliver-done，这时候，就没有margin和price，所以不写帐
         IF price IS NOT NULL AND price > 0 {
             IF orderType=OrderType.Customer {
-                PROC ProcItemHistory(bizOp, Item.orderAmount, price*value);
-                PROC ProcItemHistory(bizOp, Item.orderProfit, (margin)*value);
-                PROC ProcItemHistory(bizOp, Item.orderFee, (margin)*value);
+                PROC ProcItemHistory(bizOp, Item.orderAmount, baseCurrencyPrice*value, itemHistoryId);
+                PROC ProcItemHistory(bizOp, Item.orderProfit, (baseCurrencyMargin)*value, itemHistoryId);
+                PROC ProcItemHistory(bizOp, Item.orderFee, (baseCurrencyMargin)*value, itemHistoryId);
+                IF currency IS NOT NULL {
+                    WITH CurrencyItemHistory as a ID=itemHistoryId SET a.currency=currency, a.value=price*value, a.rate=rate;
+                }
             }
             ELSEIF orderType=OrderType.SaleBranch {
-                PROC ProcItemHistory(bizOp, Item.orderSaleTransferIn, price*value);
-                PROC ProcItemHistory(bizOp, Item.orderSaleTransferOut, price*value);
+                PROC ProcItemHistory(bizOp, Item.orderSaleTransferIn, price*value, itemHistoryId);
+                PROC ProcItemHistory(bizOp, Item.orderSaleTransferOut, price*value, itemHistoryId);
             }
             ELSEIF orderType=OrderType.FactoryBranch {
-                PROC ProcItemHistory(bizOp, Item.orderFactoryTransferIn, price*value);
-                PROC ProcItemHistory(bizOp, Item.orderFactoryTransferOut, price*value);
+                PROC ProcItemHistory(bizOp, Item.orderFactoryTransferIn, price*value, itemHistoryId);
+                PROC ProcItemHistory(bizOp, Item.orderFactoryTransferOut, price*value, itemHistoryId);
             }
         }
         ELSE {
@@ -337,7 +352,7 @@ PROC #ProcWriteItemHistory ver 0.1 (
         }
     }
     ELSEIF bizOpType=EnumBizOpType.orderReceiveDone {
-        PROC ProcItemHistory(bizOp, Item.orderReceive, value);
+        PROC ProcItemHistory(bizOp, Item.orderReceive, value, itemHistoryId);
         SET price=a.price
             FROM OrderDetail as a
             WHERE a.id=biz;
@@ -345,7 +360,7 @@ PROC #ProcWriteItemHistory ver 0.1 (
         -- 可能是积分兑换单引发的deliver-done，这时候，就没有margin和price，所以不写帐
         IF price IS NOT NULL AND price > 0 {
             PROC ProcItemHistory(bizOp, Item.orderFee, 
-                CASE WHEN price<0.01 THEN 0 ELSE (margin)/price*value END);
+                CASE WHEN price<0.01 THEN 0 ELSE (margin)/price*value END, itemHistoryId);
         }
         ELSE {
             LOG CONCAT_WS(' ', bizOp, bizOpType, price, margin, value) SUBJECT 'Failed BizOp ItemHistory Price IS NULL';
@@ -360,8 +375,9 @@ PROC #ProcItemHistory ver 0.1 (
     bizOp ID,
     item ENUM Item,
     value DEC(18,4),
+    out itemHistoryId ID,
 ) {
-    VAR itemHistoryId ID, stamp INT, booking ID, type ENUM EnumBizOpType;
+    VAR stamp INT, booking ID, type ENUM EnumBizOpType;
     SET itemHistoryId = a.id FROM ItemHistory as a WHERE a.bizOp=bizOp AND a.item=item;
     SET type = a.type, stamp = a.stamp FROM DxBizOp as a WHERE a.id=bizOp;
     IF itemHistoryId IS NULL {

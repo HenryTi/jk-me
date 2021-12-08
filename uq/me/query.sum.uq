@@ -22,6 +22,12 @@ IX DaySumItem (
     value DEC(18,4),        -- 日合计
 );
 
+IX DaySumOpi (
+    ix ID ObjectPostItem,
+    xi DATE,                -- date
+    value DEC(18,4),        -- 日合计
+);
+
 QUERY GetMonthSumProduct (
     item ENUM Item,
     id ID,

@@ -8,7 +8,7 @@ RETURNS ret (
         FROM Object as a;
 };
 
-QUERY GetDistributors() 
+QUERY GetDistributors ver 0.1 () 
 RETURNS ret (
     id ID,
     distributor ID,

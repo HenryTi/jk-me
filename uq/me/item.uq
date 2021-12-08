@@ -67,7 +67,6 @@ ID #ItemHistory ver 0.1 MINUTEID (
     KEY bizOp ID,               -- 业务操作id。包含biz。也可以是itemHistory id。当前的值，从这里计算来
     KEY item ENUM Item,         -- 科目
     value DEC(18,4),            -- 数值
-    -- memo INT,                   -- 文本ID
     booking ID OPIBooking,      -- 记账动作
     INDEX item_id(item, id) UNIQUE,
 );
@@ -83,9 +82,17 @@ ID #OPIHistory MINUTEID (
     INDEX itemHistory(itemHistory),
 );
 
-IX OPIItemHistory (
+IX OPIItemHistory ver 0.3 (
+    id,                     -- 这个id可以放到队列里面去处理
     ix ObjectPostItem,
     xi ItemHistory,
+);
+
+IDX CurrencyItemHistory ver 0.3 (
+    id,                         --  ItemHistory
+    currency ENUM EnumCurrency,
+    value DEC(18,4),            -- 订单原值
+    rate DEC(12,4),             -- 货币兑换率=currency/本位币，本位币当下默认为RMB
 );
 
 ENUM EnumAccount (

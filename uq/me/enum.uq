@@ -69,6 +69,41 @@ ENUM OrderReady (
     margin                      = 0x0004,
 );
 
+-- 从uq common的currency表获取id
+ENUM EnumCurrency (
+    BASE                = 5,            -- 本位币，默认使用RMB。如果需要修改，直接全文检索EnumCurrency.Base。
+    -- CNY                 = 1,         -- 使用RMB
+    GBP                 = 2,
+    HKD                 = 3,
+    JPY                 = 4,
+    RMB                 = 5,
+    AUD                 = 6,
+    CAD                 = 7,
+    CHF                 = 8,            -- Swiss Franc
+    EUR                 = 9,
+    USD                 = 10,
+);
+
+-- rate is on 2021-12-6, when uq is first built.
+IDX DxCurrency ver 0.3 (
+    id small,
+    name CHAR(50),      -- 显示用名称
+    rate DEC(18,4),     -- 汇率
+)
++ (id, name, rate ON INIT) 
+VALUES 
+(EnumCurrency.BASE, '本位币', 1),
+(EnumCurrency.GBP, '英镑', 8.45),
+(EnumCurrency.HKD, '港币', 0.82),
+(EnumCurrency.JPY, '日元', 0.056),
+(EnumCurrency.RMB, '人民币', 1),
+(EnumCurrency.AUD, '澳元', 4.49),
+(EnumCurrency.CAD, '加元', 4.99),
+(EnumCurrency.CHF, '瑞士法郎', 6.89),            -- Swiss Franc
+(EnumCurrency.EUR, '欧元', 7.19),
+(EnumCurrency.USD, '美元', 6.38),
+;
+
 ID #ItemTitle ver 0.1 CONST (
     id small,
     title CHAR(50),
