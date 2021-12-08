@@ -1,4 +1,4 @@
-BUS JkOrderBus ver 0.6 from 百灵威系统工程部/[jk-order]
+BUS JkOrderBus ver 0.5 from 百灵威系统工程部/[jk-order]
 ACCEPT order {
 	VAR mainId ID;
 	SET mainId = id;
@@ -7,7 +7,7 @@ ACCEPT order {
         , a.customerAccount=customerAccount
         , a.type=type
         , a.seller=seller
-        , a.currency=currency
+        , a.currency = currency
         , a.stamp=$stamp;
 	FOR detail {
         LOG CONCAT_WS(' ', id, quantity, item) SUBJECT 'JkOrderBus ACCEPT orderDetail';
@@ -95,7 +95,6 @@ ACCEPT [receive-done] {
     -- SCHEDULE ExecQueueBizOp DELAY 1;
 }
 ACCEPT [return] {
-    VAR orderMain ID;
 	FOR detail {
         IF exists(SELECT a.id FROM DxBizOp as a WHERE a.id=id) {
             CONTINUE;
@@ -104,70 +103,70 @@ ACCEPT [return] {
         WITH DxBizOp as a ID=id 
             SET a.type=EnumBizOpType.orderReturn, a.biz=orderDetail, a.value=quantity, a.stamp=$stamp;
 
-        set orderMain = a.orderMain
+        VAR mainId ID;
+        SET mainId = null;
+        SET mainId = a.main
         from    orderDetail as a
         where   id = orderdetail;
-    }
 
-    VAR seller ID, customerAccount ID, orderType ENUM OrderType;
-    set seller = seller, customerAccount = customerAccount, orderType = type
-    from    orderMain
-    where   id = orderMain;
+        VAR seller ID, customerAccount ID, type ENUM OrderType;
+        set seller = seller, customerAccount = customerAccount, type = type
+        from    orderMain
+        where   id = mainId;
 
-    VAR objSellerId ID, sellerItem ENUM Item;
-    SET objSellerId = a.id from ObjectBranch as a where a.seller = seller;
-    IF orderType=OrderType.Customer {
-        -- 所有的给customer订单绑定到ManagerIT
-        VAR objManagerId ID;
-        SET objManagerId=ID(ObjectPost, Post.managerIT);
-        IF objManagerId IS NULL {
-            SET objManagerId=ID(Object new);
-            WITH Object ID=objManagerId SET type=EnumObjectType.post;
-            WITH ObjectPost as a ID=objManagerId SET a.post=Post.managerIT;
+        VAR objSellerId ID, sellerItem ENUM Item;
+        SET objSellerId = a.id from ObjectBranch as a where a.seller = seller;
+        IF type=OrderType.Customer {
+            -- 所有的给customer订单绑定到ManagerIT
+            VAR objManagerId ID;
+            SET objManagerId=ID(ObjectPost, Post.managerIT);
+            IF objManagerId IS NULL {
+                SET objManagerId=ID(Object new);
+                WITH Object ID=objManagerId SET type=EnumObjectType.post;
+                WITH ObjectPost as a ID=objManagerId SET a.post=Post.managerIT;
+            }
+            VAR bizMainBoundId ID = ID(
+                BizMainBound new 
+                KEY bizMain=mainId, post=POST.managerIT, item=ITEM.amountFee, to=objManagerId
+            );
+
+            set sellerItem = ITEM.orderReturn;
         }
+        ELSEIF type=OrderType.SaleBranch OR type=OrderType.FactoryBranch {
+            VAR objBranchId ID, post ENUM Post, Item ENUM Item;
+            SET objBranchId=ID(ObjectBranch, customerAccount);
+            IF objBranchId IS NULL {
+                SET objBranchId=ID(Object new);
+                WITH Object ID=objBranchId SET type=EnumObjectType.branch;
+                WITH ObjectBranch as a ID=objBranchId SET a.branch=customerAccount;
+            }
+
+            IF type=OrderType.SaleBranch {
+                set post = Post.saleBranch;
+                set item = Item.orderSaleTransferIn;
+
+                set sellerItem = Item.orderSaleTransferOut;
+            }
+            ELSE {
+                SET post=Post.factoryBranch;
+                set item = Item.orderFactoryTransferIn;
+
+                set sellerItem = Item.orderFactoryTransferOut;
+            }
+            VAR bizMainBoundId ID = ID(
+                BizMainBound new 
+                KEY bizMain=mainId, post=post, item=post, to=objBranchId
+            );
+        }
+        ELSEIF type=OrderType.Distributor {
+            -- 暂时不处理 2021-12-2
+        }
+
         VAR bizMainBoundId ID = ID(
             BizMainBound new 
-            KEY bizMain=orderMain, post=POST.managerIT, item=ITEM.amountFee, to=objManagerId
+            KEY bizMain=mainId, post=Post.sellerBranch, item=sellerItem, to=objSellerId
         );
 
-        set sellerItem = ITEM.orderReturn;
-    }
-    ELSEIF orderType=OrderType.SaleBranch OR orderType=OrderType.FactoryBranch {
-        VAR objBranchId ID, post ENUM Post, Item ENUM Item;
-        SET objBranchId=ID(ObjectBranch, customerAccount);
-        IF objBranchId IS NULL {
-            SET objBranchId=ID(Object new);
-            WITH Object ID=objBranchId SET type=EnumObjectType.branch;
-            WITH ObjectBranch as a ID=objBranchId SET a.branch=customerAccount;
-        }
-
-        IF type=OrderType.SaleBranch {
-            set post = Post.saleBranch;
-            set item = Item.orderSaleTransferInReturn;
-
-            set sellerItem = Item.orderSaleTransferOutReturn;
-        }
-        ELSE {
-            SET post=Post.factoryBranch;
-            set item = Item.orderFactoryTransferInReturn;
-
-            set sellerItem = Item.orderFactoryTransferOutReturn;
-        }
-        VAR bizMainBoundId ID = ID(
-            BizMainBound new 
-            KEY bizMain=mainId, post=post, item=post, to=objBranchId
-        );
-    }
-    ELSEIF type=OrderType.Distributor {
-        -- 暂时不处理 2021-12-2
-    }
-
-    VAR bizMainBoundId ID = ID(
-        BizMainBound new 
-        KEY bizMain=mainId, post=Post.sellerBranch, item=sellerItem, to=objSellerId
-    );
-
-    FOR detail{
         -- VAR queueId ID = ID(QueueBizOp new, id);
         WITH QueueBizOp as a ID=id SET a.bizop=id;
 	}

@@ -306,7 +306,13 @@ PROC #ProcWriteItemHistory ver 0.1 (
     SET biz=a.biz, bizOpType=a.type, value=a.value
         FROM DxBizOp as a 
         WHERE a.id=bizOp;
-    IF bizOpType=EnumBizOpType.orderDeliverDone {
+
+    IF bizOpType=EnumBizOpType.orderDeliverDone or bizOpType = EnumBizOpType.orderReturn {
+        VAR mainItem ENUM Item;
+        SET mainItem = Item.orderAmount;
+        if bizOpType = EnumBizOpType.orderReturn
+            SET mainItem = Item.orderReturn;
+
         VAR orderType ENUM OrderType, currency ENUM EnumCurrency
             , baseCurrencyPrice DEC(18,4), baseCurrencyMargin DEC(18,4), rate DEC(18,4);
         SET orderType=a.type, currency=a.currency, rate=d.rate
@@ -331,20 +337,20 @@ PROC #ProcWriteItemHistory ver 0.1 (
         -- 可能是积分兑换单引发的deliver-done，这时候，就没有margin和price，所以不写帐
         IF price IS NOT NULL AND price > 0 {
             IF orderType=OrderType.Customer {
-                PROC ProcItemHistory(bizOp, Item.orderAmount, baseCurrencyPrice*value, itemHistoryId);
-                PROC ProcItemHistory(bizOp, Item.orderProfit, (baseCurrencyMargin)*value, itemHistoryId);
-                PROC ProcItemHistory(bizOp, Item.orderFee, (baseCurrencyMargin)*value, itemHistoryId);
+                PROC ProcItemHistory(bizOp, mainItem, baseCurrencyPrice*value, itemHistoryId);
                 IF currency IS NOT NULL {
                     WITH CurrencyItemHistory as a ID=itemHistoryId SET a.currency=currency, a.value=price*value, a.rate=rate;
                 }
+                PROC ProcItemHistory(bizOp, Item.orderProfit, (baseCurrencyMargin)*value, itemHistoryId);
+                PROC ProcItemHistory(bizOp, Item.orderFee, (baseCurrencyMargin)*value, itemHistoryId);
             }
             ELSEIF orderType=OrderType.SaleBranch {
-                PROC ProcItemHistory(bizOp, Item.orderSaleTransferIn, price*value, itemHistoryId);
-                PROC ProcItemHistory(bizOp, Item.orderSaleTransferOut, price*value, itemHistoryId);
+                PROC ProcItemHistory(bizOp, Item.orderSaleTransferIn, baseCurrencyPrice*value, itemHistoryId);
+                PROC ProcItemHistory(bizOp, Item.orderSaleTransferOut, baseCurrencyPrice*value, itemHistoryId);
             }
             ELSEIF orderType=OrderType.FactoryBranch {
-                PROC ProcItemHistory(bizOp, Item.orderFactoryTransferIn, price*value, itemHistoryId);
-                PROC ProcItemHistory(bizOp, Item.orderFactoryTransferOut, price*value, itemHistoryId);
+                PROC ProcItemHistory(bizOp, Item.orderFactoryTransferIn, baseCurrencyPrice*value, itemHistoryId);
+                PROC ProcItemHistory(bizOp, Item.orderFactoryTransferOut, baseCurrencyPrice*value, itemHistoryId);
             }
         }
         ELSE {
@@ -365,9 +371,6 @@ PROC #ProcWriteItemHistory ver 0.1 (
         ELSE {
             LOG CONCAT_WS(' ', bizOp, bizOpType, price, margin, value) SUBJECT 'Failed BizOp ItemHistory Price IS NULL';
         }
-    }
-    ELSEIF bizOpType=EnumBizOpType.orderReturn {
-
     }
 };
 

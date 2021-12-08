@@ -19,10 +19,6 @@ ENUM Item (
     orderFactoryTransferOut     = 1017,     -- 内部生产调出金额
 
     orderReturn                       = 1020,     -- 订单退货
-    orderSaleTransferInReturn         = 1024,     -- 内部销售调入退货金额
-    orderFactoryTransferInReturn      = 1025,     -- 内部生产调入退货金额
-    orderSaleTransferOutReturn        = 1026,     -- 内部销售调出退货金额
-    orderFactoryTransferOutReturn     = 1027,     -- 内部生产调出退货金额
 
     orderReceive                = 1030,     -- 订单收款
     orderReceiveReturn          = 1040,     -- 订单退款
