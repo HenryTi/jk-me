@@ -109,15 +109,15 @@ ACCEPT [return] {
         SET mainId = null;
         SET mainId = a.main
         from    orderDetail as a
-        where   id = orderdetail;
+        where   a.id = orderdetail;
 
         if(mainId is null)
             CONTINUE;
 
         VAR seller ID, customerAccount ID, type ENUM OrderType;
-        set seller = seller, customerAccount = customerAccount, type = type
-        from    orderMain
-        where   id = mainId;
+        set seller = a.seller, customerAccount = a.customerAccount, type = a.type
+        from    orderMain as a
+        where   a.id = mainId;
 
         VAR objSellerId ID, sellerItem ENUM Item;
         SET objSellerId = a.id from ObjectBranch as a where a.seller = seller;
