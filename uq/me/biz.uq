@@ -321,9 +321,10 @@ PROC #ProcWriteItemHistory ver 0.1 (
                 JOIN DxBizOp as c ON c.biz=b.id
                 LEFT JOIN DxCurrency as d ON d.id=a.currency
             WHERE c.id=bizOp;
-        SET price=a.price
-            FROM OrderDetail as a
-            WHERE a.id=biz;
+
+        SET price=a.price FROM OrderDetail as a WHERE a.id=biz;
+        SET margin=a.margin FROM DxOrderDetail as a WHERE a.id=biz;
+
         IF currency IS NULL {
             SET baseCurrencyPrice=price;
             SET baseCurrencyMargin=margin;
@@ -333,7 +334,6 @@ PROC #ProcWriteItemHistory ver 0.1 (
             SET baseCurrencyMargin=margin*rate;
         }
         
-        SET margin=a.margin FROM DxOrderDetail as a WHERE a.id=biz;
         -- 可能是积分兑换单引发的deliver-done，这时候，就没有margin和price，所以不写帐
         IF price IS NOT NULL AND price > 0 {
             IF orderType=OrderType.Customer {

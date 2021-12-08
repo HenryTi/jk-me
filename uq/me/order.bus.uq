@@ -31,9 +31,9 @@ ACCEPT order {
         VAR objManagerId ID;
         SET objManagerId=ID(ObjectPost, Post.managerIT);
         IF objManagerId IS NULL {
-            SET objManagerId=ID(Object new);
-            WITH Object ID=objManagerId SET type=EnumObjectType.post;
-            WITH ObjectPost as a ID=objManagerId SET a.post=Post.managerIT;
+            SET objManagerId=ID(Object new);    -- 生成一个新object id；
+            WITH Object ID=objManagerId SET type=EnumObjectType.post;   -- 这个新object id和它的类型一起写入到 object 中；
+            WITH ObjectPost as a ID=objManagerId SET a.post=Post.managerIT; -- 再在对应的objectxxx中记录object id与原始id的关系
         }
         VAR bizMainBoundId ID = ID(
             BizMainBound new 
@@ -103,11 +103,16 @@ ACCEPT [return] {
         WITH DxBizOp as a ID=id 
             SET a.type=EnumBizOpType.orderReturn, a.biz=orderDetail, a.value=quantity, a.stamp=$stamp;
 
+        WITH QueueBizOp as a ID=id SET a.bizop=id;
+
         VAR mainId ID;
         SET mainId = null;
         SET mainId = a.main
         from    orderDetail as a
         where   id = orderdetail;
+
+        if(mainId is null)
+            CONTINUE;
 
         VAR seller ID, customerAccount ID, type ENUM OrderType;
         set seller = seller, customerAccount = customerAccount, type = type
@@ -166,9 +171,6 @@ ACCEPT [return] {
             BizMainBound new 
             KEY bizMain=mainId, post=Post.sellerBranch, item=sellerItem, to=objSellerId
         );
-
-        -- VAR queueId ID = ID(QueueBizOp new, id);
-        WITH QueueBizOp as a ID=id SET a.bizop=id;
 	}
     -- SCHEDULE ExecQueueBizOp DELAY 1;
 }
