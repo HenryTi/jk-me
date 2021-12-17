@@ -1,7 +1,7 @@
-//=== UqApp builder created on Thu Dec 02 2021 11:23:43 GMT-0500 (北美东部标准时间) ===//
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID } from "tonwa-core";
-		import { Render } from "tonwa-react";
+//=== UqApp builder created on Thu Dec 16 2021 16:51:36 GMT-0500 (北美东部标准时间) ===//
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID } from "tonwa-core";
+import { Render, IDXEntity } from "tonwa-react";
 
 
 //===============================
@@ -13,15 +13,18 @@ export enum Item {
 	orderAmount = 1011,
 	orderProfit = 1012,
 	orderFee = 1013,
-	orderSaleTransfer = 1014,
-	orderFactoryTransfer = 1015,
+	orderSaleTransferIn = 1014,
+	orderFactoryTransferIn = 1015,
+	orderSaleTransferOut = 1016,
+	orderFactoryTransferOut = 1017,
 	orderReturn = 1020,
 	orderReceive = 1030,
 	orderReceiveReturn = 1040,
 	profitFee = 1110,
 	couponFee = 1111,
 	amountFee = 1120,
-	customerPoint = 2010
+	customerPoint = 2010,
+	pickupPoint = 3010
 }
 
 export enum Post {
@@ -33,6 +36,7 @@ export enum Post {
 	managerIT = 2100,
 	saleBranch = 3000,
 	factoryBranch = 3001,
+	sellerBranch = 3002,
 	agent = 7010,
 	agentSales = 7100,
 	distributor = 7500,
@@ -61,7 +65,8 @@ export enum EnumObjectType {
 	staff = 3,
 	agent = 4,
 	distributor = 5,
-	post = 6
+	post = 6,
+	branch = 7
 }
 
 export enum EnumAccount {
@@ -72,7 +77,8 @@ export enum EnumBizOpType {
 	booking = 0,
 	orderDeliverDone = 101,
 	orderReceiveDone = 102,
-	orderReturn = 103
+	orderReturn = 103,
+	pickupDone = 104
 }
 
 export enum OrderType {
@@ -80,6 +86,19 @@ export enum OrderType {
 	Distributor = 11,
 	SaleBranch = 21,
 	FactoryBranch = 22
+}
+
+export enum EnumCurrency {
+	BASE = 5,
+	GBP = 2,
+	HKD = 3,
+	JPY = 4,
+	RMB = 5,
+	AUD = 6,
+	CAD = 7,
+	CHF = 8,
+	EUR = 9,
+	USD = 10
 }
 
 export interface Tuid$sheet {
@@ -476,6 +495,8 @@ export interface Param$getMyTimezone {
 export interface Return$getMyTimezoneRet {
 	timezone: number;
 	unitTimeZone: number;
+	unitBizMonth: number;
+	unitBizDate: number;
 }
 export interface Result$getMyTimezone {
 	ret: Return$getMyTimezoneRet[];
@@ -544,10 +565,13 @@ export interface ParamActs {
 	group?: Group[];
 }
 
-	
+
 export interface UqExt extends Uq {
-		Acts(param:ParamActs): Promise<any>;
-	
+	Acts(param:ParamActs): Promise<any>;
+	SQL: Uq;
+	IDRender(id:number):JSX.Element;
+	IDLocalRender(id:number):JSX.Element;
+
 	$sheet: UqTuid<Tuid$sheet>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
 	$user: UqTuid<Tuid$user>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
 	BusTestBoundStaffSales: UqAction<ParamBusTestBoundStaffSales, ResultBusTestBoundStaffSales>;
@@ -584,14 +608,13 @@ export interface UqExt extends Uq {
 	GetAccountTitles: UqQuery<ParamGetAccountTitles, ResultGetAccountTitles>;
 	GetObjectAccountHistory: UqQuery<ParamGetObjectAccountHistory, ResultGetObjectAccountHistory>;
 	GetAccounts: UqQuery<ParamGetAccounts, ResultGetAccounts>;
-	Group: UqID<any>;
+	Group: UqID<any> & IDXEntity<any>;
 }
 
-	export function assign(uq: any, to:string, from:any): void {
-		let hasEntity = uq.hasEntity(to);
-		if (hasEntity === false) {
-			return;
-		}
-		Object.assign((uq as any)[to], from);
+export function assign(uq: any, to:string, from:any): void {
+	let hasEntity = uq.hasEntity(to);
+	if (hasEntity === false) {
+		return;
 	}
-	
+	Object.assign((uq as any)[to], from);
+}

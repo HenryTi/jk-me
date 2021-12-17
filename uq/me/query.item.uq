@@ -34,7 +34,7 @@ RETURNS ret (
 
 -- post ENUM Post = Post.staffSales
 -- item ENUM Item = Item.orderAmount, Item.profitFee
-QUERY GetStaffs(
+QUERY GetStaffs ver 0.1 (
 ) 
 RETURNS ret (
     opi ID,

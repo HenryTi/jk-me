@@ -92,7 +92,7 @@ export class CApp extends CUqApp {
 			JkMe.GetPostTitles.query({}),
 			JkMe.GetAccountTitles.query({}),
 			JkMe.GetRoleOps.query({}),
-			JkMe.$getMyTimezone.query({}),
+			this.loadUnitTime(JkMe.$getTimezone),
 		]);
 		for (let it of retItemTitles.ret) this.itemTitles[it.id as Item] = it;
 		for (let pt of retPostTitles.ret) this.postTitles[pt.id as Post] = pt;
@@ -101,6 +101,8 @@ export class CApp extends CUqApp {
 		let tz = myTimezone.ret[0];
 		this.timezone = tz.timezone;
 		this.unitTimezone = tz.unitTimeZone;
+		this.unitBizMonth = tz.unitBizMonth ?? 1;
+		this.unitBizDate = tz.unitBizDate ?? 1;
 	}
 
 	renderVPortal() {

@@ -21,8 +21,8 @@ import * as DxExchangeMainState from './DxExchangeMainState.ui';
 import * as IxExchangeMainUsedPoint from './IxExchangeMainUsedPoint.ui';
 import * as ExchangeDetailDeliver from './ExchangeDetailDeliver.ui';
 import * as IxOrderDetailReceive from './IxOrderDetailReceive.ui';
-		
-	export function setUI(uq: Uq) {
+	
+export function setUI(uq: Uq) {
 	assign(uq, 'ProductX', ProductX);
 	assign(uq, 'Customer', Customer);
 	assign(uq, 'WebUser', WebUser);
@@ -45,6 +45,5 @@ import * as IxOrderDetailReceive from './IxOrderDetailReceive.ui';
 	assign(uq, 'IxExchangeMainUsedPoint', IxExchangeMainUsedPoint);
 	assign(uq, 'ExchangeDetailDeliver', ExchangeDetailDeliver);
 	assign(uq, 'IxOrderDetailReceive', IxOrderDetailReceive);
-	}
-	export * from './JkPointShop';
-	
+}
+export * from './JkPointShop';

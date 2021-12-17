@@ -322,8 +322,10 @@ PROC #ProcWriteItemHistory ver 0.1 (
                 LEFT JOIN DxCurrency as d ON d.id=a.currency
             WHERE c.id=bizOp;
 
-        SET price=a.price, margin=a.margin 
+        SET price=a.price
             FROM OrderDetail as a WHERE a.id=biz;
+        SET margin=a.margin
+            FROM DxOrderDetail as a WHERE a.id=biz;
 
         IF currency IS NULL {
             SET baseCurrencyPrice=price;

@@ -116,13 +116,13 @@ PROC CalcSum ver 0.1 () {
     PROC ProcCalcAccountSum();
 };
 
-PROC SumItemHistory (
+PROC SumItemHistory ver 0.2 (
     itemHistoryId ID
 ) {
     VAR timeZone TINYINT = unittimezone(), tick INT, compileTick INT;
     VAR value DEC(18,4), date DATE, item ENUM Item
         , biz ID, bizOp ID;
-    VAR product ID, customerAccount ID, m INT;
+    VAR product ID, customerAccount ID, m INT, bizmonth TINYINT, bizdate TINYINT;
 
     SET biz=b.biz
         , bizOp=a.bizOp
@@ -137,6 +137,10 @@ PROC SumItemHistory (
 
     LOG concat('ProcCalcHistorySum: ', itemHistoryId) SUBJECT 'Schedule CalcSum';
     SET date=MinuteIdDate(itemHistoryId, timeZone);
+    set bizdateId = BizMonthId(date);
+    set bizmonth = bizmonth();
+    set bizdate = bizdate();
+
     SET m=YEAR(date)*100+MONTH(date);
 
     WITH DaySumItem as a IX=item XI=date SET a.value=IFNULL(a.value,0) + IFNULL(value,0);
