@@ -19,9 +19,13 @@ export interface PostPeriodSum {
 }
 
 export abstract class Period {
-    private timezone: number;
-    constructor(timezone: number) {
+    protected readonly timezone: number;
+    protected readonly unitBizMonth: number;
+    protected readonly unitBizDate: number;
+    constructor(timezone: number, unitBizMonth: number, unitBizDate: number) {
         this.timezone = timezone;
+        this.unitBizMonth = unitBizMonth;
+        this.unitBizDate = unitBizDate;
         this.to = this.newDate();
         this.from = new Date(this.to);
         this.init();
@@ -110,8 +114,16 @@ class WeekPeriod extends Period {
 class MonthPeriod extends Period {
     init(): void {
         this.type = EnumPeriod.month;
-        this.from = new Date(this.to.getFullYear(), this.to.getMonth(), 1);
-        this.to = new Date(this.to.getFullYear(), this.to.getMonth() + 1, 1);
+        let year = this.to.getFullYear();
+        let month = this.to.getMonth();
+        let date = this.to.getDate();
+        if (date < this.unitBizDate) {
+            month--;
+            if (month < 0) year--;
+        }
+        this.from = new Date(year, month, this.unitBizDate);
+        this.to = new Date(this.from);
+        this.to.setMonth(this.to.getMonth() + 1);
     }
     prev(): void {
         this.from = new Date(this.from.setMonth(this.from.getMonth() - 1));
@@ -131,8 +143,22 @@ class MonthPeriod extends Period {
 class YearPeriod extends Period {
     init(): void {
         this.type = EnumPeriod.year;
-        this.from = new Date(this.to.getFullYear(), 0, 1);
-        this.to = new Date(this.to.getFullYear() + 1, 0, 1);
+        let year = this.to.getFullYear();
+        let month = this.to.getMonth();
+        let date = this.to.getDate();
+        if (date < this.unitBizDate) {
+            month--;
+            if (month < 0) year--;
+        }
+        if (month < this.unitBizMonth) {
+            year--;
+        }
+        month = this.unitBizMonth;
+        this.from = new Date(year, month, this.unitBizDate);
+        this.to = new Date(this.from);
+        this.to.setFullYear(this.to.getFullYear() + 1);
+        //this.from = new Date(this.to.getFullYear(), 0, 1);
+        //this.to = new Date(this.to.getFullYear() + 1, 0, 1);
     }
     prev(): void {
         this.from = new Date(this.from.setFullYear(this.from.getFullYear() - 1));
@@ -145,13 +171,13 @@ class YearPeriod extends Period {
     render(): string { return `${this.from.getFullYear()}年` }
 }
 
-export function createPeriod(periodType: EnumPeriod, timezone: number): Period {
+export function createPeriod(periodType: EnumPeriod, timezone: number, unitBizMonth: number, unitBizDate: number): Period {
     let period: Period;
     switch (periodType) {
-        case EnumPeriod.day: period = new DayPeriod(timezone); break;
-        case EnumPeriod.week: period = new WeekPeriod(timezone); break;
-        case EnumPeriod.month: period = new MonthPeriod(timezone); break;
-        case EnumPeriod.year: period = new YearPeriod(timezone); break;
+        case EnumPeriod.day: period = new DayPeriod(timezone, unitBizMonth, unitBizDate); break;
+        case EnumPeriod.week: period = new WeekPeriod(timezone, unitBizMonth, unitBizDate); break;
+        case EnumPeriod.month: period = new MonthPeriod(timezone, unitBizMonth, unitBizDate); break;
+        case EnumPeriod.year: period = new YearPeriod(timezone, unitBizMonth, unitBizDate); break;
     }
     return period;
 }

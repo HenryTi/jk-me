@@ -122,7 +122,7 @@ PROC SumItemHistory ver 0.2 (
     VAR timeZone TINYINT = unittimezone(), tick INT, compileTick INT;
     VAR value DEC(18,4), date DATE, item ENUM Item
         , biz ID, bizOp ID;
-    VAR product ID, customerAccount ID, m INT, bizmonth TINYINT, bizdate TINYINT;
+    VAR product ID, customerAccount ID, m INT; -- , bizmonth TINYINT, bizdate TINYINT;
 
     SET biz=b.biz
         , bizOp=a.bizOp
@@ -137,13 +137,14 @@ PROC SumItemHistory ver 0.2 (
 
     LOG concat('ProcCalcHistorySum: ', itemHistoryId) SUBJECT 'Schedule CalcSum';
     SET date=MinuteIdDate(itemHistoryId, timeZone);
-    set bizdateId = BizMonthId(date);
-    set bizmonth = bizmonth();
-    set bizdate = bizdate();
-
-    SET m=YEAR(date)*100+MONTH(date);
-
     WITH DaySumItem as a IX=item XI=date SET a.value=IFNULL(a.value,0) + IFNULL(value,0);
+
+    -- set bizdateId = BizMonthId(date);
+    -- set bizmonth = bizmonth();
+    -- set bizdate = bizdate();
+
+    SET m=BizMonthId(date, bizdate()); --  YEAR(date)*100+MONTH(date);
+
     IF item=Item.orderAmount {
         SET customerAccount=c.customerAccount
             , product=b.product
@@ -207,7 +208,12 @@ PROC ProcCalcHistorySum ver 0.4 ()
             WITH DaySumItem as a IX=item XI=date SET a.value=IFNULL(a.value,0) + IFNULL(value,0);
             VAR product ID, customerAccount ID, m INT;
             SET date=MinuteIdMonth(historyId, timeZone);
-            SET m=YEAR(date)*100+MONTH(date);
+            -- SET m=YEAR(date)*100+MONTH(date);
+            -- set bizdateId = BizMonthId(date);
+            -- set bizmonth = bizmonth();
+            -- set bizdate = bizdate();
+
+            SET m=BizMonthId(date, bizdate()); --  YEAR(date)*100+MONTH(date);
             IF item=Item.orderAmount {
                 SET customerAccount=c.customerAccount
                     , product=b.product

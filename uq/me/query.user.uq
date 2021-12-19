@@ -146,23 +146,24 @@ Auth AuthCheck
     objectPostItem ID ObjectPostItem,
     from DATE,
     to DATE,
-    period TINYINT,         -- 0: day, 1: month
+    period TINYINT,         -- 0: day, >=1: month with bizDate
 )
 RETURNS ret (
     date Date,
     value DEC(18,4)
 ) {
-    VAR timeZone TINYINT = timezone();
+    VAR timeZone TINYINT = timezone(), bizDate TINYINT;
+    -- bizDate TINYINT = BizDate();
+    SET bizDate = period;
     INTO ret SELECT date, SUM(a.value) as value
         FROM OPIHistory AS a
             JOIN ObjectPostItem as b ON a.opi=b.id
-            -- JOIN UserObject as c ON b.object=c.xi
         WHERE a.opi=objectPostItem
             AND a.id >= minuteIdFromDate(from, timeZone)
             AND a.id < minuteIdFromDate(to, timeZone)
-        GROUP BY MinuteIdPeriod(a.id, timeZone, period) as date
+        -- GROUP BY BizMonthId(MinuteIdPeriod(a.id, timeZone, period), bizDate)as date
+        GROUP BY MinuteIdPeriod(a.id, timeZone, bizDate) as date
         ORDER BY date DESC;
-        -- c.ix=$user AND 
 };
 
 SYSPROC ProxyCheck ver 0.2 (

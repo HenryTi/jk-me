@@ -87,22 +87,17 @@ export class CApp extends CUqApp {
 
 	private async loadBaseData() {
 		let { JkMe } = this.uqs;
-		let [retItemTitles, retPostTitles, retAccountTitles, roleOps, myTimezone] = await Promise.all([
+		let [retItemTitles, retPostTitles, retAccountTitles, roleOps] = await Promise.all([
 			JkMe.GetItemTitles.query({}),
 			JkMe.GetPostTitles.query({}),
 			JkMe.GetAccountTitles.query({}),
 			JkMe.GetRoleOps.query({}),
-			this.loadUnitTime(JkMe.$getTimezone),
+			this.loadUnitTime(JkMe.$getUnitTime),
 		]);
 		for (let it of retItemTitles.ret) this.itemTitles[it.id as Item] = it;
 		for (let pt of retPostTitles.ret) this.postTitles[pt.id as Post] = pt;
 		for (let at of retAccountTitles.ret) this.accountTitles[at.id as EnumAccount] = at;
 		this.ops = roleOps.ret;
-		let tz = myTimezone.ret[0];
-		this.timezone = tz.timezone;
-		this.unitTimezone = tz.unitTimeZone;
-		this.unitBizMonth = tz.unitBizMonth ?? 1;
-		this.unitBizDate = tz.unitBizDate ?? 1;
 	}
 
 	renderVPortal() {

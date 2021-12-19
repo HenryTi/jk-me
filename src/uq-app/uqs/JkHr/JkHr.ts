@@ -1,6 +1,7 @@
-//=== UqApp builder created on Thu Dec 16 2021 16:51:36 GMT-0500 (北美东部标准时间) ===//
+//=== UqApp builder created on Sat Dec 18 2021 11:01:29 GMT-0500 (北美东部标准时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqMap } from "tonwa-core";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Render, IDXEntity } from "tonwa-react";
 
 
@@ -145,16 +146,16 @@ export interface ParamActs {
 
 
 export interface UqExt extends Uq {
-	Acts(param:ParamActs): Promise<any>;
+	Acts(param: ParamActs): Promise<any>;
 	SQL: Uq;
-	IDRender(id:number):JSX.Element;
-	IDLocalRender(id:number):JSX.Element;
+	IDRender(id: number): JSX.Element;
+	IDLocalRender(id: number): JSX.Element;
 
-	$user: UqTuid<Tuid$user>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
-	$sheet: UqTuid<Tuid$sheet>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
-	Employee: UqTuid<TuidEmployee>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
-	Role: UqTuid<TuidRole>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
-	Company: UqTuid<TuidCompany>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	$user: UqTuid<Tuid$user> & { tv: (id: number, render?: Render<any>) => JSX.Element };
+	$sheet: UqTuid<Tuid$sheet> & { tv: (id: number, render?: Render<any>) => JSX.Element };
+	Employee: UqTuid<TuidEmployee> & { tv: (id: number, render?: Render<any>) => JSX.Element };
+	Role: UqTuid<TuidRole> & { tv: (id: number, render?: Render<any>) => JSX.Element };
+	Company: UqTuid<TuidCompany> & { tv: (id: number, render?: Render<any>) => JSX.Element };
 	DeleteWebuseEmployee: UqAction<ParamDeleteWebuseEmployee, ResultDeleteWebuseEmployee>;
 	AddWebuseEmployee: UqAction<ParamAddWebuseEmployee, ResultAddWebuseEmployee>;
 	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
@@ -168,7 +169,7 @@ export interface UqExt extends Uq {
 	EmployeeRelation: UqMap;
 }
 
-export function assign(uq: any, to:string, from:any): void {
+export function assign(uq: any, to: string, from: any): void {
 	let hasEntity = uq.hasEntity(to);
 	if (hasEntity === false) {
 		return;
