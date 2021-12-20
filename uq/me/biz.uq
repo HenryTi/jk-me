@@ -314,7 +314,7 @@ PROC #ProcWriteItemHistory ver 0.1 (
             SET mainItem = Item.orderReturn;
 
         VAR orderType ENUM OrderType, currency ENUM EnumCurrency
-            , baseCurrencyPrice DEC(18,4), baseCurrencyMargin DEC(18,4), rate DEC(18,4);
+            , baseCurrencyPrice DEC(18,4), rate DEC(18,4);
         SET orderType=a.type, currency=a.currency, rate=d.rate
             FROM OrderMain as a 
                 JOIN DxBiz as b ON b.main=a.id
@@ -329,11 +329,9 @@ PROC #ProcWriteItemHistory ver 0.1 (
 
         IF currency IS NULL {
             SET baseCurrencyPrice=price;
-            SET baseCurrencyMargin=margin;
         }
         ELSE {
             SET baseCurrencyPrice=price * rate;
-            SET baseCurrencyMargin=margin*rate;
         }
         
         -- 可能是积分兑换单引发的deliver-done，这时候，就没有margin和price，所以不写帐
@@ -343,8 +341,8 @@ PROC #ProcWriteItemHistory ver 0.1 (
                 IF currency IS NOT NULL {
                     WITH CurrencyItemHistory as a ID=itemHistoryId SET a.currency=currency, a.value=price*value, a.rate=rate;
                 }
-                PROC ProcItemHistory(bizOp, Item.orderProfit, (baseCurrencyMargin)*value, itemHistoryId);
-                PROC ProcItemHistory(bizOp, Item.orderFee, (baseCurrencyMargin)*value, itemHistoryId);
+                PROC ProcItemHistory(bizOp, Item.orderProfit, (margin)*value, itemHistoryId);
+                PROC ProcItemHistory(bizOp, Item.orderFee, (margin)*value, itemHistoryId);
             }
             ELSEIF orderType=OrderType.SaleBranch {
                 PROC ProcItemHistory(bizOp, Item.orderSaleTransferIn, baseCurrencyPrice*value, itemHistoryId);
