@@ -144,16 +144,20 @@ PROC SetOpiBooking() {
     SET today=dateadd(hour, 8, utc_timestamp());
 
     -- 根据 IxOpiBooking 的日期，设置 OpiBooking ratio
-    FOR (VAR bookingId ID OpiBooking, d DATE
-        OF SELECT bookingId, MAX(b.xi) as d
-            FROM OpiBooking as a
-                JOIN IxOpiBooking as b ON a.id=b.ix AND b.xi<=today
-            GROUP BY a.id as bookingId
-            ORDER BY bookingId ASC)
+    FOR (VAR bookingId ID OpiBooking 
+        OF SELECT a.id as bookingId
+            FROM OpiBooking as a)
     {
-        VAR ratio DEC(6,2), span SMALLINT;
-        SET ratio=a.ratio, span=a.span FROM IxOpiBooking as a WHERE a.ix=bookingId AND a.xi=d;
-        WITH OPIBooking as a ID=bookingId SET a.ratio=ratio, a.start=d, a.span=span;
+        VAR d DATE, ratio DEC(6,2), span SMALLINT;
+        SET d=b.xi, ratio=b.ratio, span=b.span
+            FROM IxOpiBooking as b
+            WHERE b.ix=bookingId AND b.xi<=today
+            ORDER BY b.xi DESC
+            LIMIT 1;
+        WITH OPIBooking as a ID=bookingId 
+            SET a.ratio=IFNULL(ratio,a.ratioInit)
+                , a.start=d
+                , a.span=IFNULL(span, 10000);
     }
 };
 
@@ -178,16 +182,20 @@ PROC #ExecQueueBizOp ver 0.4 () {
     SET today=dateadd(hour, 8, utc_timestamp());
 
     -- 根据 IxOpiBooking 的日期，设置 OpiBooking ratio, span, start
-    FOR (VAR bookingId ID OpiBooking, d DATE
-        OF SELECT bookingId, MAX(b.xi) as d
-            FROM OpiBooking as a
-                JOIN IxOpiBooking as b ON a.id=b.ix AND b.xi<=today
-            GROUP BY a.id as bookingId
-            ORDER BY bookingId ASC)
+    FOR (VAR bookingId ID OpiBooking 
+        OF SELECT a.id as bookingId
+            FROM OpiBooking as a)
     {
-        VAR ratio DEC(6,2), span SMALLINT;
-        SET ratio=a.ratio, span=a.span FROM IxOpiBooking as a WHERE a.ix=bookingId AND a.xi=d;
-        WITH OPIBooking as a ID=bookingId SET a.ratio=ratio, a.start=d, a.span=span;
+        VAR d DATE, ratio DEC(6,2), span SMALLINT;
+        SET d=b.xi, ratio=b.ratio, span=b.span
+            FROM IxOpiBooking as b
+            WHERE b.ix=bookingId AND b.xi<=today
+            ORDER BY b.xi DESC
+            LIMIT 1;
+        WITH OPIBooking as a ID=bookingId 
+            SET a.ratio=IFNULL(ratio,a.ratioInit)
+                , a.start=d
+                , a.span=IFNULL(span, 10000);
     }
 
     WHILE 1=1 {
@@ -293,9 +301,11 @@ PROC #ProcBizOp ver 0.1 (
         VAR d DATE = MinuteIdDate(opiHistoryId, timeZone);
         IF d<start {
             VAR dt DATE;
-            SET dt=MAX(b.xi)
+            SET dt=b.xi
                 FROM IxOpiBooking as b
-                WHERE b.ix=booking AND b.xi<=d;
+                WHERE b.ix=booking AND b.xi<=d
+                ORDER BY b.xi DESC
+                LIMIT 1;
             IF dt IS NULL {
                 CONTINUE;
             }

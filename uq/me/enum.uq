@@ -182,7 +182,7 @@ VALUES
 (EnumBizOpType.booking, Post.sys, Item.orderReceiveReturn, Item.orderReceiveReturn, 100, TEXTID('退货金额')),
 (EnumBizOpType.booking, Post.sys, Item.profitFee, Item.profitFee, 100, TEXTID('订单毛利提成')),
 (EnumBizOpType.booking, Post.sys, Item.couponFee, Item.couponFee, 100, TEXTID('发券毛利提成')),
-(EnumBizOpType.booking, Post.sys, Item.amountFee, Item.amountFee, 100, TEXTID('订单销售额提成')),
+(EnumBizOpType.booking, Post.sys, Item.amountFee, Item.amountFee, 100.01, TEXTID('订单销售额提成')),
 
 -- EnumOrderAction.orderDeliverDone
 (EnumBizOpType.orderDeliverDone, Post.staffSales, Item.orderAmount, Item.orderAmount, 100, TEXTID('销售额')),
