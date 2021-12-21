@@ -9,6 +9,7 @@ ACCEPT order {
         , a.seller=seller
         , a.currency = currency
         , a.stamp=$stamp;
+    WITH DxBizMain as a ID=mainId SET a.stamp=$stamp;
 	FOR detail {
         LOG CONCAT_WS(' ', id, quantity, item) SUBJECT 'JkOrderBus ACCEPT orderDetail';
 		WITH OrderDetail as a 

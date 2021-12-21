@@ -13,6 +13,11 @@ ID # QueueBizOp MINUTEID (
     KEY bizOp ID,                       -- detail of deliver, receive, return
 );
 
+IDX DxBizMain (
+    id,
+    stamp INT,
+);
+
 -- biz是核心
 IDX DxBiz ver 0.7 (
     id,
@@ -39,7 +44,7 @@ IX IxBizOpBound (
     ix,                                 -- bizOp id
     xi BizMainBound,
     bound TINYINT DEFAULT 0,            -- 1: bound
-    opiItemHistory TINYINT DEFAULT 0,   -- 1: On OpiItemHistory
+    -- opiItemHistory TINYINT DEFAULT 0,   -- 1: On OpiItemHistory
     sys (create, update),
 );
 
@@ -110,8 +115,8 @@ PROC # ExecQueueBizMain ver 0.4 () {
                         LEFT JOIN IxBizOpBound as f ON f.ix=b.id AND f.xi=e.id
                     WHERE f.bound IS NULL 
                         OR f.bound=0
-                        OR f.opiItemHistory IS NULL
-                        OR f.opiItemHistory=0
+                        -- OR f.opiItemHistory IS NULL
+                        -- OR f.opiItemHistory=0
             )
             {
                 WITH QueueBizOp as a ID=bizOp SET a.bizop=bizOp;
@@ -134,6 +139,24 @@ PROC # ExecQueueBizMain ver 0.4 () {
     LOG CONCAT_WS('ExecQueueBizMain ', 'end because compile') SUBJECT 'Schedule ExecQueueBizMain';
 };
 
+PROC SetOpiBooking() {
+    VAR today DATE;
+    SET today=dateadd(hour, 8, utc_timestamp());
+
+    -- 根据 IxOpiBooking 的日期，设置 OpiBooking ratio
+    FOR (VAR bookingId ID OpiBooking, d DATE
+        OF SELECT bookingId, MAX(b.xi) as d
+            FROM OpiBooking as a
+                JOIN IxOpiBooking as b ON a.id=b.ix AND b.xi<=today
+            GROUP BY a.id as bookingId
+            ORDER BY bookingId ASC)
+    {
+        VAR ratio DEC(6,2), span SMALLINT;
+        SET ratio=a.ratio, span=a.span FROM IxOpiBooking as a WHERE a.ix=bookingId AND a.xi=d;
+        WITH OPIBooking as a ID=bookingId SET a.ratio=ratio, a.start=d, a.span=span;
+    }
+};
+
 PROC #ExecQueueBizOp ver 0.4 () {
     /-mysql
   	DECLARE _$ERROR TEXT;
@@ -149,9 +172,24 @@ PROC #ExecQueueBizOp ver 0.4 () {
     END;
     -/
     LOG CONCAT_WS('ExecQueueBizOp ', 'start') SUBJECT 'Schedule ExecQueueBizOp';
-    VAR queueId ID, bizOp ID, rows INT, tick INT, compileTick INT;
+    VAR queueId ID, bizOp ID, rows INT, tick INT, compileTick INT, today DATE;
     SET rows=0;
     SET tick=UNIX_TIMESTAMP();
+    SET today=dateadd(hour, 8, utc_timestamp());
+
+    -- 根据 IxOpiBooking 的日期，设置 OpiBooking ratio, span, start
+    FOR (VAR bookingId ID OpiBooking, d DATE
+        OF SELECT bookingId, MAX(b.xi) as d
+            FROM OpiBooking as a
+                JOIN IxOpiBooking as b ON a.id=b.ix AND b.xi<=today
+            GROUP BY a.id as bookingId
+            ORDER BY bookingId ASC)
+    {
+        VAR ratio DEC(6,2), span SMALLINT;
+        SET ratio=a.ratio, span=a.span FROM IxOpiBooking as a WHERE a.ix=bookingId AND a.xi=d;
+        WITH OPIBooking as a ID=bookingId SET a.ratio=ratio, a.start=d, a.span=span;
+    }
+
     WHILE 1=1 {
         SET queueId=NULL;
         SET queueId=a.id, bizOp=a.bizOp
@@ -200,7 +238,8 @@ PROC #ProcBizOp ver 0.1 (
         RETURN;
     };
 
-    VAR bizOpType ENUM EnumBizOpType, done TINYINT, biz ID, opi ID, changed TINYINT;
+    VAR bizOpType ENUM EnumBizOpType, done TINYINT, biz ID, opi ID, timeZone TINYINT;
+    -- changed TINYINT, 
     VAR ixOpiItemHistoryId ID;
     SET bizOpType=a.type, done=a.done, biz=a.biz
         FROM DxBizOp as a 
@@ -210,80 +249,71 @@ PROC #ProcBizOp ver 0.1 (
         PROC ProcWriteItemHistory(bizOp);
         WITH DxBizOp ID=bizOp SET done=1;
     }
+    SET timeZone=unittimezone();
 
     -- biz bound post history
     LOG CONCAT_WS(' ', 'bizOpType', bizOpType, 'biz', biz, 'bizOp', bizOp) SUBJECT 'ProcBizOp';
     FOR (VAR booking ID, itemHistoryId ID, post ENUM Post, stamp INT, value DEC(18,4)
-        , postItem ENUM Item, ratio DEC(6,2)
+        , postItem ENUM Item, ratio DEC(6,2), span SMALLINT, start DATE
         , to ID, bizMainBoundId ID, boundRatio DEC(6,2)
-        , opBound TINYINT, boundOpiItemHistory ID
+        , opBound TINYINT, bizMainStamp INT -- , boundOpiItemHistory ID
         OF SELECT a.id as booking, c.id as itemHistoryId, a.post, b.stamp
-            , c.value, a.postItem, a.ratio
+            , c.value, a.postItem, a.ratio, a.span, a.start
             , e.to, e.id as bizMainBoundId, e.ratio as boundRatio
-            , f.bound as opBound, f.opiItemHistory as boundOpiItemHistory
+            , f.bound as opBound, g.stamp as bizMainStamp -- , f.opiItemHistory as boundOpiItemHistory
             FROM OPIBooking as a
                 JOIN DxBizOp as b ON a.bizOpType=b.type
                 JOIN ItemHistory as c ON c.item=a.item AND c.bizOp=b.id
                 JOIN DxBiz as d ON d.id=b.biz
                 JOIN BizMainBound as e ON e.bizMain=d.main AND e.post=a.post AND e.item=a.postItem
                 LEFT JOIN IxBizOpBound as f ON f.ix=b.id AND f.xi=e.id
-            WHERE b.id=bizOp)
+                LEFT JOIN DxBizMain as g ON g.id=d.main
+            WHERE b.id=bizOp AND a.ratio IS NOT NULL)
     {
-        SET changed = 0;
-        IF boundOpiItemHistory IS NULL OR boundOpiItemHistory = 0 {
-            SET opi = ID(
-                ObjectPostItem new
-                KEY object=to, post=post, item=postItem
-            );
-            LOG CONCAT_WS(' ', opi, itemHistoryId, bizOpType, post, postItem, to) SUBJECT 'ProcBizOp Bound 1';
-            -- write OpiItemHistory
-            VAR opiItemHistoryId ID;
-            SET opiItemHistoryId=ID(
-                ItemHistory new 
-                KEY bizOp=itemHistoryId, item=postItem
-                STAMP stamp
-            );
-            WITH ItemHistory as a ID=opiItemHistoryId
-                SET a.value=value * IFNULL(IFNULL(boundRatio, ratio), 100) / 100
-                    , a.booking=booking;
-            WITH OPIItemHistory IX=opi XI=opiItemHistoryId ID TO ixOpiItemHistoryId;
-            WITH IxBizOpBound IX=bizOp XI=bizMainBoundId SET opiItemHistory=1;
-            WITH SumQueueItemHistory ID=itemHistoryId;
-            QUEUE QueueSumOpiItemHistory ADD ixOpiItemHistoryId;
-            SET changed = 1;
-        }
-
-        IF opBound IS NULL OR opBound = 0 {
-            SET opi = ID(
-                ObjectPostItem new
-                KEY object=to, post=post, item=postItem
-            );
-            IF Exists(SELECT a.id FROM OPIHistory as a WHERE a.opi=opi AND a.itemHistory=itemHistoryId AND a.booking=booking) {
-                VAR bdoId ID = ID(BizopOfDuplicateOpiHistory new);
-                WITH BizopOfDuplicateOpiHistory as a ID=bdoId SET 
-                    a.itemHistoryId = itemHistoryId,
-                    a.bizOp = bizOp,
-                    a.booking = booking,
-                    a.bizMainBoundId = bizMainBoundId;
-                CONTINUE;
-            }
-            -- to be deleted
-            -- write OpiHistory
-            VAR opiHistoryId ID;
-            SET opiHistoryId=ID(OPIHistory new STAMP stamp);
-            LOG CONCAT_WS(' ', opi, opiHistoryId, bizOpType, post, postItem, to) SUBJECT 'ProcBizOp Bound 1';
-            WITH OPIHistory as a ID=opiHistoryId
-                SET a.opi=opi, a.itemHistory=itemHistoryId
-                , a.value=value * IFNULL(IFNULL(boundRatio, ratio), 100) / 100
-                , a.booking=booking;
-            WITH IxBizOpBound IX=bizOp XI=bizMainBoundId SET bound=1;
-            WITH SumQueueOpiHistory ID=opiHistoryId;
-            SET changed = 1;
-        }
-        
-        IF changed=0 {
+        IF opBound=1 {
             CONTINUE;
         }
+        -- IF opBound IS NULL OR opBound = 0 {
+        SET opi = ID(
+            ObjectPostItem new
+            KEY object=to, post=post, item=postItem
+        );
+        IF Exists(SELECT a.id FROM OPIHistory as a WHERE a.opi=opi AND a.itemHistory=itemHistoryId AND a.booking=booking)
+        {
+            VAR bdoId ID = ID(BizopOfDuplicateOpiHistory new);
+            WITH BizopOfDuplicateOpiHistory as a ID=bdoId SET 
+                a.itemHistoryId = itemHistoryId,
+                a.bizOp = bizOp,
+                a.booking = booking,
+                a.bizMainBoundId = bizMainBoundId;
+            CONTINUE;
+        }
+        -- write OpiHistory
+        VAR opiHistoryId ID = ID(OPIHistory new STAMP stamp);
+        VAR d DATE = MinuteIdDate(opiHistoryId, timeZone);
+        IF d<start {
+            VAR dt DATE;
+            SET dt=MAX(b.xi)
+                FROM IxOpiBooking as b
+                WHERE b.ix=booking AND b.xi<=d;
+            IF dt IS NULL {
+                CONTINUE;
+            }
+            SET ratio=a.ratio, span=a.span FROM IxOpiBooking as a WHERE a.ix=booking AND a.xi=dt;
+        }
+
+        -- 超过规则的业务时间跨度
+        IF stamp >= bizMainStamp + span * 24 * 3600 {
+            CONTINUE;
+        }
+
+        LOG CONCAT_WS(' ', opi, opiHistoryId, bizOpType, post, postItem, to) SUBJECT 'ProcBizOp Bound 1';
+        WITH OPIHistory as a ID=opiHistoryId
+            SET a.opi=opi, a.itemHistory=itemHistoryId
+            , a.value=value * IFNULL(boundRatio, ratio) / 100
+            , a.booking=booking;
+        WITH IxBizOpBound IX=bizOp XI=bizMainBoundId SET bound=1;
+        WITH SumQueueOpiHistory ID=opiHistoryId;
         FOR (VAR user ID
             OF SELECT b.ix as user
                 FROM ObjectPostItem as a JOIN UserObject as b ON a.object=b.xi
@@ -291,8 +321,34 @@ PROC #ProcBizOp ver 0.1 (
         {
             POKE user;
         }
+        -- }
     }
 };
+
+/*
+IF boundOpiItemHistory IS NULL OR boundOpiItemHistory = 0 {
+    SET opi = ID(
+        ObjectPostItem new
+        KEY object=to, post=post, item=postItem
+    );
+    LOG CONCAT_WS(' ', opi, itemHistoryId, bizOpType, post, postItem, to) SUBJECT 'ProcBizOp Bound 1';
+    -- write OpiItemHistory
+    VAR opiItemHistoryId ID;
+    SET opiItemHistoryId=ID(
+        ItemHistory new 
+        KEY bizOp=itemHistoryId, item=postItem
+        STAMP stamp
+    );
+    WITH ItemHistory as a ID=opiItemHistoryId
+        SET a.value=value * IFNULL(IFNULL(boundRatio, ratio), 100) / 100
+            , a.booking=booking;
+    WITH OPIItemHistory IX=opi XI=opiItemHistoryId ID TO ixOpiItemHistoryId;
+    WITH IxBizOpBound IX=bizOp XI=bizMainBoundId SET opiItemHistory=1;
+    WITH SumQueueItemHistory ID=itemHistoryId;
+    QUEUE QueueSumOpiItemHistory ADD ixOpiItemHistoryId;
+    SET changed = 1;
+}
+*/
 
 -- 这个是需要根据不同的业务，调整代码的。目前无法直接用表达式实现
 -- 如果要记orderProfit和orderAmount，必须有orderDeliverDone操作。
@@ -380,7 +436,7 @@ PROC #ProcItemHistory ver 0.1 (
     value DEC(18,4),
     out itemHistoryId ID,
 ) {
-    VAR stamp INT, booking ID, type ENUM EnumBizOpType;
+    VAR stamp INT, type ENUM EnumBizOpType;   -- , booking ID
     SET itemHistoryId = a.id FROM ItemHistory as a WHERE a.bizOp=bizOp AND a.item=item;
     SET type = a.type, stamp = a.stamp FROM DxBizOp as a WHERE a.id=bizOp;
     IF itemHistoryId IS NULL {
@@ -389,9 +445,11 @@ PROC #ProcItemHistory ver 0.1 (
             KEY bizOp=bizOp, item=item
             STAMP stamp
         );
+        /*
         SET booking = a.id FROM OPIBooking as a 
             WHERE a.bizOpType=type AND a.post=Post.sys AND a.postItem=item AND a.item=item;
-        WITH ItemHistory as a ID = itemHistoryId SET a.value=value, a.booking=booking;
+        */
+        WITH ItemHistory as a ID = itemHistoryId SET a.value=value; -- , a.booking=booking;
         WITH SumQueueItemHistory ID=itemHistoryId;
     }
 };

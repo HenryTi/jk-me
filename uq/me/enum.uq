@@ -18,7 +18,7 @@ ENUM Item (
     orderSaleTransferOut        = 1016,     -- 内部销售调出金额
     orderFactoryTransferOut     = 1017,     -- 内部生产调出金额
 
-    orderReturn                       = 1020,     -- 订单退货
+    orderReturn                 = 1020,     -- 订单退货
 
     orderReceive                = 1030,     -- 订单收款
     orderReceiveReturn          = 1040,     -- 订单退款
@@ -160,60 +160,63 @@ VALUES
 ;
 
 -- OPIBooking, 是设置某个岗位（post）能够看到某个科目（postItem）值，该值和另外一个科目（item）的比例关系（radio）以及在何时（bizOpType）计算该值
-ID #OPIBooking ver 0.5 CONST (
+ID #OPIBooking ver 0.1 CONST (
     id small,
     KEY bizOpType ENUM EnumBizOpType,
     KEY post ENUM Post,
-    KEY postItem ENUM Item,                 -- item to OPIHistory, 要计算的科目
-    KEY item ENUM Item,                     -- item to ItemHistory, 为了在计算opihistory时去使用ItemHistory中的值
-    ratio DEC(6,2) DEFAULT 100,         -- 百分比，从itemHistory的value，折算到 OPIHistory, 未来有可能是分段公式
+    KEY postItem ENUM Item,             -- item to OPIHistory, 要计算的科目
+    KEY item ENUM Item,                 -- item to ItemHistory, 为了在计算opihistory时去使用ItemHistory中的值
+    ratio DEC(6,2) DEFAULT 100,         -- 实际使用百分比，从itemHistory的value，折算到 OPIHistory, 未来有可能是分段公式
+    start DATE,                         -- 规则开始时间
+    span SMALLINT DEFAULT 10000,        -- 业务记账跨度 默认一万天
+    ratioInit DEC(6,2) DEFAULT 100,     -- 表中预置百分比，从itemHistory的value，折算到 OPIHistory, 未来有可能是分段公式
     memo INT,                           -- 文本id
 )
-+ (bizOpType, post, postItem, item, ratio, memo)
++ (bizOpType, post, postItem, item, ratioInit, memo)
 VALUES
 -- 原生item booking。Post.sys, item=postItem
-(EnumBizOpType.booking, Post.sys, Item.orderAmount, Item.orderAmount, null, TEXTID('订单金额')),
-(EnumBizOpType.booking, Post.sys, Item.orderProfit, Item.orderProfit, null, TEXTID('订单毛利')),
-(EnumBizOpType.booking, Post.sys, Item.orderReceive, Item.orderReceive, null, TEXTID('回款金额')),
-(EnumBizOpType.booking, Post.sys, Item.orderReturn, Item.orderReturn, null, TEXTID('退货金额')),
-(EnumBizOpType.booking, Post.sys, Item.orderReceiveReturn, Item.orderReceiveReturn, null, TEXTID('退货金额')),
-(EnumBizOpType.booking, Post.sys, Item.profitFee, Item.profitFee, null, TEXTID('订单毛利提成')),
-(EnumBizOpType.booking, Post.sys, Item.couponFee, Item.couponFee, null, TEXTID('发券毛利提成')),
-(EnumBizOpType.booking, Post.sys, Item.amountFee, Item.amountFee, null, TEXTID('订单销售额提成')),
+(EnumBizOpType.booking, Post.sys, Item.orderAmount, Item.orderAmount, 100, TEXTID('订单金额')),
+(EnumBizOpType.booking, Post.sys, Item.orderProfit, Item.orderProfit, 100, TEXTID('订单毛利')),
+(EnumBizOpType.booking, Post.sys, Item.orderReceive, Item.orderReceive, 100, TEXTID('回款金额')),
+(EnumBizOpType.booking, Post.sys, Item.orderReturn, Item.orderReturn, 100, TEXTID('退货金额')),
+(EnumBizOpType.booking, Post.sys, Item.orderReceiveReturn, Item.orderReceiveReturn, 100, TEXTID('退货金额')),
+(EnumBizOpType.booking, Post.sys, Item.profitFee, Item.profitFee, 100, TEXTID('订单毛利提成')),
+(EnumBizOpType.booking, Post.sys, Item.couponFee, Item.couponFee, 100, TEXTID('发券毛利提成')),
+(EnumBizOpType.booking, Post.sys, Item.amountFee, Item.amountFee, 100, TEXTID('订单销售额提成')),
 
 -- EnumOrderAction.orderDeliverDone
-(EnumBizOpType.orderDeliverDone, Post.staffSales, Item.orderAmount, Item.orderAmount, null, TEXTID('销售额')),
+(EnumBizOpType.orderDeliverDone, Post.staffSales, Item.orderAmount, Item.orderAmount, 100, TEXTID('销售额')),
 (EnumBizOpType.orderDeliverDone, Post.staffSales, Item.profitFee, Item.orderFee, 4, TEXTID('发货后毛利提成')),
 (EnumBizOpType.orderDeliverDone, Post.staffSales, Item.couponFee, Item.orderFee, 1, TEXTID('发货后发券提成')),
 (EnumBizOpType.orderDeliverDone, Post.topSales, Item.profitFee, Item.orderFee, 1, TEXTID('发货后高管毛利提成')),
 (EnumBizOpType.orderDeliverDone, Post.topSales, Item.couponFee, Item.orderFee, 1, TEXTID('发货后高管发券提成')),
 (EnumBizOpType.orderDeliverDone, Post.managerIT, Item.amountFee, Item.orderAmount, 0.1, TEXTID('销售额提成')),
 
-(EnumBizOpType.orderDeliverDone, Post.sellerBranch, Item.orderAmount, Item.orderAmount, null, TEXTID('销售额')),
-(EnumBizOpType.orderDeliverDone, Post.sellerBranch, Item.orderSaleTransferOut, Item.orderSaleTransferOut, null, TEXTID('销售调出额')),
-(EnumBizOpType.orderDeliverDone, Post.sellerBranch, Item.orderFactoryTransferOut, Item.orderFactoryTransferOut, null, TEXTID('生产调出额')),
+(EnumBizOpType.orderDeliverDone, Post.sellerBranch, Item.orderAmount, Item.orderAmount, 100, TEXTID('销售额')),
+(EnumBizOpType.orderDeliverDone, Post.sellerBranch, Item.orderSaleTransferOut, Item.orderSaleTransferOut, 100, TEXTID('销售调出额')),
+(EnumBizOpType.orderDeliverDone, Post.sellerBranch, Item.orderFactoryTransferOut, Item.orderFactoryTransferOut, 100, TEXTID('生产调出额')),
 
-(EnumBizOpType.orderDeliverDone, Post.saleBranch, Item.orderSaleTransferIn, Item.orderSaleTransferIn, null, TEXTID('销售调入额')),
-(EnumBizOpType.orderDeliverDone, Post.factoryBranch, Item.orderFactoryTransferIn, Item.orderFactoryTransferIn, null, TEXTID('生产调入额')),
+(EnumBizOpType.orderDeliverDone, Post.saleBranch, Item.orderSaleTransferIn, Item.orderSaleTransferIn, 100, TEXTID('销售调入额')),
+(EnumBizOpType.orderDeliverDone, Post.factoryBranch, Item.orderFactoryTransferIn, Item.orderFactoryTransferIn, 100, TEXTID('生产调入额')),
 
 -- (EnumBizOpType.orderDeliverDone, Post.topSales, Item.amountFee, Item.orderAmount, 0.1, TEXTID('销售额提成')),
 -- (EnumBizOpType.orderDeliverDone, Post.topSales, Item.amountFee, Item.orderFee, 0.1, TEXTID('销售额提成')),
 -- (EnumBizOpType.orderDeliverDone, Post.topSales, Item.profitFee, Item.orderReturn, 0.1, TEXTID('销售额提成')),
 
 -- EnumOrderAction.orderReturn
-(EnumBizOpType.orderReturn, Post.staffSales, Item.orderAmount, Item.orderReturn, null, TEXTID('销售额')),
+(EnumBizOpType.orderReturn, Post.staffSales, Item.orderAmount, Item.orderReturn, 100, TEXTID('销售额')),
 (EnumBizOpType.orderReturn, Post.staffSales, Item.profitFee, Item.orderFee, 4, TEXTID('发货后毛利提成')),
 (EnumBizOpType.orderReturn, Post.staffSales, Item.couponFee, Item.orderFee, 1, TEXTID('发货后发券提成')),
 (EnumBizOpType.orderReturn, Post.topSales, Item.profitFee, Item.orderFee, 1, TEXTID('发货后高管毛利提成')),
 (EnumBizOpType.orderReturn, Post.topSales, Item.couponFee, Item.orderFee, 1, TEXTID('发货后高管发券提成')),
 (EnumBizOpType.orderReturn, Post.managerIT, Item.amountFee, Item.orderReturn, 0.1, TEXTID('销售额提成')),
 
-(EnumBizOpType.orderReturn, Post.sellerBranch, Item.orderReturn, Item.orderReturn, null, TEXTID('退货额')),
-(EnumBizOpType.orderReturn, Post.sellerBranch, Item.orderSaleTransferOut, Item.orderSaleTransferOut, null, TEXTID('销售调出额')),
-(EnumBizOpType.orderReturn, Post.sellerBranch, Item.orderFactoryTransferOut, Item.orderFactoryTransferOut, null, TEXTID('生产调出额')),
+(EnumBizOpType.orderReturn, Post.sellerBranch, Item.orderReturn, Item.orderReturn, 100, TEXTID('退货额')),
+(EnumBizOpType.orderReturn, Post.sellerBranch, Item.orderSaleTransferOut, Item.orderSaleTransferOut, 100, TEXTID('销售调出额')),
+(EnumBizOpType.orderReturn, Post.sellerBranch, Item.orderFactoryTransferOut, Item.orderFactoryTransferOut, 100, TEXTID('生产调出额')),
 
-(EnumBizOpType.orderReturn, Post.saleBranch, Item.orderSaleTransferIn, Item.orderSaleTransferIn, null, TEXTID('销售调入额')),
-(EnumBizOpType.orderReturn, Post.factoryBranch, Item.orderFactoryTransferIn, Item.orderFactoryTransferIn, null, TEXTID('生产调入额')),
+(EnumBizOpType.orderReturn, Post.saleBranch, Item.orderSaleTransferIn, Item.orderSaleTransferIn, 100, TEXTID('销售调入额')),
+(EnumBizOpType.orderReturn, Post.factoryBranch, Item.orderFactoryTransferIn, Item.orderFactoryTransferIn, 100, TEXTID('生产调入额')),
 
 -- EnumOrderAction.receiveDone
 (EnumBizOpType.orderReceiveDone, Post.staffSales, Item.profitFee, Item.orderFee, 4, TEXTID('收款后毛利提成')),
@@ -225,6 +228,14 @@ VALUES
 -- 
 (EnumBizOpType.pickupDone, Post.staff, Item.pickupPoint, Item.pickupPoint, 100, TEXTID('拣货计件积分')),
 ;
+
+-- 业务记账规则的开始执行日，相应的计算值，以及有效时间跨度
+IX IxOPIBooking (
+    ix OPIBooking,
+    xi Date,                        -- 执行开始日
+    ratio DEC(6,2) DEFAULT 100,
+    span SMALLINT DEFAULT 10000,    -- 业务执行跨度，按天计。比如订单时间，回款超过180天，此业务提成不再计算
+);
 
 QUERY GetItemTitles()
 RETURNS ret (

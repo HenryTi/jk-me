@@ -67,8 +67,15 @@ ID #ItemHistory ver 0.1 MINUTEID (
     KEY bizOp ID,               -- 业务操作id。包含biz。也可以是itemHistory id。当前的值，从这里计算来
     KEY item ENUM Item,         -- 科目
     value DEC(18,4),            -- 数值
-    booking ID OPIBooking,      -- 记账动作
+--    booking ID OPIBooking,      -- 记账动作
     INDEX item_id(item, id) UNIQUE,
+);
+
+-- 各种Item or OpiItem 的按日合计，归一到一张表。写查询会简单很多
+IX IxOpiItemDate (
+    ix ObjectPostItem,          --  ENUM Item，对于总账item, object=0, post=0
+    xi Date,
+    value DEC(18,4),
 );
 
 -- OPI = object post item
@@ -82,11 +89,13 @@ ID #OPIHistory MINUTEID (
     INDEX itemHistory(itemHistory),
 );
 
+/*
 IX OPIItemHistory ver 0.3 (
     id,                     -- 这个id可以放到队列里面去处理
     ix ObjectPostItem,
     xi ItemHistory,
 );
+*/
 
 IDX CurrencyItemHistory ver 0.3 (
     id,                         --  ItemHistory

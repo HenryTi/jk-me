@@ -311,3 +311,65 @@ PROC ProcCalcAccountSum ver 0.4 ()
     LOG 'ProcCalcAccountSum end' SUBJECT 'Schedule CalcSum';
 };
 
+PROC CalcItemDate() {
+    VAR pCalcItemDate BIGINT, timeZone TINYINT
+        , pDate DATE, value DEC(18, 4), item ENUM Item, calcCount INT
+        , opi ID ObjectPostItem;
+    SETTING 'pCalcDateItemHistory' BIGINT TO pCalcItemDate;
+    IF pCalcItemDate IS NULL {
+        SET pCalcItemDate = 0;
+    }
+    SET timeZone=TimeZone();
+    SET calcCount=0;
+    WHILE 1=1 {
+        TRANSACTION Start;
+        SET pCalcItemDate = a.id, value = a.value, item=a.item 
+            FROM ItemHistory as a 
+            WHERE a.id>pCalcItemDate 
+            LIMIT 1;
+        IF pCalcItemDate IS NOT NULL {
+            SET pDate = MinuteIdDate(pCalcItemDate, timeZone);
+            SET opi=ID(ObjectPostItem new KEY Object=0, Post=Post.Sys, Item=item);
+            WITH IxOpiItemDate as a IX=opi XI=pDate SET a.value=a.value+ifnull(value,0);
+            SET calcCount = calcCount + 1;
+            SETTING 'pCalcDateItemHistory' BIGINT = pCalcItemDate;
+        }
+        TRANSACTION Commit;
+        IF pCalcItemDate IS NULL {
+            BREAK;
+        }
+        IF calcCount >= 1000 {
+            SLEEP Const_Sleep_Time;
+            SET calcCount = 0;
+            -- BREAK;
+        }
+    }
+
+    SETTING 'pCalcDateOpiHistory' BIGINT TO pCalcItemDate;
+    IF pCalcItemDate IS NULL {
+        SET pCalcItemDate = 0;
+    }
+    SET calcCount=0;
+    WHILE 1=1 {
+        TRANSACTION Start;
+        SET pCalcItemDate = a.id, value = a.value, opi=a.opi 
+            FROM OpiHistory as a 
+            WHERE a.id>pCalcItemDate 
+            LIMIT 1;
+        IF pCalcItemDate IS NOT NULL {
+            SET pDate = MinuteIdDate(pCalcItemDate, timeZone);
+            WITH IxOpiItemDate as a IX=opi XI=pDate SET a.value=a.value+ifnull(value,0);
+            SET calcCount = calcCount + 1;
+            SETTING 'pCalcDateOpiHistory' BIGINT = pCalcItemDate;
+        }
+        TRANSACTION Commit;
+        IF pCalcItemDate IS NULL {
+            BREAK;
+        }
+        IF calcCount >= 1000 {
+            SLEEP Const_Sleep_Time;
+            SET calcCount = 0;
+            -- BREAK;
+        }
+    }
+};
