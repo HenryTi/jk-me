@@ -26,6 +26,7 @@ ENUM Item (
     profitFee                   = 1110,     -- 订单毛利提成
     couponFee                   = 1111,     -- 发券毛利提成
     amountFee                   = 1120,     -- 订单销售额提成
+    cachout                     = 1130,     -- 工资发放
     
     customerPoint               = 2010,             -- 客户普通积分
 

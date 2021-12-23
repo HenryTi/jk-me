@@ -117,6 +117,7 @@ IX AccountBooking ver 0.1 CONST (
 VALUES
 (Item.profitFee, EnumAccount.commission),
 (Item.amountFee, EnumAccount.commission),
+(Item.couponFee, EnumAccount.commission),
 ;
 
 ID #ObjectAccount (
