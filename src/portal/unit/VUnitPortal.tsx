@@ -1,9 +1,8 @@
 import { VPeriodSum } from "../VPortal";
 import { CUnitPortal } from "./CUnitPortal";
-import { Item } from "uq-app/uqs/JkMe";
+import { Item, ReturnGetItemPeriodSumRet } from "uq-app/uqs/JkMe";
 import { FA, LMR } from "tonwa";
-
-const nf = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+import { renderNum } from "tools";
 
 export class VUnitPortal extends VPeriodSum<CUnitPortal> {
     header() { return '详情'; }
@@ -26,13 +25,17 @@ export class VUnitPortal extends VPeriodSum<CUnitPortal> {
         let right = <div>
             {
                 value < 0 ?
-                    <span className="text-danger">({nf.format(-value)})</span>
+                    <span className="text-danger">({renderNum(-value)})</span>
                     :
-                    <>{nf.format(value ?? 0)}</>
+                    renderNum(value)
             }
             <small className="text-muted ms-1">{unit}</small>
         </div>;
         return <LMR className="py-2 px-3 d-flex align-items-center"
             left={left} right={right} />;
+    }
+
+    protected onClickItem = (item: ReturnGetItemPeriodSumRet) => {
+        this.controller.showItemHistory(item);
     }
 }

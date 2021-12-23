@@ -1,7 +1,7 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
-import { CApp, CUqBase } from "uq-app";
+import { CUqBase } from "uq-app";
 import {
-    Item, ReturnGetObjectItemHistoryRet, ReturnGetObjectItemPeriodHistoryRet
+    Item, Post, ReturnGetObjectItemHistoryRet, ReturnGetObjectItemPeriodHistoryRet
     , ReturnGetObjectItemPeriodSumRet
 } from "uq-app/uqs/JkMe";
 import { BizOpDetail } from "./bizOpDetail";
@@ -21,8 +21,7 @@ export class CPortal extends CUqBase {
     history: ReturnGetObjectItemHistoryRet[];
     periodHistory: ReturnGetObjectItemPeriodHistoryRet[];
 
-    constructor(cApp: CApp) {
-        super(cApp);
+    init(...param: any[]): void {
         makeObservable(this, {
             period: observable,
             history: observable.shallow,
@@ -93,18 +92,30 @@ export class CPortal extends CUqBase {
         else {
             this.itemPeriodSum = ips;
         }
-        let { id: objectPostItem } = ips;
+        let { id: objectPostItem, post, item } = ips;
 
         let { from, to } = this.period;
         if (fromDate) from = fromDate;
         if (toDate) to = toDate;
-        let ret = await this.uqs.JkMe.GetObjectItemHistory.query({
-            objectPostItem,
-            from,
-            to,
-        });
+        let retList: ReturnGetObjectItemHistoryRet[];
+        if (post === Post.sys) {
+            let ret = await this.uqs.JkMe.GetItemHistory.page({
+                item,
+                from,
+                to,
+            }, undefined, 10000);
+            retList = ret.$page;
+        }
+        else {
+            let ret = await this.uqs.JkMe.GetObjectItemHistory.query({
+                objectPostItem,
+                from,
+                to,
+            });
+            retList = ret.ret;
+        }
         runInAction(() => {
-            this.history = ret.ret;
+            this.history = retList;
         });
     }
 
@@ -144,6 +155,21 @@ export class CPortal extends CUqBase {
     async showBizOpDetail(item: ReturnGetObjectItemHistoryRet) {
         this.bizOpDetail = new BizOpDetail(this.uqs, item);
         this.openVPage(VBizOpDetail);
+    }
+
+    showOpiHistory = async (ips: ItemPeriodSum) => {
+        switch (this.period.type) {
+            case EnumPeriod.day:
+                this.showPostItemHistory(ips, undefined, undefined);
+                break;
+            case EnumPeriod.month:
+            case EnumPeriod.week:
+                this.showDayPostItemHistory(ips, undefined, undefined);
+                break;
+            case EnumPeriod.year:
+                this.showMonthPostItemHistory(ips, undefined, undefined);
+                break;
+        }
     }
 
     async showPostItemHistory(ips: ItemPeriodSum, from: Date, to: Date) {

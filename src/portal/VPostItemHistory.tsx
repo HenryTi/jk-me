@@ -2,12 +2,14 @@ import { dateFromMinuteId } from 'tonwa-core';
 import { List, LMR, VDate, VPage } from "tonwa";
 import { ReturnGetObjectItemHistoryRet } from "uq-app/uqs/JkMe";
 import { CPortal } from "./CPortal";
+import { renderNum } from 'tools';
 
 export class VPostItemHistory extends VPage<CPortal> {
     header() {
         let { itemTitles, postTitles } = this.controller.cApp;
         let { itemPeriodSum } = this.controller;
         let { post, item } = itemPeriodSum;
+        if (post === 0) return itemTitles[item].title;
         return `${postTitles[post].title} - ${itemTitles[item].title}`;
     }
     content() {
@@ -20,14 +22,14 @@ export class VPostItemHistory extends VPage<CPortal> {
 
     private renderItem = (history: ReturnGetObjectItemHistoryRet, index: number) => {
         let { itemTitles, timezone } = this.controller.cApp;
-        let { minuteId, value, bizOp, memo } = history;
+        let { id, value, bizOp, memo } = history;
         let { item } = this.controller.itemPeriodSum;
         let { unit, fixed } = itemTitles[item];
-        let d = dateFromMinuteId(minuteId, timezone);
+        let d = dateFromMinuteId(id, timezone);
         let left = <div className="text-muted small w-min-4c me-2">
             <VDate date={d} hideSameYear={true} />
         </div>;
-        let right = <div className="ms-2">{(value ?? 0).toFixed(fixed ?? 2)} {unit}</div>;
+        let right = <div className="ms-2">{renderNum(value, unit, fixed)}</div>;
         return <LMR className="px-3 py-2 align-items-center" left={left} right={right}>
             <small>{bizOp}{memo ? ': ' + memo : ''}</small>
         </LMR>;

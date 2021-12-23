@@ -135,12 +135,23 @@ QUERY GetItemPeriodSum(
 )
 RETURNS ret (
     item ENUM Item,
+    opi ID ObjectPostItem,
     value DEC(18,4),
 ) {
+    /*
     INTO ret SELECT item, sum(b.value) as value
         FROM DaySumItem as b
         WHERE b.xi>=date AND b.xi<DATEADD(day, days, date)
         GROUP BY b.ix as item;
+    */
+    INTO ret SELECT u.item, t.p as opi, t.value
+        FROM (SELECT opi as p, sum(a.value) as value
+            FROM IxOpiItemDate as a
+                JOIN ObjectPostItem as b ON a.ix=b.id
+            WHERE b.object=0 AND b.post=POST.sys AND a.xi>=date AND a.xi<DATEADD(day, days, date)
+            GROUP BY b.id as opi
+        ) as t JOIN ObjectPostItem as u ON t.p=u.id
+        ORDER BY u.item ASC;
 };
 
 -- 从date开始，往前days天的按日汇总
@@ -207,9 +218,9 @@ PAGE (
         FROM ItemHistory as a
             -- LEFT JOIN OPIBooking as bk ON a.booking=bk.id
             LEFT JOIN ItemTitle as it ON a.item=it.id
-            JOIN UserSuperviseItem as b ON a.item=b.xi
+            -- JOIN UserSuperviseItem as b ON a.item=b.xi
             JOIN DxBizOp as c ON c.id=a.bizOp
-        WHERE b.ix=$user
+        WHERE 1=1 -- b.ix=$user
             AND a.item=item
             AND a.id<$pageStart
             AND a.id>=minuteIdFromDate(from, timeZone)

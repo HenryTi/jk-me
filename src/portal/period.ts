@@ -47,6 +47,7 @@ export abstract class Period {
         });
     }
     type: EnumPeriod;
+    caption: string;
     from: Date;
     to: Date;
     abstract init(): void;
@@ -56,7 +57,10 @@ export abstract class Period {
         let date = this.newDate();
         return this.to <= date;
     }
-    abstract render(): string;
+    abstract setCaption(): void;
+    render(): string {
+        return this.caption;
+    }
 }
 
 const weekday = '日一二三四五六';
@@ -64,22 +68,25 @@ class DayPeriod extends Period {
     init(): void {
         this.type = EnumPeriod.day;
         this.to.setDate(this.from.getDate() + 1);
+        this.setCaption();
     }
     prev(): void {
         this.to = new Date(this.to.setDate(this.to.getDate() - 1));
         this.from = new Date(this.from.setDate(this.from.getDate() - 1));
+        this.setCaption();
     }
     next(): void {
         this.to = new Date(this.to.setDate(this.to.getDate() + 1));
         this.from = new Date(this.from.setDate(this.from.getDate() + 1));
+        this.setCaption();
     }
-    render(): string {
+    setCaption(): void {
         let year = new Date().getFullYear();
         let y = this.from.getFullYear();
         let m = this.from.getMonth();
         let d = this.from.getDate();
         let dw = this.from.getDay();
-        return (y === year ? '' : `${y}年`) + `${m + 1}月${d}日 星期${weekday[dw]}`;
+        this.caption = (y === year ? '' : `${y}年`) + `${m + 1}月${d}日 星期${weekday[dw]}`
     }
 }
 
@@ -90,23 +97,26 @@ class WeekPeriod extends Period {
         let diff = this.to.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
         this.from = new Date(this.to.setDate(diff));
         this.to.setDate(this.to.getDate() + 7);
+        this.setCaption();
     }
     prev(): void {
         this.from = new Date(this.from.setDate(this.from.getDate() - 7));
         this.to = new Date(this.to.setDate(this.to.getDate() - 7));
+        this.setCaption();
     }
     next(): void {
         this.from = new Date(this.from.setDate(this.from.getDate() + 7));
         this.to = new Date(this.to.setDate(this.to.getDate() + 7));
+        this.setCaption();
     }
-    render(): string {
+    setCaption(): void {
         let year = new Date().getFullYear();
         let yf = this.from.getFullYear();
         let mf = this.from.getMonth();
         let df = this.from.getDate();
         let mt = this.to.getMonth();
         let dt = this.to.getDate();
-        return (yf === year ? '' : `${yf}年`) + `${mf + 1}月${df}日 - `
+        this.caption = (yf === year ? '' : `${yf}年`) + `${mf + 1}月${df}日 - `
             + (mt === mf ? '' : `${mt}月`) + `${dt}日`;
     }
 }
@@ -124,19 +134,22 @@ class MonthPeriod extends Period {
         this.from = new Date(year, month, this.unitBizDate);
         this.to = new Date(this.from);
         this.to.setMonth(this.to.getMonth() + 1);
+        this.setCaption();
     }
     prev(): void {
         this.from = new Date(this.from.setMonth(this.from.getMonth() - 1));
         this.to = new Date(this.to.setMonth(this.to.getMonth() - 1));
+        this.setCaption();
     }
     next(): void {
         this.from = new Date(this.from.setMonth(this.from.getMonth() + 1));
         this.to = new Date(this.to.setMonth(this.to.getMonth() + 1));
+        this.setCaption();
     }
-    render(): string {
-        let year = new Date().getFullYear();
+    setCaption(): void {
+        let thisYear = new Date().getFullYear();
         let yf = this.from.getFullYear();
-        return `${year === yf ? '' : year + '年'}${this.from.getMonth() + 1}月`;
+        this.caption = `${thisYear === yf ? '' : thisYear + '年'}${this.from.getMonth() + 1}月`;
     }
 }
 
@@ -157,18 +170,31 @@ class YearPeriod extends Period {
         this.from = new Date(year, month, this.unitBizDate);
         this.to = new Date(this.from);
         this.to.setFullYear(this.to.getFullYear() + 1);
-        //this.from = new Date(this.to.getFullYear(), 0, 1);
-        //this.to = new Date(this.to.getFullYear() + 1, 0, 1);
+        this.setCaption();
     }
     prev(): void {
         this.from = new Date(this.from.setFullYear(this.from.getFullYear() - 1));
         this.to = new Date(this.to.setFullYear(this.to.getFullYear() - 1));
+        this.setCaption();
     }
     next(): void {
         this.from = new Date(this.from.setFullYear(this.from.getFullYear() + 1));
         this.to = new Date(this.to.setFullYear(this.to.getFullYear() + 1));
+        this.setCaption();
     }
-    render(): string { return `${this.from.getFullYear()}年` }
+    setCaption(): void {
+        switch (this.unitBizMonth) {
+            case 0:
+                this.caption = `${this.from.getFullYear()}年`;
+                break;
+            case 11:
+                this.caption = `${this.to.getFullYear()}年`;
+                break;
+            default:
+                this.caption = `${this.from.getFullYear()}-${this.to.getFullYear().toString().substring(2)}年`;
+                break;
+        }
+    }
 }
 
 export function createPeriod(periodType: EnumPeriod, timezone: number, unitBizMonth: number, unitBizDate: number): Period {

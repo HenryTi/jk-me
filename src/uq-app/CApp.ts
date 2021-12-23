@@ -41,11 +41,15 @@ export class CApp extends CUqApp {
 	readonly postTitles: { [post in Post]: Title } = {} as any;
 	readonly accountTitles: { [acount in EnumAccount]: Title } = {} as any;
 	ops: { role: EnumRole; op: EnumRoleOp }[];
+	refreshTime: number = Date.now() / 1000;
 
-	protected async internalStart(isUserLogin: boolean) {
+	init(...param: any[]): void {
 		makeObservable(this, {
 			refreshTime: observable
 		});
+	}
+
+	protected async internalStart(isUserLogin: boolean) {
 		this.setRes(res);
 		setUI(this.uqs);
 
@@ -129,8 +133,6 @@ export class CApp extends CUqApp {
 			this.refreshTime = d;
 		});
 	}
-
-	refreshTime: number = Date.now() / 1000;
 
 	private tick = 0;
 	private gapIndex = 0;
