@@ -15,7 +15,7 @@ IX MonthSumCustomer (
     INDEX ixx_ix_value(ixx, ix, value),
     INDEX ixx_xi_ix(ixx, xi, ix),
 );
-
+/*
 IX DaySumItem (
     ix ENUM Item,
     xi DATE,                -- date
@@ -27,6 +27,7 @@ IX DaySumOpi (
     xi DATE,                -- date
     value DEC(18,4),        -- 日合计
 );
+*/
 
 QUERY GetMonthSumProduct (
     item ENUM Item,

@@ -3,7 +3,6 @@ import { EnumPeriod, ItemPeriodSum } from "portal";
 import { CApp } from "uq-app";
 import { Item, ResultGetItemPeriodSum, ReturnGetItemPeriodSumRet } from "uq-app/uqs/JkMe";
 import { CPortal } from '../CPortal';
-import { VEachItemHistory } from "./VItemHistory";
 import { VUnitPortal } from "./VUnitPortal";
 
 export class CUnitPortal extends CPortal {
@@ -34,7 +33,6 @@ export class CUnitPortal extends CPortal {
 
     async showItemHistory(row: ReturnGetItemPeriodSumRet) {
         let { item, opi, value } = row;
-        let { type, from, to } = this.period;
         let ips: ItemPeriodSum = {
             id: opi,
             item,
@@ -43,30 +41,5 @@ export class CUnitPortal extends CPortal {
             value,
         }
         await this.showOpiHistory(ips);
-        /*
-        switch (type) {
-            case EnumPeriod.day:
-                this.showEachItemHistory(item, from, to);
-                break;
-            case EnumPeriod.month:
-            case EnumPeriod.week:
-                this.showDayPostItemHistory(ips, from, to);
-                break;
-            case EnumPeriod.year:
-                this.showMonthPostItemHistory(ips, from, to);
-                break;
-        }
-        */
     }
-    /*
-        async showEachItemHistory(item: Item, from: Date, to: Date) {
-            this.item = item;
-            await this.loadItemHistory(from, to);
-            this.openVPage(VEachItemHistory);
-        }
-    
-        private async loadItemHistory(from: Date, to: Date) {
-            //let ret = await this.uqs.JkMe.GetItemPeriodHistory.query({ item, from, to });
-        }
-    */
 }

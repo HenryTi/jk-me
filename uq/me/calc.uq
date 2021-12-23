@@ -55,7 +55,7 @@ PROC RecalcSum ver 0.1 (
 ) {
     WITH MonthSumProduct TRUNCATE;
     WITH MonthSumCustomer TRUNCATE;
-    WITH DaySumItem TRUNCATE;
+    -- WITH DaySumItem TRUNCATE;
     WITH ObjectAccount TRUNCATE;
     WITH ObjectAccountHistory TRUNCATE;
     WITH SumQueueOpiHistory TRUNCATE;
@@ -137,7 +137,7 @@ PROC SumItemHistory ver 0.2 (
 
     LOG concat('ProcCalcHistorySum: ', itemHistoryId) SUBJECT 'Schedule CalcSum';
     SET date=MinuteIdDate(itemHistoryId, timeZone);
-    WITH DaySumItem as a IX=item XI=date SET a.value=IFNULL(a.value,0) + IFNULL(value,0);
+    -- WITH DaySumItem as a IX=item XI=date SET a.value=IFNULL(a.value,0) + IFNULL(value,0);
 
     -- set bizdateId = BizMonthId(date);
     -- set bizmonth = bizmonth();
@@ -204,7 +204,7 @@ PROC ProcCalcHistorySum ver 0.4 ()
         TRANSACTION Start;
 
         IF biz IS NOT NULL {
-            WITH DaySumItem as a IX=item XI=date SET a.value=IFNULL(a.value,0) + IFNULL(value,0);
+            -- WITH DaySumItem as a IX=item XI=date SET a.value=IFNULL(a.value,0) + IFNULL(value,0);
             VAR product ID, customerAccount ID, m DATE;
             SET date=MinuteIdMonth(historyId, timeZone);
             -- SET m=YEAR(date)*100+MONTH(date);
@@ -252,7 +252,7 @@ PROC ProcCalcHistorySum ver 0.4 ()
     LOG 'ProcCalcHistorySum end' SUBJECT 'Schedule CalcSum';
 };
 
-PROC ProcCalcAccountSum ver 0.4 ()
+PROC ProcCalcAccountSum ver 0.5 ()
 {
     LOG 'ProcCalcAccountSum start' SUBJECT 'Schedule CalcSum';
     VAR timeZone TINYINT = unittimezone(), tick INT, compileTick INT;

@@ -59,7 +59,7 @@ export class VMonthPostItemHistory extends VPeriodPostItemHistory {
         if (!unitBizDate) return <>{m + 1}月</>;
         let n = new Date(d);
         n.setMonth(m + 1);
-        return <>{m + 1}月{unitBizDate}日 - {n.getMonth() + 1}月{unitBizDate}日</>;
+        return <>{m + 1}月{unitBizDate}日 - {n.getMonth() + 1}月{unitBizDate - 1}日</>;
     }
 
     protected async clickItem(item: ReturnGetObjectItemPeriodHistoryRet): Promise<void> {

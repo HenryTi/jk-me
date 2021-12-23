@@ -149,7 +149,12 @@ class MonthPeriod extends Period {
     setCaption(): void {
         let thisYear = new Date().getFullYear();
         let yf = this.from.getFullYear();
-        this.caption = `${thisYear === yf ? '' : thisYear + '年'}${this.from.getMonth() + 1}月`;
+        let fm = this.from.getMonth();
+        let tm = this.to.getMonth();
+        this.caption = `${thisYear === yf ? '' : thisYear + '年'}${fm + 1}月`;
+        if (this.unitBizDate > 1) {
+            this.caption += `${this.unitBizDate}日-${tm + 1}月${this.unitBizDate - 1}日`;
+        }
     }
 }
 
@@ -183,15 +188,17 @@ class YearPeriod extends Period {
         this.setCaption();
     }
     setCaption(): void {
+        let fy = this.from.getFullYear();
+        let ty = this.to.getFullYear();
         switch (this.unitBizMonth) {
             case 0:
-                this.caption = `${this.from.getFullYear()}年`;
+                this.caption = `${fy}年`;
                 break;
             case 11:
-                this.caption = `${this.to.getFullYear()}年`;
+                this.caption = `${ty}年`;
                 break;
             default:
-                this.caption = `${this.from.getFullYear()}-${this.to.getFullYear().toString().substring(2)}年`;
+                this.caption = `${fy}-${ty.toString().substring(2)}年`;
                 break;
         }
     }
