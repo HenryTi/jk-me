@@ -1,5 +1,6 @@
 import { CSupervise } from "supervise";
 import { List, LMR, View, VPage } from "tonwa";
+import { renderNum } from "tools";
 import { ReturnGetItemSumDaysRet } from "uq-app/uqs/JkMe";
 
 export class ViewItemDayHistory extends View<CSupervise> {
@@ -15,7 +16,7 @@ export class ViewItemDayHistory extends View<CSupervise> {
         let { date, value } = row;
         return <LMR className="px-3 py-2"
             left={<div>{new Date(date).toLocaleDateString()}</div>}
-            right={<div>{(value ?? 0).toFixed(fixed ?? 2)} {unit}</div>} />
+            right={<div>{renderNum(value, unit, fixed)}</div>} />
     }
 
     private onClickDayItem = async (row: ReturnGetItemSumDaysRet) => {

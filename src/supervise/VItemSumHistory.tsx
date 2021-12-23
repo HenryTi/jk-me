@@ -1,5 +1,6 @@
 import { CSupervise } from "supervise";
 import { List, LMR, VPage } from "tonwa";
+import { renderNum } from "tools";
 import { ReturnGetItemSumMonthsRet } from "uq-app/uqs/JkMe";
 import { ViewItemDayHistory } from "./VItemDayHistory";
 
@@ -30,7 +31,7 @@ export class VItemSumHistory extends VPage<CSupervise> {
         let d = new Date(date);
         return <LMR className="px-3 py-2"
             left={<div>{d.getFullYear()}年{(d.getMonth() + 1)}月</div>}
-            right={<div>{(value ?? 0).toFixed(fixed ?? 2)} {unit}</div>} />
+            right={<div>{renderNum(value, unit, fixed)} {unit}</div>} />
     }
 
     private onClickMonthItem = async (row: ReturnGetItemSumMonthsRet) => {

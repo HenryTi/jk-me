@@ -27,9 +27,11 @@ ENUM Item (
     couponFee                   = 1111,     -- 发券毛利提成
     amountFee                   = 1120,     -- 订单销售额提成
     
-    customerPoint               = 2010,             -- 客户普通积分
+    customerPoint               = 2010,     -- 客户普通积分
 
-    pickupPoint                 = 3010,             -- 拣货积分
+    pickupPoint                 = 3010,     -- 拣货积分
+
+    cashOut                     = 5010,     -- 取款
 );
 
 -- 业务岗位

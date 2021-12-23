@@ -437,7 +437,7 @@ export interface ParamGetObjectItemHistory {
 	to: any;
 }
 export interface ReturnGetObjectItemHistoryRet {
-	minuteId: number;
+	id: number;
 	biz: number;
 	bizOp: number;
 	value: number;
@@ -484,6 +484,7 @@ export interface ParamGetItemPeriodSum {
 }
 export interface ReturnGetItemPeriodSumRet {
 	item: any;
+	opi: number;
 	value: number;
 }
 export interface ResultGetItemPeriodSum {
@@ -567,13 +568,13 @@ export interface ParamActs {
 
 
 export interface UqExt extends Uq {
-	Acts(param:ParamActs): Promise<any>;
+	Acts(param: ParamActs): Promise<any>;
 	SQL: Uq;
-	IDRender(id:number):JSX.Element;
-	IDLocalRender(id:number):JSX.Element;
+	IDRender(id: number): JSX.Element;
+	IDLocalRender(id: number): JSX.Element;
 
-	$sheet: UqTuid<Tuid$sheet>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
-	$user: UqTuid<Tuid$user>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	$sheet: UqTuid<Tuid$sheet> & { tv: (id: number, render?: Render<any>) => JSX.Element };
+	$user: UqTuid<Tuid$user> & { tv: (id: number, render?: Render<any>) => JSX.Element };
 	BusTestBoundStaffSales: UqAction<ParamBusTestBoundStaffSales, ResultBusTestBoundStaffSales>;
 	DoneDeliver: UqAction<ParamDoneDeliver, ResultDoneDeliver>;
 	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
@@ -611,7 +612,7 @@ export interface UqExt extends Uq {
 	Group: UqID<any> & IDXEntity<any>;
 }
 
-export function assign(uq: any, to:string, from:any): void {
+export function assign(uq: any, to: string, from: any): void {
 	let hasEntity = uq.hasEntity(to);
 	if (hasEntity === false) {
 		return;

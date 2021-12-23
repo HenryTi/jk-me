@@ -119,14 +119,14 @@ Auth AuthCheck
     to DATE,
 )
 RETURNS ret (
-    minuteId ID,
+    id ID,
     biz ID,
     bizOp ID,
     value DEC(18,4),
     memo CHAR(200)
 ) {
     VAR timeZone TINYINT = timezone();
-    INTO ret SELECT a.id as minuteId, f.biz, d.bizOp, a.value, IDTEXT(e.memo) as memo
+    INTO ret SELECT a.id, f.biz, d.bizOp, a.value, IDTEXT(e.memo) as memo
         FROM OPIHistory AS a
             JOIN ObjectPostItem as b ON a.opi=b.id
             JOIN ItemHistory as d ON a.itemHistory=d.id
@@ -155,6 +155,7 @@ RETURNS ret (
     VAR timeZone TINYINT = timezone(), bizDate TINYINT;
     -- bizDate TINYINT = BizDate();
     SET bizDate = period;
+    /*
     INTO ret SELECT date, SUM(a.value) as value
         FROM OPIHistory AS a
             JOIN ObjectPostItem as b ON a.opi=b.id
@@ -163,6 +164,14 @@ RETURNS ret (
             AND a.id < minuteIdFromDate(to, timeZone)
         -- GROUP BY BizMonthId(MinuteIdPeriod(a.id, timeZone, period), bizDate)as date
         GROUP BY MinuteIdPeriod(a.id, timeZone, bizDate) as date
+        ORDER BY date DESC;
+    */
+    INTO ret SELECT date, SUM(a.value) as value
+        FROM IxOpiItemDate AS a
+        WHERE a.ix=objectPostItem
+            AND a.xi >= from
+            AND a.xi < to
+        GROUP BY BizMonthId(a.xi, bizDate) as date
         ORDER BY date DESC;
 };
 

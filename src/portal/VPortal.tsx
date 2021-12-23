@@ -1,7 +1,7 @@
 import { VElement, View, EasyTime, FA, List, LMR } from "tonwa";
 import { CPortal } from "./CPortal";
 import { EnumPeriod, PostPeriodSum, ItemPeriodSum } from "./period";
-import { ReturnGetObjectItemPeriodSumRet } from "uq-app/uqs/JkMe";
+import { renderNum } from "tools";
 
 const cnColPeriod = "col text-center";
 const cnPeriod = " py-2 px-3 ";
@@ -9,6 +9,8 @@ const cnTabCur = ' border-2 border-bottom border-primary fw-bold bg-light ';
 const cnTab = ' border-bottom border-muted cursor-pointer text-muted ';
 
 export class VPeriodSum<T extends CPortal = CPortal> extends View<T> {
+	protected onClickItem: (item: any) => void = undefined;
+
 	render(): VElement {
 		return this.react(() => {
 			let periodList: [EnumPeriod, string, string][] = [
@@ -17,7 +19,7 @@ export class VPeriodSum<T extends CPortal = CPortal> extends View<T> {
 				[EnumPeriod.month, '月', undefined],
 				[EnumPeriod.year, '年', undefined],
 			];
-			let { period } = this.controller;
+			let { period, list } = this.controller;
 			let { type } = period;
 			for (let p of periodList) {
 				let [ep] = p;
@@ -37,8 +39,8 @@ export class VPeriodSum<T extends CPortal = CPortal> extends View<T> {
 				</div>
 				{this.renderDate()}
 				<div className="">
-					<List items={this.controller.list}
-						item={{ render: this.renderItem, onClick: undefined/*this.onClickItem*/ }} />
+					<List items={list}
+						item={{ render: this.renderItem, onClick: this.onClickItem }} />
 				</div>
 				<div className="d-flex py-2 px-3">
 					<div className="flex-fill"></div>
@@ -64,12 +66,9 @@ export class VPeriodSum<T extends CPortal = CPortal> extends View<T> {
 		</div>;
 	}
 
-	private onClickItem = (item: ReturnGetObjectItemPeriodSumRet) => {
-		//this.controller.showItemHistory(item.id, EnumSumPeriod.day);
-	}
-
 	protected renderItem = (postPeriodSum: PostPeriodSum, index: number) => {
-		let { postTitles } = this.controller.cApp;
+		let { cApp, showOpiHistory } = this.controller;
+		let { postTitles } = cApp;
 		let { post, itemList } = postPeriodSum;
 		let { title, vice } = postTitles[post];
 		return <div className="d-block mx-3 my-3 border border-success">
@@ -79,7 +78,7 @@ export class VPeriodSum<T extends CPortal = CPortal> extends View<T> {
 			</div>
 			<div>
 				<List items={itemList}
-					item={{ render: this.renderItemPeriodSum, onClick: this.onClickItemPeriodSum }} />
+					item={{ render: this.renderItemPeriodSum, onClick: showOpiHistory }} />
 			</div>
 		</div>;
 	}
@@ -88,23 +87,8 @@ export class VPeriodSum<T extends CPortal = CPortal> extends View<T> {
 		let { itemTitles } = this.controller.cApp;
 		let { item, value } = ips;
 		let { title, vice, fixed } = itemTitles[item];
-		return <LMR className="px-3 py-2 w-100" right={<div>{(value ?? 0).toFixed(fixed)}</div>}>
+		return <LMR className="px-3 py-2 w-100" right={<div>{renderNum(value, undefined, fixed)}</div>}>
 			{title} <small className="text-muted ms-3">{vice}</small>
 		</LMR>;
-	}
-
-	private onClickItemPeriodSum = (ips: ItemPeriodSum) => {
-		switch (this.controller.period.type) {
-			case EnumPeriod.day:
-				this.controller.showPostItemHistory(ips, undefined, undefined);
-				break;
-			case EnumPeriod.month:
-			case EnumPeriod.week:
-				this.controller.showDayPostItemHistory(ips, undefined, undefined);
-				break;
-			case EnumPeriod.year:
-				this.controller.showMonthPostItemHistory(ips, undefined, undefined);
-				break;
-		}
 	}
 }

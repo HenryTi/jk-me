@@ -2,6 +2,7 @@ import { observer } from "mobx-react";
 import React from "react";
 import { CSupervise } from "supervise";
 import { FA, List, LMR, VPage } from "tonwa";
+import { renderNum } from "tools";
 import { ReturnGetProductSumByMonthRet } from "uq-app/uqs/JkMe";
 
 abstract class VSumByMonth extends VPage<CSupervise> {
@@ -39,7 +40,7 @@ abstract class VSumByMonth extends VPage<CSupervise> {
         let { $serial } = row as any;
         return <LMR className="pe-2 pe-sm-3 py-2"
             left={<div className="w-min-2c text-center text-primary me-1 small">{$serial}</div>}
-            right={<div className="ms-1">{(value ?? 0).toFixed(2)}<small className="text-muted">元</small></div>}>
+            right={<div className="ms-1">{renderNum(value, '元')}</div>}>
             <div>{this.renderId(id)}</div>
         </LMR>
     }

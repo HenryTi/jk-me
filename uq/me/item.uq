@@ -63,19 +63,22 @@ ID #ObjectPostItem (
 -- MINUTEID 分钟序ID
 ID #ItemHistory ver 0.1 MINUTEID (
     -- 26位表达从2021开始的分钟，后面跟16位的序列号。如果重了，就顺序往后加。
-    id,                         -- 分钟序id
-    KEY bizOp ID,               -- 业务操作id。包含biz。也可以是itemHistory id。当前的值，从这里计算来
-    KEY item ENUM Item,         -- 科目
-    value DEC(18,4),            -- 数值
---    booking ID OPIBooking,      -- 记账动作
+    id,                             -- 分钟序id
+    KEY bizOp ID,                   -- 业务操作id。包含biz。也可以是itemHistory id。当前的值，从这里计算来
+    KEY item ENUM Item,             -- 科目
+    value DEC(18,4),                -- 数值
+--    booking ID OPIBooking,        -- 记账动作
     INDEX item_id(item, id) UNIQUE,
 );
 
 -- 各种Item or OpiItem 的按日合计，归一到一张表。写查询会简单很多
 IX IxOpiItemDate (
-    ix ObjectPostItem,          --  ENUM Item，对于总账item, object=0, post=0
+    ix ObjectPostItem,              --  ENUM Item，对于总账item, object=0, post=0
     xi Date,
     value DEC(18,4),
+    rows INT,
+    p0 ID,
+    p1 ID,
 );
 
 -- OPI = object post item
@@ -84,7 +87,7 @@ ID #OPIHistory MINUTEID (
     opi ID ObjectPostItem,
     itemHistory ID,
     value DEC(18,4),
-    booking ID OPIBooking,      -- 记账动作
+    booking ID OPIBooking,          -- 记账动作
     INDEX opi_id(opi, id) UNIQUE,
     INDEX itemHistory(itemHistory),
 );
@@ -111,12 +114,14 @@ ENUM EnumAccount (
 IX AccountBooking ver 0.1 CONST (
     ix ENUM Item,
     xi ENUM EnumAccount,
-    radio DEC(6,2) DEFAULT 100,           -- 百分数
+    ratio DEC(6,2) DEFAULT 100,             -- 百分数
 )
-+ (ix, xi)
++ (ix, xi, ratio)
 VALUES
-(Item.profitFee, EnumAccount.commission),
-(Item.amountFee, EnumAccount.commission),
+(Item.profitFee,    EnumAccount.commission,         100),
+(Item.amountFee,    EnumAccount.commission,         100),
+(Item.couponFee,    EnumAccount.commission,         100),
+(Item.cashOut,      EnumAccount.commission,         -100),
 ;
 
 ID #ObjectAccount (
