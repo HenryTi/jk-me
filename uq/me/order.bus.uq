@@ -18,7 +18,8 @@ ACCEPT order {
 				, a.item=item, a.product=product
 				, a.quantity=quantity
                 , a.price=price
-				, a.amount=amount;
+				, a.amount=amount
+                , a.amountAfterTax = amountAfterTax;
         WITH DxBiz ID=id SET main=mainId;
         IF EXISTS(SELECT a.id FROM DxOrderDetail as a WHERE a.id=id AND a.margin IS NOT NULL) {
             WITH DxBiz ID=id SET ready=1;
