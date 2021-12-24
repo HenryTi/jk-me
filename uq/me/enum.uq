@@ -115,7 +115,7 @@ ID #ItemTitle ver 0.1 CONST (
 + (id, title, vice, unit, fixed)
 VALUES 
 (Item.orderDeliver, '发货', '已发货金额', '元', 2),
-(Item.orderAmount, '销售额', null, '元', 2),
+(Item.orderAmount, '税后销售收入', null, '元', 2),
 (Item.orderProfit, '毛利', null, '元', 2),
 (Item.orderFee, null, '提成基数', '元', 2),                    -- 如果title是null，就不需要展示给界面。属于内部核算科目
 (Item.orderSaleTransferIn, '销售调入', '分公司间销售调入金额', '元', 2),      
@@ -124,9 +124,11 @@ VALUES
 (Item.orderFactoryTransferOut, '生产调出', '分公司间生产调出金额', '元', 2),  
 (Item.orderReturn, '退货', null, '元', 2),
 (Item.orderReceive, '收款', null, '元', 2),
+(Item.receiveSaleTransferOut, '销售调出收款', null, '元', 2),
+(Item.receiveFactoryTransferOut, '生产调出收款', null, '元', 2),
 (Item.orderReceiveReturn, '退款', null, '元', 2),
-(Item.profitFee, '毛利提成', null, '元', 2),
-(Item.amountFee, '销售额提成', null, '元', 2),
+(Item.profitFee, '有效额提成', null, '元', 2),
+(Item.amountFee, '税后销售收入提成', null, '元', 2),
 (Item.couponFee, '发券提成', null, '元', 2),
 (Item.customerPoint, '客户积分', null, '点', 2),
 (Item.pickupPoint, '拣货积分', null, '点', 4),
