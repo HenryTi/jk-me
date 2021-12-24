@@ -13,6 +13,7 @@ ENUM Item (
     orderAmount                 = 1011,     -- 订单金额，value是应收金额
     orderProfit                 = 1012,     -- 订单毛利，value是毛利润
     orderFee                    = 1013,     -- 订单提成，根据发券提供比例提成。每个deliver-done和receive-done单独算
+
     orderSaleTransferIn         = 1014,     -- 内部销售调入金额
     orderFactoryTransferIn      = 1015,     -- 内部生产调入金额
     orderSaleTransferOut        = 1016,     -- 内部销售调出金额
@@ -21,6 +22,8 @@ ENUM Item (
     orderReturn                 = 1020,     -- 订单退货
 
     orderReceive                = 1030,     -- 订单收款
+    receiveSaleTransferOut      = 1036,     -- 内部销售调出回款 
+    receiveFactoryTransferOut   = 1037,     -- 内部生产调出回款
     orderReceiveReturn          = 1040,     -- 订单退款
 
     profitFee                   = 1110,     -- 订单毛利提成

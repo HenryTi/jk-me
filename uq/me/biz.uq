@@ -428,13 +428,24 @@ PROC #ProcWriteItemHistory ver 0.1 (
         IF currency IS NOT NULL {
             set bcReceive = value * rate;
         }
-        PROC ProcItemHistory(bizOp, Item.orderReceive, bcReceive, itemHistoryId);
-        IF currency IS NOT NULL {
-            WITH CurrencyItemHistory as a ID=itemHistoryId SET a.currency=currency, a.value=value, a.rate=rate;
-        }
 
         -- 可能是积分兑换单引发的deliver-done，这时候，就没有margin和price，所以不写帐
         IF price IS NOT NULL AND price > 0 {
+            VAR receiveItem ENUM Item;
+            IF orderType = OrderType.Customer {
+                SET receiveItem = Item.orderReceive;
+            }
+            ELSEIF orderType = OrderType.SaleBranch {
+                SET receiveItem = Item.receiveSaleTransferOut;
+            }
+            ELSEIF orderType = OrderType.FactoryBranch {
+                SET receiveItem = Item.receiveFactoryTransferOut;
+            }
+
+            PROC ProcItemHistory(bizOp, receiveItem, bcReceive, itemHistoryId);
+            IF currency IS NOT NULL {
+                WITH CurrencyItemHistory as a ID=itemHistoryId SET a.currency=currency, a.value=value, a.rate=rate;
+            }
             PROC ProcItemHistory(bizOp, Item.orderFee, 
                 CASE WHEN price<0.01 THEN 0 ELSE (margin)/price*value END, itemHistoryId);
         }
