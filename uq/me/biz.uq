@@ -366,12 +366,16 @@ IF boundOpiItemHistory IS NULL OR boundOpiItemHistory = 0 {
 PROC #ProcWriteItemHistory ver 0.1 (
     bizOp ID,
 ) {
-    VAR biz ID, bizOpType ENUM EnumBizOpType, value DEC(18,4);
     VAR itemHistoryId ID;
-    VAR price DEC(18,4), margin DEC(18,4);
+    VAR biz ID, bizOpType ENUM EnumBizOpType, value DEC(18,4);
     SET biz=a.biz, bizOpType=a.type, value=a.value
         FROM DxBizOp as a 
         WHERE a.id=bizOp;
+
+    VAR quantity dec(18, 4), price DEC(18,4), margin DEC(18,4), amountAfterTax dec(18, 4);
+    SET quantity = a.quantity, price = a.price, amountAfterTax = a.amountAfterTax 
+    FROM OrderDetail as a WHERE a.id = biz;
+    SET margin = a.margin FROM DxOrderDetail as a WHERE a.id = biz;
 
     IF bizOpType=EnumBizOpType.orderDeliverDone or bizOpType = EnumBizOpType.orderReturn {
         VAR mainItem ENUM Item;
@@ -380,7 +384,7 @@ PROC #ProcWriteItemHistory ver 0.1 (
             SET mainItem = Item.orderReturn;
 
         VAR orderType ENUM OrderType, currency ENUM EnumCurrency
-            , baseCurrencyPrice DEC(18,4), rate DEC(18,4);
+            , bcAmountAfterTax DEC(18,4), rate DEC(18,4);
         SET orderType=a.type, currency=a.currency, rate=d.rate
             FROM OrderMain as a 
                 JOIN DxBiz as b ON b.main=a.id
@@ -388,35 +392,30 @@ PROC #ProcWriteItemHistory ver 0.1 (
                 LEFT JOIN DxCurrency as d ON d.id=a.currency
             WHERE c.id=bizOp;
 
-        SET price=a.price
-            FROM OrderDetail as a WHERE a.id=biz;
-        SET margin=a.margin
-            FROM DxOrderDetail as a WHERE a.id=biz;
-
         IF currency IS NULL {
-            SET baseCurrencyPrice=price;
+            SET bcAmountAfterTax = amountAfterTax;
         }
         ELSE {
-            SET baseCurrencyPrice=price * rate;
+            SET bcAmountAfterTax = amountAfterTax * rate;
         }
         
         -- 可能是积分兑换单引发的deliver-done，这时候，就没有margin和price，所以不写帐
-        IF price IS NOT NULL AND price > 0 {
+        IF quantity IS NOT NULL AND quantity <> 0 {
             IF orderType=OrderType.Customer {
-                PROC ProcItemHistory(bizOp, mainItem, baseCurrencyPrice*value, itemHistoryId);
+                PROC ProcItemHistory(bizOp, mainItem, bcAmountAfterTax*value/quantity, itemHistoryId);
                 IF currency IS NOT NULL {
-                    WITH CurrencyItemHistory as a ID=itemHistoryId SET a.currency=currency, a.value=price*value, a.rate=rate;
+                    WITH CurrencyItemHistory as a ID=itemHistoryId SET a.currency=currency, a.value=amountAfterTax, a.rate=rate;
                 }
                 PROC ProcItemHistory(bizOp, Item.orderProfit, (margin)*value, itemHistoryId);
                 PROC ProcItemHistory(bizOp, Item.orderFee, (margin)*value, itemHistoryId);
             }
             ELSEIF orderType=OrderType.SaleBranch {
-                PROC ProcItemHistory(bizOp, Item.orderSaleTransferIn, baseCurrencyPrice*value, itemHistoryId);
-                PROC ProcItemHistory(bizOp, Item.orderSaleTransferOut, baseCurrencyPrice*value, itemHistoryId);
+                PROC ProcItemHistory(bizOp, Item.orderSaleTransferIn, bcAmountAfterTax*value/quantity, itemHistoryId);
+                PROC ProcItemHistory(bizOp, Item.orderSaleTransferOut, bcAmountAfterTax*value/quantity, itemHistoryId);
             }
             ELSEIF orderType=OrderType.FactoryBranch {
-                PROC ProcItemHistory(bizOp, Item.orderFactoryTransferIn, baseCurrencyPrice*value, itemHistoryId);
-                PROC ProcItemHistory(bizOp, Item.orderFactoryTransferOut, baseCurrencyPrice*value, itemHistoryId);
+                PROC ProcItemHistory(bizOp, Item.orderFactoryTransferIn, bcAmountAfterTax*value/quantity, itemHistoryId);
+                PROC ProcItemHistory(bizOp, Item.orderFactoryTransferOut, bcAmountAfterTax*value/quantity, itemHistoryId);
             }
         }
         ELSE {
@@ -425,10 +424,7 @@ PROC #ProcWriteItemHistory ver 0.1 (
     }
     ELSEIF bizOpType=EnumBizOpType.orderReceiveDone {
         PROC ProcItemHistory(bizOp, Item.orderReceive, value, itemHistoryId);
-        SET price=a.price
-            FROM OrderDetail as a
-            WHERE a.id=biz;
-        SET margin=a.margin FROM DxOrderDetail as a WHERE a.id=biz;
+
         -- 可能是积分兑换单引发的deliver-done，这时候，就没有margin和price，所以不写帐
         IF price IS NOT NULL AND price > 0 {
             PROC ProcItemHistory(bizOp, Item.orderFee, 
