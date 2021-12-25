@@ -404,7 +404,8 @@ PROC #ProcWriteItemHistory ver 0.1 (
             IF orderType=OrderType.Customer {
                 PROC ProcItemHistory(bizOp, mainItem, bcAmountAfterTax*value/quantity, itemHistoryId);
                 IF currency IS NOT NULL {
-                    WITH CurrencyItemHistory as a ID=itemHistoryId SET a.currency=currency, a.value=amountAfterTax, a.rate=rate;
+                    WITH CurrencyItemHistory as a ID=itemHistoryId 
+                    SET a.currency=currency, a.value=amountAfterTax * value / quantity, a.rate=rate;
                 }
                 PROC ProcItemHistory(bizOp, Item.orderProfit, (margin)*value, itemHistoryId);
                 PROC ProcItemHistory(bizOp, Item.orderFee, (margin)*value, itemHistoryId);
