@@ -127,6 +127,7 @@ VALUES
 (Item.couponFee, '发券提成', null, '元', 2),
 (Item.customerPoint, '客户积分', null, '点', 2),
 (Item.pickupPoint, '拣货积分', null, '点', 4),
+(Item.cashOut, '兑款', null, '元', 2),
 ;
 
 ID #PostTitle ver 0.2 CONST (
