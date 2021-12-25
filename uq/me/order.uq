@@ -25,6 +25,7 @@ ID #OrderDetail ver 0.5 GLOBAL (
 	product ID,
 	quantity DEC(18,4),
 	amount DEC(18,4),
+    amountAfterTax dec(18, 4),
 	price DEC(18,4),                            -- 实际成交价
 );
 
