@@ -116,7 +116,7 @@ ID #ItemTitle ver 0.1 CONST (
 VALUES 
 (Item.orderDeliver, '发货', '已发货金额', '元', 2),
 (Item.orderAmount, '税后销售收入', null, '元', 2),
-(Item.orderProfit, '毛利', null, '元', 2),
+(Item.orderProfit, '有效销售额', null, '元', 2),
 (Item.orderFee, null, '提成基数', '元', 2),                    -- 如果title是null，就不需要展示给界面。属于内部核算科目
 (Item.orderSaleTransferIn, '销售调入', '分公司间销售调入金额', '元', 2),      
 (Item.orderFactoryTransferIn, '生产调入', '分公司间生产调入金额', '元', 2),   
