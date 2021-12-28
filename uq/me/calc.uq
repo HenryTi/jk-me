@@ -469,7 +469,7 @@ PROC CalcDateOpiSuperviseHistory() {
     SET timeZone=timeZone();
     SETTING 'pCalcDateOpiSuperviseHistory' BIGINT TO pCalcItemDate;
     IF pCalcItemDate IS NULL {
-        SET pCalcItemDate = LEAST(
+        SET pCalcItemDate = GREATEST(
             (SELECT min(a.id) from OpiHistory as a)
             , MinuteIdFromDate((SELECT min(a.xi) FROM IxOpiSupervise as a), timeZone)
         );
@@ -479,7 +479,6 @@ PROC CalcDateOpiSuperviseHistory() {
         TRANSACTION Start;
         SET pCalcItemDate = a.id, value = a.value, opi=a.opi 
             FROM OpiHistory as a 
-                JOIN objectPostItem as b ON a.opi=b.id
             WHERE a.id>pCalcItemDate 
             LIMIT 1;
         IF pCalcItemDate IS NOT NULL {
@@ -487,7 +486,8 @@ PROC CalcDateOpiSuperviseHistory() {
             FOR (VAR supervisor ID, ratio DEC(6,2)
                 OF SELECT a.ixx as supervisor, a.ratio
                     FROM IxOpiSupervise as a 
-                    WHERE a.ix=opi AND a.xi<=pDate AND pDate<a.end)
+                    WHERE a.ix=opi AND a.xi<=pDate AND pDate<a.end
+                    ORDER BY a.ix DESC)
             {
                 SET opiSupervise = ID(objectPostItem new KEY Object=supervisor, Post=Post.staffSupervisor, Item=0);
                 WITH IxOpiItemDate as a IX=opiSupervise XI=pDate 
