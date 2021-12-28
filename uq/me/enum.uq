@@ -95,15 +95,15 @@ IDX DxCurrency ver 0.3 (
 + (id, name, rate ON INIT) 
 VALUES 
 (EnumCurrency.BASE, '本位币', 1),
-(EnumCurrency.GBP, '英镑', 8.45),
-(EnumCurrency.HKD, '港币', 0.82),
-(EnumCurrency.JPY, '日元', 0.056),
+(EnumCurrency.GBP, '英镑', 8.6295),
+(EnumCurrency.HKD, '港币', 0.8217),
+(EnumCurrency.JPY, '日元', 0.0563),
 (EnumCurrency.RMB, '人民币', 1),
-(EnumCurrency.AUD, '澳元', 4.49),
-(EnumCurrency.CAD, '加元', 4.99),
-(EnumCurrency.CHF, '瑞士法郎', 6.89),            -- Swiss Franc
-(EnumCurrency.EUR, '欧元', 7.19),
-(EnumCurrency.USD, '美元', 6.38),
+(EnumCurrency.AUD, '澳元', 4.7379),
+(EnumCurrency.CAD, '加元', 4.9900),
+(EnumCurrency.CHF, '瑞士法郎', 7.0078),            -- Swiss Franc
+(EnumCurrency.EUR, '欧元', 7.3973),
+(EnumCurrency.USD, '美元', 6.3974),
 ;
 
 ID #ItemTitle ver 0.1 CONST (
@@ -196,6 +196,7 @@ VALUES
 
 -- EnumOrderAction.orderDeliverDone
 (EnumBizOpType.orderDeliverDone, Post.staffSales, Item.orderAmount, Item.orderAmount, 100, TEXTID('销售额')),
+(EnumBizOpType.orderDeliverDone, Post.staffSales, Item.orderProfit, Item.orderProfit, 100, TEXTID('有效销售额')),
 (EnumBizOpType.orderDeliverDone, Post.staffSales, Item.profitFee, Item.orderFee, 4, TEXTID('发货后毛利提成')),
 (EnumBizOpType.orderDeliverDone, Post.staffSales, Item.couponFee, Item.orderFee, 1, TEXTID('发货后发券提成')),
 (EnumBizOpType.orderDeliverDone, Post.topSales, Item.profitFee, Item.orderFee, 1, TEXTID('发货后高管毛利提成')),
@@ -215,6 +216,7 @@ VALUES
 
 -- EnumOrderAction.orderReturn
 (EnumBizOpType.orderReturn, Post.staffSales, Item.orderAmount, Item.orderReturn, 100, TEXTID('销售额')),
+(EnumBizOpType.orderReturn, Post.staffSales, Item.orderProfit, Item.orderProfit, 100, TEXTID('有效销售额')),
 (EnumBizOpType.orderReturn, Post.staffSales, Item.profitFee, Item.orderFee, 4, TEXTID('发货后毛利提成')),
 (EnumBizOpType.orderReturn, Post.staffSales, Item.couponFee, Item.orderFee, 1, TEXTID('发货后发券提成')),
 (EnumBizOpType.orderReturn, Post.topSales, Item.profitFee, Item.orderFee, 1, TEXTID('发货后高管毛利提成')),
@@ -230,6 +232,7 @@ VALUES
 
 -- EnumOrderAction.receiveDone
 (EnumBizOpType.orderReceiveDone, Post.staffSales, Item.profitFee, Item.orderFee, 4, TEXTID('收款后毛利提成')),
+(EnumBizOpType.orderReceiveDone, Post.staffSales, Item.orderProfit, Item.orderProfit, 100, TEXTID('有效销售额')),
 (EnumBizOpType.orderReceiveDone, Post.staffSales, Item.couponFee, Item.orderFee, 1, TEXTID('收款后发券提成')),
 
 (EnumBizOpType.orderReceiveDone, Post.topSales, Item.profitFee, Item.orderFee, 1, TEXTID('收款后高管毛利提成')),
