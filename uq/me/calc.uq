@@ -313,7 +313,8 @@ PROC ProcCalcAccountSum ver 0.5 ()
 PROC CalcDateItemHistory() {
     VAR pCalcItemDate BIGINT, timeZone TINYINT
         , pDate DATE, value DEC(18, 4), item ENUM Item, calcCount INT
-        , opi ID ObjectPostItem, dateSumFlag TINYINT;
+        , opi ID ObjectPostItem, dateSumFlag TINYINT
+        , lastOpi ID, lastDate DATE;
     SETTING 'pCalcDateItemHistory' BIGINT TO pCalcItemDate;
     IF pCalcItemDate IS NULL {
         SET pCalcItemDate = min(a.id) from ItemHistory as a;
@@ -329,7 +330,12 @@ PROC CalcDateItemHistory() {
         IF pCalcItemDate IS NOT NULL {
             SET pDate = MinuteIdDate(pCalcItemDate, timeZone);
             SET opi=ID(ObjectPostItem new KEY Object=0, Post=Post.Sys, Item=item);
-            WITH IxOpiItemDate as a IX=opi XI=pDate SET a.value=a.value+ifnull(value,0);
+            WITH IxOpiItemDate as a IX=opi XI=pDate SET a.value=a.value+ifnull(value,0), a.rows=a.rows+1, a.p1=pCalcItemDate;
+            IF opi<>lastOpi OR pDate<>lastDate {
+                WITH IxOpiItemDate as a IX=opi XI=pDate SET a.p0=pCalcItemDate;
+            }
+            SET lastOpi=opi;
+            SET lastDate=pDate;
             SET calcCount = calcCount + 1;
             SETTING 'pCalcDateItemHistory' BIGINT = pCalcItemDate;
         }
@@ -365,7 +371,8 @@ IX IxOpiItemDateGroupWithCount (
 PROC CalcDateOpiHistory() {
     VAR pCalcItemDate BIGINT, timeZone TINYINT
         , pDate DATE, value DEC(18, 4), item ENUM Item, calcCount INT
-        , opi ID ObjectPostItem;
+        , opi ID ObjectPostItem
+        , lastOpi ID, lastDate DATE;
     SET timeZone=timeZone();
     SETTING 'pCalcDateOpiHistory' BIGINT TO pCalcItemDate;
     IF pCalcItemDate IS NULL {
@@ -382,6 +389,11 @@ PROC CalcDateOpiHistory() {
             SET pDate = MinuteIdDate(pCalcItemDate, timeZone);
             WITH IxOpiItemDate as a IX=opi XI=pDate 
                 SET a.value=a.value+ifnull(value,0), a.rows=a.rows + 1, a.p1=pCalcItemDate;
+            IF opi<>lastOpi OR pDate<>lastDate {
+                WITH IxOpiItemDate as a IX=opi XI=pDate SET a.p0=pCalcItemDate;
+            }
+            SET lastOpi=opi;
+            SET lastDate=pDate;
             SET calcCount = calcCount + 1;
             SETTING 'pCalcDateOpiHistory' BIGINT = pCalcItemDate;
         }
