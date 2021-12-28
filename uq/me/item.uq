@@ -146,6 +146,17 @@ IX UserObject (
     on TINYINT DEFAULT 0,
 );
 
+-- 主管绩效核算
+IX IxOpiSupervise (
+    ixx ObjectStaff,                -- 主管人
+    ix ObjectPostItem,              -- 成员科目
+    xi DATE,                        -- 开始日期
+    end DATE DEFAULT '3000-1-1',    -- 结束日期
+    ratio DEC(6,2),                 -- 换算比例
+    INDEX ix_ixx(ix, ixx, xi) UNIQUE,
+    INDEX xi(xi),                   -- 时间排序
+);
+
 IX UserSuperviseItem (
     IX user,
     XI ENUM Item,
