@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sat Dec 18 2021 11:01:29 GMT-0500 (北美东部标准时间) ===//
+//=== UqApp builder created on Tue Dec 28 2021 13:06:44 GMT-0500 (北美东部标准时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqSheet, UqQuery, UqMap, UqID, UqIDX, UqIX } from "tonwa-core";
 import { Render, IDXEntity } from "tonwa-react";
@@ -439,14 +439,16 @@ export interface ResultSearchExchangeOrders {
 	$page: ReturnSearchExchangeOrders$page[];
 }
 
-export interface Param$getMyTimezone {
+export interface Param$getUnitTime {
 }
-export interface Return$getMyTimezoneRet {
+export interface Return$getUnitTimeRet {
 	timezone: number;
 	unitTimeZone: number;
+	unitBizMonth: number;
+	unitBizDate: number;
 }
-export interface Result$getMyTimezone {
-	ret: Return$getMyTimezoneRet[];
+export interface Result$getUnitTime {
+	ret: Return$getUnitTimeRet[];
 }
 
 export interface OrderMain {
@@ -637,7 +639,7 @@ export interface UqExt extends Uq {
 	GetPointProductsByPage: UqQuery<ParamGetPointProductsByPage, ResultGetPointProductsByPage>;
 	GetBrandMinDiscount: UqQuery<ParamGetBrandMinDiscount, ResultGetBrandMinDiscount>;
 	SearchExchangeOrders: UqQuery<ParamSearchExchangeOrders, ResultSearchExchangeOrders>;
-	$getMyTimezone: UqQuery<Param$getMyTimezone, Result$getMyTimezone>;
+	$getUnitTime: UqQuery<Param$getUnitTime, Result$getUnitTime>;
 	PointProduct: UqMap;
 	PlatformOrder: UqMap;
 	PlatformOrderUsed: UqMap;

@@ -2,7 +2,8 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import { CUqBase } from "uq-app";
 import {
     Item, Post, ReturnGetObjectItemHistoryRet, ReturnGetObjectItemPeriodHistoryRet
-    , ReturnGetObjectItemPeriodSumRet
+    , ReturnGetObjectItemPeriodSumRet,
+    ReturnGetSuperviseObjectsRet
 } from "uq-app/uqs/JkMe";
 import { BizOpDetail } from "./bizOpDetail";
 import { PostPeriodSum, Period, ItemPeriodSum, EnumPeriod, createPeriod } from "./period";
@@ -10,6 +11,7 @@ import { VBizOpDetail } from "./VBizOpDetail";
 import { VPostItemHistory } from "./VPostItemHistory";
 import { VDayPostItemHistory, VMonthPostItemHistory } from "./VPeriodPostItemHistory";
 import { VPeriodSum } from "./VPortal";
+import { VSuperviseObjects } from "./VSuperviseObjects";
 
 export class CPortal extends CUqBase {
     bizOpDetail: BizOpDetail;
@@ -20,6 +22,7 @@ export class CPortal extends CUqBase {
     itemPeriodSum: ItemPeriodSum;
     history: ReturnGetObjectItemHistoryRet[];
     periodHistory: ReturnGetObjectItemPeriodHistoryRet[];
+    superviseObjects: ReturnGetSuperviseObjectsRet[];
 
     init(...param: any[]): void {
         makeObservable(this, {
@@ -93,7 +96,6 @@ export class CPortal extends CUqBase {
             this.itemPeriodSum = ips;
         }
         let { id: objectPostItem, post, item } = ips;
-
         let { from, to } = this.period;
         if (fromDate) from = fromDate;
         if (toDate) to = toDate;
@@ -136,9 +138,24 @@ export class CPortal extends CUqBase {
             to,
             period: bizDate,
         });
-        runInAction(() => {
+        this.runInAction(() => {
             this.periodHistory = ret.ret;
         });
+    }
+
+    private async loadSuperviseObjects(ips: ItemPeriodSum, fromDate: Date, toDate: Date) {
+        if (ips) {
+            this.itemPeriodSum = ips;
+        }
+        else {
+            ips = this.itemPeriodSum;
+        }
+        let { id: objectPostItem } = ips;
+        let { from, to } = this.period;
+        if (fromDate) from = fromDate;
+        if (toDate) to = toDate;
+        let ret = await this.uqs.JkMe.GetSuperviseObjects.query({ from, to });
+        this.superviseObjects = ret.ret;
     }
 
     prev = async () => {
@@ -173,8 +190,16 @@ export class CPortal extends CUqBase {
     }
 
     async showPostItemHistory(ips: ItemPeriodSum, from: Date, to: Date) {
-        await this.loadPostItemHistory(ips, from, to);
-        this.openVPage(VPostItemHistory);
+        switch (ips.post) {
+            case Post.staffSupervisor:
+                await this.loadSuperviseObjects(ips, from, to);
+                this.openVPage(VSuperviseObjects);
+                break;
+            default:
+                await this.loadPostItemHistory(ips, from, to);
+                this.openVPage(VPostItemHistory);
+                break;
+        }
     }
 
     async showDayPostItemHistory(ips: ItemPeriodSum, from: Date, to: Date) {

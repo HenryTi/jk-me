@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sat Dec 18 2021 11:01:29 GMT-0500 (北美东部标准时间) ===//
+//=== UqApp builder created on Tue Dec 28 2021 13:06:44 GMT-0500 (北美东部标准时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID } from "tonwa-core";
 import { Render, IDXEntity } from "tonwa-react";
@@ -19,12 +19,16 @@ export enum Item {
 	orderFactoryTransferOut = 1017,
 	orderReturn = 1020,
 	orderReceive = 1030,
+	receiveSaleTransferOut = 1036,
+	receiveFactoryTransferOut = 1037,
 	orderReceiveReturn = 1040,
 	profitFee = 1110,
 	couponFee = 1111,
 	amountFee = 1120,
+	supervisorFee = 1210,
 	customerPoint = 2010,
-	pickupPoint = 3010
+	pickupPoint = 3010,
+	cashOut = 5010
 }
 
 export enum Post {
@@ -32,6 +36,7 @@ export enum Post {
 	staff = 1010,
 	staffSales = 1100,
 	topSales = 1101,
+	staffSupervisor = 1102,
 	manager = 2010,
 	managerIT = 2100,
 	saleBranch = 3000,
@@ -557,6 +562,38 @@ export interface Result$getUnitTime {
 	ret: Return$getUnitTimeRet[];
 }
 
+export interface ParamTestItemDate {
+	d: any;
+}
+export interface ReturnTestItemDateRet {
+	id: number;
+	value: number;
+}
+export interface ReturnTestItemDateRetTotal {
+	d: any;
+	value: number;
+}
+export interface ResultTestItemDate {
+	ret: ReturnTestItemDateRet[];
+	retTotal: ReturnTestItemDateRetTotal[];
+}
+
+export interface ParamGetSuperviseObjects {
+	from: any;
+	to: any;
+}
+export interface ReturnGetSuperviseObjectsRet {
+	opi: number;
+	object: number;
+	post: any;
+	item: any;
+	value: number;
+	ratioValue: number;
+}
+export interface ResultGetSuperviseObjects {
+	ret: ReturnGetSuperviseObjectsRet[];
+}
+
 export interface Group {
 	id?: number;
 	name: string;
@@ -568,13 +605,13 @@ export interface ParamActs {
 
 
 export interface UqExt extends Uq {
-	Acts(param: ParamActs): Promise<any>;
+	Acts(param:ParamActs): Promise<any>;
 	SQL: Uq;
-	IDRender(id: number): JSX.Element;
-	IDLocalRender(id: number): JSX.Element;
+	IDRender(id:number):JSX.Element;
+	IDLocalRender(id:number):JSX.Element;
 
-	$sheet: UqTuid<Tuid$sheet> & { tv: (id: number, render?: Render<any>) => JSX.Element };
-	$user: UqTuid<Tuid$user> & { tv: (id: number, render?: Render<any>) => JSX.Element };
+	$sheet: UqTuid<Tuid$sheet>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
+	$user: UqTuid<Tuid$user>&{tv:(id:number, render?:Render<any>)=>JSX.Element};
 	BusTestBoundStaffSales: UqAction<ParamBusTestBoundStaffSales, ResultBusTestBoundStaffSales>;
 	DoneDeliver: UqAction<ParamDoneDeliver, ResultDoneDeliver>;
 	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
@@ -609,10 +646,12 @@ export interface UqExt extends Uq {
 	GetObjectAccountHistory: UqQuery<ParamGetObjectAccountHistory, ResultGetObjectAccountHistory>;
 	GetAccounts: UqQuery<ParamGetAccounts, ResultGetAccounts>;
 	$getUnitTime: UqQuery<Param$getUnitTime, Result$getUnitTime>;
+	TestItemDate: UqQuery<ParamTestItemDate, ResultTestItemDate>;
+	GetSuperviseObjects: UqQuery<ParamGetSuperviseObjects, ResultGetSuperviseObjects>;
 	Group: UqID<any> & IDXEntity<any>;
 }
 
-export function assign(uq: any, to: string, from: any): void {
+export function assign(uq: any, to:string, from:any): void {
 	let hasEntity = uq.hasEntity(to);
 	if (hasEntity === false) {
 		return;

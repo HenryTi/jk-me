@@ -501,7 +501,7 @@ PROC CalcDateOpiSuperviseHistory() {
                     WHERE a.ix=opi AND a.xi<=pDate AND pDate<a.end
                     ORDER BY a.ix DESC)
             {
-                SET opiSupervise = ID(objectPostItem new KEY Object=supervisor, Post=Post.staffSupervisor, Item=0);
+                SET opiSupervise = ID(objectPostItem new KEY Object=supervisor, Post=Post.staffSupervisor, Item=Item.supervisorFee);
                 WITH IxOpiItemDate as a IX=opiSupervise XI=pDate 
                     SET a.value=a.value+ifnull(value,0)*ratio/100, a.rows=a.rows + 1, a.p1=pCalcItemDate;
             }
@@ -518,6 +518,7 @@ PROC CalcDateOpiSuperviseHistory() {
             -- BREAK;
         }
     }
+    LOG 'EXIT' SUBJECT 'CalcDateOpiSuperviseHistory';
 };
 
 QUERY TestItemDate(
