@@ -196,7 +196,6 @@ VALUES
 
 -- EnumOrderAction.orderDeliverDone
 (EnumBizOpType.orderDeliverDone, Post.staffSales, Item.orderAmount, Item.orderAmount, 100, TEXTID('销售额')),
-(EnumBizOpType.orderDeliverDone, Post.staffSales, Item.orderProfit, Item.orderProfit, 100, TEXTID('有效销售额')),
 (EnumBizOpType.orderDeliverDone, Post.staffSales, Item.profitFee, Item.orderFee, 4, TEXTID('发货后毛利提成')),
 (EnumBizOpType.orderDeliverDone, Post.staffSales, Item.couponFee, Item.orderFee, 1, TEXTID('发货后发券提成')),
 (EnumBizOpType.orderDeliverDone, Post.topSales, Item.profitFee, Item.orderFee, 1, TEXTID('发货后高管毛利提成')),
@@ -216,7 +215,6 @@ VALUES
 
 -- EnumOrderAction.orderReturn
 (EnumBizOpType.orderReturn, Post.staffSales, Item.orderAmount, Item.orderReturn, 100, TEXTID('销售额')),
-(EnumBizOpType.orderReturn, Post.staffSales, Item.orderProfit, Item.orderProfit, 100, TEXTID('有效销售额')),
 (EnumBizOpType.orderReturn, Post.staffSales, Item.profitFee, Item.orderFee, 4, TEXTID('发货后毛利提成')),
 (EnumBizOpType.orderReturn, Post.staffSales, Item.couponFee, Item.orderFee, 1, TEXTID('发货后发券提成')),
 (EnumBizOpType.orderReturn, Post.topSales, Item.profitFee, Item.orderFee, 1, TEXTID('发货后高管毛利提成')),
@@ -232,7 +230,6 @@ VALUES
 
 -- EnumOrderAction.receiveDone
 (EnumBizOpType.orderReceiveDone, Post.staffSales, Item.profitFee, Item.orderFee, 4, TEXTID('收款后毛利提成')),
-(EnumBizOpType.orderReceiveDone, Post.staffSales, Item.orderProfit, Item.orderProfit, 100, TEXTID('有效销售额')),
 (EnumBizOpType.orderReceiveDone, Post.staffSales, Item.couponFee, Item.orderFee, 1, TEXTID('收款后发券提成')),
 
 (EnumBizOpType.orderReceiveDone, Post.topSales, Item.profitFee, Item.orderFee, 1, TEXTID('收款后高管毛利提成')),

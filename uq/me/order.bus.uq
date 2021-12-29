@@ -203,10 +203,6 @@ ACCEPT [order-bound-staff-sales] {
             BizMainBound new 
             KEY bizMain=order, post=Post.staffSales, item=ITEM.orderAmount, to=toId
         );
-        SET bizMainBoundId = ID(
-            BizMainBound new 
-            KEY bizMain=order, post=Post.staffSales, item=ITEM.orderProfit, to=toId
-        );
         -- 指定客户之后的提成
         IF [bound-type]='assign' {
             SET bizMainBoundId = ID(
