@@ -66,10 +66,14 @@ RETURNS ret (
     INTO ret SELECT a.id, a.object, a.post, a.item,
         IFNULL(
             (SELECT SUM(t.value)
-                FROM OPIHistory AS t
-                WHERE t.opi=a.id
-                    AND t.id >= minuteIdFromDate(from, timeZone)
-                    AND t.id < minuteIdFromDate(to, timeZone)
+                -- FROM OPIHistory AS t
+                FROM IxOpiItemDate as t
+                -- WHERE t.opi=a.id
+                --    AND t.id >= minuteIdFromDate(from, timeZone)
+                --    AND t.id < minuteIdFromDate(to, timeZone)
+                WHERE t.ix=a.id
+                    AND t.xi>=from
+                    AND t.xi<to
             ),
             0
         ) as value
@@ -203,4 +207,28 @@ RETURNS ret (
         WHERE a.ix=objectAccount
         ORDER BY a.xi DESC
         LIMIT 200;
+};
+
+QUERY GetSuperviseObjects(
+    from DATE,
+    to DATE,
+)
+RETURNS ret (
+    opi ID,
+    object ID,
+    post ENUM Post,
+    item ENUM Item,
+    value DEC(18,4),
+    ratioValue DEC(18,4)
+) {
+    INTO ret 
+        SELECT v.opi, o.object, o.post, o.item, v.value, v.ratioValue
+            FROM (SELECT objectPostItem as opi, sum(c.value) as value, sum(c.value*b.ratio/100) as ratioValue
+                FROM UserObject as a
+                    JOIN IxOpiSupervise as b ON b.ixx=a.xi
+                    JOIN IxOpiItemDate as c ON c.ix=b.ix AND c.xi>=b.xi AND c.xi<b.end
+                WHERE a.ix=$user AND c.xi>=from AND c.xi<to
+                GROUP BY b.ix as objectPostItem
+            ) as v JOIN ObjectPostItem as o ON v.opi=o.id
+            ;
 };

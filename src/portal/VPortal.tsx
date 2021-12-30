@@ -84,11 +84,25 @@ export class VPeriodSum<T extends CPortal = CPortal> extends View<T> {
 	}
 
 	private renderItemPeriodSum = (ips: ItemPeriodSum, index: number) => {
-		let { itemTitles } = this.controller.cApp;
+		let { cApp } = this.controller;
+		let { itemTitles } = cApp;
 		let { item, value } = ips;
-		let { title, vice, fixed } = itemTitles[item];
-		return <LMR className="px-3 py-2 w-100" right={<div>{renderNum(value, undefined, fixed)}</div>}>
-			{title} <small className="text-muted ms-3">{vice}</small>
-		</LMR>;
+		let titles = itemTitles[item];
+		if (titles) {
+			let { title, vice, fixed } = titles;
+			return <LMR className="px-3 py-2 w-100" right={<div>{renderNum(value, undefined, fixed)}</div>}>
+				{title} <small className="text-muted ms-3">{vice}</small>
+			</LMR>;
+		}
+		let { post } = ips;
+		let { postTitles } = cApp;
+		let posts = postTitles[post];
+		if (posts) {
+			let { title, vice, fixed } = posts;
+			return <LMR className="px-3 py-2 w-100" right={<div>{renderNum(value, undefined, fixed)}</div>}>
+				{title} <small className="text-muted ms-3">{vice}</small>
+			</LMR>;
+		}
+		return <div>unknown item {item} and post {post}</div>;
 	}
 }

@@ -29,6 +29,8 @@ ENUM Item (
     profitFee                   = 1110,     -- 订单毛利提成
     couponFee                   = 1111,     -- 发券毛利提成
     amountFee                   = 1120,     -- 订单销售额提成
+
+    supervisorFee               = 1210,     -- 主管提成
     
     customerPoint               = 2010,     -- 客户普通积分
 
@@ -131,6 +133,7 @@ VALUES
 (Item.profitFee, '有效额提成', null, '元', 2),
 (Item.amountFee, '税后销售收入提成', null, '元', 2),
 (Item.couponFee, '发券提成', null, '元', 2),
+(Item.supervisorFee, '主管提成', null, '元', 2),
 (Item.customerPoint, '客户积分', null, '点', 2),
 (Item.pickupPoint, '拣货积分', null, '点', 4),
 (Item.cashOut, '提款', null, '元', 2),
