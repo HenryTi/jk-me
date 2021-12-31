@@ -324,6 +324,7 @@ PROC #ProcBizOp ver 0.1 (
             , a.booking=booking;
         WITH IxBizOpBound IX=bizOp XI=bizMainBoundId SET bound=1;
         WITH SumQueueOpiHistory ID=opiHistoryId;
+        Queue QueueDateOpiHistory Add opiHistoryId;
         FOR (VAR user ID
             OF SELECT b.ix as user
                 FROM ObjectPostItem as a JOIN UserObject as b ON a.object=b.xi
@@ -477,5 +478,6 @@ PROC #ProcItemHistory ver 0.1 (
         */
         WITH ItemHistory as a ID = itemHistoryId SET a.value=value; -- , a.booking=booking;
         WITH SumQueueItemHistory ID=itemHistoryId;
+        QUEUE QueueDateItemHistory Add itemHistoryId;
     }
 };
