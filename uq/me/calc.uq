@@ -310,6 +310,34 @@ PROC ProcCalcAccountSum ver 0.5 ()
     LOG 'ProcCalcAccountSum end' SUBJECT 'Schedule CalcSum';
 };
 
+-- 各种Item or OpiItem 的按日合计，归一到一张表。写查询会简单很多
+IX IxOpiItemDate_new (
+    ix ObjectPostItem,              --  ENUM Item，对于总账item, object=0, post=0
+    xi Date,
+    value DEC(18,4),
+    rows INT,
+    p0 ID,
+    p1 ID,
+);
+QUEUE QueueDateItemHistory;
+PROC CalcDateItemHistory_new() {
+    VAR timeZone TINYINT
+        , pDate DATE, value DEC(18, 4), item ENUM Item, opi ID ObjectPostItem;
+    SET timeZone=TimeZone();
+    FOR (VAR itemHistoryId ID OF QUEUE QueueDateItemHistory) {
+        SET value = a.value, item=a.item
+            FROM ItemHistory as a 
+            WHERE a.id=itemHistoryId;
+        SET pDate = MinuteIdDate(itemHistoryId, timeZone);
+        SET opi=ID(ObjectPostItem new KEY Object=0, Post=Post.Sys, Item=item);
+        WITH IxOpiItemDate as a IX=opi XI=pDate 
+            SET a.value=a.value+ifnull(value,0)
+                , a.rows=a.rows+1
+                , a.p1=itemHistoryId
+            ON NEW a.p0=itemHistoryId;
+    }
+};
+
 PROC CalcDateItemHistory() {
     VAR pCalcItemDate BIGINT, timeZone TINYINT
         , pDate DATE, value DEC(18, 4), item ENUM Item, calcCount INT

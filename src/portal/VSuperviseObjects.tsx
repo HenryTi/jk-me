@@ -20,11 +20,11 @@ export class VSuperviseObjects extends VPage<CPortal> {
 
     private renderItem = (row: ReturnGetSuperviseObjectsRet, index: number) => {
         let { itemTitles } = this.controller.cApp;
-        let { opi, item, post, object, value, ratioValue } = row;
+        let { opi, item, post, object, staff, value, ratioValue } = row;
         let {/*title, vice, */unit, fixed } = itemTitles[item as Item];
         return <div className="px-3 py-2 d-block">
-            <div>{this.controller.uqs.JkHr.Employee.tv(object, renderEmployee)}</div>
-            <div>opi: {opi} item: {item} post: {post} object: {object} </div>
+            <div>{this.controller.uqs.JkHr.Employee.tv(staff, renderEmployee)}</div>
+            <div>opi: {opi} item: {item} post: {post} object: {object} staff: {staff} </div>
             <LMR left={<div>{renderNum(value, unit, fixed)}</div>} right={<div>{renderNum(ratioValue, unit, fixed)}</div>} />
         </div>;
     }
