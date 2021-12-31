@@ -330,7 +330,7 @@ PROC CalcDateItemHistory_new() {
             WHERE a.id=itemHistoryId;
         SET pDate = MinuteIdDate(itemHistoryId, timeZone);
         SET opi=ID(ObjectPostItem new KEY Object=0, Post=Post.Sys, Item=item);
-        WITH IxOpiItemDate as a IX=opi XI=pDate 
+        WITH IxOpiItemDate_new as a IX=opi XI=pDate 
             SET a.value=a.value+ifnull(value,0)
                 , a.rows=a.rows+1
                 , a.p1=itemHistoryId
@@ -378,24 +378,7 @@ PROC CalcDateItemHistory() {
         }
     }
 };
-/*
-IX IxOpiItemDateEachWithCount (
-    ix ObjectPostItem,          --  ENUM Item，对于总账item, object=0, post=0
-    xi Date,
-    value DEC(18,4),
-    rows INT,
-    p0 ID,
-    p1 ID,
-);
-IX IxOpiItemDateGroupWithCount (
-    ix ObjectPostItem,          --  ENUM Item，对于总账item, object=0, post=0
-    xi Date,
-    value DEC(18,4),
-    rows INT,
-    p0 ID,
-    p1 ID,
-);
-*/
+
 PROC CalcDateOpiHistory() {
     VAR pCalcItemDate BIGINT, timeZone TINYINT
         , pDate DATE, value DEC(18, 4), item ENUM Item, calcCount INT
