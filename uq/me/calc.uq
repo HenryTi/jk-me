@@ -339,7 +339,7 @@ PROC CalcDateItemHistory_new() {
 };
 
 QUEUE QueueDateOpiHistory;
-PROC CaleDateOpiHistory_new() {
+PROC CalcDateOpiHistory_new() {
     VAR timeZone TINYINT
         , pDate DATE, value DEC(18, 4), opi ID ObjectPostItem;
     SET timeZone=TimeZone();
