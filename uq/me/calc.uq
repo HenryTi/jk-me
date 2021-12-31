@@ -338,6 +338,24 @@ PROC CalcDateItemHistory_new() {
     }
 };
 
+QUEUE QueueDateOpiHistory;
+PROC CaleDateOpiHistory_new() {
+    VAR timeZone TINYINT
+        , pDate DATE, value DEC(18, 4), opi ID ObjectPostItem;
+    SET timeZone=TimeZone();
+    FOR (VAR opiHistoryId ID OF QUEUE QueueDateOpiHistory) {
+        SET value = a.value, opi=a.opi
+            FROM OpiHistory as a 
+            WHERE a.id=opiHistoryId;
+        SET pDate = MinuteIdDate(opiHistoryId, timeZone);
+        WITH IxOpiItemDate_new as a IX=opi XI=pDate 
+            SET a.value=a.value+ifnull(value,0)
+                , a.rows=a.rows+1
+                , a.p1=opiHistoryId
+            ON NEW a.p0=opiHistoryId;
+    }
+};
+
 PROC CalcDateItemHistory() {
     VAR pCalcItemDate BIGINT, timeZone TINYINT
         , pDate DATE, value DEC(18, 4), item ENUM Item, calcCount INT
