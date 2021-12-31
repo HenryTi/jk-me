@@ -1,4 +1,4 @@
-//=== UqApp builder created on Tue Dec 28 2021 13:06:44 GMT-0500 (北美东部标准时间) ===//
+//=== UqApp builder created on Wed Dec 29 2021 23:20:14 GMT-0500 (北美东部标准时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID } from "tonwa-core";
 import { Render, IDXEntity } from "tonwa-react";
@@ -587,6 +587,7 @@ export interface ReturnGetSuperviseObjectsRet {
 	object: number;
 	post: any;
 	item: any;
+	staff: number;
 	value: number;
 	ratioValue: number;
 }
