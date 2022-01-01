@@ -109,6 +109,7 @@ IDX CurrencyItemHistory ver 0.3 (
 
 ENUM EnumAccount (
     commission              = 10,
+    supervisor              = 11,
 );
 
 IX AccountBooking ver 0.1 CONST (
@@ -122,6 +123,8 @@ VALUES
 (Item.amountFee,    EnumAccount.commission,         100),
 (Item.couponFee,    EnumAccount.commission,         100),
 (Item.cashOut,      EnumAccount.commission,         -100),
+(Item.couponFee,    EnumAccount.supervisor,         100),
+(Item.cashOut,      EnumAccount.supervisor,         -100),
 ;
 
 ID #ObjectAccount (
