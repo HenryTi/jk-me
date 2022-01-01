@@ -1,11 +1,3 @@
-ID #SumQueueOpiHistory MINUTEID (
-    id,
-);
-
-ID #SumQueueItemHistory MINUTEID (
-    id,
-);
-
 QUEUE QueueSumItemHistory ver 0.4;
 -- QUEUE QueueSumOpiItemHistory;
 IDX QueueSumItemHistoryTest0 (
@@ -58,18 +50,6 @@ PROC RecalcSum ver 0.1 (
     -- WITH DaySumItem TRUNCATE;
     WITH ObjectAccount TRUNCATE;
     WITH ObjectAccountHistory TRUNCATE;
-    WITH SumQueueOpiHistory TRUNCATE;
-    WITH SumQueueItemHistory TRUNCATE;
-
-    INTO QueueSumItemHistory
-        SELECT id
-        FROM itemhistory WHERE 1=1;
-    INTO sumqueueopihistory
-        SELECT id
-        FROM opihistory WHERE 1=1;
-    INTO sumqueueitemhistory
-        SELECT id
-        FROM itemhistory WHERE 1=1;
 
     /*
     VAR id ID, p ID;
@@ -90,7 +70,6 @@ PROC RecalcSum ver 0.1 (
         IF id IS NULL {
             BREAK;
         }
-        WITH SumQueueItemHistory ID=id SET itemHistory=id;
         SET p = id;
     }
     */
@@ -112,8 +91,8 @@ PROC CalcSum ver 0.1 () {
     END;
     -/
     TRANSACTION OFF;                     -- 去掉每一个ACT开始的Start Transaction和结尾的Commit
-    PROC ProcCalcHistorySum();
-    PROC ProcCalcAccountSum();
+    -- PROC ProcCalcHistorySum();
+    -- PROC ProcCalcAccountSum();
 };
 
 PROC SumItemHistory ver 0.2 (
@@ -171,6 +150,7 @@ PROC SumItemHistory ver 0.2 (
     }
 };
 
+/*
 PROC ProcCalcHistorySum ver 0.4 ()
 {
     LOG 'ProcCalcHistorySum start' SUBJECT 'Schedule CalcSum';
@@ -182,76 +162,11 @@ PROC ProcCalcHistorySum ver 0.4 ()
     FOR (VAR p ID OF Queue QueueSumItemHistory) {
         PROC SumItemHistory(p);
     }
-
-    WHILE 1=1 {
-        SET historyId=a.id
-            , biz=b.biz
-            , bizOp=a.bizOp
-            , value=a.value
-            , item=a.item
-            , queueId=c.id
-            FROM ItemHistory as a
-                JOIN SumQueueItemHistory as c ON c.id=a.id
-                LEFT JOIN DxBizOp as b ON b.id=a.bizOp
-            ORDER BY c.id ASC
-            LIMIT 1;
-        IF historyId IS NULL {
-            BREAK;
-        }
-
-        LOG concat('ProcCalcHistorySum: ', historyId) SUBJECT 'Schedule CalcSum';
-        SET date=MinuteIdDate(historyId, timeZone);
-        TRANSACTION Start;
-
-        IF biz IS NOT NULL {
-            -- WITH DaySumItem as a IX=item XI=date SET a.value=IFNULL(a.value,0) + IFNULL(value,0);
-            VAR product ID, customerAccount ID, m DATE;
-            SET date=MinuteIdMonth(historyId, timeZone);
-            -- SET m=YEAR(date)*100+MONTH(date);
-            -- set bizdateId = BizMonthId(date);
-            -- set bizmonth = bizmonth();
-            -- set bizdate = bizdate();
-
-            SET m=BizMonthId(date, bizdate()); --  YEAR(date)*100+MONTH(date);
-            IF item=Item.orderAmount {
-                SET customerAccount=c.customerAccount
-                    , product=b.product
-                    FROM OrderDetail as b
-                        JOIN OrderMain as c ON b.main=c.id
-                    WHERE b.id=biz;
-
-                -- product
-                WITH MonthSumProduct as a IXX=item IX=m XI=product SET a.value=a.value + value;
-                -- customerAccount
-                WITH MonthSumCustomer as a IXX=item IX=m XI=customerAccount SET a.value=a.value + value;
-            }
-            ELSEIF item=Item.orderReturn {
-                SET customerAccount=c.customerAccount
-                    , product=b.product
-                    FROM OrderDetail as b
-                        JOIN OrderMain as c ON b.main=c.id
-                    WHERE b.id=biz;
-
-                -- product
-                WITH MonthSumProduct as a IXX=item IX=m XI=product SET a.value=a.value + value;
-                -- customerAccount
-                WITH MonthSumCustomer as a IXX=item IX=m XI=customerAccount SET a.value=a.value + value;
-            }
-        }
-
-        WITH SumQueueItemHistory ID=queueId DEL;
-        TRANSACTION Commit;
-        SETTING 'compileTick' CHAR TO compileTick;
-        IF tick<IFNULL(compileTick, 0) {
-            BREAK;
-        }
-        ELSE {
-            SLEEP Const_Sleep_Time;
-        }
-    }
     LOG 'ProcCalcHistorySum end' SUBJECT 'Schedule CalcSum';
 };
+*/
 
+/*
 PROC ProcCalcAccountSum ver 0.5 ()
 {
     LOG 'ProcCalcAccountSum start' SUBJECT 'Schedule CalcSum';
@@ -309,6 +224,7 @@ PROC ProcCalcAccountSum ver 0.5 ()
     }
     LOG 'ProcCalcAccountSum end' SUBJECT 'Schedule CalcSum';
 };
+*/
 
 -- 各种Item or OpiItem 的按日合计，归一到一张表。写查询会简单很多
 IX IxOpiItemDate_new (
@@ -319,6 +235,7 @@ IX IxOpiItemDate_new (
     p0 ID,
     p1 ID,
 );
+
 QUEUE QueueDateItemHistory;
 PROC CalcDateItemHistory_new() {
     VAR timeZone TINYINT
@@ -328,6 +245,7 @@ PROC CalcDateItemHistory_new() {
         SET value = a.value, item=a.item
             FROM ItemHistory as a 
             WHERE a.id=itemHistoryId;
+
         SET pDate = MinuteIdDate(itemHistoryId, timeZone);
         SET opi=ID(ObjectPostItem new KEY Object=0, Post=Post.Sys, Item=item);
         WITH IxOpiItemDate_new as a IX=opi XI=pDate 
@@ -335,24 +253,63 @@ PROC CalcDateItemHistory_new() {
                 , a.rows=a.rows+1
                 , a.p1=itemHistoryId
             ON NEW a.p0=itemHistoryId;
+        
+        -- 计算MonthSum *
+        PROC SumItemHistory(itemHistoryId);
     }
 };
 
 QUEUE QueueDateOpiHistory;
 PROC CalcDateOpiHistory_new() {
-    VAR timeZone TINYINT
-        , pDate DATE, value DEC(18, 4), opi ID ObjectPostItem;
+    VAR timeZone TINYINT, pDate DATE, value DEC(18, 4), opi ID ObjectPostItem
+        , item ENUM Item, object ID;
     SET timeZone=TimeZone();
     FOR (VAR opiHistoryId ID OF QUEUE QueueDateOpiHistory) {
-        SET value = a.value, opi=a.opi
+        SET value = a.value, opi=a.opi, object = b.object, item = b.item
             FROM OpiHistory as a 
+                LEFT JOIN ObjectPostItem as b on b.id = a.opi
             WHERE a.id=opiHistoryId;
+
+        -- 一般销售人员opi汇总
         SET pDate = MinuteIdDate(opiHistoryId, timeZone);
         WITH IxOpiItemDate_new as a IX=opi XI=pDate 
             SET a.value=a.value+ifnull(value,0)
                 , a.rows=a.rows+1
                 , a.p1=opiHistoryId
             ON NEW a.p0=opiHistoryId;
+
+        -- 主管的绩效汇总 
+        VAR opiSupervise ID ObjectPostItem;
+        FOR (VAR supervisor ID, ratio DEC(6,2)
+            OF SELECT a.ixx as supervisor, a.ratio
+                FROM IxOpiSupervise as a 
+                WHERE a.ix=opi AND a.xi<=pDate AND pDate<a.end
+                ORDER BY a.ix DESC)
+        {
+            SET opiSupervise = ID(objectPostItem new KEY Object=supervisor, Post=Post.staffSupervisor, Item=Item.supervisorFee);
+            WITH IxOpiItemDate_new as a IX=opiSupervise XI=pDate 
+                SET a.value=a.value+ifnull(value,0)*ratio/100, a.rows=a.rows + 1, a.p1=opiHistoryId;
+        }
+
+        -- objectAccount计算
+        IF object IS NOT NULL {
+            VAR dateHourId ID, accountValue DEC(18,4), objectAccountId ID;
+            SET dateHourId=(((opiHistoryId>>20) DIV (24*60)) * 24) + timeZone;
+            FOR (VAR account ENUM EnumAccount, ratio DEC(6,2)
+                OF SELECT a.xi as account, a.ratio
+                    FROM AccountBooking as a WHERE a.ix=item)
+            {
+                SET accountValue=ratio * value / 100;
+                SET objectAccountId=ID(
+                    ObjectAccount new
+                    KEY object=object, account=account);
+                WITH ObjectAccount as a ID=objectAccountId 
+                    SET a.balance=IFNULL(a.balance, 0)+accountValue
+                    WHERE a.startStamp<MinuteIdTime(opiHistoryId, timeZone);
+                WITH ObjectAccountHistory as a IX=objectAccountId XI=dateHourId
+                    SET a.value=IFNULL(a.value,0)+accountValue, a.opi=opi;
+            }
+        }
     }
 };
 
@@ -503,6 +460,7 @@ PROC CalcDateOpiHistoryGroup() {
     }
 };
 
+/*
 PROC CalcDateOpiSuperviseHistory() {
     VAR pCalcItemDate BIGINT, timeZone TINYINT
         , pDate DATE, value DEC(18, 4), item ENUM Item, calcCount INT
@@ -549,6 +507,7 @@ PROC CalcDateOpiSuperviseHistory() {
     }
     LOG 'EXIT' SUBJECT 'CalcDateOpiSuperviseHistory';
 };
+*/
 
 QUERY TestItemDate(
     d DATE,
