@@ -1,3 +1,6 @@
+QUEUE QueueDateItemHistory;
+QUEUE QueueDateOpiHistory;
+QUEUE QueueSumItemHistory ver 0.4;
 ID #SumQueueOpiHistory MINUTEID (
     id,
 );
@@ -5,49 +8,6 @@ ID #SumQueueOpiHistory MINUTEID (
 ID #SumQueueItemHistory MINUTEID (
     id,
 );
-
-QUEUE QueueSumItemHistory ver 0.4;
--- QUEUE QueueSumOpiItemHistory;
-IDX QueueSumItemHistoryTest0 (
-    id,
-);
-IDX QueueSumItemHistoryTest1 (
-    id,
-);
-IDX QueueSumItemHistoryTest2 (
-    id,
-);
-IDX QueueSumItemHistoryTest3 (
-    id,
-);
-
-PROC AddQueue(id ID) {
-    QUEUE QueueSumItemHistory Add id;
-};
-
-PROC AddQueueAgain(id ID) {
-    QUEUE QueueSumItemHistory Again id;
-};
-
-PROC TestQueue ver 0.1 () {
-    LOG 'TestQueue start' SUBJECT 'Schedule TestQueue';
-    FOR (VAR p ID OF Queue QueueSumItemHistory) {
-        WITH QueueSumItemHistoryTest3 ID=p;
-        LOG concat('TestQueue ', p) SUBJECT 'Schedule TestQueue';
-        IF p MOD 3 = 1 {
-            WITH QueueSumItemHistoryTest1 ID=p;
-        }
-        IF p MOD 2 =0 {
-            WITH QueueSumItemHistoryTest0 ID=p;
-            -- BREAK;
-        }
-        IF p MOD 3 = 2 {
-            WITH QueueSumItemHistoryTest2 ID=p;
-            CONTINUE;
-        }
-    }
-    LOG 'TestQueue end' SUBJECT 'Schedule TestQueue';
-};
 
 PROC RecalcSum ver 0.1 (
 --    from DATE,
@@ -319,7 +279,6 @@ IX IxOpiItemDate_new (
     p0 ID,
     p1 ID,
 );
-QUEUE QueueDateItemHistory;
 PROC CalcDateItemHistory_new() {
     VAR timeZone TINYINT
         , pDate DATE, value DEC(18, 4), item ENUM Item, opi ID ObjectPostItem;
@@ -338,7 +297,6 @@ PROC CalcDateItemHistory_new() {
     }
 };
 
-QUEUE QueueDateOpiHistory;
 PROC CalcDateOpiHistory_new() {
     VAR timeZone TINYINT
         , pDate DATE, value DEC(18, 4), opi ID ObjectPostItem;
