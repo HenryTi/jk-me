@@ -119,12 +119,12 @@ IX AccountBooking ver 0.1 CONST (
 )
 + (ix, xi, ratio)
 VALUES
-(Item.profitFee,    EnumAccount.commission,         100),
-(Item.amountFee,    EnumAccount.commission,         100),
-(Item.couponFee,    EnumAccount.commission,         100),
-(Item.cashOut,      EnumAccount.commission,         -100),
-(Item.couponFee,    EnumAccount.supervisor,         100),
-(Item.cashOut,      EnumAccount.supervisor,         -100),
+(Item.profitFee,        EnumAccount.commission,         100),
+(Item.amountFee,        EnumAccount.commission,         100),
+(Item.couponFee,        EnumAccount.commission,         100),
+(Item.cashOut,          EnumAccount.commission,         -100),
+(Item.supervisorFee,    EnumAccount.supervisor,         100),
+(Item.cashOut,          EnumAccount.supervisor,         -100),
 ;
 
 ID #ObjectAccount (
