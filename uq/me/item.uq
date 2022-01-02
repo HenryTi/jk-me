@@ -123,7 +123,7 @@ VALUES
 (Item.amountFee,    EnumAccount.commission,         100),
 (Item.couponFee,    EnumAccount.commission,         100),
 (Item.cashOut,      EnumAccount.commission,         -100),
-(Item.couponFee,    EnumAccount.supervisor,         100),
+(Item.supervisorFee,    EnumAccount.supervisor,     100),
 (Item.cashOut,      EnumAccount.supervisor,         -100),
 ;
 
