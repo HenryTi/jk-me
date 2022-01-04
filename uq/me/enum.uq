@@ -170,6 +170,7 @@ ID #AccountTitle ver 0.1 CONST (
 + (id, title, vice, unit, fixed)
 VALUES
 (EnumAccount.commission, '业绩提成', null, '元', 2),
+(EnumAccount.supervisor, '主管业绩提成', null, '元', 2),
 ;
 
 -- OPIBooking, 是设置某个岗位（post）能够看到某个科目（postItem）值，该值和另外一个科目（item）的比例关系（radio）以及在何时（bizOpType）计算该值

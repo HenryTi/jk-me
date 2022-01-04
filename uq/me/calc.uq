@@ -248,7 +248,7 @@ PROC CalcDateItemHistory_new() {
 
         SET pDate = MinuteIdDate(itemHistoryId, timeZone);
         SET opi=ID(ObjectPostItem new KEY Object=0, Post=Post.Sys, Item=item);
-        WITH IxOpiItemDate_new as a IX=opi XI=pDate 
+        WITH IxOpiItemDate as a IX=opi XI=pDate 
             SET a.value=a.value+ifnull(value,0)
                 , a.rows=a.rows+1
                 , a.p1=itemHistoryId
@@ -276,7 +276,7 @@ PROC CalcDateOpiHistory_new() {
 
         -- 一般销售人员opi汇总
         SET pDate = MinuteIdDate(opiHistoryId, timeZone);
-        WITH IxOpiItemDate_new as a IX=opi XI=pDate 
+        WITH IxOpiItemDate as a IX=opi XI=pDate 
             SET a.value=a.value+ifnull(value,0)
                 , a.rows=a.rows+1
                 , a.p1=opiHistoryId
@@ -310,10 +310,11 @@ PROC CalcDateOpiHistory_new() {
                 ORDER BY a.ix DESC)
         {
             SET opiSupervise = ID(objectPostItem new KEY Object=supervisor, Post=Post.staffSupervisor, Item=Item.supervisorFee);
-            WITH IxOpiItemDate_new as a IX=opiSupervise XI=pDate 
+            WITH IxOpiItemDate as a IX=opiSupervise XI=pDate 
                 SET a.value=a.value+ifnull(value,0)*ratio/100, a.rows=a.rows + 1, a.p1=opiHistoryId;
-            VAR accountValue DEC(18,4), objectAccountId ID;
 
+            VAR accountValue DEC(18,4), objectAccountId ID;
+            SET accountValue=ratio * ifnull(value,0) / 100;
             -- 只针对没有opi明细，又下级的数据直接合计的主管账户
             FOR (VAR account ENUM EnumAccount, ratio DEC(6,2)
                 OF SELECT a.xi as account, a.ratio
@@ -326,7 +327,7 @@ PROC CalcDateOpiHistory_new() {
                 SET startStamp=a.startStamp FROM ObjectAccount as a WHERE a.id=objectAccountId;
                 SET opiHistoryTime = MinuteIdTime(opiHistoryId, timeZone);
                 IF startStamp<opiHistoryTime {
-                    SET accountValue=ratio * value / 100;
+                    SET accountValue=ratio * accountValue / 100;
                     WITH ObjectAccount as a ID=objectAccountId 
                         SET a.balance=IFNULL(a.balance, 0)+accountValue;
                     WITH ObjectAccountHistory as a IX=objectAccountId XI=accountHistoryDate -- dateHourId
