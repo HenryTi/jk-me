@@ -323,7 +323,7 @@ PROC #ProcBizOp ver 0.1 (
             , a.value=value * IFNULL(boundRatio, ratio) / 100
             , a.booking=booking;
         WITH IxBizOpBound IX=bizOp XI=bizMainBoundId SET bound=1;
-        Queue QueueDateOpiHistory Add opiHistoryId;
+        Queue QueueOpiHistory Add opiHistoryId;
         FOR (VAR user ID
             OF SELECT b.ix as user
                 FROM ObjectPostItem as a JOIN UserObject as b ON a.object=b.xi
@@ -475,6 +475,6 @@ PROC #ProcItemHistory ver 0.1 (
             WHERE a.bizOpType=type AND a.post=Post.sys AND a.postItem=item AND a.item=item;
         */
         WITH ItemHistory as a ID = itemHistoryId SET a.value=value; -- , a.booking=booking;
-        QUEUE QueueDateItemHistory Add itemHistoryId;
+        QUEUE QueueItemHistory Add itemHistoryId;
     }
 };

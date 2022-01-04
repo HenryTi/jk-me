@@ -236,12 +236,12 @@ IX IxOpiItemDate_new (
     p1 ID,
 );
 
-QUEUE QueueDateItemHistory;
+QUEUE QueueItemHistory;
 PROC CalcDateItemHistory_new() {
     VAR timeZone TINYINT
         , pDate DATE, value DEC(18, 4), item ENUM Item, opi ID ObjectPostItem;
     SET timeZone=TimeZone();
-    FOR (VAR itemHistoryId ID OF QUEUE QueueDateItemHistory) {
+    FOR (VAR itemHistoryId ID OF QUEUE QueueItemHistory) {
         SET value = a.value, item=a.item
             FROM ItemHistory as a 
             WHERE a.id=itemHistoryId;
@@ -259,11 +259,16 @@ PROC CalcDateItemHistory_new() {
     }
 };
 
+QUEUE QueueOpiHistory;
 PROC CalcDateOpiHistory_new() {
     VAR timeZone TINYINT, pDate DATE, value DEC(18, 4), opi ID ObjectPostItem
         , item ENUM Item, object ID;
     SET timeZone=TimeZone();
-    FOR (VAR opiHistoryId ID OF QUEUE QueueDateOpiHistory) {
+    FOR (VAR opiHistoryId ID OF QUEUE QueueOpiHistory) {
+        VAR accountHistoryDate DATE;
+        -- SET dateHourId=(((opiHistoryId>>20) DIV (24*60)) * 24) + timeZone;
+        SET accountHistoryDate=MinuteIdDate(opiHistoryId, timeZone);
+
         SET value = a.value, opi=a.opi, object = b.object, item = b.item
             FROM OpiHistory as a 
                 LEFT JOIN ObjectPostItem as b on b.id = a.opi
@@ -277,6 +282,25 @@ PROC CalcDateOpiHistory_new() {
                 , a.p1=opiHistoryId
             ON NEW a.p0=opiHistoryId;
 
+        -- objectAccount计算
+        IF object IS NOT NULL {
+            VAR accountValue DEC(18,4), objectAccountId ID;
+            FOR (VAR account ENUM EnumAccount, ratio DEC(6,2)
+                OF SELECT a.xi as account, a.ratio
+                    FROM AccountBooking as a WHERE a.ix=item AND a.type=0)
+            {
+                SET accountValue=ratio * value / 100;
+                SET objectAccountId=ID(
+                    ObjectAccount new
+                    KEY object=object, account=account);
+                WITH ObjectAccount as a ID=objectAccountId 
+                    SET a.balance=IFNULL(a.balance, 0)+accountValue
+                    WHERE a.startStamp<MinuteIdTime(opiHistoryId, timeZone);
+                WITH ObjectAccountHistory as a IX=objectAccountId XI=accountHistoryDate -- dateHourId
+                    SET a.value=IFNULL(a.value,0)+accountValue, a.opi=opi;
+            }
+        }
+
         -- 主管的绩效汇总 
         VAR opiSupervise ID ObjectPostItem;
         FOR (VAR supervisor ID, ratio DEC(6,2)
@@ -288,25 +312,25 @@ PROC CalcDateOpiHistory_new() {
             SET opiSupervise = ID(objectPostItem new KEY Object=supervisor, Post=Post.staffSupervisor, Item=Item.supervisorFee);
             WITH IxOpiItemDate_new as a IX=opiSupervise XI=pDate 
                 SET a.value=a.value+ifnull(value,0)*ratio/100, a.rows=a.rows + 1, a.p1=opiHistoryId;
-        }
+            VAR accountValue DEC(18,4), objectAccountId ID;
 
-        -- objectAccount计算
-        IF object IS NOT NULL {
-            VAR dateHourId ID, accountValue DEC(18,4), objectAccountId ID;
-            SET dateHourId=(((opiHistoryId>>20) DIV (24*60)) * 24) + timeZone;
+            -- 只针对没有opi明细，又下级的数据直接合计的主管账户
             FOR (VAR account ENUM EnumAccount, ratio DEC(6,2)
                 OF SELECT a.xi as account, a.ratio
-                    FROM AccountBooking as a WHERE a.ix=item)
+                    FROM AccountBooking as a WHERE a.ix=item AND a.type=1)
             {
-                SET accountValue=ratio * value / 100;
-                SET objectAccountId=ID(
-                    ObjectAccount new
-                    KEY object=object, account=account);
-                WITH ObjectAccount as a ID=objectAccountId 
-                    SET a.balance=IFNULL(a.balance, 0)+accountValue
-                    WHERE a.startStamp<MinuteIdTime(opiHistoryId, timeZone);
-                WITH ObjectAccountHistory as a IX=objectAccountId XI=dateHourId
-                    SET a.value=IFNULL(a.value,0)+accountValue, a.opi=opi;
+                VAR startStamp DATETIME;
+                SET startStamp=a.startStamp FROM ObjectAccount as a WHERE a.id=objectAccountId;
+                IF startStamp<MinuteIdTime(opiHistoryId, timeZone) {
+                    SET accountValue=ratio * value / 100;
+                    SET objectAccountId=ID(
+                        ObjectAccount new
+                        KEY object=supervisor, account=account);
+                    WITH ObjectAccount as a ID=objectAccountId 
+                        SET a.balance=IFNULL(a.balance, 0)+accountValue;
+                    WITH ObjectAccountHistory as a IX=objectAccountId XI=accountHistoryDate -- dateHourId
+                        SET a.value=IFNULL(a.value,0)+accountValue, a.opi=opiSupervise;
+                }
             }
         }
     }

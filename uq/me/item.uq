@@ -116,15 +116,16 @@ IX AccountBooking ver 0.1 CONST (
     ix ENUM Item,
     xi ENUM EnumAccount,
     ratio DEC(6,2) DEFAULT 100,             -- 百分数
+    type TINYINT DEFAULT 0,                 -- 0: 普通记账，1: supervise记账
 )
-+ (ix, xi, ratio)
++ (ix, xi, ratio, type)
 VALUES
-(Item.profitFee,    EnumAccount.commission,         100),
-(Item.amountFee,    EnumAccount.commission,         100),
-(Item.couponFee,    EnumAccount.commission,         100),
-(Item.cashOut,      EnumAccount.commission,         -100),
-(Item.supervisorFee,    EnumAccount.supervisor,     100),
-(Item.cashOut,      EnumAccount.supervisor,         -100),
+(Item.profitFee,        EnumAccount.commission,     100,    0),
+(Item.amountFee,        EnumAccount.commission,     100,    0),
+(Item.couponFee,        EnumAccount.commission,     100,    0),
+(Item.cashOut,          EnumAccount.commission,     -100,   0),
+(Item.supervisorFee,    EnumAccount.supervisor,     100,    1),
+(Item.cashOut,          EnumAccount.supervisor,     -100,   0),
 ;
 
 ID #ObjectAccount (
@@ -136,9 +137,9 @@ ID #ObjectAccount (
     startStamp TIMESTAMP DEFAULT Current,
 );
 
-IX ObjectAccountHistory (
+IX ObjectAccountHistory ver 0.1 (
     ix ObjectAccount,
-    xi,                         -- date HourID
+    xi DATE,            -- date -- HourID
     value DEC(18,4),
     opi ID ObjectPostItem,
 );
