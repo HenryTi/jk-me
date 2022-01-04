@@ -196,7 +196,7 @@ QUERY GetObjectAccountHistory(
     objectAccount ID,
 )
 RETURNS ret (
-    date INT,               -- hourID
+    date DATE,               -- hourID
     value DEC(18,4),
     post ENUM Post,
     item ENUM Item,

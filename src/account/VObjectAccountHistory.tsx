@@ -1,5 +1,4 @@
 import { CAccount } from 'account';
-import { dateFromHourId } from 'tonwa-core';
 import { List, LMR, VPage } from "tonwa";
 import { Item, Post, ReturnGetObjectAccountHistoryRet } from "uq-app/uqs/JkMe";
 
@@ -22,7 +21,7 @@ export class VObjectAccountHistory extends VPage<CAccount> {
             <small className="text-muted">{unit}</small>
         </div>;
         return <LMR className="px-3 py-2" right={right}>
-            <span className="d-inline-block w-min-6c">{dateString(dateFromHourId(date))}</span>
+            <span className="d-inline-block w-min-6c">{dateString(date)}</span>
             <small className="text-muted">
                 {postTitles[post as Post].title} &nbsp;
                 {itemTitles[item as Item].title}

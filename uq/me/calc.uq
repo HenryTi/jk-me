@@ -317,15 +317,16 @@ PROC CalcDateOpiHistory_new() {
             -- 只针对没有opi明细，又下级的数据直接合计的主管账户
             FOR (VAR account ENUM EnumAccount, ratio DEC(6,2)
                 OF SELECT a.xi as account, a.ratio
-                    FROM AccountBooking as a WHERE a.ix=item AND a.type=1)
+                    FROM AccountBooking as a WHERE a.type=1)
             {
-                VAR startStamp DATETIME;
+                VAR startStamp DATETIME, opiHistoryTime DATETIME;
+                SET objectAccountId=ID(
+                    ObjectAccount new
+                    KEY object=supervisor, account=account);
                 SET startStamp=a.startStamp FROM ObjectAccount as a WHERE a.id=objectAccountId;
-                IF startStamp<MinuteIdTime(opiHistoryId, timeZone) {
+                SET opiHistoryTime = MinuteIdTime(opiHistoryId, timeZone);
+                IF startStamp<opiHistoryTime {
                     SET accountValue=ratio * value / 100;
-                    SET objectAccountId=ID(
-                        ObjectAccount new
-                        KEY object=supervisor, account=account);
                     WITH ObjectAccount as a ID=objectAccountId 
                         SET a.balance=IFNULL(a.balance, 0)+accountValue;
                     WITH ObjectAccountHistory as a IX=objectAccountId XI=accountHistoryDate -- dateHourId

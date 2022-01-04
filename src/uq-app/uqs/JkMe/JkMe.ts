@@ -1,4 +1,4 @@
-//=== UqApp builder created on Wed Dec 29 2021 23:20:14 GMT-0500 (北美东部标准时间) ===//
+//=== UqApp builder created on Mon Jan 03 2022 22:31:06 GMT-0500 (北美东部标准时间) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqTuid, UqAction, UqQuery, UqID } from "tonwa-core";
 import { Render, IDXEntity } from "tonwa-react";
@@ -75,7 +75,8 @@ export enum EnumObjectType {
 }
 
 export enum EnumAccount {
-	commission = 10
+	commission = 10,
+	supervisor = 11
 }
 
 export enum EnumBizOpType {
@@ -527,7 +528,7 @@ export interface ParamGetObjectAccountHistory {
 	objectAccount: number;
 }
 export interface ReturnGetObjectAccountHistoryRet {
-	date: number;
+	date: any;
 	value: number;
 	post: any;
 	item: any;
