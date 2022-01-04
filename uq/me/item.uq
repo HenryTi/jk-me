@@ -134,7 +134,7 @@ ID #ObjectAccount (
     KEY account ENUM EnumAccount,   -- 比如提成-commission
     balance DEC(18,4) DEFAULT 0,
     startBalance DEC(18,4) DEFAULT 0,
-    startStamp TIMESTAMP DEFAULT Current,
+    startDate DATE DEFAULT '2021-12-21',
 );
 
 IX ObjectAccountHistory ver 0.1 (
