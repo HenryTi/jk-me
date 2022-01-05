@@ -72,6 +72,7 @@ RETURNS ret (
                 --    AND t.id >= minuteIdFromDate(from, timeZone)
                 --    AND t.id < minuteIdFromDate(to, timeZone)
                 WHERE t.ix=a.id
+                    AND t.xi >= b.startDate
                     AND t.xi>=from
                     AND t.xi<to
             ),
