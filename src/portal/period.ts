@@ -164,12 +164,11 @@ class YearPeriod extends Period {
         let year = this.to.getFullYear();
         let month = this.to.getMonth();
         let date = this.to.getDate();
-        if (date < this.unitBizDate) {
-            month--;
-            if (month < 0) year--;
-        }
         if (month < this.unitBizMonth) {
             year--;
+        } else if (date < this.unitBizDate) {
+            month++;
+            if (month > 11) year++;
         }
         month = this.unitBizMonth;
         this.from = new Date(year, month, this.unitBizDate);
