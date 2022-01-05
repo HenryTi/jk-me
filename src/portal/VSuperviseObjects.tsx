@@ -14,7 +14,7 @@ export class VSuperviseObjects extends VPage<CPortal> {
 
     content(): JSX.Element {
         return <div className="py-0">
-            <List items={this.controller.superviseObjects} item={{ render: this.renderItem, onClick: this.onClickItem }} />
+            <List items={this.controller.superviseObjects} item={{ render: this.renderItem }} />
         </div>;
     }
 
@@ -23,9 +23,8 @@ export class VSuperviseObjects extends VPage<CPortal> {
         let { opi, item, post, object, staff, value, ratioValue } = row;
         let {/*title, vice, */unit, fixed } = itemTitles[item as Item];
         return <div className="px-3 py-2 d-block">
-            <div>{this.controller.uqs.JkHr.Employee.tv(staff, renderEmployee)}</div>
-            <div>opi: {opi} item: {item} post: {post} object: {object} staff: {staff} </div>
-            <LMR left={<div>{renderNum(value, unit, fixed)}</div>} right={<div>{renderNum(ratioValue, unit, fixed)}</div>} />
+            <LMR left={<div><span className="text-muted small">来自: </span>{this.controller.uqs.JkHr.Employee.tv(staff, renderEmployee)}</div>}
+                right={<div>{renderNum(ratioValue, unit, fixed)}</div>} />
         </div>;
     }
 
