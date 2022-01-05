@@ -148,6 +148,7 @@ IX UserObject (
     IX user,
     XI ID Object INDEX,
     on TINYINT DEFAULT 0,
+    startDate DATE DEFAULT '2021-12-21',
 );
 
 -- 主管绩效核算
