@@ -2,7 +2,7 @@ QUEUE QueueItemHistory ONCE ONLY;
 
 QUEUE QueueOpiHistory ONCE ONLY;
 
-PROC CalcDateItemHistory() {
+PROC CalcDateItemHistory ver 0.2 () {
     VAR timeZone TINYINT
         , pDate DATE, value DEC(18, 4), item ENUM Item, opi ID ObjectPostItem;
     SET timeZone=TimeZone();
@@ -24,7 +24,7 @@ PROC CalcDateItemHistory() {
     }
 };
 
-PROC CalcDateOpiHistory() {
+PROC CalcDateOpiHistory ver 0.2 () {
     VAR timeZone TINYINT, pDate DATE, value DEC(18, 4), opi ID ObjectPostItem
         , item ENUM Item, object ID, startDate DATE;
     SET timeZone=TimeZone();

@@ -229,6 +229,7 @@ RETURNS ret (
                 FROM UserObject as a
                     JOIN IxOpiSupervise as b ON b.ixx=a.xi
                     JOIN IxOpiItemDate as c ON c.ix=b.ix AND c.xi>=b.xi AND c.xi<b.end
+                        and c.xi >= a.startDate
                 WHERE a.ix=$user AND c.xi>=from AND c.xi<to
                 GROUP BY b.ix as objectPostItem
             ) as v 
