@@ -11,6 +11,10 @@ PROC CalcDateItemHistory ver 0.2 () LOG Error {
             FROM ItemHistory as a 
             WHERE a.id=itemHistoryId;
 
+        if value IS NULL OR value = 0 {
+            CONTINUE;
+        }
+
         SET pDate = MinuteIdDate(itemHistoryId, timeZone);
         SET opi=ID(ObjectPostItem new KEY Object=0, Post=Post.Sys, Item=item);
         WITH IxOpiItemDate as a IX=opi XI=pDate 
@@ -36,6 +40,10 @@ PROC CalcDateOpiHistory ver 0.2 () LOG Error {
             FROM OpiHistory as a 
                 LEFT JOIN ObjectPostItem as b on b.id = a.opi
             WHERE a.id=opiHistoryId;
+
+        if value IS NULL OR value = 0 {
+            CONTINUE;
+        }
 
         -- 一般销售人员opi汇总
         WITH IxOpiItemDate as a IX=opi XI=pDate 
