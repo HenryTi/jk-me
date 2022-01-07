@@ -5,7 +5,7 @@ ENUM OrderType (
 	FactoryBranch		= 22,
 );
 
-ID #OrderMain ver 0.5 GLOBAL (
+ID #OrderMain ver 0.6 GLOBAL (
 	id,
 	KEY no,
     webUser ID,                         -- 下单user注册账号

@@ -21,13 +21,13 @@ ACCEPT order {
 				, a.amount=amount
                 , a.amountAfterTax = amountAfterTax;
         WITH DxBiz ID=id SET main=mainId;
-        IF EXISTS(SELECT a.id FROM DxOrderDetail as a WHERE a.id=id AND a.margin IS NOT NULL) {
+        IF EXISTS(SELECT a.id FROM DxOrderDetail as a WHERE a.id=id AND a.margin IS NOT NULL LOCK) {
             WITH DxBiz ID=id SET ready=1;
         }
 	}
 
     VAR objSellerId ID, sellerItem ENUM Item;
-    SET objSellerId = a.id from ObjectBranch as a where a.seller = seller;
+    SET objSellerId = a.id from ObjectBranch as a where a.seller = seller LOCK;
     IF type=OrderType.Customer {
         -- 所有的给customer订单绑定到ManagerIT
         VAR objManagerId ID;
@@ -85,7 +85,7 @@ ACCEPT order {
 ACCEPT [receive-done] {
     LOG CONCAT_WS(' ', id) SUBJECT 'ACCEPT JkOrderBus.receive-done';
 	FOR detail {
-        IF exists(SELECT a.id FROM DxBizOp as a WHERE a.id=id) {
+        IF exists(SELECT a.id FROM DxBizOp as a WHERE a.id=id LOCK) {
             CONTINUE;
         }
 		WITH DxOrderDetail ID=orderDetail SET receiveDone+=value;
@@ -98,7 +98,7 @@ ACCEPT [receive-done] {
 }
 ACCEPT [return] {
 	FOR detail {
-        IF exists(SELECT a.id FROM DxBizOp as a WHERE a.id=id) {
+        IF exists(SELECT a.id FROM DxBizOp as a WHERE a.id=id LOCK) {
             CONTINUE;
         }
 		WITH DxOrderDetail ID=orderDetail SET return+=quantity;
@@ -118,11 +118,12 @@ ACCEPT [return] {
 
         VAR seller ID, customerAccount ID, type ENUM OrderType;
         set seller = a.seller, customerAccount = a.customerAccount, type = a.type
-        from    orderMain as a
-        where   a.id = mainId;
+            from    orderMain as a
+            where   a.id = mainId
+            LOCK;
 
         VAR objSellerId ID, sellerItem ENUM Item;
-        SET objSellerId = a.id from ObjectBranch as a where a.seller = seller;
+        SET objSellerId = a.id from ObjectBranch as a where a.seller = seller LOCK;
         IF type=OrderType.Customer {
             -- 所有的给customer订单绑定到ManagerIT
             VAR objManagerId ID;
@@ -181,7 +182,7 @@ ACCEPT [order-sale-margin] {
     FOR detail {
         LOG CONCAT_WS(' ', [orderdetail], [value]) SUBJECT 'ACCEPT JkOrderBus.order-sale-margin';
         WITH DxOrderDetail ID=[orderdetail] SET margin=[value];
-        IF EXISTS(SELECT a.id FROM OrderDetail as a WHERE a.id=[orderdetail]) {
+        IF EXISTS(SELECT a.id FROM OrderDetail as a WHERE a.id=[orderdetail] LOCK) {
             WITH DxBiz ID=orderDetail SET ready=1;
         }
     }
