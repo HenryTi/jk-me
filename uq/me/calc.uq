@@ -1,8 +1,8 @@
-QUEUE QueueItemHistory ONCE ONLY;
+QUEUE QueueItemHistory ASC ONCE ONLY;
 
 QUEUE QueueOpiHistory ONCE ONLY;
 
-PROC CalcDateItemHistory ver 0.2 () LOG Error {
+PROC CalcDateItemHistory ver 0.3 () LOG Error {
     VAR timeZone TINYINT
         , pDate DATE, value DEC(18, 4), item ENUM Item, opi ID ObjectPostItem;
     SET timeZone=TimeZone();
