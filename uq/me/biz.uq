@@ -331,7 +331,6 @@ PROC #ProcBizOp ver 0.1 (
         {
             POKE user;
         }
-        -- }
     }
 };
 

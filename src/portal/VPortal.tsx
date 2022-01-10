@@ -94,7 +94,7 @@ export class VPeriodSum<T extends CPortal = CPortal> extends View<T> {
                 <LMR className="px-3 py-2 w-100" right={<div>{renderNum(value, undefined, fixed)}</div>}>
                     {title}
                 </LMR>
-                <div className="px-3 small"><small className="text-muted">{vice}</small></div>
+                <div className="px-3 small me-5"><small className="text-muted">{vice}</small></div>
             </div>;
         }
         let { post } = ips;
