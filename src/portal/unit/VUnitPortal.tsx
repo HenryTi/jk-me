@@ -16,7 +16,7 @@ export class VUnitPortal extends VPeriodSum<CUnitPortal> {
     protected renderItem = (row: any, index: number) => {
         let { item, value } = row;
         let { itemTitles } = this.controller.cApp;
-        let { title, unit } = itemTitles[item as Item];
+        let { title, unit, fixed } = itemTitles[item as Item];
         if (!title) return null;
         let left = <div>
             <FA className="text-info me-3" name="lightbulb-o" />
@@ -25,11 +25,10 @@ export class VUnitPortal extends VPeriodSum<CUnitPortal> {
         let right = <div>
             {
                 value < 0 ?
-                    <span className="text-danger">({renderNum(-value)})</span>
+                    <span className="text-danger">({renderNum(-value, unit, fixed)})</span>
                     :
-                    renderNum(value)
+                    renderNum(value, unit, fixed)
             }
-            <small className="text-muted ms-1">{unit}</small>
         </div>;
         return <LMR className="py-2 px-3 d-flex align-items-center"
             left={left} right={right} />;

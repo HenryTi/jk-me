@@ -89,9 +89,9 @@ export class VPeriodSum<T extends CPortal = CPortal> extends View<T> {
         let { item, value } = ips;
         let titles = itemTitles[item];
         if (titles) {
-            let { title, vice, fixed } = titles;
+            let { title, vice, fixed, unit } = titles;
             return <div className="d-block pb-2">
-                <LMR className="px-3 py-2 w-100" right={<div>{renderNum(value, undefined, fixed)}</div>}>
+                <LMR className="px-3 py-2 w-100" right={<div>{renderNum(value, unit, fixed)}</div>}>
                     <small><FA className="me-2 text-danger small" name="bookmark-o" /></small> {title}
                 </LMR>
                 <div className="px-3 small ms-3 me-4"><small className="text-muted">{vice}</small></div>
