@@ -71,7 +71,7 @@ export class VPeriodSum<T extends CPortal = CPortal> extends View<T> {
         let { postTitles } = cApp;
         let { post, itemList } = postPeriodSum;
         let { title, vice } = postTitles[post];
-        return <div className="d-block mx-3 my-3 border border-success">
+        return <div className="d-block mx-3 my-3 border border-success rounded-3">
             <div className="px-3 py-2">
                 <b className="text-primary">{title}</b>
                 <small className="text-muted ms-3">{vice}</small>
@@ -90,9 +90,12 @@ export class VPeriodSum<T extends CPortal = CPortal> extends View<T> {
         let titles = itemTitles[item];
         if (titles) {
             let { title, vice, fixed } = titles;
-            return <LMR className="px-3 py-2 w-100" right={<div>{renderNum(value, undefined, fixed)}</div>}>
-                {title} <small className="text-muted ms-3">{vice}</small>
-            </LMR>;
+            return <div className="d-block">
+                <LMR className="px-3 py-2 w-100" right={<div>{renderNum(value, undefined, fixed)}</div>}>
+                    {title}
+                </LMR>
+                <div className="px-3 small"><small className="text-muted">{vice}</small></div>
+            </div>;
         }
         let { post } = ips;
         let { postTitles } = cApp;

@@ -10,5 +10,5 @@ export function renderNum(value: number, unit?: string, fixed?: number): JSX.Ele
     let vUnit: any;
     if (unit !== undefined) vUnit = <small className="text-muted">{unit}</small>;
     if (fixed === undefined) fixed = 2;
-    return <>{numToStr(value, fixed)} {vUnit}</>;
+    return <strong>{numToStr(value, fixed)} {vUnit}</strong>;
 }
