@@ -23,6 +23,7 @@ IDX DxBiz ver 0.7 (
     id,
     main ID,
     ready TINYINT DEFAULT 0,
+    bizValidStamp INT,
     sys (create, update),
     INDEX main_id(main, id) UNIQUE,
 );
@@ -264,11 +265,11 @@ PROC #ProcBizOp ver 0.1 (
     FOR (VAR booking ID, itemHistoryId ID, post ENUM Post, stamp INT, value DEC(18,4)
         , postItem ENUM Item, ratio DEC(6,2), span SMALLINT, start DATE
         , to ID, bizMainBoundId ID, boundRatio DEC(6,2)
-        , opBound TINYINT, bizMainStamp INT -- , boundOpiItemHistory ID
+        , opBound TINYINT, bizValidStamp INT -- , boundOpiItemHistory ID
         OF SELECT a.id as booking, c.id as itemHistoryId, a.post, b.stamp
             , c.value, a.postItem, a.ratio, a.span, a.start
             , e.to, e.id as bizMainBoundId, e.ratio as boundRatio
-            , f.bound as opBound, g.stamp as bizMainStamp -- , f.opiItemHistory as boundOpiItemHistory
+            , f.bound as opBound, d.bizValidStamp  -- , f.opiItemHistory as boundOpiItemHistory
             FROM OPIBooking as a
                 JOIN DxBizOp as b ON a.bizOpType=b.type
                 JOIN ItemHistory as c ON c.item=a.item AND c.bizOp=b.id
@@ -313,7 +314,7 @@ PROC #ProcBizOp ver 0.1 (
         }
 
         -- 超过规则的业务时间跨度
-        IF stamp >= bizMainStamp + span * 24 * 3600 {
+        IF stamp >= bizValidStamp + span * 24 * 3600 {
             CONTINUE;
         }
 
