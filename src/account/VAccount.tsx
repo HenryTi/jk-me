@@ -1,6 +1,7 @@
 import { CAccount } from "./CAccount";
 import { View } from 'tonwa';
 import { EnumAccount, Post } from "uq-app/uqs/JkMe";
+import { renderNum } from "tools";
 
 export class VAccount extends View<CAccount> {
     render() {
@@ -20,9 +21,7 @@ export class VAccount extends View<CAccount> {
                         <span className="text-secondary small">{postTitle?.title}</span>
                         <span className="text-primary">{title}</span>
                     </div>
-                    <div>
-                        <span className="fs-5 me-1">{balance.toFixed(fixed)}</span>
-                        <small className="text-muted">{unit}</small></div>
+                    <div>{renderNum(balance, unit, fixed)}</div>
                 </div>
             })}</>;
         });

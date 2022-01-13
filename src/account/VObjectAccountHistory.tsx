@@ -1,5 +1,6 @@
 import { CAccount } from 'account';
 import { List, LMR, VPage } from "tonwa";
+import { renderNum } from 'tools';
 import { Item, Post, ReturnGetObjectAccountHistoryRet } from "uq-app/uqs/JkMe";
 
 export class VObjectAccountHistory extends VPage<CAccount> {
@@ -16,10 +17,7 @@ export class VObjectAccountHistory extends VPage<CAccount> {
         let { fixed, unit } = accountTitle;
         let { postTitles, itemTitles } = cApp;
         let { date, value, item, post } = row;
-        let right = <div>
-            <span className="me-1">{value.toFixed(fixed)}</span>
-            <small className="text-muted">{unit}</small>
-        </div>;
+        let right = <div>{renderNum(value, unit, fixed, false)}</div>;
         return <LMR className="px-3 py-2" right={right}>
             <span className="d-inline-block w-min-6c">{dateString(date)}</span>
             <small className="text-muted">
