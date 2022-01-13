@@ -21,7 +21,7 @@ export class VAccount extends View<CAccount> {
                         <span className="text-secondary small">{postTitle?.title}</span>
                         <span className="text-primary">{title}</span>
                     </div>
-                    <div>{renderNum(balance, unit, fixed)}</div>
+                    <div className="large">{renderNum(balance, unit, fixed)}</div>
                 </div>
             })}</>;
         });
