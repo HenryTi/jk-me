@@ -29,7 +29,7 @@ export class VPostItemHistory extends VPage<CPortal> {
         let left = <div className="text-muted small w-min-4c me-2">
             <VDate date={d} hideSameYear={true} />
         </div>;
-        let right = <div className="ms-2">{renderNum(value, unit, fixed)}</div>;
+        let right = <div className="ms-2">{renderNum(value, unit, fixed, false)}</div>;
         return <LMR className="px-3 py-2 align-items-center" left={left} right={right}>
             <small>{bizOp}{memo ? ': ' + memo : ''}</small>
         </LMR>;

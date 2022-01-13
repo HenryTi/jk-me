@@ -32,7 +32,7 @@ export function renderNum(value: number, unit?: string, fixed?: number, b?: bool
     let dec = parts[1];
     let vDec: any;
     if (dec !== undefined) {
-        vDec = <span className="small text-muted"><small>.{dec}</small></span>;
+        vDec = <span className="small text-muted"><small> .{dec}</small></span>;
     }
     return <span>{vInt}{vDec} {vUnit}</span>
 }
