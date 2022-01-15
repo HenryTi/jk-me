@@ -434,6 +434,8 @@ PROC #ProcWriteItemHistory ver 0.1 (
             VAR receiveItem ENUM Item;
             IF orderType = OrderType.Customer {
                 SET receiveItem = Item.orderReceive;
+                PROC ProcItemHistory(bizOp, Item.orderFee, 
+                    CASE WHEN price<0.01 THEN 0 ELSE (margin)/price*value END, itemHistoryId);
             }
             ELSEIF orderType = OrderType.SaleBranch {
                 SET receiveItem = Item.receiveSaleTransferOut;
@@ -446,8 +448,6 @@ PROC #ProcWriteItemHistory ver 0.1 (
             IF currency IS NOT NULL {
                 WITH CurrencyItemHistory as a ID=itemHistoryId SET a.currency=currency, a.value=value, a.rate=rate;
             }
-            PROC ProcItemHistory(bizOp, Item.orderFee, 
-                CASE WHEN price<0.01 THEN 0 ELSE (margin)/price*value END, itemHistoryId);
         }
         ELSE {
             LOG CONCAT_WS(' ', bizOp, bizOpType, price, margin, value) SUBJECT 'Failed BizOp ItemHistory Price IS NULL';
