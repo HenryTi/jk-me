@@ -138,19 +138,7 @@ PROC SumItemHistory ver 0.2 (
 
     SET m=BizMonthId(date, bizdate()); --  YEAR(date)*100+MONTH(date);
 
-    IF item=Item.orderAmount {
-        SET customerAccount=c.customerAccount
-            , product=b.product
-            FROM OrderDetail as b
-                JOIN OrderMain as c ON b.main=c.id
-            WHERE b.id=biz;
-
-        -- product
-        WITH MonthSumProduct as a IXX=item IX=m XI=product SET a.value=a.value + value;
-        -- customerAccount
-        WITH MonthSumCustomer as a IXX=item IX=m XI=customerAccount SET a.value=a.value + value;
-    }
-    ELSEIF item=Item.orderReturn {
+    IF item=Item.orderAmount OR item = Item.orderReturn {
         SET customerAccount=c.customerAccount
             , product=b.product
             FROM OrderDetail as b

@@ -15,6 +15,16 @@ IX MonthSumCustomer (
     INDEX ixx_ix_value(ixx, ix, value),
     INDEX ixx_xi_ix(ixx, xi, ix),
 );
+
+IX MonthSumBrand (
+    ixx ENUM Item,          -- ENUM Item
+    ix DATE,                -- month, 202109
+    xi,                     -- brand id, 
+    value DEC(18,4),        -- 销售额
+    INDEX ixx_ix_value(ixx, ix, value),
+    INDEX ixx_xi_ix(ixx, xi, ix),
+);
+
 /*
 IX DaySumItem (
     ix ENUM Item,
