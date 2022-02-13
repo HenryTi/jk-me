@@ -23,6 +23,12 @@ ACCEPT order {
         WITH DxBiz ID=id SET main=mainId;
         IF EXISTS(SELECT a.id FROM DxOrderDetail as a WHERE a.id=id AND a.margin IS NOT NULL LOCK) {
             WITH DxBiz ID=id SET ready=1;
+            -- 如果订单明细存在退货单，则其退货单ready设置为1
+            VAR returnDetail ID;
+            SET returnDetail = a.id from ReturnDetail as a where a.orderDetail = id;
+            IF (returnDetail is not null){
+                WITH DxBiz ID = returnDetail SET ready = 1;
+            }
         }
 	}
 
@@ -97,6 +103,11 @@ ACCEPT [receive-done] {
     -- SCHEDULE ExecQueueBizOp DELAY 1;
 }
 ACCEPT [return] {
+    var returnMainId ID;
+    set returnMainId = id;
+    WITH ReturnMain ID = returnMainId;
+    WITH DxBizMain as a ID = returnMainId SET a.stamp = $stamp;
+
 	FOR detail {
         IF exists(SELECT a.id FROM DxBizOp as a WHERE a.id=id LOCK) {
             CONTINUE;
@@ -174,7 +185,25 @@ ACCEPT [return] {
             BizMainBound new 
             KEY bizMain=mainId, post=Post.sellerBranch, item=sellerItem, to=objSellerId
         );
+
+        -- return detail本身作为单据时的处理
+        WITH ReturnDetail as a ID = id SET a.main = returnMainId, a.orderDetail = orderdetail;
+        WITH DxBiz ID = id SET main = returnMainId;
+        IF EXISTS(SELECT a.id from DxBiz as a where a.id = orderdetail and a.ready = 1) {
+            WITH DxBiz ID = id SET ready = 1;
+        }
+
+        FOR(VAR post ENUM Post, item ENUM Item, to ID 
+            OF SELECT a.post, a.item, a.to from BizMainBound as a 
+            where a.bizMain = mainId and a.post = Post.staffSales and a.item in (Item.profitFee, Item.couponFee)
+        ){
+            VAR bizReturnMainBoundId ID = ID(
+                BizMainBound new 
+                KEY bizMain=returnMainId, post=post, item=item, to=to
+            );
+        }
 	}
+    PROC ProcQueueBizMain(returnMainId);
     -- SCHEDULE ExecQueueBizOp DELAY 1;
 }
 ACCEPT [order-sale-margin] {
@@ -185,6 +214,12 @@ ACCEPT [order-sale-margin] {
             WITH DxOrderDetail ID=[orderdetail] SET margin=[value];
             IF EXISTS(SELECT a.id FROM OrderDetail as a WHERE a.id=[orderdetail] LOCK) {
                 WITH DxBiz ID=orderDetail SET ready=1;
+                -- 如果订单明细存在退货单，则其退货单ready设置为1
+                VAR returnDetail ID;
+                SET returnDetail = a.id from ReturnDetail as a where a.orderDetail = orderdetail;
+                IF (returnDetail is not null){
+                    WITH DxBiz ID = returnDetail SET ready = 1;
+                }
             }
         }
     }

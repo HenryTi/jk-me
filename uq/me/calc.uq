@@ -52,7 +52,7 @@ PROC CalcDateOpiHistory ver 0.2 () LOG Error {
                 , a.p1=opiHistoryId
             ON NEW a.p0=opiHistoryId;
 
-        -- objectAccount计算
+        -- 一般销售人员objectAccount计算
         IF object IS NOT NULL {
             VAR accountValue DEC(18,4), objectAccountId ID;
             FOR (VAR account ENUM EnumAccount, ratio DEC(6,2)
@@ -73,7 +73,7 @@ PROC CalcDateOpiHistory ver 0.2 () LOG Error {
             }
         }
 
-        -- 主管的绩效汇总 
+        -- 主管的绩效汇总，分为两步：第一步，根据ixOpiSupervise的配置也写入IxOpiItemDate；第二步，再根据accountbooking的配置写入objectaccount表 
         VAR opiSupervise ID ObjectPostItem;
         FOR (VAR supervisor ID, superiviceRatio DEC(6,2)
             OF SELECT a.ixx as supervisor, a.ratio as superiviceRatio
