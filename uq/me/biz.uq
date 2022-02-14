@@ -370,6 +370,14 @@ PROC #ProcWriteItemHistory ver 0.1 (
     SET biz=a.biz, bizOpType=a.type, value=a.value
         FROM DxBizOp as a 
         WHERE a.id=bizOp;
+    
+    IF bizOpType = EnumBizOpType.orderReceiveDone {
+        VAR orderDetail ID;
+        SET orderDetail = a.orderDetail from ReturnDetail as a where a.id = biz;
+        IF(orderDetail is not null){
+            SET Biz = orderDetail;
+        }
+    }
 
     VAR quantity dec(18, 4), price DEC(18,4), margin DEC(18,4), amountAfterTax dec(18, 4);
     SET quantity = a.quantity, price = a.price, amountAfterTax = a.amountAfterTax 
@@ -380,9 +388,8 @@ PROC #ProcWriteItemHistory ver 0.1 (
     SET orderType=a.type, currency=a.currency, rate=d.rate
         FROM OrderMain as a 
             JOIN DxBiz as b ON b.main=a.id
-            JOIN DxBizOp as c ON c.biz=b.id
             LEFT JOIN DxCurrency as d ON d.id=a.currency
-        WHERE c.id=bizOp;
+        WHERE b.id=biz;
 
     IF bizOpType=EnumBizOpType.orderDeliverDone or bizOpType = EnumBizOpType.orderReturn {
         VAR mainItem ENUM Item;
@@ -434,6 +441,8 @@ PROC #ProcWriteItemHistory ver 0.1 (
             VAR receiveItem ENUM Item;
             IF orderType = OrderType.Customer {
                 SET receiveItem = Item.orderReceive;
+                PROC ProcItemHistory(bizOp, Item.orderFee, 
+                    CASE WHEN price<0.01 THEN 0 ELSE (margin)/price*value END, itemHistoryId);
             }
             ELSEIF orderType = OrderType.SaleBranch {
                 SET receiveItem = Item.receiveSaleTransferOut;
@@ -446,8 +455,6 @@ PROC #ProcWriteItemHistory ver 0.1 (
             IF currency IS NOT NULL {
                 WITH CurrencyItemHistory as a ID=itemHistoryId SET a.currency=currency, a.value=value, a.rate=rate;
             }
-            PROC ProcItemHistory(bizOp, Item.orderFee, 
-                CASE WHEN price<0.01 THEN 0 ELSE (margin)/price*value END, itemHistoryId);
         }
         ELSE {
             LOG CONCAT_WS(' ', bizOp, bizOpType, price, margin, value) SUBJECT 'Failed BizOp ItemHistory Price IS NULL';
