@@ -229,6 +229,11 @@ ACCEPT [order-bound-staff-sales] {
     LOG CONCAT_WS(' ', order) SUBJECT 'JkOrderBus ACCEPT order-bound-staff-sales';
     VAR bizMainBoundId ID;
     FOR to {
+        IF EXISTS(select 1 from BizMainBound as a 
+        where a.bizMain = order and a.post = post.staffSales and a.item = ITEM.orderAmount) {
+            CONTINUE;
+        }
+
 		VAR toId ID;
         SET toId=ID(ObjectStaff, id);
         IF toId IS NULL {
