@@ -375,7 +375,7 @@ PROC #ProcWriteItemHistory ver 0.1 (
         VAR orderDetail ID;
         SET orderDetail = a.orderDetail from ReturnDetail as a where a.id = biz;
         IF(orderDetail is not null){
-            SET Biz = orderDetail;
+            SET biz = orderDetail;
         }
     }
 
